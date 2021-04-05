@@ -1,0 +1,15 @@
+package ${common.pathPackage}.service;
+
+import ${common.pathBasePackage}.BaseService;
+import ${common.pathPackage}.model.${tableinfo.className};
+
+/**
+ * ${tableinfo.comments}
+ * 
+ * @author ${common.author}
+ * @date ${datetime}
+ * @git ${common.git}
+ */
+public interface ${tableinfo.className}Service extends BaseService<${tableinfo.className}, Long> {
+
+}

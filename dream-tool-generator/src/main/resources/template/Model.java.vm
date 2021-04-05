@@ -1,0 +1,58 @@
+package ${common.pathPackage}.model;
+
+import ${common.pathBasePackage}.AbstractModel;
+#if(${tableinfo.hasSort})
+import com.wy.database.annotation.Sort;
+#end
+#if(${tableinfo.hasUnique})
+import com.wy.database.annotation.Unique;
+#end
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+#if(${tableinfo.hasBigDecimal})
+import java.math.BigDecimal;
+#end
+#if(${tableinfo.hasDate})
+import java.util.Date;
+#end
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+/**
+ * ${tableinfo.comments} ${tableinfo.tableName}
+ * 
+ * @author ${common.author}
+ * @date ${datetime}
+ * @git ${common.git}
+ */
+@ApiModel(description = "${tableinfo.comments} ${tableinfo.tableName}")
+@Getter
+@Setter
+@Builder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+public class ${tableinfo.className} extends AbstractModel {
+
+	private static final long serialVersionUID = 1L;
+#foreach ($column in $columns)
+
+	/**
+	 * $column.comments
+	 */
+	@ApiModelProperty("$column.comments")
+#if($column.sortColumn)
+	@Sort
+#end
+#if($column.unique)
+	@Unique
+#end
+	private $column.attrType $column.attrNameLower;
+#end
+
+	/** 非数据库字段 */
+}

@@ -1,0 +1,23 @@
+package ${common.pathPackage}.crl;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import ${common.pathBasePackage}.AbstractCrl;
+import ${common.pathPackage}.model.${tableinfo.className};
+
+import io.swagger.annotations.Api;
+
+/**
+ * ${tableinfo.comments}API
+ * 
+ * @author ${common.author}
+ * @date ${datetime}
+ * @git ${common.git}
+ */
+@Api(tags = "${tableinfo.comments}API")
+@RestController
+@RequestMapping("${tableinfo.objectName}")
+public class ${tableinfo.className}Crl extends AbstractCrl<${tableinfo.className}, Long> {
+
+}

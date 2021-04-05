@@ -1,0 +1,42 @@
+package ${common.pathPackage}.mapper;
+
+import ${common.pathBasePackage}.BaseMapper;
+import ${common.pathPackage}.model.${tableinfo.className};
+import ${common.pathPackage}.model.${tableinfo.className}Example;
+import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+/**
+ * ${tableinfo.comments}
+ * 
+ * @author ${common.author}
+ * @date ${datetime}
+ * @git ${common.git}
+ */
+@Mapper
+public interface ${tableinfo.className}Mapper extends BaseMapper<${tableinfo.className}, Long> {
+
+	long countByExample(${tableinfo.className}Example example);
+
+	int deleteByExample(${tableinfo.className}Example example);
+
+	int deleteByPrimaryKey(Long id);
+
+	int insert(${tableinfo.className} record);
+
+	int insertSelective(${tableinfo.className} record);
+
+	List<${tableinfo.className}> selectByExample(${tableinfo.className}Example example);
+
+	${tableinfo.className} selectByPrimaryKey(Long id);
+
+	int updateByExampleSelective(@Param("record") ${tableinfo.className} record,
+			@Param("example") ${tableinfo.className}Example example);
+
+	int updateByExample(@Param("record") ${tableinfo.className} record, @Param("example") ${tableinfo.className}Example example);
+
+	int updateByPrimaryKeySelective(${tableinfo.className} record);
+
+	int updateByPrimaryKey(${tableinfo.className} record);
+}
