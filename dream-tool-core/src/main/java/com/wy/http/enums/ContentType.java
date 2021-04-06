@@ -1,4 +1,4 @@
-package com.wy.enums.http;
+package com.wy.http.enums;
 
 import java.awt.PageAttributes.MediaType;
 import java.nio.charset.Charset;
@@ -55,7 +55,7 @@ public class ContentType {
 	public static final ContentType ALL;
 
 	/**
-	 * A String equivalent of {@link MediaType#ALL}.
+	 * A String equivalent of {@code MediaType#ALL}.
 	 */
 	public static final String ALL_VALUE = "*/*";
 
@@ -65,7 +65,7 @@ public class ContentType {
 	public static final ContentType APPLICATION_ATOM_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_ATOM_XML}.
+	 * A String equivalent of {@code application/atom+xml}.
 	 */
 	public static final String APPLICATION_ATOM_XML_VALUE = "application/atom+xml";
 
@@ -77,7 +77,7 @@ public class ContentType {
 	public static final ContentType APPLICATION_CBOR;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_CBOR}.
+	 * A String equivalent of {@code application/cbor}.
 	 * 
 	 * @since 5.2
 	 */
@@ -89,7 +89,7 @@ public class ContentType {
 	public static final ContentType APPLICATION_FORM_URLENCODED;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_FORM_URLENCODED}.
+	 * A String equivalent of {@code application/x-www-form-urlencoded}.
 	 */
 	public static final String APPLICATION_FORM_URLENCODED_VALUE = "application/x-www-form-urlencoded";
 
@@ -99,7 +99,7 @@ public class ContentType {
 	public static final ContentType APPLICATION_JSON;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_JSON}.
+	 * A String equivalent of {@code application/json}.
 	 * 
 	 * @see #APPLICATION_JSON_UTF8_VALUE
 	 */
@@ -108,7 +108,7 @@ public class ContentType {
 	/**
 	 * Public constant media type for {@code application/json;charset=UTF-8}.
 	 * 
-	 * @deprecated as of 5.2 in favor of {@link #APPLICATION_JSON} since major browsers like Chrome
+	 * @deprecated as of 5.2 in favor of {@code #APPLICATION_JSON} since major browsers like Chrome
 	 *             <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=438464"> now
 	 *             comply with the specification</a> and interpret correctly UTF-8 special
 	 *             characters without requiring a {@code charset=UTF-8} parameter.
@@ -133,19 +133,17 @@ public class ContentType {
 	public static final ContentType APPLICATION_OCTET_STREAM;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_OCTET_STREAM}.
+	 * A String equivalent of {@code application/octet-stream}.
 	 */
 	public static final String APPLICATION_OCTET_STREAM_VALUE = "application/octet-stream";
 
 	/**
 	 * Public constant media type for {@code application/pdf}.
-	 * 
-	 * @since 4.3
 	 */
 	public static final ContentType APPLICATION_PDF;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_PDF}.
+	 * A String equivalent of {@code application/pdf}.
 	 * 
 	 * @since 4.3
 	 */
@@ -157,7 +155,7 @@ public class ContentType {
 	public static final ContentType APPLICATION_PROBLEM_JSON;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_PROBLEM_JSON}.
+	 * A String equivalent of {@code application/problem+json}.
 	 */
 	public static final String APPLICATION_PROBLEM_JSON_VALUE = "application/problem+json";
 
@@ -167,7 +165,7 @@ public class ContentType {
 	public static final ContentType APPLICATION_PROBLEM_JSON_UTF8;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_PROBLEM_JSON_UTF8}.
+	 * A String equivalent of {@code application/problem+json;charset=UTF-8}.
 	 */
 	@Deprecated
 	public static final String APPLICATION_PROBLEM_JSON_UTF8_VALUE = "application/problem+json;charset=UTF-8";
@@ -178,7 +176,7 @@ public class ContentType {
 	public static final ContentType APPLICATION_PROBLEM_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_PROBLEM_XML}.
+	 * A String equivalent of {@code application/problem+xml}.
 	 */
 	public static final String APPLICATION_PROBLEM_XML_VALUE = "application/problem+xml";
 
@@ -188,7 +186,7 @@ public class ContentType {
 	public static final ContentType APPLICATION_RSS_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_RSS_XML}.
+	 * A String equivalent of {@code MediaType#APPLICATION_RSS_XML}.
 	 */
 	public static final String APPLICATION_RSS_XML_VALUE = "application/rss+xml";
 
@@ -198,14 +196,14 @@ public class ContentType {
 	public static final ContentType APPLICATION_NDJSON;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_NDJSON}.
+	 * A String equivalent of {@code application/x-ndjson}.
 	 */
 	public static final String APPLICATION_NDJSON_VALUE = "application/x-ndjson";
 
 	/**
 	 * Public constant media type for {@code application/stream+json}.
 	 * 
-	 * @deprecated as of 5.3, see notice on {@link #APPLICATION_STREAM_JSON_VALUE}.
+	 * @deprecated as of 5.3, see notice on {@code #APPLICATION_STREAM_JSON_VALUE}.
 	 */
 	@Deprecated
 	public static final ContentType APPLICATION_STREAM_JSON;
@@ -227,7 +225,7 @@ public class ContentType {
 	public static final ContentType APPLICATION_XHTML_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_XHTML_XML}.
+	 * A String equivalent of {@code application/xhtml+xml}.
 	 */
 	public static final String APPLICATION_XHTML_XML_VALUE = "application/xhtml+xml";
 
@@ -237,7 +235,7 @@ public class ContentType {
 	public static final ContentType APPLICATION_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_XML}.
+	 * A String equivalent of {@code application/xml}.
 	 */
 	public static final String APPLICATION_XML_VALUE = "application/xml";
 
@@ -247,7 +245,7 @@ public class ContentType {
 	public static final ContentType IMAGE_GIF;
 
 	/**
-	 * A String equivalent of {@link MediaType#IMAGE_GIF}.
+	 * A String equivalent of {@code image/gif}.
 	 */
 	public static final String IMAGE_GIF_VALUE = "image/gif";
 
@@ -257,7 +255,7 @@ public class ContentType {
 	public static final ContentType IMAGE_JPEG;
 
 	/**
-	 * A String equivalent of {@link MediaType#IMAGE_JPEG}.
+	 * A String equivalent of {@code image/jpeg}.
 	 */
 	public static final String IMAGE_JPEG_VALUE = "image/jpeg";
 
@@ -267,7 +265,7 @@ public class ContentType {
 	public static final ContentType IMAGE_PNG;
 
 	/**
-	 * A String equivalent of {@link MediaType#IMAGE_PNG}.
+	 * A String equivalent of {@code image/png}.
 	 */
 	public static final String IMAGE_PNG_VALUE = "image/png";
 
@@ -277,7 +275,7 @@ public class ContentType {
 	public static final ContentType MULTIPART_FORM_DATA;
 
 	/**
-	 * A String equivalent of {@link MediaType#MULTIPART_FORM_DATA}.
+	 * A String equivalent of {@code multipart/form-data}.
 	 */
 	public static final String MULTIPART_FORM_DATA_VALUE = "multipart/form-data";
 
@@ -287,7 +285,7 @@ public class ContentType {
 	public static final ContentType MULTIPART_MIXED;
 
 	/**
-	 * A String equivalent of {@link MediaType#MULTIPART_MIXED}.
+	 * A String equivalent of {@code multipart/mixed}.
 	 */
 	public static final String MULTIPART_MIXED_VALUE = "multipart/mixed";
 
@@ -297,7 +295,7 @@ public class ContentType {
 	public static final ContentType MULTIPART_RELATED;
 
 	/**
-	 * A String equivalent of {@link MediaType#MULTIPART_RELATED}.
+	 * A String equivalent of {@code multipart/related}.
 	 */
 	public static final String MULTIPART_RELATED_VALUE = "multipart/related";
 
@@ -307,7 +305,7 @@ public class ContentType {
 	public static final ContentType TEXT_EVENT_STREAM;
 
 	/**
-	 * A String equivalent of {@link MediaType#TEXT_EVENT_STREAM}.
+	 * A String equivalent of {@code text/event-stream}.
 	 */
 	public static final String TEXT_EVENT_STREAM_VALUE = "text/event-stream";
 
@@ -317,7 +315,7 @@ public class ContentType {
 	public static final ContentType TEXT_HTML;
 
 	/**
-	 * A String equivalent of {@link MediaType#TEXT_HTML}.
+	 * A String equivalent of {@code text/html}.
 	 */
 	public static final String TEXT_HTML_VALUE = "text/html";
 
@@ -327,7 +325,7 @@ public class ContentType {
 	public static final ContentType TEXT_MARKDOWN;
 
 	/**
-	 * A String equivalent of {@link MediaType#TEXT_MARKDOWN}.
+	 * A String equivalent of {@code text/markdown}.
 	 */
 	public static final String TEXT_MARKDOWN_VALUE = "text/markdown";
 
@@ -337,7 +335,7 @@ public class ContentType {
 	public static final ContentType TEXT_PLAIN;
 
 	/**
-	 * A String equivalent of {@link MediaType#TEXT_PLAIN}.
+	 * A String equivalent of {@code text/plain}.
 	 */
 	public static final String TEXT_PLAIN_VALUE = "text/plain";
 
@@ -347,7 +345,7 @@ public class ContentType {
 	public static final ContentType TEXT_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#TEXT_XML}.
+	 * A String equivalent of {@code text/xml}.
 	 */
 	public static final String TEXT_XML_VALUE = "text/xml";
 

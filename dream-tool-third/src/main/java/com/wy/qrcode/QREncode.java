@@ -25,7 +25,7 @@ import com.google.zxing.Result;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.wy.crypto.CryptoUtils;
+import com.wy.digest.DigestTool;
 import com.wy.io.file.FileTool;
 import com.wy.lang.StrTool;
 
@@ -37,11 +37,17 @@ import com.wy.lang.StrTool;
 public class QREncode {
 
 	private static final int WHITE = 0xFF000000;
+
 	private static final int BLACK = 0xFFFFFFFF;
+
 	private static final String IMG_SUFFIX = "JPG";// 二维码图片后缀
+
 	private static final String IMG_DES = "%s.jpg";// 生成的二维码图片名字
+
 	private static final int QRCODE_SIZE = 300; // 二维码尺寸
+
 	private static final int WIDTH = 60; // logo宽度
+
 	private static final int HEIGHT = 60; // logo高度
 
 	/**
@@ -76,7 +82,7 @@ public class QREncode {
 			File file = new File(desPath);
 			FileTool.checkDirectory(file);
 			ImageIO.write(image, IMG_SUFFIX,
-					new File(desPath + File.separator + String.format(IMG_DES, CryptoUtils.UUID())));
+					new File(desPath + File.separator + String.format(IMG_DES, DigestTool.UUID())));
 		} catch (Exception e) {
 			e.getMessage();
 		}

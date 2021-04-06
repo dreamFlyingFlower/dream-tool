@@ -28,8 +28,10 @@ public interface StatusMsg {
 	}
 
 	/**
-	 * 状态信息,{@link String#format(String, Object...)}
+	 * 格式化状态信息,{@link String#format(String, Object...)}
 	 * 
+	 * @param format 格式化字符串
+	 * @param args 格式化参数
 	 * @return 状态信息
 	 */
 	default String getMsg(String format, Object... args) {

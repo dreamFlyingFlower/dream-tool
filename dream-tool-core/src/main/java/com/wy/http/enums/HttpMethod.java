@@ -1,4 +1,4 @@
-package com.wy.enums.http;
+package com.wy.http.enums;
 
 import java.util.HashMap;
 import java.util.Map;

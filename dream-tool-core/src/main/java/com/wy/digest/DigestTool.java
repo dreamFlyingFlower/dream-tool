@@ -1,8 +1,8 @@
-package com.wy.crypto;
+package com.wy.digest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -31,17 +31,19 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.wy.binary.HexTool;
 import com.wy.collection.MapTool;
+import com.wy.digest.enums.Algorithms;
 import com.wy.lang.StrTool;
 import com.wy.result.ResultException;
+import com.wy.util.CharsetTool;
 
 /**
- * Crypto加密工具 FIXME
- *
+ * Digest加密工具类
+ * 
  * @author 飞花梦影
- * @date 2021-03-05 23:13:58
+ * @date 2021-03-06 19:29:58
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public class CryptoUtils {
+public class DigestTool {
 
 	/**
 	 * 按照UUID算法生成一个字符串
@@ -58,27 +60,63 @@ public class CryptoUtils {
 	}
 
 	/**
-	 * 将传入的消息只进行md5加密,进行16进制编码
+	 * 将传入的消息进行md5加密,进行16进制编码,不可逆,无解密,任意长度变等长
+	 * 
+	 * @param message 需要进行加密的字符串
+	 * @return 加密后的字符串
 	 */
 	public static String MD5(String message) {
-		return MD5(message, false);
+		return MD5(message.getBytes(CharsetTool.defaultCharset()));
 	}
 
 	/**
-	 * 将传入的消息进行md5加密,不可逆,无解密,任意长度变等长
+	 * 将传入的消息进行md5加密,进行16进制编码,不可逆,无解密,任意长度变等长
 	 * 
 	 * @param message 需要进行加密的字符串
-	 * @param flag true返回16进制编码后的加密串,false返回base64编码后字符串
+	 * @param charset 字符编码
+	 * @return 加密后的字符串
 	 */
-	public static String MD5(String message, boolean flag) {
+	public static String MD5(String message, Charset charset) {
+		return MD5(message.getBytes(CharsetTool.defaultCharset(charset)));
+	}
+
+	/**
+	 * 将传入的消息进行md5加密,进行16进制编码,不可逆,无解密,任意长度变等长
+	 * 
+	 * @param bytes 需要进行加密的字节数组
+	 * @return 加密后的字符串
+	 */
+	public static String MD5(byte[] bytes) {
+		return digest(Algorithms.MD5, bytes);
+	}
+
+	/**
+	 * 字符串加密,再进行16进制编码
+	 * 
+	 * @param algorithms 加密算法
+	 * @param message 需要加密的字符串
+	 * @return 加密后的字符串
+	 */
+	public static String digest(Algorithms algorithms, String message) {
+		return digest(algorithms, message.getBytes(CharsetTool.defaultCharset()));
+	}
+
+	/**
+	 * 字符串加密,再进行16进制编码
+	 * 
+	 * @param algorithms 加密算法
+	 * @param bytes 需要加密的字节数组
+	 * @return 加密后的字符串
+	 */
+	public static String digest(Algorithms algorithms, byte[] bytes) {
 		try {
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			byte[] output = md.digest(message.getBytes(StandardCharsets.UTF_8));
-			return flag ? Base64.getEncoder().encodeToString(output) : HexTool.encodeHexString(output);
+			MessageDigest digest = MessageDigest.getInstance(algorithms.name());
+			byte[] output = digest.digest(bytes);
+			return HexTool.encodeHexString(output);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -97,11 +135,10 @@ public class CryptoUtils {
 			throw new ResultException("密钥长度必须是16的倍数位");
 		}
 		return flag
-				? HexTool.encodeHexString(AES(content.getBytes(StandardCharsets.UTF_8),
-						encodeRules.getBytes(StandardCharsets.UTF_8), Cipher.ENCRYPT_MODE))
-				: new String(
-						AES(HexTool.decode(content), encodeRules.getBytes(StandardCharsets.UTF_8), Cipher.DECRYPT_MODE),
-						StandardCharsets.UTF_8);
+				? HexTool.encodeHexString(AES(content.getBytes(CharsetTool.defaultCharset()),
+						encodeRules.getBytes(CharsetTool.defaultCharset()), Cipher.ENCRYPT_MODE))
+				: new String(AES(HexTool.decode(content), encodeRules.getBytes(CharsetTool.defaultCharset()),
+						Cipher.DECRYPT_MODE), CharsetTool.defaultCharset());
 	}
 
 	/**
@@ -110,13 +147,17 @@ public class CryptoUtils {
 	 * @param encodeRules 加密规则
 	 * @param content 加密内容
 	 * @return 返回一个16进制字符串
+	 * @throws BadPaddingException
+	 * @throws IllegalBlockSizeException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidKeyException
 	 */
 	public static String AESEncrypt(String encodeRules, String content) {
 		if (StrTool.isAnyBlank(encodeRules, content)) {
 			return "加密参数不能为空";
 		}
-		return HexTool.encodeHexString(aesCrypto(encodeRules.getBytes(StandardCharsets.UTF_8),
-				content.getBytes(StandardCharsets.UTF_8), Cipher.ENCRYPT_MODE));
+		return HexTool.encodeHexString(aesCrypto(encodeRules.getBytes(CharsetTool.defaultCharset()),
+				content.getBytes(CharsetTool.defaultCharset()), Cipher.ENCRYPT_MODE));
 	}
 
 	/**
@@ -124,6 +165,10 @@ public class CryptoUtils {
 	 * 
 	 * @param encodeRules 解密规则
 	 * @param content 需解密16进制字符串
+	 * @throws BadPaddingException
+	 * @throws IllegalBlockSizeException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidKeyException
 	 */
 	public static String AESDecrypt(String encodeRules, String content) {
 		if (StrTool.isAnyBlank(encodeRules, content)) {
@@ -135,9 +180,9 @@ public class CryptoUtils {
 		// SecureRandom.getInstance("SHA1PRNG");
 		// random.setSeed(encodeRules.getBytes());
 		// keygen.init(128, random);
-		byte[] byte_decode = aesCrypto(encodeRules.getBytes(StandardCharsets.UTF_8), HexTool.decode(content),
+		byte[] byte_decode = aesCrypto(encodeRules.getBytes(CharsetTool.defaultCharset()), HexTool.decode(content),
 				Cipher.DECRYPT_MODE);
-		return new String(byte_decode, StandardCharsets.UTF_8);
+		return new String(byte_decode, CharsetTool.defaultCharset());
 	}
 
 	private static byte[] aesCrypto(byte[] encodeRules, byte[] content, int mode) {
@@ -161,16 +206,16 @@ public class CryptoUtils {
 	private static final byte[] AES(byte[] content, byte[] raw, int mode) {
 		// 5.根据字节数组生成AES密钥
 		SecretKey key = new SecretKeySpec(raw, "AES");
+		// 6.根据指定算法AES生成密码器
 		try {
-			// 6.根据指定算法AES生成密码器
 			Cipher cip = Cipher.getInstance("AES/ECB/PKCS5Padding");
 			// 7.初始化密码器,第一个参数为加密(Encrypt_mode)或解密(Decrypt_mode),第二个参数为使用的KEY
 			cip.init(mode, key);
 			// 不要使用base64加密,会在前端传输中少字符数
 			// 9.根据密码器的初始化方式--加密/解密
 			return cip.doFinal(content);
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException
-				| BadPaddingException e) {
+		} catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | NoSuchAlgorithmException
+				| NoSuchPaddingException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -238,7 +283,7 @@ public class CryptoUtils {
 	 */
 	public static String RsaEncrypt(PublicKey key, String xmlstr) throws NoSuchAlgorithmException,
 			NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
-		byte[] plainText = xmlstr.getBytes(StandardCharsets.UTF_8);
+		byte[] plainText = xmlstr.getBytes(CharsetTool.defaultCharset());
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
 			Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -290,7 +335,7 @@ public class CryptoUtils {
 				out.write(cache, 0, cache.length);
 				++i;
 			}
-			return new String(out.toByteArray(), StandardCharsets.UTF_8);
+			return new String(out.toByteArray(), CharsetTool.defaultCharset());
 		}
 	}
 }

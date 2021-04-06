@@ -21,7 +21,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 
 import com.sun.mail.util.MailSSLSocketFactory;
-import com.wy.crypto.CryptoUtils;
+import com.wy.digest.DigestTool;
 import com.wy.lang.StrTool;
 import com.wy.result.Result;
 import com.wy.util.CharsetTool;
@@ -172,7 +172,7 @@ public class MailTools {
 		if (mail.getAttachs() != null && mail.getAttachs().length > 0) {
 			String[] attachs = mail.getAttachs();
 			for (String attach : attachs) {
-				handlerAttach(part, attach, CryptoUtils.UUID());
+				handlerAttach(part, attach, DigestTool.UUID());
 			}
 		}
 	}
@@ -212,7 +212,7 @@ public class MailTools {
 			String[] relateds = mail.getRelateds();
 			for (String related : relateds) {
 				MimeBodyPart image = new MimeBodyPart();
-				String contentId = CryptoUtils.UUID();
+				String contentId = DigestTool.UUID();
 				image.setContent(String.format("<img src=cid:%s width=500 height=600 />", "text/html;charset=utf8"),
 						contentId);
 				part.addBodyPart(image);

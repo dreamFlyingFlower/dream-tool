@@ -1,4 +1,4 @@
-package com.wy.enums.http;
+package com.wy.http.enums;
 
 /**
  * Http状态码,详见{@link https://tools.ietf.org/html/rfc7231#section-6}
