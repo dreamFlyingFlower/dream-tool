@@ -18,6 +18,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import com.wy.collection.ListTool;
 import com.wy.common.PropConverter;
+import com.wy.excel.annotation.Excel;
+import com.wy.excel.annotation.ExcelAction;
+import com.wy.excel.annotation.ExcelColumn;
 import com.wy.lang.StrTool;
 import com.wy.result.ResultException;
 import com.wy.util.ArrayTool;
@@ -31,16 +34,16 @@ import io.swagger.annotations.ApiModelProperty;
  * @date 2020-11-30 17:06:09
  * @git {@link https://github.com/mygodness100}
  */
-public class ExcelModelUtils implements ExcelUtils {
+public class ExcelModelTools implements ExcelTools {
 
-	private ExcelModelUtils() {}
+	private ExcelModelTools() {}
 
 	private static class Inner {
 
-		private static final ExcelModelUtils INSTANCE = new ExcelModelUtils();
+		private static final ExcelModelTools INSTANCE = new ExcelModelTools();
 	}
 
-	public static ExcelModelUtils getInstance() {
+	public static ExcelModelTools getInstance() {
 		return Inner.INSTANCE;
 	}
 
@@ -57,7 +60,7 @@ public class ExcelModelUtils implements ExcelUtils {
 	@Override
 	public <T> void writeSheet(int index, List<T> datas, String path, int sheetMax, boolean subject) {
 		try (FileOutputStream fos = new FileOutputStream(path);
-				Workbook workbook = ExcelUtils.generateWorkbook(path);) {
+				Workbook workbook = ExcelTools.generateWorkbook(path);) {
 			Sheet sheet = workbook.createSheet();
 			// 若有标题,从第2行开始写数据
 			int beginRow = subject ? 1 : 0;
@@ -174,13 +177,13 @@ public class ExcelModelUtils implements ExcelUtils {
 						// 是否有特殊值需要选择
 						if (excelColumn.propConverter() != PropConverter.class) {
 							Class<? extends PropConverter> select = excelColumn.propConverter();
-							ExcelUtils.setCellValue(r, i,
+							ExcelTools.setCellValue(r, i,
 									PropConverter.getMember(select.getEnumConstants(), field.get(data)));
 							i++;
 							continue;
 						}
 					}
-					ExcelUtils.setCellValue(r, i, field.get(data));
+					ExcelTools.setCellValue(r, i, field.get(data));
 					i++;
 				}
 			}
@@ -251,7 +254,7 @@ public class ExcelModelUtils implements ExcelUtils {
 	public <T> void handleCell(Cell cell, T t, Field field) {
 		field.setAccessible(true);
 		try {
-			ExcelUtils.setCellValue(cell, field.get(t));
+			ExcelTools.setCellValue(cell, field.get(t));
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}

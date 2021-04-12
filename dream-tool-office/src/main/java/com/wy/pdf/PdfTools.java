@@ -27,7 +27,7 @@ import com.wy.bean.BeanTool;
  * @date 2021-02-22 16:28:59
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public class PdfUtils {
+public class PdfTools {
 		// 标准A4的宽
 		private static final Integer A4_WEIGHT = 595 - 60;
 

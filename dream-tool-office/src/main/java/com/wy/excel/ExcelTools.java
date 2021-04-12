@@ -49,7 +49,7 @@ import com.wy.util.DateTool;
  * @date 2020-11-23 16:11:10
  * @git {@link https://github.com/mygodness100}
  */
-public interface ExcelUtils {
+public interface ExcelTools {
 
 	/**
 	 * 根据文件后缀名生成相应的Workbook实例,将数据写入到excel中使用

@@ -22,7 +22,7 @@ import com.wy.util.Convert;
  * @date 2021-03-06 00:24:25
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public class TableUtil {
+public class TableTools {
 
 	/**
 	 * 创建空表,只有一行

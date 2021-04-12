@@ -3,12 +3,15 @@ package com.wy.io;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import com.wy.util.CharsetTool;
 
 /**
  * 字符串压缩
@@ -20,177 +23,174 @@ import java.util.zip.ZipOutputStream;
 public class ZipTool {
 
 	/**
-	 * 使用gzip进行压缩
+	 * gzip压缩
+	 * 
+	 * @param bytes 需要压缩的字节数组
+	 * @return 压缩后的字节数组
+	 * @throws IOException
 	 */
-	public static String gzip(String primStr) {
-		if (primStr == null || primStr.length() == 0) {
-			return primStr;
+	public static byte[] gzip(byte[] bytes) throws IOException {
+		if (null == bytes || bytes.length == 0) {
+			return null;
 		}
-
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-		GZIPOutputStream gzip = null;
-		try {
-			gzip = new GZIPOutputStream(out);
-			gzip.write(primStr.getBytes());
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (gzip != null) {
-				try {
-					gzip.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+				GZIPOutputStream gzip = new GZIPOutputStream(out);) {
+			gzip.write(bytes);
+			out.flush();
+			return out.toByteArray();
 		}
-		return Base64.getEncoder().encodeToString(out.toByteArray());
 	}
 
 	/**
-	 * <p>
-	 * Description:使用gzip进行解压缩
-	 * </p>
-	 *
-	 * @param compressedStr
-	 * @return
+	 * gzip压缩
+	 * 
+	 * @param str 需要压缩的字符串
+	 * @return 压缩后的字节数组
+	 * @throws IOException
 	 */
-	public static String gunzip(String compressedStr) {
-		if (compressedStr == null) {
+	public static byte[] gzip(String str) throws IOException {
+		return gzip(str, CharsetTool.defaultCharset());
+	}
+
+	/**
+	 * gzip压缩
+	 * 
+	 * @param str 需要压缩的字符串
+	 * @param charset 字符编码
+	 * @return 压缩后的字节数组
+	 * @throws IOException
+	 */
+	public static byte[] gzip(String str, Charset charset) throws IOException {
+		if (str == null || str.length() == 0) {
 			return null;
 		}
+		return gzip(str.getBytes(CharsetTool.defaultCharset(charset)));
+	}
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ByteArrayInputStream in = null;
-		GZIPInputStream ginzip = null;
-		byte[] compressed = null;
-		String decompressed = null;
-		try {
-			compressed = Base64.getDecoder().decode(compressedStr);
-			in = new ByteArrayInputStream(compressed);
-			ginzip = new GZIPInputStream(in);
-
+	/**
+	 * gzip解压缩
+	 *
+	 * @param bytes 压缩后的字节数组
+	 * @return 解压缩后的字节数组
+	 * @throws IOException
+	 */
+	public static byte[] gunzip(byte[] bytes) throws IOException {
+		if (null == bytes) {
+			return null;
+		}
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+				ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+				GZIPInputStream ginzip = new GZIPInputStream(in);) {
 			byte[] buffer = new byte[1024];
 			int offset = -1;
 			while ((offset = ginzip.read(buffer)) != -1) {
 				out.write(buffer, 0, offset);
 			}
-			decompressed = out.toString();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (ginzip != null) {
-				try {
-					ginzip.close();
-				} catch (IOException e) {
-				}
-			}
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-				}
-			}
+			return out.toByteArray();
 		}
-
-		return decompressed;
 	}
 
 	/**
-	 * 使用zip进行压缩
+	 * zip压缩
+	 *
+	 * @param bytes 压缩前的字节数组
+	 * @return 压缩后的字节数组
+	 * @throws IOException
+	 */
+	public static final byte[] zip(byte[] bytes) throws IOException {
+		if (null == bytes) {
+			return null;
+		}
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+				ZipOutputStream zout = new ZipOutputStream(out);) {
+			zout.putNextEntry(new ZipEntry("0"));
+			zout.write(bytes);
+			zout.closeEntry();
+			return out.toByteArray();
+		}
+	}
+
+	/**
+	 * zip压缩
 	 *
 	 * @param str 压缩前的文本
-	 * @return 返回压缩后的文本
+	 * @return 压缩后的字节数组
+	 * @throws IOException
 	 */
-	public static final String zip(String str) {
-		if (str == null)
+	public static final byte[] zip(String str) throws IOException {
+		if (str == null) {
 			return null;
-		byte[] compressed;
-		ByteArrayOutputStream out = null;
-		ZipOutputStream zout = null;
-		String compressedStr = null;
-		try {
-			out = new ByteArrayOutputStream();
-			zout = new ZipOutputStream(out);
-			zout.putNextEntry(new ZipEntry("0"));
-			zout.write(str.getBytes());
-			zout.closeEntry();
-			compressed = out.toByteArray();
-			compressedStr = Base64.getEncoder().encodeToString(compressed);
-		} catch (IOException e) {
-			compressed = null;
-		} finally {
-			if (zout != null) {
-				try {
-					zout.close();
-				} catch (IOException e) {
-				}
-			}
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-				}
-			}
 		}
-		return compressedStr;
+		return zip(str.getBytes(CharsetTool.defaultCharset()));
 	}
 
 	/**
-	 * 使用zip进行解压缩
+	 * zip压缩
 	 *
-	 * @param compressedStr 压缩后的文本
-	 * @return 解压后的字符串
+	 * @param str 压缩前的文本
+	 * @param charset 字符编码
+	 * @return 压缩后的字节数组
+	 * @throws IOException
 	 */
-	public static final String unzip(String compressedStr) {
-		if (compressedStr == null) {
+	public static final byte[] zip(String str, Charset charset) throws IOException {
+		if (str == null) {
 			return null;
 		}
+		return zip(str.getBytes(CharsetTool.defaultCharset(charset)));
+	}
 
-		ByteArrayOutputStream out = null;
-		ByteArrayInputStream in = null;
-		ZipInputStream zin = null;
-		String decompressed = null;
-		try {
-			byte[] compressed = Base64.getDecoder().decode(compressedStr);
-			out = new ByteArrayOutputStream();
-			in = new ByteArrayInputStream(compressed);
-			zin = new ZipInputStream(in);
+	/**
+	 * zip解压缩
+	 *
+	 * @param bytes 压缩后的文本字节数组
+	 * @return 解压后的字节数组
+	 * @throws IOException
+	 */
+	public static final byte[] unzip(byte[] bytes) throws IOException {
+		if (null == bytes || bytes.length == 0) {
+			return null;
+		}
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+				ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+				ZipInputStream zin = new ZipInputStream(in);) {
 			zin.getNextEntry();
 			byte[] buffer = new byte[1024];
 			int offset = -1;
 			while ((offset = zin.read(buffer)) != -1) {
 				out.write(buffer, 0, offset);
 			}
-			decompressed = out.toString();
-		} catch (IOException e) {
-			decompressed = null;
-		} finally {
-			if (zin != null) {
-				try {
-					zin.close();
-				} catch (IOException e) {
-				}
-			}
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-				}
-			}
+			return out.toByteArray();
 		}
-		return decompressed;
+	}
+
+	/**
+	 * zip解压缩
+	 *
+	 * @param compressedStr 压缩后的文本
+	 * @return 解压后的字节数组
+	 * @throws IOException
+	 */
+	public static final byte[] unzip(String compressedStr) throws IOException {
+		if (null == compressedStr) {
+			return null;
+		}
+		byte[] compressed = Base64.getDecoder().decode(compressedStr.getBytes(CharsetTool.defaultCharset()));
+		return unzip(compressed);
+	}
+
+	/**
+	 * zip解压缩
+	 *
+	 * @param compressedStr 压缩后的文本
+	 * @param charset 字符编码
+	 * @return 解压后的字节数组
+	 * @throws IOException
+	 */
+	public static final byte[] unzip(String compressedStr, Charset charset) throws IOException {
+		if (null == compressedStr) {
+			return null;
+		}
+		byte[] compressed = Base64.getDecoder().decode(compressedStr.getBytes(CharsetTool.defaultCharset(charset)));
+		return unzip(compressed);
 	}
 }

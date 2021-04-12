@@ -16,7 +16,7 @@ import com.wy.io.file.FileTool;
  * @date 2021-03-06 00:23:10
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public class DocUtil {
+public class DocTools {
 
 	/**
 	 * 创建{@link XWPFDocument}，如果文件已存在则读取之，否则创建新的

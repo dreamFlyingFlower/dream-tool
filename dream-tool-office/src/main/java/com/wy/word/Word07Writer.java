@@ -51,7 +51,7 @@ public class Word07Writer implements Closeable {
 	 * @throws InvalidFormatException
 	 */
 	public Word07Writer(File destFile) throws InvalidFormatException, IOException {
-		this(DocUtil.create(destFile), destFile);
+		this(DocTools.create(destFile), destFile);
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class Word07Writer implements Closeable {
 	 * @since 4.5.16
 	 */
 	public Word07Writer addTable(Iterable<?> data) {
-		TableUtil.createTable(this.doc, data);
+		TableTools.createTable(this.doc, data);
 		return this;
 	}
 

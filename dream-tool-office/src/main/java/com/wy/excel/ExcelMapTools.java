@@ -30,16 +30,16 @@ import com.wy.util.ArrayTool;
  * @date 2020-11-30 17:05:43
  * @git {@link https://github.com/mygodness100}
  */
-public class ExcelMapUtils implements ExcelUtils {
+public class ExcelMapTools implements ExcelTools {
 
-	private ExcelMapUtils() {}
+	private ExcelMapTools() {}
 
 	private static class Inner {
 
-		private static final ExcelMapUtils INSTANCE = new ExcelMapUtils();
+		private static final ExcelMapTools INSTANCE = new ExcelMapTools();
 	}
 
-	public static ExcelMapUtils getInstance() {
+	public static ExcelMapTools getInstance() {
 		return Inner.INSTANCE;
 	}
 
@@ -71,7 +71,7 @@ public class ExcelMapUtils implements ExcelUtils {
 		judgeClass(datas.get(0).getClass());
 		List<Map<String, Object>> dataMaps = (List<Map<String, Object>>) datas;
 		try (FileOutputStream fos = new FileOutputStream(path);
-				Workbook workbook = ExcelUtils.generateWorkbook(path);) {
+				Workbook workbook = ExcelTools.generateWorkbook(path);) {
 			Sheet sheet = workbook.createSheet();
 			int beginRow = subject ? 1 : 0;
 			List<String> allField = new ArrayList<>(dataMaps.get(0).keySet());
@@ -156,7 +156,7 @@ public class ExcelMapUtils implements ExcelUtils {
 	 */
 	public List<Map<String, Object>> readExcel(String path, boolean firstUse, List<String> titles, int beginRow,
 			int beginCol) {
-		try (Workbook wb = ExcelUtils.generateReadWorkbook(path);) {
+		try (Workbook wb = ExcelTools.generateReadWorkbook(path);) {
 			List<Map<String, Object>> res = new ArrayList<>();
 			int sheetNum = wb.getNumberOfSheets();
 			for (int i = 0; i < sheetNum; i++) {
@@ -228,7 +228,7 @@ public class ExcelMapUtils implements ExcelUtils {
 		for (int j = beginRow + 1; j < rows; j++) {
 			Map<String, Object> rowData = new HashMap<>();
 			for (int k = beginCol; k < cellNum; k++) {
-				Object cellVal = ExcelUtils.getCellValue(sheet.getRow(j).getCell(k));
+				Object cellVal = ExcelTools.getCellValue(sheet.getRow(j).getCell(k));
 				if (firstUse) {
 					rowData.put(String.valueOf(first.getCell(k)), cellVal);
 				} else {

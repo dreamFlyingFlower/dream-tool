@@ -12,7 +12,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
  * @date 2021-03-06 00:22:59
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public class WordUtil {
+public class WordTools {
 
 	/**
 	 * 创建Word 07格式的生成器
