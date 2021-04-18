@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Map;
@@ -28,11 +29,17 @@ import com.wy.bean.BeanTool;
  * @git {@link https://github.com/dreamFlyingFlower}
  */
 public class PdfTools {
-		// 标准A4的宽
-		private static final Integer A4_WEIGHT = 595 - 60;
 
-		// 标准A4的高
-		private static final Integer A4_HEIGHT = 842 - 60;
+	/**
+	 * 标准A4的宽
+	 */
+	private static final Integer A4_WEIGHT = 595 - 60;
+
+	/**
+	 * 标准A4的高
+	 */
+	private static final Integer A4_HEIGHT = 842 - 60;
+
 	public <T> String exportPdf(T t, HttpServletResponse response) throws IOException, DocumentException {
 		// 指定解析器
 		System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
@@ -53,6 +60,7 @@ public class PdfTools {
 			// 给表单添加中文字体,这里采用系统字体,不设置的话,中文可能无法显示
 			BaseFont bf = BaseFont.createFont("C:/WINDOWS/Fonts/SIMSUN.TTC,1", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 			form.addSubstitutionFont(bf);
+			// 查询数据
 			Map<String, Object> data = BeanTool.beanToMap(t);
 			for (String key : data.keySet()) {
 				form.setField(key, data.get(key).toString());
@@ -67,13 +75,19 @@ public class PdfTools {
 			}
 		}
 		return null;
-	}/**
+	}
+
+	/**
 	 * 将图片转成pdf,需要用到itextpdf.jar
 	 * 
 	 * @param filePath 当前文件路径
 	 * @param fileName 文件名称
+	 * @throws DocumentException
+	 * @throws IOException
+	 * @throws MalformedURLException
 	 */
-	public static final void img2Pdf(String filePath, String fileName) {
+	public static void img2Pdf(String filePath, String fileName)
+			throws DocumentException, MalformedURLException, IOException {
 		File pdfFile = null;
 		Document document = null;
 		try {
@@ -82,14 +96,14 @@ public class PdfTools {
 			if (pdfFile.exists()) {
 				return;
 			}
-			// 第一步:创建一个document对象。
+			// 创建document对象
 			document = new Document();
 			document.setMargins(0, 0, 0, 0);
-			// 第二步:创建一个PdfWriter实例
+			// 创建PdfWriter实例
 			PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
-			// 第三步:打开文档。
+			// 打开文档
 			document.open();
-			// 第四步:在文档中增加图片。
+			// 在文档中增加图片
 			File files = new File(filePath);
 			String[] images = files.list();
 			Arrays.sort(images);
@@ -111,10 +125,7 @@ public class PdfTools {
 					document.add(img);
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		} finally {
-			// 关闭文档
 			if (document != null) {
 				document.close();
 			}
