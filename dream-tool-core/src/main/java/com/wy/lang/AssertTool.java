@@ -358,7 +358,7 @@ public class AssertTool {
 	 * @throws IllegalArgumentException 当对象不是一个数
 	 */
 	public static Number isNumber(Object object, String message) {
-		if (NumberTool.isNumber(notNull(object))) {
+		if (!NumberTool.isNumber(notNull(object))) {
 			throw new IllegalArgumentException(message);
 		}
 		return NumberTool.toNumber(object);
