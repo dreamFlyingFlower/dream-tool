@@ -16,9 +16,11 @@ import com.wy.util.Convert;
 /**
  * String工具类,参照{@link org.apache.commons.lang3.StringUtils},{@link org.springframework.util.StringUtils}
  * 
- * 正则表达式的分组: @ (),每一个对括号表示一个分组,分组的顺序是从左括号出现的顺序, @ $后面加一个数字表示对应某一个分组,替代分组中不可直接表达的字符串
+ * 正则表达式的分组: @ (),每一个对括号表示一个分组,分组的顺序是从左括号出现的顺序, @
+ * $后面加一个数字表示对应某一个分组,替代分组中不可直接表达的字符串
  * 
- * 快快乐乐 去掉叠词为快乐,pattern((.)\\1+,$1): 第一个括号表示第一个分组中的任意字符;\\1表示第一个分组,\\2表示第2个分组,需要紧跟在分组之后
+ * 快快乐乐 去掉叠词为快乐,pattern((.)\\1+,$1):
+ * 第一个括号表示第一个分组中的任意字符;\\1表示第一个分组,\\2表示第2个分组,需要紧跟在分组之后
  * +表示可出现多个相同的任意字符,$1表示将分组中的.所代表的任意字符串替换到$1,$2则表示替换第二个分组
  * 
  * @author 飞花梦影
@@ -315,7 +317,7 @@ public class StrTool extends CharSequenceTool {
 	 * 
 	 * @param template 字符串模板
 	 * @param args 参数列表
-	 * @return 结果  FIXME
+	 * @return 结果 FIXME
 	 */
 	public static String format(final String template, final Object... args) {
 		if (isBlank(template) || null == args || args.length == 0) {
@@ -421,7 +423,8 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
-	 * 判断源字符串中是否只包含unicode表示的数字或纯数字,不包括小数点,非数字将删除; 若是unicode表示的数字,直接返回unicode形式的字符串;数字直接返回
+	 * 判断源字符串中是否只包含unicode表示的数字或纯数字,不包括小数点,非数字将删除;
+	 * 若是unicode表示的数字,直接返回unicode形式的字符串;数字直接返回
 	 *
 	 * @param str 源字符串
 	 * @return 只包含unicode表示的数字或纯数字字符串
@@ -873,7 +876,7 @@ public class StrTool extends CharSequenceTool {
 		}
 		return str;
 	}
-	
+
 	/**
 	 * 删除源字符串起始指定字符串,返回删除起始字符串后的新字符串,大小写不敏感
 	 *
@@ -1044,6 +1047,20 @@ public class StrTool extends CharSequenceTool {
 	public static String replaceIgnoreCase(final String str, final String searchStr, final String replacement,
 			final int max) {
 		return replace(str, searchStr, replacement, max, true);
+	}
+
+	/**
+	 * 将字符串中重复的字符去除,只留下单个
+	 * 
+	 * <pre>
+	 * fdfdssssfdsffff -> fdfdsfdsf
+	 * </pre>
+	 * 
+	 * @param str 源字符串
+	 * @return 替换后的新字符串
+	 */
+	public static String replaceRepeat(final String str) {
+		return str.replaceAll("(.)\\1+", "$1");
 	}
 
 	/**
@@ -1660,5 +1677,4 @@ public class StrTool extends CharSequenceTool {
 		}
 		return builder.toString();
 	}
-
 }
