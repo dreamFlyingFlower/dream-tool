@@ -25,6 +25,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.wy.lang.AssertTool;
 import com.wy.lang.NumberTool;
 import com.wy.lang.ObjectTool;
 import com.wy.lang.StrTool;
@@ -669,19 +670,67 @@ public class MapTool {
 	}
 
 	public static class MapBuilder {
-
+	
 		private Map<String, Object> map = new HashMap<>();
-
+	
 		public MapBuilder(String key, Object val) {
 			map.put(key, val);
 		}
-
+	
 		public MapBuilder put(String key, Object val) {
 			map.put(key, val);
 			return this;
 		}
-
+	
 		public Map<String, Object> build() {
+			return map;
+		}
+	}
+
+	public static MapConcurrentBuilder builderConcurrent(String key, Object val) {
+		return new MapConcurrentBuilder(key, val);
+	}
+
+	public static class MapConcurrentBuilder {
+	
+		private Map<String, Object> map = new ConcurrentHashMap<>();
+	
+		public MapConcurrentBuilder(String key, Object val) {
+			AssertTool.notBlank(key);
+			AssertTool.notNull(val);
+			map.put(key, val);
+		}
+	
+		public MapConcurrentBuilder put(String key, Object val) {
+			AssertTool.notBlank(key);
+			AssertTool.notNull(val);
+			map.put(key, val);
+			return this;
+		}
+	
+		public Map<String, Object> build() {
+			return map;
+		}
+	}
+
+	public static <K, V> MapGenericBuilder<K, V> builderGeneric(K key, V val) {
+		return new MapGenericBuilder<K, V>(key, val);
+	}
+
+	public static class MapGenericBuilder<K, V> {
+
+		private Map<K, V> map = new HashMap<>();
+
+		public MapGenericBuilder(K key, V val) {
+			map.put(key, val);
+		}
+
+		public MapGenericBuilder<K, V> put(K key, V val) {
+			map.put(key, val);
+			return this;
+		}
+
+		public Map<K, V> build() {
 			return map;
 		}
 	}

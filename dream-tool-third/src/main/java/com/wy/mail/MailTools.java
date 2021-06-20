@@ -172,7 +172,7 @@ public class MailTools {
 		if (mail.getAttachs() != null && mail.getAttachs().length > 0) {
 			String[] attachs = mail.getAttachs();
 			for (String attach : attachs) {
-				handlerAttach(part, attach, DigestTool.UUID());
+				handlerAttach(part, attach, DigestTool.uuid());
 			}
 		}
 	}
@@ -212,7 +212,7 @@ public class MailTools {
 			String[] relateds = mail.getRelateds();
 			for (String related : relateds) {
 				MimeBodyPart image = new MimeBodyPart();
-				String contentId = DigestTool.UUID();
+				String contentId = DigestTool.uuid();
 				image.setContent(String.format("<img src=cid:%s width=500 height=600 />", "text/html;charset=utf8"),
 						contentId);
 				part.addBodyPart(image);

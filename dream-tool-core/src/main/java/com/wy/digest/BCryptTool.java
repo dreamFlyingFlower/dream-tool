@@ -8,55 +8,57 @@ import java.util.Arrays;
 /**
  * {@link org.springframework.security.crypto.bcrypt.BCrypt}
  * 
- * BCrypt加密算法实现,由它加密的文件可在所有支持的操作系统和处理器上进行转移.<br>
- * 它的口令必须是8至56个字符,并将在内部被转化为448位的密钥
- * <p>
- * 此类来自于https://github.com/jeremyh/jBCrypt/
- * <p>
- * 使用方法如下:<br>
- * {@code String pw_hash = BCrypt.hashpw(plain_password, BCrypt.gensalt()); }
- * <p>
- * 使用checkpw方法检查被加密的字符串是否与原始字符串匹配:<br>
- * {@code BCrypt.checkpw(candidate_password, stored_hash); }
- * <p>
- * gensalt方法提供了可选参数 (log_rounds) 来定义加盐多少,也决定了加密的复杂度
- * {@code String strong_salt = BCrypt.gensalt(10); String stronger_salt = BCrypt.gensalt(12); }
- * <p>
+ * BCrypt加密算法,由它加密的文件可在所有支持的OS和处理器上进行转移.它的口令必须是8至56个字符,并将在内部被转化为448位的密钥
+ * 
+ * @see https://github.com/jeremyh/jBCrypt/
+ *      <p>
+ *      使用方法如下:<br>
+ *      {@code String pw_hash = BCryptTool.hashpw(plain_password, BCryptTool.gensalt()); }
+ *      <p>
+ *      使用checkpw方法检查被加密的字符串是否与原始字符串匹配:<br>
+ *      {@code BCryptTool#checkpw(candidate_password, stored_hash); }
+ *      <p>
+ *      gensalt方法提供了可选参数 (log_rounds) 来定义加盐多少,也决定了加密的复杂度
+ *      {@code String strong_salt = BCryptTool.gensalt(10); String stronger_salt = BCryptTool.gensalt(12); }
+ *      <p>
  *
- * BCrypt implements OpenBSD-style Blowfish password hashing using the scheme described in "A
- * Future-Adaptable Password Scheme" by Niels Provos and David Mazieres.
- * <p>
- * This password hashing system tries to thwart off-line password cracking using a
- * computationally-intensive hashing algorithm, based on Bruce Schneier's Blowfish cipher. The work
- * factor of the algorithm is parameterised, so it can be increased as computers get faster.
- * <p>
- * Usage is really simple. To hash a password for the first time, call the hashpw method with a
- * random salt, like this:
- * <p>
- * <code>
+ *      BCrypt implements OpenBSD-style Blowfish password hashing using the
+ *      scheme described in "A Future-Adaptable Password Scheme" by Niels Provos
+ *      and David Mazieres.
+ *      <p>
+ *      This password hashing system tries to thwart off-line password cracking
+ *      using a computationally-intensive hashing algorithm, based on Bruce
+ *      Schneier's Blowfish cipher. The work factor of the algorithm is
+ *      parameterised, so it can be increased as computers get faster.
+ *      <p>
+ *      Usage is really simple. To hash a password for the first time, call the
+ *      hashpw method with a random salt, like this:
+ *      <p>
+ *      <code>
  * String pw_hash = BCrypt.hashpw(plain_password, BCrypt.gensalt()); <br />
  * </code>
- * <p>
- * To check whether a plaintext password matches one that has been hashed previously, use the
- * checkpw method:
- * <p>
- * <code>
+ *      <p>
+ *      To check whether a plaintext password matches one that has been hashed
+ *      previously, use the checkpw method:
+ *      <p>
+ *      <code>
  * if (BCrypt.checkpw(candidate_password, stored_hash))<br />
  * &nbsp;&nbsp;&nbsp;&nbsp;System.out.println("It matches");<br />
  * else<br />
  * &nbsp;&nbsp;&nbsp;&nbsp;System.out.println("It does not match");<br />
  * </code>
- * <p>
- * The gensalt() method takes an optional parameter (log_rounds) that determines the computational
- * complexity of the hashing:
- * <p>
- * <code>
+ *      <p>
+ *      The gensalt() method takes an optional parameter (log_rounds) that
+ *      determines the computational complexity of the hashing:
+ *      <p>
+ *      <code>
  * String strong_salt = BCrypt.gensalt(10)<br />
  * String stronger_salt = BCrypt.gensalt(12)<br />
  * </code>
- * <p>
- * The amount of work increases exponentially (2**log_rounds), so each increment is twice as much
- * work. The default log_rounds is 10, and the valid range is 4 to 31.
+ *      <p>
+ *      The amount of work increases exponentially (2**log_rounds), so each
+ *      increment is twice as much work. The default log_rounds is 10, and the
+ *      valid range is 4 to 31.
  * 
  * @author 飞花梦影
  * @date 2021-04-06 17:28:04
@@ -65,19 +67,19 @@ import java.util.Arrays;
 public class BCryptTool {
 
 	// BCrypt parameters
-	private static final int GENSALT_DEFAULT_LOG2_ROUNDS = 10;
+	private final static int GENSALT_DEFAULT_LOG2_ROUNDS = 10;
 
-	private static final int BCRYPT_SALT_LEN = 16;
+	private final static int BCRYPT_SALT_LEN = 16;
 
 	// Blowfish parameters
-	private static final int BLOWFISH_NUM_ROUNDS = 16;
+	private final static int BLOWFISH_NUM_ROUNDS = 16;
 
 	// Initial contents of key schedule
-	private static final int P_orig[] = { 0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344, 0xa4093822, 0x299f31d0,
+	private final static int P_ORIG[] = { 0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344, 0xa4093822, 0x299f31d0,
 			0x082efa98, 0xec4e6c89, 0x452821e6, 0x38d01377, 0xbe5466cf, 0x34e90c6c, 0xc0ac29b7, 0xc97c50dd, 0x3f84d5b5,
 			0xb5470917, 0x9216d5d9, 0x8979fb1b };
 
-	private static final int S_orig[] = { 0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7, 0xb8e1afed, 0x6a267e96,
+	private final static int S_ORIG[] = { 0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7, 0xb8e1afed, 0x6a267e96,
 			0xba7c9045, 0xf12c7f99, 0x24a19947, 0xb3916cf7, 0x0801f2e2, 0x858efc16, 0x636920d8, 0x71574e69, 0xa458fea3,
 			0xf4933d7e, 0x0d95748f, 0x728eb658, 0x718bcd58, 0x82154aee, 0x7b54a41d, 0xc25a59b5, 0x9c30d539, 0x2af26013,
 			0xc5d1b023, 0x286085f0, 0xca417918, 0xb8db38ef, 0x8e79dcb0, 0x603a180e, 0x6c9e0e8b, 0xb01e8a3e, 0xd71577c1,
@@ -194,17 +196,17 @@ public class BCryptTool {
 			0x3ac372e6 };
 
 	// bcrypt IV: "OrpheanBeholderScryDoubt"
-	static private final int bf_crypt_ciphertext[] = { 0x4f727068, 0x65616e42, 0x65686f6c, 0x64657253, 0x63727944,
-			0x6f756274 };
+	private final static int bf_crypt_ciphertext[] =
+			{ 0x4f727068, 0x65616e42, 0x65686f6c, 0x64657253, 0x63727944, 0x6f756274 };
 
-	// Table for Base64 encoding
-	static private final char base64_code[] = { '.', '/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+	/** 64位编码表,和Base64不一样,Base64是+,这里是. */
+	private final static char BASE64_CODE[] = { '.', '/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
 			'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
 			'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1',
 			'2', '3', '4', '5', '6', '7', '8', '9' };
 
-	// Table for Base64 decoding
-	static private final byte index_64[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	/** 64位解码表 */
+	private final static byte INDEX_64[] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 			0, 1, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, -1, -1, -1, -1, -1, -1, -1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 			12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, -1, -1, -1, -1, -1, -1, 28, 29, 30, 31, 32,
@@ -220,8 +222,9 @@ public class BCryptTool {
 	private int S[];
 
 	/**
-	 * Encode a byte array using bcrypt's slightly-modified base64 encoding scheme. Note that this
-	 * is <strong>not</strong> compatible with the standard MIME-base64 encoding.
+	 * Encode a byte array using bcrypt's slightly-modified base64 encoding scheme.
+	 * Note that this is <strong>not</strong> compatible with the standard
+	 * MIME-base64 encoding.
 	 *
 	 * @param d the byte array to encode
 	 * @param len the number of bytes to encode
@@ -238,43 +241,43 @@ public class BCryptTool {
 
 		while (off < len) {
 			c1 = d[off++] & 0xff;
-			rs.append(base64_code[(c1 >> 2) & 0x3f]);
+			rs.append(BASE64_CODE[(c1 >> 2) & 0x3f]);
 			c1 = (c1 & 0x03) << 4;
 			if (off >= len) {
-				rs.append(base64_code[c1 & 0x3f]);
+				rs.append(BASE64_CODE[c1 & 0x3f]);
 				break;
 			}
 			c2 = d[off++] & 0xff;
 			c1 |= (c2 >> 4) & 0x0f;
-			rs.append(base64_code[c1 & 0x3f]);
+			rs.append(BASE64_CODE[c1 & 0x3f]);
 			c1 = (c2 & 0x0f) << 2;
 			if (off >= len) {
-				rs.append(base64_code[c1 & 0x3f]);
+				rs.append(BASE64_CODE[c1 & 0x3f]);
 				break;
 			}
 			c2 = d[off++] & 0xff;
 			c1 |= (c2 >> 6) & 0x03;
-			rs.append(base64_code[c1 & 0x3f]);
-			rs.append(base64_code[c2 & 0x3f]);
+			rs.append(BASE64_CODE[c1 & 0x3f]);
+			rs.append(BASE64_CODE[c2 & 0x3f]);
 		}
 	}
 
 	/**
-	 * Look up the 3 bits base64-encoded by the specified character, range-checking againt
-	 * conversion table
+	 * Look up the 3 bits base64-encoded by the specified character, range-checking
+	 * againt conversion table
 	 * 
 	 * @param x the base64-encoded value
 	 * @return the decoded value of x
 	 */
 	private static byte char64(char x) {
-		if ((int) x < 0 || (int) x >= index_64.length)
+		if ((int) x < 0 || (int) x >= INDEX_64.length)
 			return -1;
-		return index_64[(int) x];
+		return INDEX_64[(int) x];
 	}
 
 	/**
-	 * Decode a string encoded using bcrypt's base64 scheme to a byte array. Note that this is *not*
-	 * compatible with the standard MIME-base64 encoding.
+	 * Decode a string encoded using bcrypt's base64 scheme to a byte array. Note
+	 * that this is *not* compatible with the standard MIME-base64 encoding.
 	 * 
 	 * @param s the string to decode
 	 * @param maxolen the maximum number of bytes to decode
@@ -354,9 +357,10 @@ public class BCryptTool {
 	 * Cycically extract a word of key material
 	 * 
 	 * @param data the string to extract the data from
-	 * @param offp a "pointer" (as a one-entry array) to the current offset into data
-	 * @param signp a "pointer" (as a one-entry array) to the cumulative flag for non-benign sign
-	 *        extension
+	 * @param offp a "pointer" (as a one-entry array) to the current offset into
+	 *        data
+	 * @param signp a "pointer" (as a one-entry array) to the cumulative flag for
+	 *        non-benign sign extension
 	 * @return correct and buggy next word of material from data as int[2]
 	 */
 	private static int[] streamtowords(byte data[], int offp[], int signp[]) {
@@ -382,7 +386,8 @@ public class BCryptTool {
 	 * Cycically extract a word of key material
 	 * 
 	 * @param data the string to extract the data from
-	 * @param offp a "pointer" (as a one-entry array) to the current offset into data
+	 * @param offp a "pointer" (as a one-entry array) to the current offset into
+	 *        data
 	 * @return the next word of material from data
 	 */
 	private static int streamtoword(byte data[], int offp[]) {
@@ -394,7 +399,8 @@ public class BCryptTool {
 	 * Cycically extract a word of key material, with sign-extension bug
 	 * 
 	 * @param data the string to extract the data from
-	 * @param offp a "pointer" (as a one-entry array) to the current offset into data
+	 * @param offp a "pointer" (as a one-entry array) to the current offset into
+	 *        data
 	 * @return the next word of material from data
 	 */
 	private static int streamtoword_bug(byte data[], int offp[]) {
@@ -406,8 +412,8 @@ public class BCryptTool {
 	 * Initialise the Blowfish key schedule
 	 */
 	private void init_key() {
-		P = P_orig.clone();
-		S = S_orig.clone();
+		P = P_ORIG.clone();
+		S = S_ORIG.clone();
 	}
 
 	/**
@@ -443,8 +449,9 @@ public class BCryptTool {
 	}
 
 	/**
-	 * Perform the "enhanced key schedule" step described by Provos and Mazieres in "A
-	 * Future-Adaptable Password Scheme" https://www.openbsd.org/papers/bcrypt-paper.ps
+	 * Perform the "enhanced key schedule" step described by Provos and Mazieres in
+	 * "A Future-Adaptable Password Scheme"
+	 * https://www.openbsd.org/papers/bcrypt-paper.ps
 	 * 
 	 * @param data salt information
 	 * @param key password information
@@ -467,27 +474,32 @@ public class BCryptTool {
 
 		int sign = signp[0];
 
-		/* At this point, "diff" is zero iff the correct and buggy algorithms produced exactly the
-		 * same result. If so and if "sign" is non-zero, which indicates that there was a non-benign
-		 * sign extension, this means that we have a collision between the correctly computed hash
-		 * for this password and a set of passwords that could be supplied to the buggy algorithm.
-		 * Our safety measure is meant to protect from such many-buggy to one-correct collisions, by
-		 * deviating from the correct algorithm in such cases. Let's check for this. */
+		/*
+		 * At this point, "diff" is zero iff the correct and buggy algorithms produced
+		 * exactly the same result. If so and if "sign" is non-zero, which indicates
+		 * that there was a non-benign sign extension, this means that we have a
+		 * collision between the correctly computed hash for this password and a set of
+		 * passwords that could be supplied to the buggy algorithm. Our safety measure
+		 * is meant to protect from such many-buggy to one-correct collisions, by
+		 * deviating from the correct algorithm in such cases. Let's check for this.
+		 */
 		diff |= diff >> 16; /* still zero iff exact match */
 		diff &= 0xffff; /* ditto */
 		diff += 0xffff; /* bit 16 set iff "diff" was non-zero (on non-match) */
 		sign <<= 9; /* move the non-benign sign extension flag to bit 16 */
 		sign &= ~diff & safety; /* action needed? */
 
-		/* If we have determined that we need to deviate from the correct algorithm, flip bit 16 in
-		 * initial expanded key. (The choice of 16 is arbitrary, but let's stick to it now. It came
-		 * out of the approach we used above, and it's not any worse than any other choice we could
-		 * make.)
+		/*
+		 * If we have determined that we need to deviate from the correct algorithm,
+		 * flip bit 16 in initial expanded key. (The choice of 16 is arbitrary, but
+		 * let's stick to it now. It came out of the approach we used above, and it's
+		 * not any worse than any other choice we could make.)
 		 *
-		 * It is crucial that we don't do the same to the expanded key used in the main Eksblowfish
-		 * loop. By doing it to only one of these two, we deviate from a state that could be
-		 * directly specified by a password to the buggy algorithm (and to the fully correct one as
-		 * well, but that's a side-effect). */
+		 * It is crucial that we don't do the same to the expanded key used in the main
+		 * Eksblowfish loop. By doing it to only one of these two, we deviate from a
+		 * state that could be directly specified by a password to the buggy algorithm
+		 * (and to the fully correct one as well, but that's a side-effect).
+		 */
 		P[0] ^= sign;
 
 		for (i = 0; i < plen; i += 2) {
@@ -519,7 +531,8 @@ public class BCryptTool {
 	 * 
 	 * @param password the password to hash
 	 * @param salt the binary salt to hash with the password
-	 * @param log_rounds the binary logarithm of the number of rounds of hashing to apply
+	 * @param log_rounds the binary logarithm of the number of rounds of hashing to
+	 *        apply
 	 * @param sign_ext_bug true to implement the 2x bug
 	 * @param safety bit 16 is set when the safety measure is requested
 	 * @return an array containing the binary hashed password
@@ -559,45 +572,38 @@ public class BCryptTool {
 	}
 
 	/**
-	 * Hash a password using the OpenBSD bcrypt scheme
+	 * 使用OpenBSD bcrypt方案散列密码
 	 * 
-	 * @param password the password to hash
-	 * @param salt the salt to hash with (perhaps generated using BCrypt.gensalt)
-	 * @return the hashed password
+	 * @param password 需要散列的密码
+	 * @param salt 散列盐值,可使用{@link #gensalt}
+	 * @return 散列后的密码
 	 */
 	public static String hashpw(String password, String salt) {
-		byte passwordb[];
-
-		passwordb = password.getBytes(StandardCharsets.UTF_8);
-
+		byte[] passwordb = password.getBytes(StandardCharsets.UTF_8);
 		return hashpw(passwordb, salt);
 	}
 
 	/**
-	 * Hash a password using the OpenBSD bcrypt scheme
+	 * 使用OpenBSD bcrypt方案散列密码
 	 * 
-	 * @param passwordb the password to hash, as a byte array
-	 * @param salt the salt to hash with (perhaps generated using BCrypt.gensalt)
-	 * @return the hashed password
+	 * @param password 需要散列的密码字节数组
+	 * @param salt 散列盐值,可使用{@link #gensalt}
+	 * @return 散列后的密码
 	 */
-	public static String hashpw(byte passwordb[], String salt) {
+	public static String hashpw(byte[] passwordb, String salt) {
 		BCryptTool B;
 		String real_salt;
 		byte saltb[], hashed[];
 		char minor = (char) 0;
 		int rounds, off;
 		StringBuilder rs = new StringBuilder();
-
 		if (salt == null) {
 			throw new IllegalArgumentException("salt cannot be null");
 		}
-
 		int saltLength = salt.length();
-
 		if (saltLength < 28) {
 			throw new IllegalArgumentException("Invalid salt");
 		}
-
 		if (salt.charAt(0) != '$' || salt.charAt(1) != '2')
 			throw new IllegalArgumentException("Invalid salt version");
 		if (salt.charAt(2) == '$')
@@ -610,9 +616,9 @@ public class BCryptTool {
 		}
 
 		// Extract number of rounds
-		if (salt.charAt(off + 2) > '$')
+		if (salt.charAt(off + 2) > '$') {
 			throw new IllegalArgumentException("Missing salt rounds");
-
+		}
 		if (off == 4 && saltLength < 29) {
 			throw new IllegalArgumentException("Invalid salt");
 		}
@@ -620,10 +626,10 @@ public class BCryptTool {
 
 		real_salt = salt.substring(off + 3, off + 25);
 		saltb = decode_base64(real_salt, BCRYPT_SALT_LEN);
-
-		if (minor >= 'a') // add null terminator
+		// add null terminator
+		if (minor >= 'a') {
 			passwordb = Arrays.copyOf(passwordb, passwordb.length + 1);
-
+		}
 		B = new BCryptTool();
 		hashed = B.crypt_raw(passwordb, saltb, rounds, minor == 'x', minor == 'a' ? 0x10000 : 0);
 
@@ -641,14 +647,13 @@ public class BCryptTool {
 	}
 
 	/**
-	 * Generate a salt for use with the BCrypt.hashpw() method
+	 * 为{@link #hashpw}生成一个盐值
 	 * 
-	 * @param prefix the prefix value (default $2a)
-	 * @param log_rounds the log2 of the number of rounds of hashing to apply - the work factor
-	 *        therefore increases as 2**log_rounds.
+	 * @param prefix 前缀,默认$2a
+	 * @param log_rounds the log2 of the number of rounds of hashing to apply - the
+	 *        work factor therefore increases as 2**log_rounds.
 	 * @param random an instance of SecureRandom to use
-	 * @return an encoded salt value
-	 * @exception IllegalArgumentException if prefix or log_rounds is invalid
+	 * @return 经过编码的盐值
 	 */
 	public static String gensalt(String prefix, int log_rounds, SecureRandom random) throws IllegalArgumentException {
 		StringBuilder rs = new StringBuilder();
@@ -661,9 +666,7 @@ public class BCryptTool {
 		if (log_rounds < 4 || log_rounds > 31) {
 			throw new IllegalArgumentException("Invalid log_rounds");
 		}
-
 		random.nextBytes(rnd);
-
 		rs.append("$2");
 		rs.append(prefix.charAt(2));
 		rs.append("$");
@@ -676,38 +679,35 @@ public class BCryptTool {
 	}
 
 	/**
-	 * Generate a salt for use with the BCrypt.hashpw() method
+	 * 为{@link #hashpw}生成一个盐值
 	 * 
-	 * @param prefix the prefix value (default $2a)
-	 * @param log_rounds the log2 of the number of rounds of hashing to apply - the work factor
-	 *        therefore increases as 2**log_rounds.
-	 * @return an encoded salt value
-	 * @exception IllegalArgumentException if prefix or log_rounds is invalid
+	 * @param prefix 前缀,默认$2a
+	 * @param log_rounds the log2 of the number of rounds of hashing to apply - the
+	 *        work factor therefore increases as 2**log_rounds.
+	 * @return 经过编码的盐值
 	 */
 	public static String gensalt(String prefix, int log_rounds) throws IllegalArgumentException {
 		return gensalt(prefix, log_rounds, new SecureRandom());
 	}
 
 	/**
-	 * Generate a salt for use with the BCrypt.hashpw() method
+	 * 为{@link #hashpw}生成一个盐值
 	 * 
-	 * @param log_rounds the log2 of the number of rounds of hashing to apply - the work factor
-	 *        therefore increases as 2**log_rounds.
+	 * @param log_rounds the log2 of the number of rounds of hashing to apply - the
+	 *        work factor therefore increases as 2**log_rounds.
 	 * @param random an instance of SecureRandom to use
-	 * @return an encoded salt value
-	 * @exception IllegalArgumentException if log_rounds is invalid
+	 * @return 经过编码的盐值
 	 */
 	public static String gensalt(int log_rounds, SecureRandom random) throws IllegalArgumentException {
 		return gensalt("$2a", log_rounds, random);
 	}
 
 	/**
-	 * Generate a salt for use with the BCrypt.hashpw() method
+	 * 为{@link #hashpw}生成一个盐值
 	 * 
-	 * @param log_rounds the log2 of the number of rounds of hashing to apply - the work factor
-	 *        therefore increases as 2**log_rounds.
-	 * @return an encoded salt value
-	 * @exception IllegalArgumentException if log_rounds is invalid
+	 * @param log_rounds the log2 of the number of rounds of hashing to apply - the
+	 *        work factor therefore increases as 2**log_rounds.
+	 * @return 经过编码的盐值
 	 */
 	public static String gensalt(int log_rounds) throws IllegalArgumentException {
 		return gensalt(log_rounds, new SecureRandom());
@@ -718,8 +718,8 @@ public class BCryptTool {
 	}
 
 	/**
-	 * Generate a salt for use with the BCrypt.hashpw() method, selecting a reasonable default for
-	 * the number of hashing rounds to apply
+	 * Generate a salt for use with the BCrypt.hashpw() method, selecting a
+	 * reasonable default for the number of hashing rounds to apply
 	 * 
 	 * @return an encoded salt value
 	 */
@@ -732,7 +732,7 @@ public class BCryptTool {
 	 * 
 	 * @param plaintext the plaintext password to verify
 	 * @param hashed the previously-hashed password
-	 * @return true if the passwords match, false otherwise
+	 * @return 判断2个密码是否匹配.true->匹配,false->不匹配
 	 */
 	public static boolean checkpw(String plaintext, String hashed) {
 		return equalsNoEarlyReturn(hashed, hashpw(plaintext, hashed));
@@ -743,8 +743,7 @@ public class BCryptTool {
 	 * 
 	 * @param passwordb the password to verify, as a byte array
 	 * @param hashed the previously-hashed password
-	 * @return true if the passwords match, false otherwise
-	 * @since 5.3
+	 * @return 判断2个密码是否匹配.true->匹配,false->不匹配
 	 */
 	public static boolean checkpw(byte[] passwordb, String hashed) {
 		return equalsNoEarlyReturn(hashed, hashpw(passwordb, hashed));

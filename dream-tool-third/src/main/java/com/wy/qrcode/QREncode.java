@@ -82,7 +82,7 @@ public class QREncode {
 			File file = new File(desPath);
 			FileTool.checkDirectory(file);
 			ImageIO.write(image, IMG_SUFFIX,
-					new File(desPath + File.separator + String.format(IMG_DES, DigestTool.UUID())));
+					new File(desPath + File.separator + String.format(IMG_DES, DigestTool.uuid())));
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -120,8 +120,8 @@ public class QREncode {
 			map.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.toString());
 			// 设置边框
 			map.put(EncodeHintType.MARGIN, 1);
-			BitMatrix bitMatrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, QRCODE_SIZE,
-					QRCODE_SIZE, map);
+			BitMatrix bitMatrix =
+					new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, QRCODE_SIZE, QRCODE_SIZE, map);
 			int width = bitMatrix.getWidth();
 			int height = bitMatrix.getHeight();
 			BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
