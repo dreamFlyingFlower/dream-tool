@@ -83,14 +83,14 @@ public class ImageTool {
 	 * 将图片文件转成base64
 	 */
 	public static String getBase64Image(String path) {
-		byte[] b = null;
 		try (InputStream is = new FileInputStream(path);) {
-			b = new byte[is.available()];
+			byte[] b = new byte[is.available()];
 			is.read(b);
+			return Base64.getEncoder().encodeToString(b);
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new ResultException("生成Base64图片失败:" + e.getMessage());
 		}
-		return Base64.getEncoder().encodeToString(b);
 	}
 
 	/**
@@ -117,9 +117,9 @@ public class ImageTool {
 		}
 	}
 
-	
-
 	/**
+	 * 给图片加水印
+	 * 
 	 * @param waterFile 水印文件路径,可是图片,文字
 	 * @param srcImg 需要进行水印处理的图片
 	 * @param desImg 处理完成后生成的图片地址
@@ -130,7 +130,7 @@ public class ImageTool {
 	public static boolean waterMark(String waterFile, String srcImg, String desImg, int x, int y) {
 		String lowerImage = waterFile.toLowerCase();
 		if (lowerImage.endsWith(".png") || lowerImage.endsWith(".jpg") || lowerImage.endsWith(".jpeg")) {
-			try (FileOutputStream fos = new FileOutputStream(desImg);){
+			try (FileOutputStream fos = new FileOutputStream(desImg);) {
 				// 转换成图片对象
 				Image image = ImageIO.read(new File(waterFile));
 				// 获得图片对象的宽高
@@ -163,6 +163,14 @@ public class ImageTool {
 		return false;
 	}
 
+	/**
+	 * 生成指定大小的图片,并将指定内容写到图片中
+	 * 
+	 * @param width 图片的宽
+	 * @param height 图片的高
+	 * @param code 图片内容
+	 * @return 图片
+	 */
 	public static BufferedImage obtainImage(int width, int height, String code) {
 		width = width <= 0 ? 120 : width;
 		height = height <= 0 ? 35 : height;
@@ -228,5 +236,60 @@ public class ImageTool {
 		int g = fc + random.nextInt(bc - fc);
 		int b = fc + random.nextInt(bc - fc);
 		return new Color(r, g, b);
+	}
+
+	/**
+	 * 压缩图片
+	 * 
+	 * @param filePath 源图片地址
+	 * @param destPath 压缩后的图片地址
+	 * @param proportion 是否等比压缩.true->是,false->否
+	 * @return 压缩是否成功.true->是,false->否
+	 */
+	@SuppressWarnings("restriction")
+	public static boolean compressImage(String filePath, String destPath, boolean proportion) {
+		// 获得源文件
+		File file = new File(filePath);
+		if (!file.exists()) {
+			throw new ResultException("the file [%s] is not exist", filePath);
+		}
+		try {
+			Image img = ImageIO.read(file);
+			// 判断图片格式是否正确
+			if (img.getWidth(null) == -1) {
+				throw new ResultException("the format can't read,retry!");
+			} else {
+				int newWidth;
+				int newHeight;
+				// 判断是否是等比缩放
+				if (proportion) {
+					// 为等比缩放计算输出的图片宽度及高度
+					double rate1 = ((double) img.getWidth(null)) / (double) 100 + 0.1;
+					double rate2 = ((double) img.getHeight(null)) / (double) 100 + 0.1;
+					// 根据缩放比率大的进行缩放控制
+					double rate = rate1 > rate2 ? rate1 : rate2;
+					newWidth = (int) (((double) img.getWidth(null)) / rate);
+					newHeight = (int) (((double) img.getHeight(null)) / rate);
+				} else {
+					// 默认输出的图片宽高
+					newWidth = 100;
+					newHeight = 100;
+				}
+				BufferedImage tag = new BufferedImage((int) newWidth, (int) newHeight, BufferedImage.TYPE_INT_RGB);
+
+				// Image.SCALE_SMOOTH缩略算法,生成缩略图片的平滑度的优先级比速度高,生成的图片质量比较好,但速度慢
+				tag.getGraphics().drawImage(img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, null);
+				FileOutputStream out = new FileOutputStream(destPath);
+				// JPEGImageEncoder可适用于其他图片类型的转换
+				com.sun.image.codec.jpeg.JPEGImageEncoder encoder =
+						com.sun.image.codec.jpeg.JPEGCodec.createJPEGEncoder(out);
+				encoder.encode(tag);
+				out.close();
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			throw new ResultException(ex.getMessage());
+		}
+		return true;
 	}
 }
