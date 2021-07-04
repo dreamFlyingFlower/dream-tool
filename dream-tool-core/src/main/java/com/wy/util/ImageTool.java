@@ -246,7 +246,6 @@ public class ImageTool {
 	 * @param proportion 是否等比压缩.true->是,false->否
 	 * @return 压缩是否成功.true->是,false->否
 	 */
-	@SuppressWarnings("restriction")
 	public static boolean compressImage(String filePath, String destPath, boolean proportion) {
 		// 获得源文件
 		File file = new File(filePath);
@@ -281,9 +280,9 @@ public class ImageTool {
 				tag.getGraphics().drawImage(img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, null);
 				FileOutputStream out = new FileOutputStream(destPath);
 				// JPEGImageEncoder可适用于其他图片类型的转换
-				com.sun.image.codec.jpeg.JPEGImageEncoder encoder =
-						com.sun.image.codec.jpeg.JPEGCodec.createJPEGEncoder(out);
-				encoder.encode(tag);
+				// com.sun.image.codec.jpeg.JPEGImageEncoder encoder =
+				// com.sun.image.codec.jpeg.JPEGCodec.createJPEGEncoder(out);
+				// encoder.encode(tag);
 				out.close();
 			}
 		} catch (IOException ex) {

@@ -104,7 +104,7 @@ public enum RegexEnum {
 	REGEX_DOUBLE_CHAR("[^\\x00-\\xff]"),
 
 	/** 匹配空白行 FIXME */
-	REGEX_BLANK("\n\s*\r"),
+	REGEX_BLANK("\\n\\s*\\r"),
 
 	/** 匹配首尾空白字符 FIXME */
 	REGEX_BLANK_BEGIN_END("^\\s*|\\s*$"),
