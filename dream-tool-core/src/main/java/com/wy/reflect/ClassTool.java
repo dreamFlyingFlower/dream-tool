@@ -265,8 +265,6 @@ public class ClassTool {
 		}
 	}
 
-	
-
 	/**
 	 * 获得给定类的包的名称
 	 * 
@@ -487,12 +485,31 @@ public class ClassTool {
 	}
 
 	/**
-	 * 判断是否为一个整数,byte,short,int,long
+	 * 判断是否为一个整数:byte,short,int,long
+	 * 
+	 * @param clazz 类字节码文件
+	 * @return true->是一个整数类型,false->不是一个整数类型
 	 */
 	public static boolean isIntegral(Class<?> clazz) {
 		if (byte.class == clazz || Byte.class == clazz || short.class == clazz || Short.class == clazz
 				|| int.class == clazz || Integer.class == clazz || long.class == clazz || Long.class == clazz) {
 			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断是否是一个数字类型
+	 * 
+	 * @param clazz 类字节码文件
+	 * @return true->是一个数字类型,false->不是一个数字类型
+	 */
+	public static boolean isNumber(Class<?> clazz) {
+		if (clazz.isPrimitive()) {
+			Class<?> wrapper = primitiveToWrapper(clazz);
+			return ClassTool.isAssignable(wrapper, Number.class);
+		} else if (isPrimitiveWrapper(clazz)) {
+			return ClassTool.isAssignable(clazz, Number.class);
 		}
 		return false;
 	}
@@ -592,8 +609,8 @@ public class ClassTool {
 	public static <T> T newProxy(Class<T> interfaceType, InvocationHandler handler) {
 		AssertTool.notNull(handler);
 		AssertTool.isTrue(interfaceType.isInterface(), interfaceType + " is not an interface");
-		Object object = Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class<?>[] { interfaceType },
-				handler);
+		Object object =
+				Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class<?>[] { interfaceType }, handler);
 		return interfaceType.cast(object);
 	}
 

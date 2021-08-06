@@ -1,10 +1,13 @@
 package com.wy.enums;
 
 /**
- * @apiNote 数据库排序升序或降序
- * @author ParadiseWY
- * @date 2020年1月29日 下午4:40:04
+ * 数据库排序升序或降序
+ * 
+ * @author 飞花梦影
+ * @date 2021-08-01 23:51:22
+ * @git {@link https://github.com/dreamFlyingFlower}
  */
 public enum Direction {
-	ASC, DESC;
+	ASC,
+	DESC;
 }

@@ -19,6 +19,24 @@ import java.util.Map;
  */
 public interface Constant {
 
+	interface Pager {
+
+		/** 分页参数,默认当前页数字段 */
+		String PAGE_INDEX = "pageIndex";
+
+		/** 分页参数,默认每页数据量字段 */
+		String PAGE_SIZE = "pageSize";
+
+		/** 分页参数pageSize,默认每页数据量 */
+		int PAGE_SIZE_NUM = 10;
+
+		/** 分页参数,默认总页数字段 */
+		String TOTAL_PAGE = "totalPage";
+
+		/** 分页参数,默认总数字段 */
+		String TOTAL = "total";
+	}
+
 	/**
 	 * Array数组常量
 	 * 

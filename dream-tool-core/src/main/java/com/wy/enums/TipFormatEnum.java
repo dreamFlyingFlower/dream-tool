@@ -37,11 +37,6 @@ public enum TipFormatEnum implements StatusMsg {
 		return code;
 	}
 
-	@Override
-	public String getMsg() {
-		return getMsg("");
-	}
-
 	public String getMsg(String msg) {
 		return MessageFormat.format(this.msg, msg);
 	}

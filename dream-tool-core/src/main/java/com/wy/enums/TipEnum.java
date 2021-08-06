@@ -98,6 +98,8 @@ public enum TipEnum implements StatusMsg {
 	TIP_DB_MODIFY(1502, "msg_db_modify_fail"),
 	/** 数据查询失败 */
 	TIP_DB_QUERY(1503, "msg_db_query_fail"),
+	/** 数据库主键重复 */
+	TIP_DB_DUPLICATE_KEY_ERROR(1504, "msg_db_duplicate_key_error"),
 
 	/** 文件不存在 */
 	TIP_FILE_NOT_EXIST(1600, "msg_file_not_exist"),
