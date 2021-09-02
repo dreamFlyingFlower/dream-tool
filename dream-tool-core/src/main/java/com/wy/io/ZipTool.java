@@ -82,8 +82,8 @@ public class ZipTool {
 				ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 				GZIPInputStream ginzip = new GZIPInputStream(in);) {
 			byte[] buffer = new byte[1024];
-			int offset = -1;
-			while ((offset = ginzip.read(buffer)) != -1) {
+			int offset = 0;
+			while ((offset = ginzip.read(buffer, 0, buffer.length)) != -1) {
 				out.write(buffer, 0, offset);
 			}
 			return out.toByteArray();
