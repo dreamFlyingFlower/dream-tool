@@ -23,7 +23,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>dream.flying.flower</groupId>
-			<artifactId>dream-tool-core</artifactId>
+			<artifactId>dream-tool-http</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 		<dependency>
@@ -40,6 +40,11 @@
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
 			<version>${jaxen.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.14.2</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
