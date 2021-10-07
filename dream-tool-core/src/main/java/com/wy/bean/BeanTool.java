@@ -1,6 +1,7 @@
 package com.wy.bean;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,8 +106,13 @@ public class BeanTool {
 	 * @return T 转换后的实体
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
 	 */
-	public static <T> T mapToBean(Object map, Class<T> clazz) throws InstantiationException, IllegalAccessException {
+	public static <T> T mapToBean(Object map, Class<T> clazz) throws InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		if (null == map) {
 			return null;
 		}
@@ -116,7 +122,7 @@ public class BeanTool {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> res = (Map<String, Object>) map;
 		Field[] fields = clazz.getDeclaredFields();
-		T t = clazz.newInstance();
+		T t = clazz.getDeclaredConstructor().newInstance();
 		for (Field field : fields) {
 			field.setAccessible(true);
 			field.set(t, res.get(field.getName()));
@@ -132,14 +138,19 @@ public class BeanTool {
 	 * @return T 转换后的实体
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
 	 */
 	public static <T> T mapToBean(Map<String, Object> map, Class<T> clazz)
-			throws InstantiationException, IllegalAccessException {
+			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException {
 		if (MapTool.isEmpty(map)) {
 			return null;
 		}
 		Field[] fields = clazz.getDeclaredFields();
-		T t = clazz.newInstance();
+		T t = clazz.getDeclaredConstructor().newInstance();
 		for (Field field : fields) {
 			field.setAccessible(true);
 			field.set(t, map.get(field.getName()));

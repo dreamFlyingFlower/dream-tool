@@ -12,6 +12,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +89,8 @@ public class XmlTool {
 	public static final int INDENT_DEFAULT = 2;
 
 	/** 默认的DocumentBuilderFactory实现 */
-	private static String defaultDocumentBuilderFactory = "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl";
+	private static String defaultDocumentBuilderFactory =
+			"com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl";
 
 	/** 是否打开命名空间支持 */
 	private static boolean namespaceAware = true;
@@ -131,8 +133,8 @@ public class XmlTool {
 	 */
 	public static Element appendChild(Node node, String tagName, String namespace) {
 		final Document doc = getOwnerDocument(node);
-		final Element child = (null == namespace) ? doc.createElement(tagName)
-				: doc.createElementNS(namespace, tagName);
+		final Element child =
+				(null == namespace) ? doc.createElement(tagName) : doc.createElementNS(namespace, tagName);
 		node.appendChild(child);
 		return child;
 	}
@@ -171,7 +173,8 @@ public class XmlTool {
 	private static DocumentBuilderFactory disableXXE(DocumentBuilderFactory dbf) {
 		String feature;
 		try {
-			// This is the PRIMARY defense. If DTDs (doctypes) are disallowed, almost all XML entity
+			// This is the PRIMARY defense. If DTDs (doctypes) are disallowed, almost all
+			// XML entity
 			// attacks are
 			// prevented
 			// Xerces 2 only -
@@ -179,8 +182,10 @@ public class XmlTool {
 			feature = "http://apache.org/xml/features/disallow-doctype-decl";
 			dbf.setFeature(feature, true);
 			// If you can't completely disable DTDs, then at least do the following:
-			// Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-general-entities
-			// Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-general-entities
+			// Xerces 1 -
+			// http://xerces.apache.org/xerces-j/features.html#external-general-entities
+			// Xerces 2 -
+			// http://xerces.apache.org/xerces2-j/features.html#external-general-entities
 			// JDK7+ - http://xml.org/sax/features/external-general-entities
 			feature = "http://xml.org/sax/features/external-general-entities";
 			dbf.setFeature(feature, false);
@@ -194,7 +199,8 @@ public class XmlTool {
 			// Disable external DTDs as well
 			feature = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
 			dbf.setFeature(feature, false);
-			// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity
+			// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and
+			// Entity
 			// Attacks"
 			dbf.setXIncludeAware(false);
 			dbf.setExpandEntityReferences(false);
@@ -445,8 +451,8 @@ public class XmlTool {
 	 * @return 节点列表
 	 */
 	public static List<Element> getElements(Element element, String tagName) {
-		final NodeList nodeList = StrTool.isBlank(tagName) ? element.getChildNodes()
-				: element.getElementsByTagName(tagName);
+		final NodeList nodeList =
+				StrTool.isBlank(tagName) ? element.getChildNodes() : element.getElementsByTagName(tagName);
 		return transElements(element, nodeList);
 	}
 
@@ -781,7 +787,8 @@ public class XmlTool {
 		xformer.transform(source, result);
 		// TransformerFactory factory = TransformerFactory.newInstance();
 		// // stylesheet样式
-		// Transformer transformer = factory.newTransformer(new StreamSource(stylesheet));
+		// Transformer transformer = factory.newTransformer(new
+		// StreamSource(stylesheet));
 		// DocumentSource source = new DocumentSource(document);
 		// DocumentResult result = new DocumentResult();
 		// transformer.transform(source, result);
@@ -849,8 +856,8 @@ public class XmlTool {
 			charset = doc.getXmlEncoding();
 		}
 		BufferedWriter writer = null;
-		try (BufferedWriter writer2 = FileTool.newBufferedWriter(new File(path), CharsetTool.defaultCharset(charset),
-				false);) {
+		try (BufferedWriter writer2 =
+				FileTool.newBufferedWriter(new File(path), CharsetTool.defaultCharset(charset), false);) {
 			write(doc, writer, charset, INDENT_DEFAULT);
 		}
 	}
@@ -1037,8 +1044,13 @@ public class XmlTool {
 	 * @return bean
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
 	 */
-	public static <T> T xmlToBean(Node node, Class<T> bean) throws InstantiationException, IllegalAccessException {
+	public static <T> T xmlToBean(Node node, Class<T> bean) throws InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		final Map<String, Object> map = xmlToMap(node);
 		if (null != map && map.size() == 1) {
 			return BeanTool.mapToBean(map.get(bean.getSimpleName()), bean);
@@ -1153,8 +1165,8 @@ public class XmlTool {
 		private final HashMap<String, String> prefixUri = new HashMap<String, String>();
 
 		/**
-		 * This constructor parses the document and stores all namespaces it can find. If
-		 * toplevelOnly is true, only namespaces in the root are used.
+		 * This constructor parses the document and stores all namespaces it can find.
+		 * If toplevelOnly is true, only namespaces in the root are used.
 		 *
 		 * @param node source Node
 		 * @param toplevelOnly restriction of the search to enhance performance
@@ -1192,7 +1204,8 @@ public class XmlTool {
 		}
 
 		/**
-		 * This method looks at an attribute and stores it, if it is a namespace attribute.
+		 * This method looks at an attribute and stores it, if it is a namespace
+		 * attribute.
 		 *
 		 * @param attribute to examine
 		 */
@@ -1214,8 +1227,8 @@ public class XmlTool {
 		}
 
 		/**
-		 * This method is called by XPath. It returns the default namespace, if the prefix is null
-		 * or "".
+		 * This method is called by XPath. It returns the default namespace, if the
+		 * prefix is null or "".
 		 *
 		 * @param prefix to search for
 		 * @return uri
@@ -1230,7 +1243,8 @@ public class XmlTool {
 		}
 
 		/**
-		 * This method is not needed in this context, but can be implemented in a similar way.
+		 * This method is not needed in this context, but can be implemented in a
+		 * similar way.
 		 */
 		@Override
 		public String getPrefix(String namespaceURI) {

@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.activation.MimeType;
-
 import com.wy.annotation.Nullable;
 import com.wy.collection.LinkedCaseInsensitiveMap;
 import com.wy.collection.MapTool;
@@ -50,7 +48,8 @@ public class ContentType {
 	private volatile String toStringValue;
 
 	/**
-	 * Public constant media type that includes all media ranges (i.e. "&#42;/&#42;").
+	 * Public constant media type that includes all media ranges (i.e.
+	 * "&#42;/&#42;").
 	 */
 	public static final ContentType ALL;
 
@@ -108,10 +107,12 @@ public class ContentType {
 	/**
 	 * Public constant media type for {@code application/json;charset=UTF-8}.
 	 * 
-	 * @deprecated as of 5.2 in favor of {@code #APPLICATION_JSON} since major browsers like Chrome
-	 *             <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=438464"> now
-	 *             comply with the specification</a> and interpret correctly UTF-8 special
-	 *             characters without requiring a {@code charset=UTF-8} parameter.
+	 * @deprecated as of 5.2 in favor of {@code #APPLICATION_JSON} since major
+	 *             browsers like Chrome <a href=
+	 *             "https://bugs.chromium.org/p/chromium/issues/detail?id=438464">
+	 *             now comply with the specification</a> and interpret correctly
+	 *             UTF-8 special characters without requiring a
+	 *             {@code charset=UTF-8} parameter.
 	 */
 	@Deprecated
 	public static final ContentType APPLICATION_JSON_UTF8;
@@ -119,10 +120,12 @@ public class ContentType {
 	/**
 	 * A String equivalent of {@link MediaType#APPLICATION_JSON_UTF8}.
 	 * 
-	 * @deprecated as of 5.2 in favor of {@link #APPLICATION_JSON_VALUE} since major browsers like
-	 *             Chrome <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=438464">
-	 *             now comply with the specification</a> and interpret correctly UTF-8 special
-	 *             characters without requiring a {@code charset=UTF-8} parameter.
+	 * @deprecated as of 5.2 in favor of {@link #APPLICATION_JSON_VALUE} since major
+	 *             browsers like Chrome <a href=
+	 *             "https://bugs.chromium.org/p/chromium/issues/detail?id=438464">
+	 *             now comply with the specification</a> and interpret correctly
+	 *             UTF-8 special characters without requiring a
+	 *             {@code charset=UTF-8} parameter.
 	 */
 	@Deprecated
 	public static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
@@ -211,10 +214,12 @@ public class ContentType {
 	/**
 	 * A String equivalent of {@link MediaType#APPLICATION_STREAM_JSON}.
 	 * 
-	 * @deprecated as of 5.3 since it originates from the W3C Activity Streams specification which
-	 *             has a more specific purpose and has been since replaced with a different mime
-	 *             type. Use {@link #APPLICATION_NDJSON} as a replacement or any other
-	 *             line-delimited JSON format (e.g. JSON Lines, JSON Text Sequences).
+	 * @deprecated as of 5.3 since it originates from the W3C Activity Streams
+	 *             specification which has a more specific purpose and has been
+	 *             since replaced with a different mime type. Use
+	 *             {@link #APPLICATION_NDJSON} as a replacement or any other
+	 *             line-delimited JSON format (e.g. JSON Lines, JSON Text
+	 *             Sequences).
 	 */
 	@Deprecated
 	public static final String APPLICATION_STREAM_JSON_VALUE = "application/stream+json";
@@ -422,7 +427,8 @@ public class ContentType {
 	 * The {@linkplain #getSubtype() subtype} is set to "&#42;", parameters empty.
 	 * 
 	 * @param type the primary type
-	 * @throws IllegalArgumentException if any of the parameters contain illegal characters
+	 * @throws IllegalArgumentException if any of the parameters contain illegal
+	 *         characters
 	 */
 	public ContentType(String type) {
 		this(type, WILDCARD_TYPE);
@@ -435,19 +441,22 @@ public class ContentType {
 	 * 
 	 * @param type the primary type
 	 * @param subtype the subtype
-	 * @throws IllegalArgumentException if any of the parameters contain illegal characters
+	 * @throws IllegalArgumentException if any of the parameters contain illegal
+	 *         characters
 	 */
 	public ContentType(String type, String subtype) {
 		this(type, subtype, Collections.emptyMap());
 	}
 
 	/**
-	 * Create a new {@code MediaType} for the given type, subtype, and character set.
+	 * Create a new {@code MediaType} for the given type, subtype, and character
+	 * set.
 	 * 
 	 * @param type the primary type
 	 * @param subtype the subtype
 	 * @param charset the character set
-	 * @throws IllegalArgumentException if any of the parameters contain illegal characters
+	 * @throws IllegalArgumentException if any of the parameters contain illegal
+	 *         characters
 	 */
 	public ContentType(String type, String subtype, Charset charset) {
 		this(type, subtype, Collections.singletonMap(PARAM_CHARSET, charset.name()));
@@ -455,24 +464,27 @@ public class ContentType {
 	}
 
 	/**
-	 * Create a new {@code MediaType} for the given type, subtype, and quality value.
+	 * Create a new {@code MediaType} for the given type, subtype, and quality
+	 * value.
 	 * 
 	 * @param type the primary type
 	 * @param subtype the subtype
 	 * @param qualityValue the quality value
-	 * @throws IllegalArgumentException if any of the parameters contain illegal characters
+	 * @throws IllegalArgumentException if any of the parameters contain illegal
+	 *         characters
 	 */
 	public ContentType(String type, String subtype, double qualityValue) {
 		this(type, subtype, Collections.singletonMap(PARAM_QUALITY_FACTOR, Double.toString(qualityValue)));
 	}
 
 	/**
-	 * Copy-constructor that copies the type, subtype and parameters of the given {@code MediaType},
-	 * and allows to set the specified character set.
+	 * Copy-constructor that copies the type, subtype and parameters of the given
+	 * {@code MediaType}, and allows to set the specified character set.
 	 * 
 	 * @param other the other media type
 	 * @param charset the character set
-	 * @throws IllegalArgumentException if any of the parameters contain illegal characters
+	 * @throws IllegalArgumentException if any of the parameters contain illegal
+	 *         characters
 	 */
 	public ContentType(ContentType other, Charset charset) {
 		this(other.getType(), other.getSubtype(), addCharsetParameter(charset, other.getParameters()));
@@ -486,12 +498,13 @@ public class ContentType {
 	}
 
 	/**
-	 * Copy-constructor that copies the type and subtype of the given {@code MediaType}, and allows
-	 * for different parameters.
+	 * Copy-constructor that copies the type and subtype of the given
+	 * {@code MediaType}, and allows for different parameters.
 	 * 
 	 * @param other the other media type
 	 * @param parameters the parameters, may be {@code null}
-	 * @throws IllegalArgumentException if any of the parameters contain illegal characters
+	 * @throws IllegalArgumentException if any of the parameters contain illegal
+	 *         characters
 	 */
 	public ContentType(ContentType other, @Nullable Map<String, String> parameters) {
 		this(other.getType(), other.getSubtype(), parameters);
@@ -503,7 +516,8 @@ public class ContentType {
 	 * @param type the primary type
 	 * @param subtype the subtype
 	 * @param parameters the parameters, may be {@code null}
-	 * @throws IllegalArgumentException if any of the parameters contain illegal characters
+	 * @throws IllegalArgumentException if any of the parameters contain illegal
+	 *         characters
 	 */
 	public ContentType(String type, String subtype, @Nullable Map<String, String> parameters) {
 		AssertTool.notBlank(type, "'type' must not be empty");
@@ -525,12 +539,13 @@ public class ContentType {
 	}
 
 	/**
-	 * Create a new {@code MediaType} for the given {@link MimeType}. The type, subtype and
-	 * parameters information is copied and {@code MediaType}-specific checks on parameters are
-	 * performed.
+	 * Create a new {@code MediaType} for the given {@link MimeType}. The type,
+	 * subtype and parameters information is copied and {@code MediaType}-specific
+	 * checks on parameters are performed.
 	 * 
 	 * @param mimeType the MIME type
-	 * @throws IllegalArgumentException if any of the parameters contain illegal characters
+	 * @throws IllegalArgumentException if any of the parameters contain illegal
+	 *         characters
 	 */
 	public ContentType(ContentType other) {
 		this.type = other.type;
@@ -596,8 +611,8 @@ public class ContentType {
 	}
 
 	/**
-	 * Return the quality factor, as indicated by a {@code q} parameter, if any. Defaults to
-	 * {@code 1.0}.
+	 * Return the quality factor, as indicated by a {@code q} parameter, if any.
+	 * Defaults to {@code 1.0}.
 	 * 
 	 * @return the quality factor as double value
 	 */
@@ -621,7 +636,8 @@ public class ContentType {
 	}
 
 	/**
-	 * Return the character set, as indicated by a {@code charset} parameter, if any.
+	 * Return the character set, as indicated by a {@code charset} parameter, if
+	 * any.
 	 * 
 	 * @return the character set, or {@code null} if not available
 	 * @since 4.3
@@ -660,9 +676,9 @@ public class ContentType {
 	}
 
 	/**
-	 * Indicates whether the {@linkplain #getSubtype() subtype} is the wildcard character
-	 * <code>&#42;</code> or the wildcard character followed by a suffix (e.g.
-	 * <code>&#42;+xml</code>).
+	 * Indicates whether the {@linkplain #getSubtype() subtype} is the wildcard
+	 * character <code>&#42;</code> or the wildcard character followed by a suffix
+	 * (e.g. <code>&#42;+xml</code>).
 	 * 
 	 * @return whether the subtype is a wildcard
 	 */
@@ -673,16 +689,16 @@ public class ContentType {
 	/**
 	 * Indicate whether this {@code MediaType} includes the given media type.
 	 * <p>
-	 * For instance, {@code text/*} includes {@code text/plain} and {@code text/html}, and
-	 * {@code application/*+xml} includes {@code application/soap+xml}, etc. This method is
-	 * <b>not</b> symmetric.
+	 * For instance, {@code text/*} includes {@code text/plain} and
+	 * {@code text/html}, and {@code application/*+xml} includes
+	 * {@code application/soap+xml}, etc. This method is <b>not</b> symmetric.
 	 * <p>
-	 * Simply calls {@link MimeType#includes(MimeType)} but declared with a {@code MediaType}
-	 * parameter for binary backwards compatibility.
+	 * Simply calls {@link MimeType#includes(MimeType)} but declared with a
+	 * {@code MediaType} parameter for binary backwards compatibility.
 	 * 
 	 * @param other the reference media type with which to compare
-	 * @return {@code true} if this media type includes the given media type; {@code false}
-	 *         otherwise
+	 * @return {@code true} if this media type includes the given media type;
+	 *         {@code false} otherwise
 	 */
 	public boolean includes(@Nullable ContentType other) {
 		if (other == null) {
@@ -718,10 +734,11 @@ public class ContentType {
 	}
 
 	/**
-	 * Return a replica of this instance with the quality value of the given {@code MediaType}.
+	 * Return a replica of this instance with the quality value of the given
+	 * {@code MediaType}.
 	 * 
-	 * @return the same instance if the given MediaType doesn't have a quality value, or a new one
-	 *         otherwise
+	 * @return the same instance if the given MediaType doesn't have a quality
+	 *         value, or a new one otherwise
 	 */
 	public ContentType copyQualityValue(ContentType mediaType) {
 		if (!mediaType.getParameters().containsKey(PARAM_QUALITY_FACTOR)) {
@@ -735,8 +752,8 @@ public class ContentType {
 	/**
 	 * Return a replica of this instance with its quality value removed.
 	 * 
-	 * @return the same instance if the media type doesn't contain a quality value, or a new one
-	 *         otherwise
+	 * @return the same instance if the media type doesn't contain a quality value,
+	 *         or a new one otherwise
 	 */
 	public ContentType removeQualityValue() {
 		if (!getParameters().containsKey(PARAM_QUALITY_FACTOR)) {
@@ -749,8 +766,8 @@ public class ContentType {
 
 	/**
 	 * Tokenize the given comma-separated string of {@code MimeType} objects into a
-	 * {@code List<String>}. Unlike simple tokenization by ",", this method takes into account
-	 * quoted parameters.
+	 * {@code List<String>}. Unlike simple tokenization by ",", this method takes
+	 * into account quoted parameters.
 	 * 
 	 * @param mimeTypes the string to tokenize
 	 * @return the list of tokens
@@ -808,9 +825,11 @@ public class ContentType {
 	}
 
 	/**
-	 * Return a string representation of the given list of {@code MediaType} objects.
+	 * Return a string representation of the given list of {@code MediaType}
+	 * objects.
 	 * <p>
-	 * This method can be used to for an {@code Accept} or {@code Content-Type} header.
+	 * This method can be used to for an {@code Accept} or {@code Content-Type}
+	 * header.
 	 * 
 	 * @param mediaTypes the media types to create a string representation for
 	 * @return the string representation
@@ -848,28 +867,33 @@ public class ContentType {
 	 * <p>
 	 * Given two media types:
 	 * <ol>
-	 * <li>if either media type has a {@linkplain #isWildcardType() wildcard type}, then the media
-	 * type without the wildcard is ordered before the other.</li>
-	 * <li>if the two media types have different {@linkplain #getType() types}, then they are
-	 * considered equal and remain their current order.</li>
-	 * <li>if either media type has a {@linkplain #isWildcardSubtype() wildcard subtype}, then the
-	 * media type without the wildcard is sorted before the other.</li>
-	 * <li>if the two media types have different {@linkplain #getSubtype() subtypes}, then they are
-	 * considered equal and remain their current order.</li>
-	 * <li>if the two media types have different {@linkplain #getQualityValue() quality value}, then
-	 * the media type with the highest quality value is ordered before the other.</li>
-	 * <li>if the two media types have a different amount of {@linkplain #getParameter(String)
-	 * parameters}, then the media type with the most parameters is ordered before the other.</li>
+	 * <li>if either media type has a {@linkplain #isWildcardType() wildcard type},
+	 * then the media type without the wildcard is ordered before the other.</li>
+	 * <li>if the two media types have different {@linkplain #getType() types}, then
+	 * they are considered equal and remain their current order.</li>
+	 * <li>if either media type has a {@linkplain #isWildcardSubtype() wildcard
+	 * subtype}, then the media type without the wildcard is sorted before the
+	 * other.</li>
+	 * <li>if the two media types have different {@linkplain #getSubtype()
+	 * subtypes}, then they are considered equal and remain their current
+	 * order.</li>
+	 * <li>if the two media types have different {@linkplain #getQualityValue()
+	 * quality value}, then the media type with the highest quality value is ordered
+	 * before the other.</li>
+	 * <li>if the two media types have a different amount of
+	 * {@linkplain #getParameter(String) parameters}, then the media type with the
+	 * most parameters is ordered before the other.</li>
 	 * </ol>
 	 * <p>
 	 * For example: <blockquote>audio/basic &lt; audio/* &lt; *&#047;*</blockquote>
 	 * <blockquote>audio/* &lt; audio/*;q=0.7; audio/*;q=0.3</blockquote>
-	 * <blockquote>audio/basic;level=1 &lt; audio/basic</blockquote> <blockquote>audio/basic ==
-	 * text/html</blockquote> <blockquote>audio/basic == audio/wave</blockquote>
+	 * <blockquote>audio/basic;level=1 &lt; audio/basic</blockquote>
+	 * <blockquote>audio/basic == text/html</blockquote> <blockquote>audio/basic ==
+	 * audio/wave</blockquote>
 	 * 
 	 * @param mediaTypes the list of media types to be sorted
-	 * @see <a href="https://tools.ietf.org/html/rfc7231#section-5.3.2">HTTP 1.1: Semantics and
-	 *      Content, section 5.3.2</a>
+	 * @see <a href="https://tools.ietf.org/html/rfc7231#section-5.3.2">HTTP 1.1:
+	 *      Semantics and Content, section 5.3.2</a>
 	 */
 	public static void sortBySpecificity(List<ContentType> mediaTypes) {
 		AssertTool.notNull(mediaTypes, "'mediaTypes' must not be null");
@@ -883,18 +907,22 @@ public class ContentType {
 	 * <p>
 	 * Given two media types:
 	 * <ol>
-	 * <li>if the two media types have different {@linkplain #getQualityValue() quality value}, then
-	 * the media type with the highest quality value is ordered before the other.</li>
-	 * <li>if either media type has a {@linkplain #isWildcardType() wildcard type}, then the media
-	 * type without the wildcard is ordered before the other.</li>
-	 * <li>if the two media types have different {@linkplain #getType() types}, then they are
-	 * considered equal and remain their current order.</li>
-	 * <li>if either media type has a {@linkplain #isWildcardSubtype() wildcard subtype}, then the
-	 * media type without the wildcard is sorted before the other.</li>
-	 * <li>if the two media types have different {@linkplain #getSubtype() subtypes}, then they are
-	 * considered equal and remain their current order.</li>
-	 * <li>if the two media types have a different amount of {@linkplain #getParameter(String)
-	 * parameters}, then the media type with the most parameters is ordered before the other.</li>
+	 * <li>if the two media types have different {@linkplain #getQualityValue()
+	 * quality value}, then the media type with the highest quality value is ordered
+	 * before the other.</li>
+	 * <li>if either media type has a {@linkplain #isWildcardType() wildcard type},
+	 * then the media type without the wildcard is ordered before the other.</li>
+	 * <li>if the two media types have different {@linkplain #getType() types}, then
+	 * they are considered equal and remain their current order.</li>
+	 * <li>if either media type has a {@linkplain #isWildcardSubtype() wildcard
+	 * subtype}, then the media type without the wildcard is sorted before the
+	 * other.</li>
+	 * <li>if the two media types have different {@linkplain #getSubtype()
+	 * subtypes}, then they are considered equal and remain their current
+	 * order.</li>
+	 * <li>if the two media types have a different amount of
+	 * {@linkplain #getParameter(String) parameters}, then the media type with the
+	 * most parameters is ordered before the other.</li>
 	 * </ol>
 	 * 
 	 * @param mediaTypes the list of media types to be sorted
@@ -908,8 +936,8 @@ public class ContentType {
 	}
 
 	/**
-	 * Sorts the given list of {@code MediaType} objects by specificity as the primary criteria and
-	 * quality value the secondary.
+	 * Sorts the given list of {@code MediaType} objects by specificity as the
+	 * primary criteria and quality value the secondary.
 	 * 
 	 * @see MediaType#sortBySpecificity(List)
 	 * @see MediaType#sortByQualityValue(List)
