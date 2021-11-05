@@ -25,6 +25,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.wy.annotation.Example;
+import com.wy.example.HeavenSong;
 import com.wy.lang.AssertTool;
 import com.wy.lang.NumberTool;
 import com.wy.lang.ObjectTool;
@@ -670,18 +672,18 @@ public class MapTool {
 	}
 
 	public static class MapBuilder {
-	
+
 		private Map<String, Object> map = new HashMap<>();
-	
+
 		public MapBuilder(String key, Object val) {
 			map.put(key, val);
 		}
-	
+
 		public MapBuilder put(String key, Object val) {
 			map.put(key, val);
 			return this;
 		}
-	
+
 		public Map<String, Object> build() {
 			return map;
 		}
@@ -692,22 +694,22 @@ public class MapTool {
 	}
 
 	public static class MapConcurrentBuilder {
-	
+
 		private Map<String, Object> map = new ConcurrentHashMap<>();
-	
+
 		public MapConcurrentBuilder(String key, Object val) {
 			AssertTool.notBlank(key);
 			AssertTool.notNull(val);
 			map.put(key, val);
 		}
-	
+
 		public MapConcurrentBuilder put(String key, Object val) {
 			AssertTool.notBlank(key);
 			AssertTool.notNull(val);
 			map.put(key, val);
 			return this;
 		}
-	
+
 		public Map<String, Object> build() {
 			return map;
 		}
@@ -733,5 +735,35 @@ public class MapTool {
 		public Map<K, V> build() {
 			return map;
 		}
+	}
+}
+
+class Examples {
+
+	/**
+	 * 将一个List转换为Map
+	 * 
+	 * {@link Map#merge}:merge源码,2个参数的前一个参数是Map中的旧值,第二个是新值
+	 * 
+	 * @param entitys 需要进行转换的集合
+	 * @return 转换后的Map
+	 */
+	@Example
+	public static Map<Long, Double> merge(List<HeavenSong> entitys) {
+		HeavenSong entity1 = new HeavenSong();
+		entity1.setUserId(1l);
+		entity1.setSalary(1000.0);
+		entitys.add(entity1);
+		HeavenSong entity2 = new HeavenSong();
+		entity2.setUserId(2l);
+		entity2.setSalary(2000.0);
+		entitys.add(entity2);
+		HashMap<Long, Double> newHashMap = MapTool.newHashMap();
+		// merge的第一个参数是需要在newHashMap中查找的的key
+		// 第二个参数是要放入到newHashMap中的新的value
+		// 第三个参数是对newHashMap中的旧值和新值的处理方法:m是newHashMap中的旧值,n是新值,
+		entitys.stream().forEach(t -> newHashMap.merge(t.getUserId(), t.getSalary(), (m, n) -> m + n));
+		System.out.println(newHashMap);
+		return newHashMap;
 	}
 }
