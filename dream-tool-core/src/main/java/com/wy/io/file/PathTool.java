@@ -1,4 +1,4 @@
-package com.wy.nio.file;
+package com.wy.io.file;
 
 import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 
@@ -38,7 +38,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.wy.Constant;
-import com.wy.io.file.FileTool;
 import com.wy.lang.AssertTool;
 import com.wy.util.CharsetTool;
 

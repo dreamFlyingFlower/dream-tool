@@ -2,15 +2,24 @@ package com.wy.io;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import com.wy.io.file.FileNameTool;
+import com.wy.io.file.FileTool;
+import com.wy.lang.AssertTool;
 import com.wy.util.CharsetTool;
 
 /**
@@ -111,6 +120,48 @@ public class ZipTool {
 	}
 
 	/**
+	 * ZIP压缩文件或目录,默认会在同级目录下生成同名文件
+	 * 
+	 * @param source 待压缩文件
+	 */
+	public static void zip(File source) {
+		AssertTool.notNull(source);
+		zip(source, source.getParentFile());
+	}
+
+	/**
+	 * ZIP压缩文件或目录
+	 * 
+	 * @param source 待压缩文件
+	 * @param target 压缩后文件.若是目录,则压缩后文件放入该目录下;若是文件,取文件父目录以及压缩文件名加zip
+	 */
+	public static void zip(File source, File target) {
+		AssertTool.notNull(source);
+		if (source.isFile()) {
+			zipFile(source, target);
+			return;
+		}
+		File zipFile = new File(
+				null == target ? source.getParentFile() : target.isDirectory() ? target : target.getParentFile(),
+				FileNameTool.getBaseName(source.getName()) + ".zip");
+		try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));) {
+			InputStream input = null;
+			File[] files = source.listFiles();
+			for (int i = 0; i < files.length; ++i) {
+				input = new FileInputStream(files[i]);
+				zipOut.putNextEntry(new ZipEntry(source.getName() + File.separator + files[i].getName()));
+				int temp = 0;
+				while ((temp = input.read()) != -1) {
+					zipOut.write(temp);
+				}
+				input.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * zip压缩
 	 *
 	 * @param str 压缩前的文本
@@ -140,6 +191,40 @@ public class ZipTool {
 	}
 
 	/**
+	 * ZIP压缩单个文件,默认会在同级目录下生成同名文件,注意,只压缩文件
+	 * 
+	 * @param source 需要压缩的文件
+	 */
+	public static void zipFile(File source) {
+		AssertTool.notNull(source);
+		zipFile(source, source.getParentFile());
+	}
+
+	/**
+	 * ZIP压缩文件到指定目录或指定名称,注意,只压缩文件
+	 * 
+	 * @param source 待压缩文件
+	 * @param target 压缩后文件.若是目录,则压缩后文件放入该目录下;若是文件,取文件父目录以及压缩文件名加zip
+	 */
+	public static void zipFile(File source, File target) {
+		FileTool.checkFile(source);
+		File zipFile = new File(
+				null == target ? source.getParentFile() : target.isDirectory() ? target : target.getParentFile(),
+				FileNameTool.getBaseName(source.getName()) + ".zip");
+		try (InputStream input = new FileInputStream(source);
+				ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));) {
+			zipOut.putNextEntry(new ZipEntry(source.getName()));
+			zipOut.setComment(source.getName());
+			int temp = 0;
+			while ((temp = input.read()) != -1) {
+				zipOut.write(temp);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * zip解压缩
 	 *
 	 * @param bytes 压缩后的文本字节数组
@@ -160,6 +245,41 @@ public class ZipTool {
 				out.write(buffer, 0, offset);
 			}
 			return out.toByteArray();
+		}
+	}
+
+	/**
+	 * 解压缩文件
+	 * 
+	 * @param file 待解压缩文件
+	 */
+	public static void unzip(File file) {
+		FileTool.checkFile(file);
+		File outFile = null;
+		try (ZipFile zipFile = new ZipFile(file);
+				ZipInputStream zipInput = new ZipInputStream(new FileInputStream(file));) {
+			ZipEntry entry = null;
+			InputStream input = null;
+			OutputStream output = null;
+			while ((entry = zipInput.getNextEntry()) != null) {
+				outFile = new File(file.getParentFile(), entry.getName());
+				if (!outFile.getParentFile().exists()) {
+					outFile.getParentFile().mkdirs();
+				}
+				if (!outFile.exists()) {
+					outFile.createNewFile();
+				}
+				input = zipFile.getInputStream(entry);
+				output = new FileOutputStream(outFile);
+				int temp = 0;
+				while ((temp = input.read()) != -1) {
+					output.write(temp);
+				}
+				input.close();
+				output.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

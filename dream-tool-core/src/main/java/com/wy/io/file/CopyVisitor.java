@@ -1,4 +1,4 @@
-package com.wy.nio.file;
+package com.wy.io.file;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

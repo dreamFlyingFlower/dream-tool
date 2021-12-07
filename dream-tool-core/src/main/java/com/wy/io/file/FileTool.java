@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.Reader;
+import java.io.SequenceInputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
@@ -32,6 +33,7 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,6 +50,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
@@ -61,13 +64,13 @@ import com.wy.Constant;
 import com.wy.io.IOTool;
 import com.wy.lang.AssertTool;
 import com.wy.lang.StrTool;
-import com.wy.nio.file.PathTool;
 import com.wy.result.ResultException;
 import com.wy.util.CharsetTool;
 import com.wy.util.UrlTool;
 
 /**
- * File工具类,所有需要用到字符串编码的地方,都使用UTF-8 FIXME ,{@link org.springframework.util.FastByteArrayOutputStream}
+ * File工具类,所有需要用到字符串编码的地方,都使用UTF-8 FIXME
+ * ,{@link org.springframework.util.FastByteArrayOutputStream}
  * 
  * @author 飞花梦影
  * @date 2021-02-28 20:10:31
@@ -381,8 +384,8 @@ public class FileTool {
 			return true;
 		}
 		try (Reader input1 = new InputStreamReader(new FileInputStream(file1), CharsetTool.defaultCharset(charsetName));
-				Reader input2 = new InputStreamReader(new FileInputStream(file2),
-						CharsetTool.defaultCharset(charsetName))) {
+				Reader input2 =
+						new InputStreamReader(new FileInputStream(file2), CharsetTool.defaultCharset(charsetName))) {
 			return IOTool.contentEqualsIgnoreEOL(input1, input2);
 		}
 	}
@@ -441,7 +444,8 @@ public class FileTool {
 		if (srcDir.getCanonicalPath().equals(destDir.getCanonicalPath())) {
 			throw new IOException("Source '" + srcDir + "' and destination '" + destDir + "' are the same");
 		}
-		// Cater for destination being directory within the source directory (see IO-141)
+		// Cater for destination being directory within the source directory (see
+		// IO-141)
 		List<String> exclusionList = null;
 		if (destDir.getCanonicalPath().startsWith(srcDir.getCanonicalPath())) {
 			final File[] srcFiles = filter == null ? srcDir.listFiles() : srcDir.listFiles(filter);
@@ -779,6 +783,80 @@ public class FileTool {
 		AssertTool.notNull(directory, Constant.IO.TOAST_DIR_NULL);
 		AssertTool.notNull(names, "names");
 		return Paths.get(directory, names).toFile();
+	}
+
+	/**
+	 * 获得文件的所有基础属性
+	 * 
+	 * @param file 文件
+	 * @return 属性Map
+	 * @throws IOException
+	 */
+	public static Map<String, Object> getFileAttr(File file) throws IOException {
+		AssertTool.notNull(file);
+		return getFileAttr(file.toPath());
+	}
+
+	/**
+	 * 获得文件的所有基础属性
+	 * 
+	 * @param file 文件
+	 * @param attr 文件属性,*表示所有属性,多个指定属性可用逗号隔开
+	 * @return 属性Map
+	 * @throws IOException
+	 */
+	public static Map<String, Object> getFileAttr(File file, String attr) throws IOException {
+		AssertTool.notNull(file);
+		return getFileAttr(file.toPath(), attr);
+	}
+
+	/**
+	 * 获得文件的所有基础属性
+	 * 
+	 * @param path 文件路径
+	 * @return 属性Map
+	 * @throws IOException
+	 */
+	public static Map<String, Object> getFileAttr(Path path) throws IOException {
+		return getFileAttr(path, "*");
+	}
+
+	/**
+	 * 获得文件的指定属性
+	 * 
+	 * @param path 文件路径
+	 * @param attr 文件属性,*表示所有属性,多个指定属性可用逗号隔开
+	 * @return 属性Map
+	 * @throws IOException
+	 */
+	public static Map<String, Object> getFileAttr(Path path, String attr) throws IOException {
+		AssertTool.notNull(path);
+		return Files.readAttributes(path, attr, LinkOption.NOFOLLOW_LINKS);
+	}
+
+	/**
+	 * 获得文件的指定属性
+	 * 
+	 * @param path 文件路径
+	 * @return 属性Map
+	 * @throws IOException
+	 */
+	public static Map<String, Object> getFileAttr(String path) throws IOException {
+		AssertTool.notBlank(path);
+		return getFileAttr(Paths.get(path));
+	}
+
+	/**
+	 * 获得文件的指定属性
+	 * 
+	 * @param path 文件路径
+	 * @param attr 文件属性,*表示所有属性,多个指定属性可用逗号隔开
+	 * @return 属性Map
+	 * @throws IOException
+	 */
+	public static Map<String, Object> getFileAttr(String path, String attr) throws IOException {
+		AssertTool.notBlank(path);
+		return getFileAttr(Paths.get(path), attr);
 	}
 
 	/**
@@ -1153,38 +1231,13 @@ public class FileTool {
 	}
 
 	/**
-	 * 移动或重命名文件{@link java.nio.file.Path} {@link java.nio.file.Files#move}
-	 * 
-	 * @param from 源文件
-	 * @param to 目标文件
-	 * @throws IOException
-	 */
-	public static void move(File from, File to) throws IOException {
-		AssertTool.notNull(from, "the original file can't be null");
-		AssertTool.notNull(to, "the destination file can't be null");
-		Files.move(from.toPath(), to.toPath());
-	}
-
-	/**
-	 * 移动或重命名文件{@link java.nio.file.Path} {@link java.nio.file.Files#move}
-	 * 
-	 * @param from 源文件地址绝对路径
-	 * @param to 目标文件地址绝对路径
-	 * @throws IOException
-	 */
-	public static void move(String from, String to) throws IOException {
-		AssertTool.notBlank(from, "the original file can't be blank");
-		AssertTool.notBlank(to, "the destination file can't be blank");
-		Files.move(Paths.get(from), Paths.get(to));
-	}
-
-	/**
 	 * 移动一个目录到另一个目录
 	 *
 	 * @param from 需要移动的目录
 	 * @param to 目标目录
 	 * @param create true->当目标目录不存在时,创建,false->当目标目录不存在时,不创建
-	 * @throws FileExistsException if the directory exists in the destination directory
+	 * @throws FileExistsException if the directory exists in the destination
+	 *         directory
 	 * @throws IOException if source or destination is invalid
 	 */
 	public static void moveDirectory(final File from, final File to, final boolean create) throws IOException {
@@ -1204,14 +1257,27 @@ public class FileTool {
 	}
 
 	/**
-	 * 移动文件,若目标文件存在,删除之后再移动
+	 * 移动文件,若目标文件存在,抛异常
 	 *
 	 * @param from 源文件
 	 * @param to 目标地址
 	 * @throws IOException
 	 */
 	public static void moveFile(final File from, final File to) throws IOException {
-		moveFile(from, to, true, false);
+		moveFile(from, to, false, false);
+	}
+
+	/**
+	 * 移动或重命名文件,若文件存在,抛异常
+	 * 
+	 * @param source 源文件地址绝对路径
+	 * @param target 目标文件地址绝对路径
+	 * @throws IOException
+	 */
+	public static void moveFile(String source, String target) throws IOException {
+		AssertTool.notBlank(source, "the source file can't be blank");
+		AssertTool.notBlank(target, "the target file can't be blank");
+		moveFile(Paths.get(source).toFile(), Paths.get(target).toFile(), false, true);
 	}
 
 	/**
@@ -1231,43 +1297,26 @@ public class FileTool {
 	 * 
 	 * @param from 源文件
 	 * @param to 目标地址
-	 * @param delete 若目标文件存在,是否删除,true->删除,false->不删除
+	 * @param replace 若目标文件存在,是否覆盖,true->覆盖,false->不覆盖,抛异常
 	 * @param copy true->复制,false->剪切
 	 * @throws IOException
 	 */
-	public static final void moveFile(File from, File to, boolean delete, boolean copy) throws IOException {
+	public static final void moveFile(File from, File to, boolean replace, boolean copy) throws IOException {
 		checkFile(from);
 		AssertTool.notNull(to);
-		// 目标文件是目录,抛异常
-		if (to.isDirectory()) {
-			throw new IOException("Destination '" + to + "' is a directory");
-		}
-		// 目标文件存在时,若delete为true先删除,若为false,抛异常
-		if (to.exists()) {
-			if (delete) {
-				if (!to.delete()) {
-					throw new IOException("删除" + to.getName() + "文件失败");
-				}
-			} else {
-				throw new IOException("The " + to.getAbsolutePath() + " exist");
-			}
+		AssertTool.isTrue(to.isDirectory(), " the target file is a directory");
+		// 目标文件存在时,若replace为true直接覆盖,若为false,抛异常
+		if (to.exists() && !replace) {
+			throw new IOException("The " + to.getAbsolutePath() + " exist");
 		}
 		if (copy) {
 			// 复制
 			copyFile(from, to);
 		} else {
 			// renameto在同盘内是改名,从A盘移到B盘,相当于剪切.不同文件系统下移动文件会失败
-			if (!from.renameTo(to)) {
-				// 移动失败就复制
-				copyFile(from, to);
-				// 删除源文件
-				if (!from.delete()) {
-					if (!to.delete()) {
-						throw new IOException("Unable to delete " + to);
-					}
-					throw new IOException("Unable to delete " + from);
-				}
-			}
+			// if (!from.renameTo(to)) {
+			// }
+			Files.move(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
 	}
 
@@ -1304,7 +1353,8 @@ public class FileTool {
 	 * @param from 需要移动的文件或目录
 	 * @param to 目标目录
 	 * @param create true->当目标目录不存在时,创建,false->当目标目录不存在时,不创建
-	 * @throws FileExistsException if the directory or file exists in the destination directory
+	 * @throws FileExistsException if the directory or file exists in the
+	 *         destination directory
 	 * @throws IOException if source or destination is invalid
 	 */
 	public static void moveToDirectory(final File from, final File to, final boolean create) throws IOException {
@@ -1785,7 +1835,8 @@ public class FileTool {
 	public static void write(final File file, final byte[] data) throws IOException {
 		write(file, data, false);
 		// try {
-		// IOTool.copy(new ByteArrayInputStream(data), Files.newOutputStream(file.toPath()));
+		// IOTool.copy(new ByteArrayInputStream(data),
+		// Files.newOutputStream(file.toPath()));
 		// } catch (IOException e) {
 		// ResultException.throwResultException(e);
 		// }
@@ -2021,7 +2072,8 @@ public class FileTool {
 	 * @param charset 字符编码
 	 * @param lines 写入的数据
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
+	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines)
 			throws IOException {
@@ -2036,7 +2088,8 @@ public class FileTool {
 	 * @param lines 写入的数据
 	 * @param append 文件操作模式,true->追加写入,false->覆盖写入
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
+	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
 			final boolean append) throws IOException {
@@ -2051,7 +2104,8 @@ public class FileTool {
 	 * @param lines 写入的数据
 	 * @param lineEnding 文件换行符
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
+	 *         by the VM
 	 */
 	public static void writeLines(final File file, final String charsetName, final Collection<?> lines,
 			final String lineEnding) throws IOException {
@@ -2066,7 +2120,8 @@ public class FileTool {
 	 * @param lines 写入的数据
 	 * @param lineEnding 文件换行符
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
+	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
 			final String lineEnding) throws IOException {
@@ -2082,7 +2137,8 @@ public class FileTool {
 	 * @param lineEnding 文件换行符
 	 * @param append 文件操作模式,true->追加写入,false->覆盖写入
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
+	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
 			final String lineEnding, final boolean append) throws IOException {
@@ -2168,8 +2224,8 @@ public class FileTool {
 				RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");) {
 			zipOut.putNextEntry(new ZipEntry(".zip"));
 			// 内存中的映射文件
-			MappedByteBuffer mappedByteBuffer = randomAccessFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0,
-					1024);
+			MappedByteBuffer mappedByteBuffer =
+					randomAccessFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 1024);
 			writableByteChannel.write(mappedByteBuffer);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2211,5 +2267,46 @@ public class FileTool {
 			e.printStackTrace();
 			throw new ResultException(e);
 		}
+	}
+}
+
+/**
+ * 例子
+ * 
+ * FIXME 未测试
+ * 
+ * @author 飞花梦影
+ * @date 2021-12-07 15:16:41
+ * @git {@link https://github.com/dreamFlyingFlower }
+ */
+class Example {
+
+	/**
+	 * 将多个文件流合并到一个流中
+	 * 
+	 * @param files 文件列表
+	 * @return 文件合并后的流
+	 */
+	public static byte[] combine(List<File> files) {
+		if (null == files || files.size() == 0) {
+			return Constant.Arrayes.EMPTY_BYTE;
+		}
+		try (FileInputStream fis = new FileInputStream(files.get(0));) {
+			if (files.size() == 1) {
+				return IOTool.toByteArray(fis);
+			}
+			FileInputStream inputStream = new FileInputStream(files.get(1));
+			SequenceInputStream sis = new SequenceInputStream(fis, inputStream);
+			if (files.size() == 2) {
+				return IOTool.toByteArray(sis);
+			}
+			for (int i = 2; i < files.size(); i++) {
+				sis = new SequenceInputStream(sis, new FileInputStream(files.get(i)));
+			}
+			sis.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
