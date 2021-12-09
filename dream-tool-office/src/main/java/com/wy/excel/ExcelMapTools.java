@@ -26,9 +26,9 @@ import com.wy.util.ArrayTool;
 /**
  * Map数据类型Excel工具类
  * 
- * @author ParadiseWY
+ * @author 飞花梦影
  * @date 2020-11-30 17:05:43
- * @git {@link https://github.com/mygodness100}
+ * @git {@link https://github.com/dreamFlyingFlower}
  */
 public class ExcelMapTools implements ExcelTools {
 

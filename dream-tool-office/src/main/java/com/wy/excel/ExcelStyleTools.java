@@ -5,13 +5,13 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -19,6 +19,8 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import com.wy.lang.StrTool;
 
 /**
  * Excel格式化工具
@@ -30,7 +32,28 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class ExcelStyleTools {
 
 	/** 默认字体 */
-	private static final String ENFONT = "Times New Roman";
+	public static final String DEFAULT_ENFONT = "Times New Roman";
+
+	/** 默认格式化无符号金钱格式 */
+	public static final String DEFAULT_FORMAT_MONEY = "#,###,##0.00";
+
+	/**
+	 * 画线
+	 * 
+	 * @param wb
+	 * @param patriarch
+	 * @param iRowStart
+	 * @param iColStart
+	 * @param iRowStop
+	 * @param iColStop
+	 */
+	public static void addLine(HSSFWorkbook wb, HSSFPatriarch patriarch, int iRowStart, int iColStart, int iRowStop,
+			int iColStop) {
+		HSSFClientAnchor anchor =
+				new HSSFClientAnchor(0, 0, 350, 0, (short) (iColStart), iRowStart, (short) (iColStop), iRowStop);
+		HSSFSimpleShape lineShape = patriarch.createSimpleShape(anchor);
+		lineShape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
+	}
 
 	/**
 	 * 计算公式,如函数sum
@@ -93,18 +116,14 @@ public class ExcelStyleTools {
 		sheet.createFreezePane(colSplit, rowSplit, leftmostColumn, topRow);
 	}
 
-	// 画线
-	public static void setLine(HSSFWorkbook wb, HSSFPatriarch patriarch, int iRowStart, int iColStart, int iRowStop,
-			int iColStop) {
-		HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 350, 0, (short) (iColStart), iRowStart, (short) (iColStop),
-				iRowStop);
-		HSSFSimpleShape lineShape = patriarch.createSimpleShape(anchor);
-		lineShape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
-	}
-
-	// 计算行高度,实现行自动适应高度 defaultRowHeight = 12.00f;
-	// 每一行的高度指定
-	// 目前只实现根据回车多行来判断,不能根据单元格宽度自动回行来判断
+	/**
+	 * 计算行高度,实现行自动适应高度 defaultRowHeight = 12.00f;
+	 * 每一行的高度指定,目前只实现根据回车多行来判断,不能根据单元格宽度自动回行来判断
+	 * 
+	 * @param str
+	 * @param defaultRowHeight
+	 * @return
+	 */
 	public static float getCellAutoHeight(String str, float defaultRowHeight) {
 		if (str == null) {
 			return defaultRowHeight;
@@ -121,7 +140,12 @@ public class ExcelStyleTools {
 		return height; // 计算
 	}
 
-	// 计算字符串高度
+	/**
+	 * 计算字符串高度
+	 * 
+	 * @param charStr
+	 * @return
+	 */
 	public static float getregex(String charStr) {
 		if (charStr.equals(" ")) {
 			return 0.5f;
@@ -139,86 +163,187 @@ public class ExcelStyleTools {
 		return 0.5f;
 	}
 
-	public static HSSFFont defaultFont10(HSSFWorkbook wb) {
+	public static HSSFFont font10(HSSFWorkbook wb) {
 		HSSFFont curFont = wb.createFont(); // 设置字体
-		curFont.setFontName(ENFONT);
+		curFont.setFontName(DEFAULT_ENFONT);
 		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET); // 设置中文字体,那必须还要再对单元格进行编码设置
 		curFont.setFontHeightInPoints((short) 10);
 		return curFont;
 	}
 
-	public static HSSFFont defaultFont10Blod(HSSFWorkbook wb) {
+	public static HSSFFont font10Blod(HSSFWorkbook wb) {
 		HSSFFont curFont = wb.createFont(); // 设置字体
-		curFont.setFontName(ENFONT);
+		curFont.setFontName(DEFAULT_ENFONT);
 		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET); // 设置中文字体,那必须还要再对单元格进行编码设置
 		curFont.setBold(true);// 加粗
 		curFont.setFontHeightInPoints((short) 10);
 		return curFont;
 	}
 
-	public static HSSFFont defaultFont12(HSSFWorkbook wb) {
-		HSSFFont curFont = wb.createFont(); // 设置字体
-		curFont.setFontName(ENFONT);
-		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET); // 设置中文字体,那必须还要再对单元格进行编码设置
+	/**
+	 * 设置12号字体
+	 * 
+	 * @param wb
+	 * @return
+	 */
+	public static HSSFFont font12(HSSFWorkbook wb) {
+		HSSFFont curFont = wb.createFont();
+		curFont.setFontName(DEFAULT_ENFONT);
+		// 设置中文字体,那必须还要再对单元格进行编码设置
+		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET);
 		curFont.setFontHeightInPoints((short) 12);
 		return curFont;
 	}
 
-	public static HSSFFont blackFont12(HSSFWorkbook wb) {
-		HSSFFont theFont = wb.createFont(); // 设置字体
+	/**
+	 * 设置12号黑色字体
+	 * 
+	 * @param wb
+	 * @return
+	 */
+	public static HSSFFont font12Black(HSSFWorkbook wb) {
+		HSSFFont theFont = wb.createFont();
 		theFont.setFontName("黑体");
-		theFont.setCharSet(HSSFFont.DEFAULT_CHARSET); // 设置中文字体,那必须还要再对单元格进行编码设置
+		theFont.setCharSet(HSSFFont.DEFAULT_CHARSET);
 		theFont.setFontHeightInPoints((short) 12);
 		return theFont;
 	}
 
-	public static HSSFFont songBoldFont16(HSSFWorkbook wb) {
-		HSSFFont curFont = wb.createFont(); // 设置字体
+	/**
+	 * 设置16号加粗宋体字体
+	 * 
+	 * @param wb
+	 * @return
+	 */
+	public static HSSFFont font16BoldSong(HSSFWorkbook wb) {
+		HSSFFont curFont = wb.createFont();
 		curFont.setFontName("宋体");
-		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET); // 设置中文字体,那必须还要再对单元格进行编码设置
-		curFont.setBold(true);// 加粗
+		// 设置中文字体,那必须还要再对单元格进行编码设置
+		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET);
+		curFont.setBold(true);
 		curFont.setFontHeightInPoints((short) 16);
 		return curFont;
 	}
 
 	/**
-	 * 格式化数据
+	 * 格式化数据为金钱格式,默认保留2位小数.0显示为0.00
 	 * 
-	 * @param wb {@link Workbook}对象
+	 * @param workbook {@link Workbook}对象
 	 * @return 格式索引
 	 */
-	public static short money1Format(HSSFWorkbook wb) {
-		HSSFDataFormat format = wb.createDataFormat();
-		return format.getFormat("#,###,###.0"); // 设置格式
-	}
-
-	public static short money2Format(HSSFWorkbook wb) {
-		HSSFDataFormat format = wb.createDataFormat();
-		return format.getFormat("#,###,###.00"); // 设置格式
-	}
-
-	public static short rmb2Format(HSSFWorkbook wb) {
-		HSSFDataFormat format = wb.createDataFormat();
-		return format.getFormat("\"￥\"#,###,###.00"); // 设置格式
-	}
-
-	public static short rmb4Format(HSSFWorkbook wb) {
-		HSSFDataFormat format = wb.createDataFormat();
-		return format.getFormat("\"￥\"#,###,##0.00"); // 设置格式
-	}
-
-	public static short datevENFormat(HSSFWorkbook wb) {
-		return HSSFDataFormat.getBuiltinFormat("m/d/yy"); // 设置格式
+	public static short formatMoney(Workbook workbook) {
+		return formatMoney(workbook, 2);
 	}
 
 	/**
-	 * 设置时间格式
+	 * 格式化数据为金钱格式,保留指定位小数.0显示为0.00
+	 * 
+	 * @param workbook {@link Workbook}对象
+	 * @param scale 保留小数位,0不保留小数
+	 * @return 格式索引
+	 */
+	public static short formatMoney(Workbook workbook, int scale) {
+		return formatMoney(workbook, scale,
+				new StringBuilder("#,###,##0").append(scale > 0 ? "." + StrTool.repeat("0", scale) : "").toString());
+	}
+
+	/**
+	 * 格式化数据为金钱格式,保留指定位小数.0显示为.00
+	 * 
+	 * @param workbook {@link Workbook}对象
+	 * @param scale 保留小数位,0不保留小数
+	 * @param format 格式化字符串
+	 * @return 格式索引
+	 */
+	public static short formatMoney(Workbook workbook, int scale, String format) {
+		scale = scale > 0 ? scale : 0;
+		format = StrTool.isBlank(format) ? DEFAULT_FORMAT_MONEY : format;
+		return workbook.createDataFormat().getFormat(format);
+	}
+
+	/**
+	 * 格式化数据为金钱格式,0表示为.00
+	 * 
+	 * @param workbook {@link Workbook}对象
+	 * @return 格式索引
+	 */
+	public static short formatMoneyNo0(Workbook workbook) {
+		return formatMoneyNo0(workbook, 2);
+	}
+
+	/**
+	 * 格式化数据为金钱格式,0表示为.00
+	 * 
+	 * @param workbook {@link Workbook}对象
+	 * @param scale 保留小数位,0不保留小数
+	 * @return 格式索引
+	 */
+	public static short formatMoneyNo0(Workbook workbook, int scale) {
+		return formatMoney(workbook, scale,
+				new StringBuilder("#,###,###").append(scale > 0 ? "." + StrTool.repeat("0", scale) : "").toString());
+	}
+
+	/**
+	 * 格式化数据为金钱格式,带符号￥,默认保留2位小数.0表示为0.00
+	 * 
+	 * @param workbook {@link Workbook}对象
+	 * @return 格式索引
+	 */
+	public static short formatMoneySymbol(Workbook workbook) {
+		return formatMoneySymbol(workbook, 2);
+	}
+
+	/**
+	 * 格式化数据为金钱格式,带符号￥,保留指定位小数.0显示为0.00
+	 * 
+	 * @param workbook {@link Workbook}对象
+	 * @param scale 保留小数位,0不保留小数
+	 * @return 格式索引
+	 */
+	public static short formatMoneySymbol(Workbook workbook, int scale) {
+		return formatMoney(workbook, scale, new StringBuilder("\"￥\"#,###,##0")
+				.append(scale > 0 ? "." + StrTool.repeat("0", scale) : "").toString());
+	}
+
+	/**
+	 * 格式化数据为金钱格式,带符号￥,默认保留2位小数,0表示为.00
+	 * 
+	 * @param workbook {@link Workbook}对象
+	 * @return 格式索引
+	 */
+	public static short formatMoneySymbolNo0(Workbook workbook) {
+		return formatMoneySymbolNo0(workbook, 2);
+	}
+
+	/**
+	 * 格式化数据为金钱格式,带符号￥,保留指定位小数,0表示为.00
+	 * 
+	 * @param workbook {@link Workbook}对象
+	 * @param scale 保留小数位,0不保留小数
+	 * @return 格式索引
+	 */
+	public static short formatMoneySymbolNo0(Workbook workbook, int scale) {
+		return formatMoney(workbook, scale, new StringBuilder("\"￥\"#,###,###")
+				.append(scale > 0 ? "." + StrTool.repeat("0", scale) : "").toString());
+	}
+
+	/**
+	 * 格式化日期格式
+	 * 
+	 * @return 格式索引
+	 */
+	public static short formatDate() {
+		return (short) BuiltinFormats.getBuiltinFormat("m/d/yy");
+	}
+
+	/**
+	 * 格式化日期格式
 	 * 
 	 * @param format 格式化字符串,默认yyyy-MM-dd HH:mm:ss
 	 * @return 格式索引
 	 */
-	public static short dateFormat(String format) {
-		return HSSFDataFormat.getBuiltinFormat(format);
+	public static short formatDate(String format) {
+		return (short) BuiltinFormats.getBuiltinFormat(format);
 	}
 
 	/**
@@ -227,7 +352,7 @@ public class ExcelStyleTools {
 	 * @param wb {@link Workbook}对象
 	 * @param format 若为数字格式化,规则同{@link NumberFormat};时间格式,同Java格式
 	 */
-	public static void dateFormat(Workbook wb, String format) {
+	public static void formatDate(Workbook wb, String format) {
 		DataFormat dataFormat = wb.createDataFormat();
 		CellStyle cellStyle = wb.createCellStyle();
 		cellStyle.setDataFormat(dataFormat.getFormat(format));
@@ -238,7 +363,7 @@ public class ExcelStyleTools {
 	 * 
 	 * @param cellStyle 单元格样式对象
 	 */
-	public static void nexLine(CellStyle cellStyle) {
+	public static void newLine(CellStyle cellStyle) {
 		cellStyle.setWrapText(true);
 	}
 

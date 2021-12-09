@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.wy.ConstantOffice;
@@ -40,16 +41,141 @@ import com.wy.result.ResultException;
 import com.wy.util.DateTool;
 
 /**
- * apache操作excel的包,HSSFWorkbook是操作Excel2003以前(包括2003)的版本,扩展名是.xls
- * 需要导入包:poi-3.17,commons-codec-1.10,commons-collections4-4.1,commons-logging-1.2,log4j-1.2.17
- * XSSFWorkbook是操作Excel2007的版本,扩展名是.xlsx
+ * Apache操作excel,需要导入包:poi-3.17,commons-codec-1.10,commons-collections4-4.1,commons-logging-1.2,log4j-1.2.17
  * xmlbeans-2.6.0,curvesapi-1.04,poi-ooxml-schemas-3.17,poi-ooxml-3.17
  * 
- * @author ParadiseWY
+ * {@link HSSFWorkbook}:处理Excel2003以前,包括2003的版本,文件扩展名是.xls
+ * {@link XSSFWorkbook}:处理Excel2007的版本,文件扩展名是.xlsx
+ * {@link SXSSFWorkbook}:处理超大数据集,需要指定每次写入时最大留存的对象个数,避免内存溢出.
+ * 最大只能写104W左右数据,实际业务中应该根据数据条数进行拆分,分成多个Excel或多个Sheet
+ * 
+ * @author 飞花梦影
  * @date 2020-11-23 16:11:10
- * @git {@link https://github.com/mygodness100}
+ * @git {@link https://github.com/dreamFlyingFlower}
  */
 public interface ExcelTools {
+
+	/**
+	 * 指定图片类型为jpg
+	 * 
+	 * @param wb
+	 * @param patriarch
+	 * @param pic
+	 * @param iRow
+	 * @param iCol
+	 * @throws IOException
+	 */
+	public static void addPicture(Workbook wb, Drawing<?> patriarch, String pic, int iRow, int iCol)
+			throws IOException {
+		File imgFile = FileTool.checkFile(pic);
+		ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
+		BufferedImage bufferImg = ImageIO.read(imgFile);
+		ImageIO.write(bufferImg, "jpg", byteArrayOut);
+		HSSFClientAnchor anchor =
+				new HSSFClientAnchor(190, 0, 1000, 0, (short) (iCol), iRow - 1, (short) (iCol + 1), iRow);
+		patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
+	}
+
+	/**
+	 * 指定图片类型为jpg
+	 * 
+	 * @param wb
+	 * @param patriarch
+	 * @param pic
+	 * @param iRowStart
+	 * @param iColStart
+	 * @param iRowStop
+	 * @param iColStop
+	 * @throws IOException
+	 */
+	public static void addPicture(Workbook wb, Drawing<?> patriarch, String pic, int iRowStart, int iColStart,
+			int iRowStop, int iColStop) {
+		File imgFile = FileTool.checkFile(pic);
+		try (ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();) {
+			BufferedImage bufferImg = ImageIO.read(imgFile);
+			ImageIO.write(bufferImg, "jpg", byteArrayOut);
+			// 左,上(0-255),右(0-1023),下
+			HSSFClientAnchor anchor =
+					new HSSFClientAnchor(20, 1, 1018, 0, (short) (iColStart), iRowStart, (short) (iColStop), iRowStop);
+			patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 导出excel数据表格:<br>
+	 * 1.默认导出的文件名:数据导出<br>
+	 * 2.默认文件后缀为xls<br>
+	 * 3.默认文件名字节数组为本地默认编码<br>
+	 * 4.默认导出时文件名的编码为本地默认编码<br>
+	 * 5.默认每个sheet页最大行数为65535<br>
+	 * 6.默认每个sheet页都有标题
+	 * 
+	 * @param resp 响应
+	 * @param datas 需要导出的数据
+	 */
+	default <T> void exportExcel(List<T> datas, HttpServletResponse resp) {
+		exportExcel(datas, resp, ConstantOffice.EXCEL_FILE_NAME);
+	}
+
+	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName) {
+		exportExcel(datas, resp, excelName, Charset.defaultCharset());
+	}
+
+	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, Charset encode) {
+		exportExcel(datas, resp, excelName, encode, Charset.defaultCharset());
+	}
+
+	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, Charset encode,
+			Charset decode) {
+		exportExcel(datas, resp, excelName, encode.displayName(), decode.displayName());
+	}
+
+	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
+			String decode) {
+		exportExcel(datas, resp, excelName, encode, decode, ConstantOffice.EXCEL_SHEET_MAX);
+	}
+
+	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
+			String decode, int sheetMax) {
+		exportExcel(datas, resp, excelName, encode, decode, sheetMax, true);
+	}
+
+	/**
+	 * 导出excel到前端页面下载,若是中文文件名,默认编码时要用gbk,解码时要用iso8859-1
+	 * 
+	 * @param <T> 泛型
+	 * @param datas 导出的数据
+	 * @param resp 响应
+	 * @param excelName 文件名,可不带后缀,默认后缀为xls
+	 * @param encode 文件名编码的字符集
+	 * @param decode 文件名解压的字符集
+	 * @param sheetMax 每个sheet页的最大写入行数,默认65535
+	 * @param subject 是否添加标题,默认true添加false不添加,真实数据从第2行开始写入
+	 */
+	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
+			String decode, int sheetMax, boolean subject) {
+		resp.setContentType("application/download");
+		try (OutputStream os = resp.getOutputStream();) {
+			// 处理文件名后缀
+			String fileExtension = FileTool.getFileExtension(excelName);
+			if (StrTool.isBlank(fileExtension)) {
+				excelName += "." + ConstantOffice.EXCEL_FILE_NAME_SUFFIX;
+			}
+			// 处理文件编码
+			resp.setHeader("Content-Disposition",
+					"attchament;filename=" + new String(excelName.getBytes(encode), Charset.forName(decode)));
+			// 处理每个sheet页最大行数据
+			sheetMax = sheetMax >= ConstantOffice.EXCEL_SHEET_MAX ? ConstantOffice.EXCEL_SHEET_MAX : sheetMax;
+			long sheetNum = Math.round(NumberTool.div(datas.size(), sheetMax).floatValue());
+			for (int i = 1; i <= sheetNum; i++) {
+				handleSheet(i, datas, os, sheetMax, subject);
+			}
+		} catch (IOException e) {
+			throw new ResultException("导出失败", e);
+		}
+	}
 
 	/**
 	 * 根据文件后缀名生成相应的Workbook实例,将数据写入到excel中使用
@@ -121,6 +247,130 @@ public interface ExcelTools {
 		default:
 			return cell.getErrorCellValue();
 		}
+	}
+
+	/**
+	 * 文件导出到输入流中生成excel文件
+	 * 
+	 * @param <T> 泛型
+	 * @param index sheet页下标,从1开始
+	 * @param datas 实体类数据源集合或Map数据源集合
+	 * @param os 输入流
+	 * @param sheetMax 每个sheet页的最大写入行数,默认65535
+	 * @param subject 是否添加标题,默认true添加false不添加,真实数据从第2行开始写入
+	 */
+	<T> void handleSheet(int index, List<T> datas, OutputStream os, int sheetMax, boolean subject);
+
+	/**
+	 * 处理每一个单元格
+	 * 
+	 * @param <T> 泛型
+	 * @param cell 单元格
+	 * @param t 需要写入到单元格的数据
+	 * @param field 当前字段
+	 */
+	default <T> void handleCell(Cell cell, T t, Field field) {
+	}
+
+	/**
+	 * 读取excel表格数据,默认表格中第一行是key值,且可以使用,不计入数据,从第2行第1列读取数据
+	 * 
+	 * @param path 需要读取的excel文件路径
+	 * @return 结果集
+	 */
+	public static List<Map<String, Object>> readExcel(String path) {
+		return readExcel(path, true, null);
+	}
+
+	/**
+	 * 读取excel中的数据.第一行不计入数据,从2行第1列开始读取数据
+	 * 
+	 * @param path 文件地址
+	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
+	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值,但是第一行数据仍不使用
+	 * @return list集合
+	 */
+	public static List<Map<String, Object>> readExcel(String path, boolean firstUse, List<String> titles) {
+		return readExcel(path, firstUse, titles, 0);
+	}
+
+	/**
+	 * 读取excel中的数据.excel的第一行作为key值,不计入数据,从第beginRow+2行第1列开始读取数据
+	 * 
+	 * @param path 文件地址
+	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
+	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值,但是第一行数据仍不使用
+	 * @param beginRow 从第beginRow+2行开始读取数据
+	 * @return list集合
+	 */
+	public static List<Map<String, Object>> readExcel(String path, boolean firstUse, List<String> titles,
+			int beginRow) {
+		return readExcel(path, firstUse, titles, beginRow, 0);
+	}
+
+	/**
+	 * 读取excel中的数据.excel的第一行作为key值,不计入数据,从第beginRow+2行第beginCol+1列开始读取数据
+	 * 
+	 * @param path 需要读取的excel路径
+	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
+	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值,但是第一行数据仍不使用
+	 * @param beginRow 从第beginRow+2行开始读取数据
+	 * @param beginCol 从第beginCol+1列开始读取excel
+	 * @return 结果集
+	 */
+	public static List<Map<String, Object>> readExcel(String path, boolean firstUse, List<String> titles, int beginRow,
+			int beginCol) {
+		return null;
+	}
+
+	/**
+	 * 读取excel表格数据,默认表格中第一行是key值,且可以使用,不计入数据,从第2行第1列读取数据
+	 * 
+	 * @param is 输入流
+	 * @return 结果集
+	 */
+	default List<Map<String, Object>> readExcel(InputStream is) {
+		return readExcel(is, true, null);
+	}
+
+	/**
+	 * 读取excel中的数据.第一行不计入数据,从2行第1列开始读取数据
+	 * 
+	 * @param is 输入流
+	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
+	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值的集合,但是第一行数据仍不使用
+	 * @return 结果集
+	 */
+	default List<Map<String, Object>> readExcel(InputStream is, boolean firstUse, List<String> titles) {
+		return readExcel(is, firstUse, titles, 0);
+	}
+
+	/**
+	 * 读取excel中的数据.excel的第一行作为key值,不计入数据,从第beginRow+2行第1列开始读取数据
+	 * 
+	 * @param is 输入流
+	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
+	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值,但是第一行数据仍不使用
+	 * @param beginRow 从第beginRow+1行开始读取excel
+	 * @return 结果集
+	 */
+	default List<Map<String, Object>> readExcel(InputStream is, boolean firstUse, List<String> titles, int beginRow) {
+		return readExcel(is, firstUse, titles, beginRow, 0);
+	}
+
+	/**
+	 * 读取excel中的数据.excel的第一行作为key值,不计入数据,从第beginRow+2行第beginCol+1列开始读取数据
+	 * 
+	 * @param is 输入流
+	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
+	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值,但是第一行数据仍不使用
+	 * @param beginRow 从第beginRow+1行开始读取excel数据
+	 * @param beginCol 从第beginCol+1列开始读取excel
+	 * @return 结果集
+	 */
+	default List<Map<String, Object>> readExcel(InputStream is, boolean firstUse, List<String> titles, int beginRow,
+			int beginCol) {
+		return null;
 	}
 
 	/**
@@ -227,6 +477,43 @@ public interface ExcelTools {
 	}
 
 	/**
+	 * 将数据写入一个excel表中,表以低版本为主,即以xls结尾,默认无字段栏
+	 * 
+	 * @param excel 数据源
+	 * @param path 写入文件路径
+	 */
+	default boolean writeExcel(Workbook wb, List<List<List<Object>>> datas, String path) {
+		return writeExcel(wb, datas, path, null);
+	}
+
+	default boolean writeExcel(Workbook wb, List<List<List<Object>>> excel, String path, CellStyle cellStyle) {
+		return false;
+	}
+
+	/**
+	 * 根据excel文件的结尾来自动判断生成那种版本的excel,若传的文件没有指定类型,自动归结为低版本excel
+	 * 
+	 * @param path 以.xls或xlsx结尾的文件路径
+	 * @param list 数据源
+	 */
+	default boolean writeExcelAuto(String path, List<List<Object>> datas) {
+		List<List<List<Object>>> excel = new ArrayList<>();
+		excel.add(datas);
+		return writeExcelAuto(excel, path);
+	}
+
+	/**
+	 * 根据excel文件的结尾来自动判断生成那种版本的excel,若传的文件没有指定类型,自动归结为低版本excel
+	 * 
+	 * @param path 以.xls或xlsx结尾的文件路径
+	 * @param list 数据源
+	 */
+	default boolean writeExcelAuto(List<List<List<Object>>> excel, String path) {
+		Workbook workbook = generateWorkbook(path);
+		return writeExcel(workbook, excel, path);
+	}
+
+	/**
 	 * 参数检查,sheet最大数量检查
 	 * 
 	 * @param <T> 泛型数据类型
@@ -282,122 +569,10 @@ public interface ExcelTools {
 	}
 
 	/**
-	 * 导出excel数据表格:<br>
-	 * 1.默认导出的文件名:数据导出<br>
-	 * 2.默认文件后缀为xls<br>
-	 * 3.默认文件名字节数组为本地默认编码<br>
-	 * 4.默认导出时文件名的编码为本地默认编码<br>
-	 * 5.默认每个sheet页最大行数为65535<br>
-	 * 6.默认每个sheet页都有标题
-	 * 
-	 * @param resp 响应
-	 * @param datas 需要导出的数据
+	 * 根据excel模版来写入数据,需要先从一个excel中读取格式等信息 不同的版本需要不同的模版文件 FIXME
 	 */
-	default <T> void exportExcel(List<T> datas, HttpServletResponse resp) {
-		exportExcel(datas, resp, ConstantOffice.EXCEL_FILE_NAME);
-	}
-
-	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName) {
-		exportExcel(datas, resp, excelName, Charset.defaultCharset());
-	}
-
-	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, Charset encode) {
-		exportExcel(datas, resp, excelName, encode, Charset.defaultCharset());
-	}
-
-	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, Charset encode,
-			Charset decode) {
-		exportExcel(datas, resp, excelName, encode.displayName(), decode.displayName());
-	}
-
-	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
-			String decode) {
-		exportExcel(datas, resp, excelName, encode, decode, ConstantOffice.EXCEL_SHEET_MAX);
-	}
-
-	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
-			String decode, int sheetMax) {
-		exportExcel(datas, resp, excelName, encode, decode, sheetMax, true);
-	}
-
-	/**
-	 * 导出excel到前端页面下载,若是中文文件名,默认编码时要用gbk,解码时要用iso8859-1
-	 * 
-	 * @param <T> 泛型
-	 * @param datas 导出的数据
-	 * @param resp 响应
-	 * @param excelName 文件名,可不带后缀,默认后缀为xls
-	 * @param encode 文件名编码的字符集
-	 * @param decode 文件名解压的字符集
-	 * @param sheetMax 每个sheet页的最大写入行数,默认65535
-	 * @param subject 是否添加标题,默认true添加false不添加,真实数据从第2行开始写入
-	 */
-	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
-			String decode, int sheetMax, boolean subject) {
-		resp.setContentType("application/download");
-		try (OutputStream os = resp.getOutputStream();) {
-			// 处理文件名后缀
-			String fileExtension = FileTool.getFileExtension(excelName);
-			if (StrTool.isBlank(fileExtension)) {
-				excelName += "." + ConstantOffice.EXCEL_FILE_NAME_SUFFIX;
-			}
-			// 处理文件编码
-			resp.setHeader("Content-Disposition",
-					"attchament;filename=" + new String(excelName.getBytes(encode), Charset.forName(decode)));
-			// 处理每个sheet页最大行数据
-			sheetMax = sheetMax >= ConstantOffice.EXCEL_SHEET_MAX ? ConstantOffice.EXCEL_SHEET_MAX : sheetMax;
-			long sheetNum = Math.round(NumberTool.div(datas.size(), sheetMax).floatValue());
-			for (int i = 1; i <= sheetNum; i++) {
-				handleSheet(i, datas, os, sheetMax, subject);
-			}
-		} catch (IOException e) {
-			throw new ResultException("导出失败", e);
-		}
-	}
-
-	/**
-	 * 文件导出到输入流中生成excel文件
-	 * 
-	 * @param <T> 泛型
-	 * @param index sheet页下标,从1开始
-	 * @param datas 实体类数据源集合或Map数据源集合
-	 * @param os 输入流
-	 * @param sheetMax 每个sheet页的最大写入行数,默认65535
-	 * @param subject 是否添加标题,默认true添加false不添加,真实数据从第2行开始写入
-	 */
-	<T> void handleSheet(int index, List<T> datas, OutputStream os, int sheetMax, boolean subject);
-
-	/**
-	 * 处理每一个单元格
-	 * 
-	 * @param <T> 泛型
-	 * @param cell 单元格
-	 * @param t 需要写入到单元格的数据
-	 * @param field 当前字段
-	 */
-	default <T> void handleCell(Cell cell, T t, Field field) {}
-
-	/**
-	 * 根据excel文件的结尾来自动判断生成那种版本的excel,若传的文件没有指定类型,自动归结为低版本excel
-	 * 
-	 * @param path 以.xls或xlsx结尾的文件路径
-	 * @param list 数据源
-	 */
-	default boolean writeExcelAuto(String path, List<List<Object>> datas) {
-		List<List<List<Object>>> excel = new ArrayList<>();
-		excel.add(datas);
-		return writeExcelAuto(excel, path);
-	}
-
-	/**
-	 * 根据excel文件的结尾来自动判断生成那种版本的excel,若传的文件没有指定类型,自动归结为低版本excel
-	 * 
-	 * @param path 以.xls或xlsx结尾的文件路径
-	 * @param list 数据源
-	 */
-	default boolean writeExcelAuto(List<List<List<Object>>> excel, String path) {
-		Workbook workbook = generateWorkbook(path);
-		return writeExcel(workbook, excel, path);
+	public static boolean writeTemp() {
+		return false;
 	}
 
 	/**
@@ -442,176 +617,5 @@ public interface ExcelTools {
 	 */
 	default boolean writeXLSX(List<List<List<Object>>> excel, String path) {
 		return writeExcel(new XSSFWorkbook(), excel, path);
-	}
-
-	/**
-	 * 将数据写入一个excel表中,表以低版本为主,即以xls结尾,默认无字段栏
-	 * 
-	 * @param excel 数据源
-	 * @param path 写入文件路径
-	 */
-	default boolean writeExcel(Workbook wb, List<List<List<Object>>> datas, String path) {
-		return writeExcel(wb, datas, path, null);
-	}
-
-	default boolean writeExcel(Workbook wb, List<List<List<Object>>> excel, String path, CellStyle cellStyle) {
-		return false;
-	}
-
-	/**
-	 * 根据excel模版来写入数据,需要先从一个excel中读取格式等信息 不同的版本需要不同的模版文件 FIXME
-	 */
-	public static boolean writeTemp() {
-		return false;
-	}
-
-	/**
-	 * 读取excel表格数据,默认表格中第一行是key值,且可以使用,不计入数据,从第2行第1列读取数据
-	 * 
-	 * @param path 需要读取的excel文件路径
-	 * @return 结果集
-	 */
-	public static List<Map<String, Object>> readExcel(String path) {
-		return readExcel(path, true, null);
-	}
-
-	/**
-	 * 读取excel中的数据.第一行不计入数据,从2行第1列开始读取数据
-	 * 
-	 * @param path 文件地址
-	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
-	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值,但是第一行数据仍不使用
-	 * @return list集合
-	 */
-	public static List<Map<String, Object>> readExcel(String path, boolean firstUse, List<String> titles) {
-		return readExcel(path, firstUse, titles, 0);
-	}
-
-	/**
-	 * 读取excel中的数据.excel的第一行作为key值,不计入数据,从第beginRow+2行第1列开始读取数据
-	 * 
-	 * @param path 文件地址
-	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
-	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值,但是第一行数据仍不使用
-	 * @param beginRow 从第beginRow+2行开始读取数据
-	 * @return list集合
-	 */
-	public static List<Map<String, Object>> readExcel(String path, boolean firstUse, List<String> titles,
-			int beginRow) {
-		return readExcel(path, firstUse, titles, beginRow, 0);
-	}
-
-	/**
-	 * 读取excel中的数据.excel的第一行作为key值,不计入数据,从第beginRow+2行第beginCol+1列开始读取数据
-	 * 
-	 * @param path 需要读取的excel路径
-	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
-	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值,但是第一行数据仍不使用
-	 * @param beginRow 从第beginRow+2行开始读取数据
-	 * @param beginCol 从第beginCol+1列开始读取excel
-	 * @return 结果集
-	 */
-	public static List<Map<String, Object>> readExcel(String path, boolean firstUse, List<String> titles, int beginRow,
-			int beginCol) {
-		return null;
-	}
-
-	/**
-	 * 读取excel表格数据,默认表格中第一行是key值,且可以使用,不计入数据,从第2行第1列读取数据
-	 * 
-	 * @param is 输入流
-	 * @return 结果集
-	 */
-	default List<Map<String, Object>> readExcel(InputStream is) {
-		return readExcel(is, true, null);
-	}
-
-	/**
-	 * 读取excel中的数据.第一行不计入数据,从2行第1列开始读取数据
-	 * 
-	 * @param is 输入流
-	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
-	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值的集合,但是第一行数据仍不使用
-	 * @return 结果集
-	 */
-	default List<Map<String, Object>> readExcel(InputStream is, boolean firstUse, List<String> titles) {
-		return readExcel(is, firstUse, titles, 0);
-	}
-
-	/**
-	 * 读取excel中的数据.excel的第一行作为key值,不计入数据,从第beginRow+2行第1列开始读取数据
-	 * 
-	 * @param is 输入流
-	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
-	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值,但是第一行数据仍不使用
-	 * @param beginRow 从第beginRow+1行开始读取excel
-	 * @return 结果集
-	 */
-	default List<Map<String, Object>> readExcel(InputStream is, boolean firstUse, List<String> titles, int beginRow) {
-		return readExcel(is, firstUse, titles, beginRow, 0);
-	}
-
-	/**
-	 * 读取excel中的数据.excel的第一行作为key值,不计入数据,从第beginRow+2行第beginCol+1列开始读取数据
-	 * 
-	 * @param is 输入流
-	 * @param firstUse 每个sheet中第一行数据是否可作为字段使用,true可,false不可
-	 * @param titles 当firstUse为true时,该值不使用.若是false,则该值为字段名或key值,但是第一行数据仍不使用
-	 * @param beginRow 从第beginRow+1行开始读取excel数据
-	 * @param beginCol 从第beginCol+1列开始读取excel
-	 * @return 结果集
-	 */
-	default List<Map<String, Object>> readExcel(InputStream is, boolean firstUse, List<String> titles, int beginRow,
-			int beginCol) {
-		return null;
-	}
-
-	/**
-	 * 指定图片类型为jpg
-	 * 
-	 * @param wb
-	 * @param patriarch
-	 * @param pic
-	 * @param iRow
-	 * @param iCol
-	 * @throws IOException
-	 */
-	public static void setPicture(Workbook wb, Drawing<?> patriarch, String pic, int iRow, int iCol)
-			throws IOException {
-		// 判断文件是否存在
-		File imgFile = FileTool.checkFile(pic);
-		// 图片处理
-		ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
-		BufferedImage bufferImg = ImageIO.read(imgFile);
-		ImageIO.write(bufferImg, "jpg", byteArrayOut);
-		HSSFClientAnchor anchor = new HSSFClientAnchor(190, 0, 1000, 0, (short) (iCol), iRow - 1, (short) (iCol + 1),
-				iRow);
-		patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
-	}
-
-	/**
-	 * 指定图片类型为jpg
-	 * 
-	 * @param wb
-	 * @param patriarch
-	 * @param pic
-	 * @param iRowStart
-	 * @param iColStart
-	 * @param iRowStop
-	 * @param iColStop
-	 * @throws IOException
-	 */
-	public static void setPicture(Workbook wb, Drawing<?> patriarch, String pic, int iRowStart, int iColStart,
-			int iRowStop, int iColStop) throws IOException {
-		// 判断文件是否存在
-		File imgFile = FileTool.checkFile(pic);
-		// 图片处理
-		ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
-		BufferedImage bufferImg = ImageIO.read(imgFile);
-		ImageIO.write(bufferImg, "jpg", byteArrayOut);
-		// 左,上(0-255),右(0-1023),下
-		HSSFClientAnchor anchor = new HSSFClientAnchor(20, 1, 1018, 0, (short) (iColStart), iRowStart,
-				(short) (iColStop), iRowStop);
-		patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
 	}
 }

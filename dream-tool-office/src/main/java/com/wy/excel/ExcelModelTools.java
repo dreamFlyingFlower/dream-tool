@@ -30,13 +30,14 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * 实体类Excel工具类
  * 
- * @author ParadiseWY
+ * @author 飞花梦影
  * @date 2020-11-30 17:06:09
- * @git {@link https://github.com/mygodness100}
+ * @git {@link https://github.com/dreamFlyingFlower}
  */
 public class ExcelModelTools implements ExcelTools {
 
-	private ExcelModelTools() {}
+	private ExcelModelTools() {
+	}
 
 	private static class Inner {
 
@@ -147,8 +148,8 @@ public class ExcelModelTools implements ExcelTools {
 				} else {
 					if (field.isAnnotationPresent(ApiModelProperty.class)) {
 						ApiModelProperty apiModelProperty = field.getAnnotation(ApiModelProperty.class);
-						titleName = StrTool.isBlank(apiModelProperty.value()) ? field.getName()
-								: apiModelProperty.value();
+						titleName =
+								StrTool.isBlank(apiModelProperty.value()) ? field.getName() : apiModelProperty.value();
 					} else {
 						titleName = field.getName();
 					}
