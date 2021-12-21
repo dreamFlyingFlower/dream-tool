@@ -16,6 +16,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalUnit;
@@ -43,9 +45,9 @@ public class DateTimeTool {
 	/**
 	 * 默认格式化年月日时分秒字符串yyyy-MM-dd HH:mm:ss,系统自带的默认格式化字符串中间带T
 	 */
-	private static final DateTimeFormatter DEFAULT_FORMATTER = new DateTimeFormatterBuilder().parseCaseInsensitive()
-			.append(DateTimeFormatter.ISO_LOCAL_DATE).appendLiteral(' ').append(DEFAULT_TIME_FORMATTER).optionalStart()
-			.parseStrict().toFormatter();
+	private static final DateTimeFormatter DEFAULT_FORMATTER =
+			new DateTimeFormatterBuilder().parseCaseInsensitive().append(DateTimeFormatter.ISO_LOCAL_DATE)
+					.appendLiteral(' ').append(DEFAULT_TIME_FORMATTER).optionalStart().parseStrict().toFormatter();
 
 	/**
 	 * 定时时间格式化字符串:yyyy-MM-dd HH:mm:ss,等同于DEFAULT_FORMATTER
@@ -452,51 +454,53 @@ public class DateTimeTool {
 	}
 
 	/**
-	 * 判断当前时间是否在date1之后,即当前时间大于date1
+	 * 判断date1是否在当前时间之后,即date1大于等于当前时间
 	 * 
 	 * @param date1 时间1
-	 * @return true当当前时间在date1之前,相同也返回false
+	 * @return true->date1在当前时间之后或date1和当前时间相同,false->date1在当前时间之前
 	 */
 	public static boolean isAfter(Date date1) {
 		AssertTool.notNull(date1);
-		return date2Local(new Date()).isAfter(date2Local(date1));
+		LocalDateTime now = LocalDateTime.now();
+		return date2Local(date1).isAfter(now) || date2Local(date1).isEqual(now);
 	}
 
 	/**
-	 * 判断date1是否在date2之后,即date1大于date2
+	 * 判断date1是否在date2之后,即date1大于等于date2
 	 * 
 	 * @param date1 时间1
 	 * @param date2 时间2
-	 * @return true当date1在date2之后,相同也返回false
+	 * @return true->date1在date2之后或date1等于date2,false->date1在date2之前
 	 */
 	public static boolean isAfter(Date date1, Date date2) {
 		AssertTool.notNull(date1);
 		AssertTool.notNull(date2);
-		return date2Local(date1).isAfter(date2Local(date2));
+		return date2Local(date1).isAfter(date2Local(date2)) || date2Local(date1).isEqual(date2Local(date2));
 	}
 
 	/**
-	 * 判断当前时间是否在date1之前,即当前时间小于date1
+	 * 判断date1是否在当前时间之前,即date1小于等于当前时间
 	 * 
 	 * @param date1 时间1
-	 * @return true当当前时间在date1之前,相同也返回false
+	 * @return true->date1在当前时间之前或date1等于当前时间,false->date1在当前时间之后
 	 */
 	public static boolean isBefore(Date date1) {
 		AssertTool.notNull(date1);
-		return date2Local(new Date()).isBefore(date2Local(date1));
+		LocalDateTime now = LocalDateTime.now();
+		return date2Local(date1).isBefore(now) || date2Local(date1).isEqual(now);
 	}
 
 	/**
-	 * 判断date1是否在date2之前,即date1小于date2
+	 * 判断date1是否在date2之前,即date1小于等于date2
 	 * 
 	 * @param date1 时间1
 	 * @param date2 时间2
-	 * @return true当date1在date2之前,相同也返回false
+	 * @return true->date1在date2之前或date1等于date2,false->date1在date2之后
 	 */
 	public static boolean isBefore(Date date1, Date date2) {
 		AssertTool.notNull(date1);
 		AssertTool.notNull(date2);
-		return date2Local(date1).isBefore(date2Local(date2));
+		return date2Local(date1).isBefore(date2Local(date2)) || date2Local(date1).isEqual(date2Local(date2));
 	}
 
 	/**
@@ -973,6 +977,17 @@ public class DateTimeTool {
 	}
 
 	/**
+	 * 获得date1和date2相差的天数
+	 * 
+	 * @param date1 时间1
+	 * @param date2 时间2
+	 * @return 天数相差数
+	 */
+	public static long spanDays(Temporal date1, Temporal date2) {
+		return ChronoUnit.DAYS.between(date1, date2);
+	}
+
+	/**
 	 * 获得当前时间和指定时间之间相差的月数 {@link #spanMonth(LocalDate, LocalDate)}
 	 * 
 	 * @param date 指定时间,可以是未来的,也可以是过去的.
@@ -1027,6 +1042,22 @@ public class DateTimeTool {
 	}
 
 	/**
+	 * 获得date1到date2相差的月数,年份,月份,天数都需要根据情况比较,情况复杂
+	 * 
+	 * <pre>
+	 * LocalDate.of(2021, 11, 11), LocalDate.of(2001, 11, 11) = -240
+	 * LocalDate.of(2021, 11, 10), LocalDate.of(2001, 11, 11) = -239
+	 * </pre>
+	 * 
+	 * @param date1 时间1,可以是未来的,也可以是过去的
+	 * @param date2 时间2,可以是未来的,也可以是过去的
+	 * @return 月份相差数
+	 */
+	public static long spanMonths(LocalDate date1, LocalDate date2) {
+		return ChronoUnit.MONTHS.between(date1, date2);
+	}
+
+	/**
 	 * 获得指定时间到当前时间相差的年份
 	 * 
 	 * @param date1 指定时间
@@ -1066,5 +1097,16 @@ public class DateTimeTool {
 	 */
 	public static int spanYear(TemporalAccessor date1, TemporalAccessor date2) {
 		return date2.get(ChronoField.YEAR) - date1.get(ChronoField.YEAR);
+	}
+
+	/**
+	 * 获得date1到date2相差的年份
+	 * 
+	 * @param date1 时间1
+	 * @param date2 时间2
+	 * @return 年份相差数.大于0表示date2大于date1
+	 */
+	public static long spanYears(Temporal date1, Temporal date2) {
+		return ChronoUnit.YEARS.between(date1, date2);
 	}
 }

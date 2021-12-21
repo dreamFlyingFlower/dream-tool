@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -749,7 +750,7 @@ class Examples {
 	 * @return 转换后的Map
 	 */
 	@Example
-	public static Map<Long, Double> merge(List<HeavenSong> entitys) {
+	public static Map<Long, HeavenSong> merge(List<HeavenSong> entitys) {
 		HeavenSong entity1 = new HeavenSong();
 		entity1.setUserId(1l);
 		entity1.setSalary(1000.0);
@@ -758,11 +759,39 @@ class Examples {
 		entity2.setUserId(2l);
 		entity2.setSalary(2000.0);
 		entitys.add(entity2);
-		HashMap<Long, Double> newHashMap = MapTool.newHashMap();
-		// merge的第一个参数是需要在newHashMap中查找的的key
+		HashMap<Long, HeavenSong> newHashMap = MapTool.newHashMap();
+		// merge源码参见{@link Map#merge}
+		// 第一个参数是需要在newHashMap中查找的的key
 		// 第二个参数是要放入到newHashMap中的新的value
-		// 第三个参数是对newHashMap中的旧值和新值的处理方法:m是newHashMap中的旧值,n是新值,
-		entitys.stream().forEach(t -> newHashMap.merge(t.getUserId(), t.getSalary(), (m, n) -> m + n));
+		// 第三个参数是当newHashMap中的旧值存在时,旧值和新值的处理方法:m是newHashMap中的旧值,n是新值,
+		entitys.stream().forEach(t -> newHashMap.merge(t.getUserId(), t, (m, n) -> null));
+		System.out.println(newHashMap);
+		return newHashMap;
+	}
+
+	@Example
+	public static Map<Long, List<HeavenSong>> mergeList(List<HeavenSong> entitys) {
+		HeavenSong entity1 = new HeavenSong();
+		entity1.setUserId(1l);
+		entity1.setSalary(1000.0);
+		entitys.add(entity1);
+		HeavenSong entity2 = new HeavenSong();
+		entity2.setUserId(2l);
+		entity2.setSalary(2000.0);
+		entitys.add(entity2);
+		HeavenSong entity3 = new HeavenSong();
+		entity3.setUserId(1l);
+		entity3.setSalary(3000.0);
+		entitys.add(entity3);
+		HashMap<Long, List<HeavenSong>> newHashMap = MapTool.newHashMap();
+		// merge源码参见{@link Map#merge}
+		// 第一个参数是需要在newHashMap中查找的的key
+		// 第二个参数是要放入到newHashMap中的新的value
+		// 第三个参数是当newHashMap中的旧值存在时,旧值和新值的处理方法:m是newHashMap中的旧值,n是新值,
+		entitys.forEach(t -> newHashMap.merge(t.getUserId(), new ArrayList<>(Arrays.asList(t)), (m, n) -> {
+			m.addAll(n);
+			return m;
+		}));
 		System.out.println(newHashMap);
 		return newHashMap;
 	}

@@ -1,4 +1,4 @@
-package com.wy.limit;
+package com.wy.limit.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -6,6 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
+
+import com.wy.limit.LimitAccesser;
 
 /**
  * 访问限制

@@ -1,11 +1,16 @@
 package com.wy.collection;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import com.wy.ConstantLang;
+import com.wy.reflect.ReflectTool;
 
 /**
  * List工具类
@@ -132,6 +137,37 @@ public class ListTool extends CollectionTool {
 		return join(separator, subList.iterator());
 	}
 
+	/**
+	 * 将List转换为Map.
+	 * 
+	 * 本方法返回的Map中的key是Object,可参照该方法修改
+	 * 
+	 * @param <T>
+	 * @param lists 需要转换的List
+	 * @param key T中的字段,值用来作为Map的key
+	 * @return Map
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 */
+	public static <T> Map<Object, List<T>> toMapList(List<T> lists, String key)
+			throws NoSuchFieldException, SecurityException {
+		HashMap<Object, List<T>> newHashMap = MapTool.newHashMap();
+		Class<?> clazz = lists.get(0).getClass();
+		Field declaredField = clazz.getDeclaredField(key);
+		ReflectTool.fixAccessible(declaredField);
+		lists.forEach(t -> {
+			try {
+				newHashMap.merge(declaredField.get(t), new ArrayList<>(Arrays.asList(t)), (m, n) -> {
+					m.addAll(n);
+					return m;
+				});
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		});
+		return newHashMap;
+	}
+
 	public static <T> ListBuilder<T> builder() {
 		return new ListBuilder<T>();
 	}
@@ -144,7 +180,8 @@ public class ListTool extends CollectionTool {
 
 		private List<T> list = new ArrayList<>(16);
 
-		public ListBuilder() {}
+		public ListBuilder() {
+		}
 
 		public ListBuilder(T val) {
 			list.add(val);
