@@ -123,6 +123,20 @@ public class AnnotationUtil {
 	}
 
 	/**
+	 * 创建赋值语句
+	 * 
+	 * @param treeMaker
+	 * @param names
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public static JCTree.JCExpression makeArg(TreeMaker treeMaker, Names names, String key, String value) {
+		// 注解需要的参数是表达式,这里的实际实现为等式对象,Ident是值,Literal是value,最后结果为a=b
+		return treeMaker.Assign(treeMaker.Ident(names.fromString(key)), treeMaker.Literal(value));
+	}
+
+	/**
 	 * 创建域/方法的多级访问,方法的标识只能是最后一个
 	 * 
 	 * @param treeMaker 封装了定义方法,变量,类等等的方法

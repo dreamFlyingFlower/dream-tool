@@ -196,7 +196,7 @@ public class HttpTool {
 		URL url = new URL(encodeUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		// 设置请求方式,不写默认get,请求方式必须大写
-		conn.setRequestMethod("GET");
+		conn.setRequestMethod(HttpMethod.GET.name());
 		// 设置超时时间
 		conn.setConnectTimeout(timeout);
 		// 设置是否缓存请求
@@ -302,7 +302,7 @@ public class HttpTool {
 			throws IOException {
 		URL url = new URL(desUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("POST");
+		conn.setRequestMethod(HttpMethod.POST.name());
 		conn.setConnectTimeout(timeout);
 		conn.setDefaultUseCaches(false);
 		conn.setUseCaches(false);
@@ -311,12 +311,10 @@ public class HttpTool {
 		// 设置属性请求
 		// 维持长连接
 		conn.setRequestProperty("Connection", "keep-Alive");
-		conn.setRequestProperty("charset",
-				charsetName = StrTool.isBlank(charsetName) ? CharsetTool.defaultCharset().name() : charsetName);
+		conn.setRequestProperty("charset", CharsetTool.defaultCharset(charsetName).name());
 		conn.setRequestProperty("Content-Encoding", "gzip");
 		conn.setRequestProperty("Contert-length", String.valueOf(desUrl.length()));
-		conn.setRequestProperty("Content-type",
-				contentType = StrTool.isBlank(contentType) ? DEFAULT_CONTENTTYPE : contentType);
+		conn.setRequestProperty("Content-type", StrTool.getDefault(contentType, DEFAULT_CONTENTTYPE));
 		conn.connect();
 		if (StrTool.isNotBlank(params)) {
 			// 参数输出
@@ -331,7 +329,8 @@ public class HttpTool {
 		// 获得响应状态
 		int respCode = conn.getResponseCode();
 		if (HttpURLConnection.HTTP_OK == respCode) {
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader(conn.getInputStream(), CharsetTool.defaultCharset(charsetName)));
 			String line = null;
 			StringBuffer sb = new StringBuffer();
 			while ((line = br.readLine()) != null) {

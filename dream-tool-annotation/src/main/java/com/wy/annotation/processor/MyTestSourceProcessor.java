@@ -234,7 +234,7 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 			@Override
 			public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
 				// 创建一个value的赋值语句,作为注解的参数
-				JCTree.JCExpression arg = makeArg("value", "");
+				JCTree.JCExpression arg = AnnotationUtil.makeArg(treeMaker, names, "value", "");
 				// 创建注解对象
 				JCTree.JCAnnotation jcAnnotation =
 						AnnotationUtil.makeAnnotation(treeMaker, names, "lombok.Getter", List.of(arg));
@@ -249,18 +249,13 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 		});
 	}
 
-	public JCTree.JCExpression makeArg(String key, String value) {
-		// 注解需要的参数是表达式,这里的实际实现为等式对象,Ident是值,Literal是value,最后结果为a=b
-		return treeMaker.Assign(treeMaker.Ident(names.fromString(key)), treeMaker.Literal(value));
-	}
-
 	/**
 	 * 给类增加import语句
 	 * 
 	 * @param element
 	 * @param packageSupportEnums
 	 */
-	private void addImport(Element element, PackageEnum... packageSupportEnums) {
+	public void addImport(Element element, PackageEnum... packageSupportEnums) {
 		TreePath treePath = trees.getPath(element);
 		JCTree.JCCompilationUnit jccu = (JCTree.JCCompilationUnit) treePath.getCompilationUnit();
 		java.util.List<JCTree> trees = new ArrayList<>();
