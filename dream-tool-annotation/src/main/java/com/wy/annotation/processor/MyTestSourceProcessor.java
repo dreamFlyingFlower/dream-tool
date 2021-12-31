@@ -15,7 +15,12 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 
 import com.google.auto.service.AutoService;
@@ -50,7 +55,47 @@ import com.wy.annotation.TestSource;
 import com.wy.annotation.util.AnnotationUtil;
 
 /**
- * 处理编译时注解{@link TestSource}
+ * 处理编译时注解{@link TestSource}.注意,编译时注解还没有字节码文件,所以用底层反射会抛异常
+ * 
+ * {@link Element}:在逻辑上代表语言元素,比如包,类,方法等,是一个接口
+ * 
+ * <pre>
+ * {@link Element#getEnclosingElement}:返回封装此元素的最里层元素,即最近的外层元素
+ * 		如果此元素的声明在词法上直接封装在另一个元素的声明中,则返回那个封装元素;
+ * 		如果此元素是顶层类型,则返回它的包;如果此元素是一个包,则返回 null; 如果此元素是一个泛型参数,则返回 null
+ * 		比如一个类里面有方法,成员变量等,这个类相对于方法跟成员变量就是外层元素,而成员变量和方法相对于类就是内层元素
+ * {@link Element#getEnclosedElements}:获得所有的内层元素,比如方法,属性,注解等
+ * {@link Element#asType}:返回此元素定义的类型,实际上就是Java类型
+ * {@link Element#getKind}:返回此元素的种类:包,类,接口,方法,字段…方法返回一个枚举值ElementKind
+ * {@link Element#getModifiers}:返回元素的修饰符,如public,static等
+ * {@link Element#getSimpleName}:返回此元素的简单名称,比如activity名,变量就是变量名
+ * {@link Element#getAnnotation}:返回此元素指定类型的注解,否则返回null.注解可以是继承的,也可以是直接存在于此元素上的
+ * {@link PackageElement}:一个包程序元素
+ * {@link TypeElement}:一个类或接口程序元素,相当于当前注解所在的class对象
+ * 		typeElement.getQualifiedName().toString():类的绝对路径
+ * 		typeElement.getSimpleName().toString():类名
+ * 		processingEnv.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString():包名
+ * 		variableElement.getAnnotation(BindView.class):获取注解
+ * 		variableElement.getSimpleName().toString():参数名
+ * 		variableElement.getSimpleName().toString():参数对象名
+ * {@link TypeElement#getNestingKind()}:返回此类型元素的嵌套种类
+ * {@link TypeElement#getQualifiedName()}:返回此类型元素的完全限定名称,即规范名称.
+ * 		对于没有规范名称的局部类和匿名类,返回一个空名称.譬如 Activity 就是包名+类名
+ * {@link TypeElement#getSuperclass()}:返回此类型元素的直接超类.
+ * 		如果此类型元素表示一个接口或者类 java.lang.Object,则返回一个种类为 NONE 的 NoType
+ * {@link TypeElement#getInterfaces()}:返回直接由此类实现或直接由此接口扩展的接口类型
+ * {@link TypeElement#getTypeParameters()}:按照声明顺序返回此类型元素的形式类型参数
+ * {@link TypeParameterElement}:一般类,接口,方法或构造方法元素的泛型参数
+ * {@link ExecutableElement}:某个类或接口的方法,构造方法或初始化程序(静态或实例),包括注解类型元素
+ * {@link VariableElement}:一个字段,enum 常量,方法或构造方法参数,局部变量或异常参数
+ * {@link VariableElement#getConstantValue}:变量初始化的值
+ * {@link VariableElement#getEnclosingElement}:获取相关类信息
+ * </pre>
+ * 
+ * {@link TypeMirror}:包含自身信息,TypeMirror类型是DeclaredType或者TypeVariable时候可以转化成Element
+ * {@link TypeMirror#getKind()}:返回元素类型:Byte,Long,Int等
+ * 
+ * 编译时主要处理类:
  * 
  * <pre>
  * {@link TreeMaker}:TreeMaker创建语法树节点的所有方法,创建时会为创建出来的JCTree设置pos字段
@@ -145,8 +190,6 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 		// 得到使用了TestSource注解的所有元素
 		Set<? extends Element> eleStrSet = roundEnv.getElementsAnnotatedWith(TestSource.class);
 		for (Element eleStr : eleStrSet) {
-			// 获得所有的方法元素
-			// List<? extends Element> enclosedElements = eleStr.getEnclosedElements();
 			// 获得语法树
 			JCTree jcTree = trees.getTree(eleStr);
 			this.messager.printMessage(Diagnostic.Kind.NOTE, jcTree.toString());

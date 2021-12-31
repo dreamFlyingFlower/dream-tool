@@ -2,11 +2,16 @@ package com.wy.annotation.util;
 
 import java.util.Set;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
+import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
@@ -19,6 +24,12 @@ import com.sun.tools.javac.util.Names;
  * @git {@link https://github.com/dreamFlyingFlower }
  */
 public class AnnotationUtil {
+
+	public static boolean isBaseVarType(java.util.List<JCVariableDecl> decls) {
+		JCVariableDecl decl = decls.get(0);
+		decl.vartype.type.isPrimitive();
+		return true;
+	}
 
 	/**
 	 * 判断方法是否构造函数
@@ -46,6 +57,22 @@ public class AnnotationUtil {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * 获得当前元素的直接父元素,若为null表示无父元素
+	 * 
+	 * @param processingEnv
+	 * @param typeElement
+	 * @return
+	 */
+	public static TypeElement findSuperElement(ProcessingEnvironment processingEnv, TypeElement typeElement) {
+		Types typeUtils = processingEnv.getTypeUtils();
+		while (!typeElement.toString().equals(Object.class.getName())) {
+			TypeMirror typeMirror = typeElement.getSuperclass();
+			return (TypeElement) typeUtils.asElement(typeMirror);
+		}
+		return null;
 	}
 
 	/**
