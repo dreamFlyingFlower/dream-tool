@@ -25,10 +25,14 @@ import com.sun.tools.javac.util.Names;
  */
 public class AnnotationUtil {
 
-	public static boolean isBaseVarType(java.util.List<JCVariableDecl> decls) {
-		JCVariableDecl decl = decls.get(0);
-		decl.vartype.type.isPrimitive();
-		return true;
+	/**
+	 * 判断参数类型是否为基本类型
+	 * 
+	 * @param decl 变量定义
+	 * @return true->是基本类型,false->不是基本类型
+	 */
+	public static boolean isPrimitive(JCVariableDecl decl) {
+		return decl.type.isPrimitive();
 	}
 
 	/**

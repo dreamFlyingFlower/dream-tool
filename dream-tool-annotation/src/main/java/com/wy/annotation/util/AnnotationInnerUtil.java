@@ -72,7 +72,7 @@ public class AnnotationInnerUtil {
 		java.util.List<JCAnnotation> jcAnnotations = new ArrayList<>();
 		JCAnnotation jcAnnotation = AnnotationUtil.makeAnnotation(Autowired.toString(), List.nil());
 		jcAnnotations.add(jcAnnotation);
-		JCVariableDecl jcVariableDecl = treeMaker.VarDef(treeMaker.Modifiers(1, from(jcAnnotations)),
+		JCVariableDecl jcVariableDecl = treeMaker.VarDef(treeMaker.Modifiers(1, List.from(jcAnnotations)),
 				names.fromString(parentClassName.substring(0, 1).toLowerCase().concat(parentClassName.substring(1))),
 				treeMaker.Ident(names.fromString(parentClassName)), null);
 		jcVariableDeclList.add(jcVariableDecl);
@@ -122,7 +122,7 @@ public class AnnotationInnerUtil {
 					JCVariableDecl jcVariableDecl = e.params.get(i);
 					if (i == 0) {
 						// 第一个参数加requestbody注解,其他参数加requestparam注解,否则会报错
-						if (!isBaseVarType(jcVariableDecl.vartype.toString())) {
+						if (!AnnotationUtil.isPrimitive(jcVariableDecl)) {
 							jcVariableDecl.mods.annotations = jcVariableDecl.mods.annotations
 									.append(AnnotationUtil.makeAnnotation(RequestBody.toString(), List.nil()));
 						} else {
@@ -141,7 +141,6 @@ public class AnnotationInnerUtil {
 			messager.printMessage(Diagnostic.Kind.NOTE, "sourceMethods: {}" + e);
 			// value
 			JCExpression jcAssign = AnnotationUtil.makeArg(treeMaker, names, "value", "/" + e.name.toString());
-
 			JCAnnotation jcAnnotation = makeAnnotation(PostMapping.toString(), List.of(jcAssign));
 			messager.printMessage(Diagnostic.Kind.NOTE, "annotation: {}" + jcAnnotation);
 			e.mods.annotations = e.mods.annotations.append(jcAnnotation);

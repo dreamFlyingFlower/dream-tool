@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
@@ -34,15 +33,18 @@ import com.sun.tools.javac.tree.JCTree.JCAnnotation;
 import com.sun.tools.javac.tree.JCTree.JCAssign;
 import com.sun.tools.javac.tree.JCTree.JCBlock;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
+import com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCExpressionStatement;
 import com.sun.tools.javac.tree.JCTree.JCFieldAccess;
 import com.sun.tools.javac.tree.JCTree.JCIdent;
+import com.sun.tools.javac.tree.JCTree.JCImport;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.JCTree.JCModifiers;
 import com.sun.tools.javac.tree.JCTree.JCNewClass;
 import com.sun.tools.javac.tree.JCTree.JCReturn;
+import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;
@@ -75,9 +77,8 @@ import com.wy.annotation.util.AnnotationUtil;
  * 		typeElement.getQualifiedName().toString():类的绝对路径
  * 		typeElement.getSimpleName().toString():类名
  * 		processingEnv.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString():包名
- * 		variableElement.getAnnotation(BindView.class):获取注解
+ * 		variableElement.getAnnotation(TestSource.class):获取注解
  * 		variableElement.getSimpleName().toString():参数名
- * 		variableElement.getSimpleName().toString():参数对象名
  * {@link TypeElement#getNestingKind()}:返回此类型元素的嵌套种类
  * {@link TypeElement#getQualifiedName()}:返回此类型元素的完全限定名称,即规范名称.
  * 		对于没有规范名称的局部类和匿名类,返回一个空名称.譬如 Activity 就是包名+类名
@@ -99,17 +100,17 @@ import com.wy.annotation.util.AnnotationUtil;
  * 
  * <pre>
  * {@link TreeMaker}:TreeMaker创建语法树节点的所有方法,创建时会为创建出来的JCTree设置pos字段
- * {@link TreeMaker#Modifiers}:创建访问标志语法树节点{@link JCModifiers},参数列表:
+ * {@link TreeMaker#Modifiers}:创建访问标志语法树节点{@link JCModifiers}
  *		flags:访问标志,使用{@link Flags}枚举,且可以相加
  *		annotations:注解列表
- * {@link TreeMaker#ClassDef}:创建类定义语法树节点{@link JCClassDecl},参数列表:
+ * {@link TreeMaker#ClassDef}:创建类定义语法树节点{@link JCClassDecl}
  * 		mods:访问标志
  * 		name:类名
  * 		typarams:泛型参数列表
  * 		extending:父类
  * 		implementing:接口列表
  * 		defs:类定义的详细语句,包括字段,方法定义等
- * {@link TreeMaker#MethodDef}:创建方法定义节点{@link JCMethodDecl},参数列表:
+ * {@link TreeMaker#MethodDef}:创建方法定义节点{@link JCMethodDecl}
  * 		mods:访问标志
  * 		name:方法名
  * 		restype:返回类型
@@ -120,7 +121,7 @@ import com.wy.annotation.util.AnnotationUtil;
  * 		defaultValue:默认方法,可能是interface中的那个default
  * 		m:方法符号
  * 		mtype:方法类型.包含多种类型,泛型参数类型,方法参数类型,异常参数类型,返回参数类型
- * {@link TreeMaker#VarDef:}创建字段/变量定义语法树节点{@link JCVariableDecl},参数列表:
+ * {@link TreeMaker#VarDef:}创建字段/变量定义语法树节点{@link JCVariableDecl}
  * 		mods:访问标志
  * 		vartype:类型
  * 		init:初始化语句
@@ -140,7 +141,7 @@ import com.wy.annotation.util.AnnotationUtil;
  * 		typeargs:参数类型列表
  * 		fn:调用语句
  * 		args:参数列表
- * {@link TreeMaker#Assign}:创建赋值语句语法树节点{@link JCAssign},参数如下:
+ * {@link TreeMaker#Assign}:创建赋值语句语法树节点{@link JCAssign}
  * 		lhs:赋值语句左边表达式
  * 		rhs:赋值语句右边表达式
  * {@link TreeMaker#Exec}:创建可执行语句语法树节点{@link JCExpressionStatement}
@@ -148,7 +149,9 @@ import com.wy.annotation.util.AnnotationUtil;
  * 		flags:访问标志
  * 		stats:语句列表
  * {@link JCExpression}:表达式
- * {@link JCAnnotation}:注解
+ * {@link TreeMaker#Annotation}:创建注解{@link JCAnnotation}
+ * 		jcTree:元素
+ * 		list:参数
  * </pre>
  *
  * @author 飞花梦影
@@ -160,18 +163,16 @@ import com.wy.annotation.util.AnnotationUtil;
 @AutoService(Processor.class)
 public class MyTestSourceProcessor extends AbstractProcessor {
 
-	private static final Logger logger = Logger.getLogger(MyTestSourceProcessor.class.getName());
-
-	// 用于编译时的输出
+	/** 用于编译时的输出 */
 	private Messager messager;
 
-	// AST 树
+	/** AST 树 */
 	private JavacTrees trees;
 
-	// 封装了定义方法,变量,类等等的方法
+	/** 封装了定义方法,变量,类等等的方法 */
 	private TreeMaker treeMaker;
 
-	// 用于创建标识符
+	/** 用于创建标识符 */
 	private Names names;
 
 	@Override
@@ -197,12 +198,12 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 			jcTree.accept(new TreeTranslator() {
 
 				@Override
-				public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
-					List<JCTree.JCVariableDecl> jcVariableDeclList = List.nil();
+				public void visitClassDef(JCClassDecl jcClassDecl) {
+					List<JCVariableDecl> jcVariableDeclList = List.nil();
 
 					for (JCTree tree : jcClassDecl.defs) {
 						if (tree.getKind().equals(Tree.Kind.VARIABLE)) {
-							JCTree.JCVariableDecl jcVariableDecl = (JCTree.JCVariableDecl) tree;
+							JCVariableDecl jcVariableDecl = (JCVariableDecl) tree;
 							jcVariableDeclList = jcVariableDeclList.append(jcVariableDecl);
 						}
 					}
@@ -216,11 +217,11 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 		return true;
 	}
 
-	private JCTree.JCMethodDecl makeGetterMethodDecl(JCTree.JCVariableDecl jcVariableDecl) {
-		ListBuffer<JCTree.JCStatement> statements = new ListBuffer<>();
+	private JCMethodDecl makeGetterMethodDecl(JCVariableDecl jcVariableDecl) {
+		ListBuffer<JCStatement> statements = new ListBuffer<>();
 		statements.append(treeMaker
 				.Return(treeMaker.Select(treeMaker.Ident(names.fromString("this")), jcVariableDecl.getName())));
-		JCTree.JCBlock body = treeMaker.Block(0, statements.toList());
+		JCBlock body = treeMaker.Block(0, statements.toList());
 		return treeMaker.MethodDef(treeMaker.Modifiers(Flags.PUBLIC), getNewMethodName(jcVariableDecl.getName()),
 				jcVariableDecl.vartype, List.nil(), List.nil(), List.nil(), body, null);
 	}
@@ -247,18 +248,19 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 		jcTree.accept(new TreeTranslator() {
 
 			@Override
-			public void visitAnnotation(JCTree.JCAnnotation jcAnnotation) {
-				JCTree.JCIdent jcIdent = (JCTree.JCIdent) jcAnnotation.getAnnotationType();
+			public void visitAnnotation(JCAnnotation jcAnnotation) {
+				JCIdent jcIdent = (JCIdent) jcAnnotation.getAnnotationType();
 				if (jcIdent.name.contentEquals("MobCloudConsumer")) {
-					logger.info("class Annotation arg process:" + jcAnnotation.toString());
+					messager.printMessage(Diagnostic.Kind.NOTE,
+							"class Annotation arg process:" + jcAnnotation.toString());
 					jcAnnotation.args.forEach(e -> {
-						JCTree.JCAssign jcAssign = (JCTree.JCAssign) e;
-						JCTree.JCIdent value = treeMaker.Ident(names.fromString("value"));
-						JCTree.JCAssign targetArg = treeMaker.Assign(value, jcAssign.rhs);
+						JCAssign jcAssign = (JCAssign) e;
+						JCIdent value = treeMaker.Ident(names.fromString("value"));
+						JCAssign targetArg = treeMaker.Assign(value, jcAssign.rhs);
 						consumerSourceAnnotationValue.put(jcAssign.lhs.toString(), targetArg);
 					});
 				}
-				logger.info("获取参数如下:" + consumerSourceAnnotationValue);
+				messager.printMessage(Diagnostic.Kind.NOTE, "获取参数如下:" + consumerSourceAnnotationValue);
 				super.visitAnnotation(jcAnnotation);
 			}
 		});
@@ -275,17 +277,17 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 
 			// 遍历所有类定义
 			@Override
-			public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
+			public void visitClassDef(JCClassDecl jcClassDecl) {
 				// 创建一个value的赋值语句,作为注解的参数
-				JCTree.JCExpression arg = AnnotationUtil.makeArg(treeMaker, names, "value", "");
+				JCExpression arg = AnnotationUtil.makeArg(treeMaker, names, "value", "");
 				// 创建注解对象
-				JCTree.JCAnnotation jcAnnotation =
+				JCAnnotation jcAnnotation =
 						AnnotationUtil.makeAnnotation(treeMaker, names, "lombok.Getter", List.of(arg));
-				logger.info("class Annotation add:" + jcAnnotation.toString());
+				messager.printMessage(Diagnostic.Kind.NOTE, "class Annotation add:" + jcAnnotation.toString());
 				// 在原有类定义中append新的注解对象
 				jcClassDecl.mods.annotations = jcClassDecl.mods.annotations.append(jcAnnotation);
 				jcClassDecl.mods.annotations.forEach(e -> {
-					logger.info("class Annotation list:" + e.toString());
+					messager.printMessage(Diagnostic.Kind.NOTE, "class Annotation list:" + e.toString());
 				});
 				super.visitClassDef(jcClassDecl);
 			}
@@ -300,7 +302,7 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 	 */
 	public void addImport(Element element, PackageEnum... packageSupportEnums) {
 		TreePath treePath = trees.getPath(element);
-		JCTree.JCCompilationUnit jccu = (JCTree.JCCompilationUnit) treePath.getCompilationUnit();
+		JCCompilationUnit jccu = (JCCompilationUnit) treePath.getCompilationUnit();
 		java.util.List<JCTree> trees = new ArrayList<>();
 		trees.addAll(jccu.defs);
 		java.util.List<JCTree> sourceImportList = new ArrayList<>();
@@ -309,7 +311,7 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 				sourceImportList.add(e);
 			}
 		});
-		java.util.List<JCTree.JCImport> needImportList = buildImportList(packageSupportEnums);
+		java.util.List<JCImport> needImportList = buildImportList(packageSupportEnums);
 		for (int i = 0; i < needImportList.size(); i++) {
 			boolean importExist = false;
 			for (int j = 0; j < sourceImportList.size(); j++) {
@@ -324,11 +326,11 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 		jccu.defs = List.from(trees);
 	}
 
-	private java.util.List<JCTree.JCImport> buildImportList(PackageEnum... packageSupportEnums) {
-		java.util.List<JCTree.JCImport> targetImportList = new ArrayList<>();
+	private java.util.List<JCImport> buildImportList(PackageEnum... packageSupportEnums) {
+		java.util.List<JCImport> targetImportList = new ArrayList<>();
 		if (packageSupportEnums.length > 0) {
 			for (int i = 0; i < packageSupportEnums.length; i++) {
-				JCTree.JCImport needImport =
+				JCImport needImport =
 						buildImport(packageSupportEnums[i].getPackageName(), packageSupportEnums[i].getClassName());
 				targetImportList.add(needImport);
 			}
@@ -336,9 +338,8 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 		return targetImportList;
 	}
 
-	private JCTree.JCImport buildImport(String packageName, String className) {
-		JCTree.JCIdent ident = treeMaker.Ident(names.fromString(packageName));
-		JCTree.JCImport jcImport = treeMaker.Import(treeMaker.Select(ident, names.fromString(className)), false);
-		return jcImport;
+	private JCImport buildImport(String packageName, String className) {
+		JCIdent ident = treeMaker.Ident(names.fromString(packageName));
+		return treeMaker.Import(treeMaker.Select(ident, names.fromString(className)), false);
 	}
 }
