@@ -1,20 +1,31 @@
 package com.wy.annotation.util;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 
+import com.sun.source.tree.Tree;
+import com.sun.source.util.TreePath;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.JCTree.JCAnnotation;
+import com.sun.tools.javac.tree.JCTree.JCClassDecl;
+import com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree.JCIdent;
+import com.sun.tools.javac.tree.JCTree.JCImport;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
+import com.sun.tools.javac.tree.JCTree.JCModifiers;
 import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
+import com.wy.annotation.enums.AnnotationEnum;
 
 /**
  * 注解工具类
@@ -41,7 +52,7 @@ public class AnnotationUtil {
 	 * @param jcMethodDecl 方法定义
 	 * @return true->是,false->否
 	 */
-	public static boolean constructor(JCTree.JCMethodDecl jcMethodDecl) {
+	public static boolean constructor(JCMethodDecl jcMethodDecl) {
 		String name = jcMethodDecl.name.toString();
 		if ("<init>".equals(name)) {
 			return true;
@@ -86,7 +97,7 @@ public class AnnotationUtil {
 	 * @return true->是,false->否
 	 */
 	public static boolean methodNoArgs(JCMethodDecl jcMethodDecl) {
-		List<JCTree.JCVariableDecl> jcVariableDeclList = jcMethodDecl.getParameters();
+		List<JCVariableDecl> jcVariableDeclList = jcMethodDecl.getParameters();
 		if (jcVariableDeclList == null || jcVariableDeclList.size() == 0) {
 			return true;
 		}
@@ -100,7 +111,7 @@ public class AnnotationUtil {
 	 * @return true->是,false->否
 	 */
 	public static boolean methodPublic(JCMethodDecl jcMethodDecl) {
-		JCTree.JCModifiers jcModifiers = jcMethodDecl.getModifiers();
+		JCModifiers jcModifiers = jcMethodDecl.getModifiers();
 		Set<Modifier> modifiers = jcModifiers.getFlags();
 		if (modifiers.contains(Modifier.PUBLIC)) {
 			return true;
@@ -115,7 +126,7 @@ public class AnnotationUtil {
 	 * @return true->是,false->否
 	 */
 	public static boolean methodPrivate(JCMethodDecl jcMethodDecl) {
-		JCTree.JCModifiers jcModifiers = jcMethodDecl.getModifiers();
+		JCModifiers jcModifiers = jcMethodDecl.getModifiers();
 		Set<Modifier> modifiers = jcModifiers.getFlags();
 		if (modifiers.contains(Modifier.PRIVATE)) {
 			return true;
@@ -130,7 +141,7 @@ public class AnnotationUtil {
 	 * @return true->是,false->否
 	 */
 	public static boolean methodFinal(JCMethodDecl jcMethodDecl) {
-		JCTree.JCModifiers jcModifiers = jcMethodDecl.getModifiers();
+		JCModifiers jcModifiers = jcMethodDecl.getModifiers();
 		Set<Modifier> modifiers = jcModifiers.getFlags();
 		if (modifiers.contains(Modifier.FINAL)) {
 			return true;
@@ -147,9 +158,9 @@ public class AnnotationUtil {
 	 * @param args 注解参数
 	 * @return 注解表达式
 	 */
-	public static JCTree.JCAnnotation makeAnnotation(TreeMaker treeMaker, Names names, String annotaionName,
-			List<JCTree.JCExpression> args) {
-		JCTree.JCExpression expression = AnnotationUtil.chainDots(treeMaker, names, annotaionName);
+	public static JCAnnotation makeAnnotation(TreeMaker treeMaker, Names names, String annotaionName,
+			List<JCExpression> args) {
+		JCExpression expression = AnnotationUtil.chainDots(treeMaker, names, annotaionName);
 		return treeMaker.Annotation(expression, args);
 	}
 
@@ -162,7 +173,7 @@ public class AnnotationUtil {
 	 * @param value
 	 * @return
 	 */
-	public static JCTree.JCExpression makeArg(TreeMaker treeMaker, Names names, String key, String value) {
+	public static JCExpression makeArg(TreeMaker treeMaker, Names names, String key, Object value) {
 		// 注解需要的参数是表达式,这里的实际实现为等式对象,Ident是值,Literal是value,最后结果为a=b
 		return treeMaker.Assign(treeMaker.Ident(names.fromString(key)), treeMaker.Literal(value));
 	}
@@ -176,12 +187,107 @@ public class AnnotationUtil {
 	 * @return 类访问表达式
 	 */
 	public static JCExpression chainDots(TreeMaker treeMaker, Names names, String element) {
-		JCTree.JCExpression e = null;
+		JCExpression e = null;
 		String[] elems = element.split("\\.");
 		for (int i = 0; i < elems.length; i++) {
 			e = e == null ? treeMaker.Ident(names.fromString(elems[i]))
 					: treeMaker.Select(e, names.fromString(elems[i]));
 		}
 		return e;
+	}
+
+	/**
+	 * 添加无参注解
+	 * 
+	 * @param treeMaker
+	 * @param names
+	 * @param annotationName
+	 * @param jcClassDecl
+	 */
+	public static void addAnnotation(TreeMaker treeMaker, Names names, String annotationName, JCClassDecl jcClassDecl) {
+		JCAnnotation jcAnnotation = AnnotationUtil.makeAnnotation(treeMaker, names, annotationName, List.nil());
+		jcClassDecl.mods.annotations = jcClassDecl.mods.annotations.append(jcAnnotation);
+	}
+
+	/**
+	 * 添加有参数注解
+	 * 
+	 * @param treeMaker
+	 * @param names
+	 * @param annotationName
+	 * @param jcClassDecl
+	 * @param args
+	 */
+	public static void addAnnotation(TreeMaker treeMaker, Names names, String annotationName, JCClassDecl jcClassDecl,
+			List<JCExpression> args) {
+		JCAnnotation jcAnnotation = AnnotationUtil.makeAnnotation(treeMaker, names, annotationName, args);
+		jcClassDecl.mods.annotations = jcClassDecl.mods.annotations.append(jcAnnotation);
+	}
+
+	/**
+	 * 添加有参数注解
+	 * 
+	 * @param treeMaker
+	 * @param names
+	 * @param annotationName
+	 * @param jcClassDecl
+	 * @param key
+	 * @param value
+	 */
+	public static void addAnnotation(TreeMaker treeMaker, Names names, String annotationName, JCClassDecl jcClassDecl,
+			String key, Object value) {
+		JCExpression args = makeArg(treeMaker, names, key, value);
+		JCAnnotation jcAnnotation = AnnotationUtil.makeAnnotation(treeMaker, names, annotationName, List.of(args));
+		jcClassDecl.mods.annotations = jcClassDecl.mods.annotations.append(jcAnnotation);
+	}
+
+	/**
+	 * 给类增加import语句
+	 * 
+	 * @param element
+	 * @param packageSupportEnums
+	 */
+	public static void addImport(TreePath treePath, Element element, TreeMaker treeMaker, Names names,
+			AnnotationEnum... annotationEnums) {
+		JCCompilationUnit jccu = (JCCompilationUnit) treePath.getCompilationUnit();
+		java.util.List<JCTree> trees = new ArrayList<>();
+		trees.addAll(jccu.defs);
+		java.util.List<JCTree> sourceImportList = new ArrayList<>();
+		trees.forEach(e -> {
+			if (e.getKind().equals(Tree.Kind.IMPORT)) {
+				sourceImportList.add(e);
+			}
+		});
+		java.util.List<JCImport> needImportList = buildImportList(treeMaker, names, annotationEnums);
+		for (int i = 0; i < needImportList.size(); i++) {
+			boolean importExist = false;
+			for (int j = 0; j < sourceImportList.size(); j++) {
+				if (sourceImportList.get(j).toString().equals(needImportList.get(i).toString())) {
+					importExist = true;
+				}
+			}
+			if (!importExist) {
+				trees.add(0, needImportList.get(i));
+			}
+		}
+		jccu.defs = List.from(trees);
+	}
+
+	private static java.util.List<JCImport> buildImportList(TreeMaker treeMaker, Names names,
+			AnnotationEnum... annotationEnums) {
+		java.util.List<JCImport> targetImportList = new ArrayList<>();
+		if (annotationEnums.length > 0) {
+			for (int i = 0; i < annotationEnums.length; i++) {
+				JCImport needImport = buildImport(treeMaker, names, annotationEnums[i].packageName(),
+						annotationEnums[i].simpleName());
+				targetImportList.add(needImport);
+			}
+		}
+		return targetImportList;
+	}
+
+	private static JCImport buildImport(TreeMaker treeMaker, Names names, String packageName, String className) {
+		JCIdent ident = treeMaker.Ident(names.fromString(packageName));
+		return treeMaker.Import(treeMaker.Select(ident, names.fromString(className)), false);
 	}
 }

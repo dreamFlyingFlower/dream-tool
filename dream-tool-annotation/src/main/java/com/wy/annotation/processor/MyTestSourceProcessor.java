@@ -1,6 +1,5 @@
 package com.wy.annotation.processor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -24,21 +23,21 @@ import javax.tools.Diagnostic;
 
 import com.google.auto.service.AutoService;
 import com.sun.source.tree.Tree;
-import com.sun.source.util.TreePath;
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCAnnotation;
 import com.sun.tools.javac.tree.JCTree.JCAssign;
+import com.sun.tools.javac.tree.JCTree.JCAssignOp;
+import com.sun.tools.javac.tree.JCTree.JCBinary;
 import com.sun.tools.javac.tree.JCTree.JCBlock;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
-import com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCExpressionStatement;
 import com.sun.tools.javac.tree.JCTree.JCFieldAccess;
 import com.sun.tools.javac.tree.JCTree.JCIdent;
-import com.sun.tools.javac.tree.JCTree.JCImport;
+import com.sun.tools.javac.tree.JCTree.JCLiteral;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.tree.JCTree.JCMethodInvocation;
 import com.sun.tools.javac.tree.JCTree.JCModifiers;
@@ -149,6 +148,11 @@ import com.wy.annotation.util.AnnotationUtil;
  * 		flags:访问标志
  * 		stats:语句列表
  * {@link JCExpression}:表达式
+ * ->{@link JCAssign}:赋值语句
+ * ->{@link JCAssignOp}:+=
+ * ->{@link JCIdent}:标识符,可以是变量,类型,关键字等等
+ * ->{@link JCLiteral}:字面量表达式,如123,string等
+ * ->{@link JCBinary}:二元操作符
  * {@link TreeMaker#Annotation}:创建注解{@link JCAnnotation}
  * 		jcTree:元素
  * 		list:参数
@@ -178,7 +182,6 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 	@Override
 	public synchronized void init(ProcessingEnvironment processingEnv) {
 		super.init(processingEnv);
-		this.processingEnv = processingEnv;
 		this.messager = processingEnv.getMessager();
 		this.trees = JavacTrees.instance(processingEnv);
 		Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
@@ -292,54 +295,5 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 				super.visitClassDef(jcClassDecl);
 			}
 		});
-	}
-
-	/**
-	 * 给类增加import语句
-	 * 
-	 * @param element
-	 * @param packageSupportEnums
-	 */
-	public void addImport(Element element, PackageEnum... packageSupportEnums) {
-		TreePath treePath = trees.getPath(element);
-		JCCompilationUnit jccu = (JCCompilationUnit) treePath.getCompilationUnit();
-		java.util.List<JCTree> trees = new ArrayList<>();
-		trees.addAll(jccu.defs);
-		java.util.List<JCTree> sourceImportList = new ArrayList<>();
-		trees.forEach(e -> {
-			if (e.getKind().equals(Tree.Kind.IMPORT)) {
-				sourceImportList.add(e);
-			}
-		});
-		java.util.List<JCImport> needImportList = buildImportList(packageSupportEnums);
-		for (int i = 0; i < needImportList.size(); i++) {
-			boolean importExist = false;
-			for (int j = 0; j < sourceImportList.size(); j++) {
-				if (sourceImportList.get(j).toString().equals(needImportList.get(i).toString())) {
-					importExist = true;
-				}
-			}
-			if (!importExist) {
-				trees.add(0, needImportList.get(i));
-			}
-		}
-		jccu.defs = List.from(trees);
-	}
-
-	private java.util.List<JCImport> buildImportList(PackageEnum... packageSupportEnums) {
-		java.util.List<JCImport> targetImportList = new ArrayList<>();
-		if (packageSupportEnums.length > 0) {
-			for (int i = 0; i < packageSupportEnums.length; i++) {
-				JCImport needImport =
-						buildImport(packageSupportEnums[i].getPackageName(), packageSupportEnums[i].getClassName());
-				targetImportList.add(needImport);
-			}
-		}
-		return targetImportList;
-	}
-
-	private JCImport buildImport(String packageName, String className) {
-		JCIdent ident = treeMaker.Ident(names.fromString(packageName));
-		return treeMaker.Import(treeMaker.Select(ident, names.fromString(className)), false);
 	}
 }

@@ -1,13 +1,5 @@
 package com.wy.annotation.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.annotation.processing.Messager;
-import javax.tools.Diagnostic;
-
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCAnnotation;
@@ -24,7 +16,13 @@ import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
-import com.sun.tools.javac.util.JCDiagnostic.DiagnosticFlag;
+import com.wy.annotation.enums.SpringEnum;
+
+import javax.annotation.processing.Messager;
+import javax.tools.Diagnostic;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 构建内部类
@@ -70,7 +68,8 @@ public class AnnotationInnerUtil {
 		messager.printMessage(Diagnostic.Kind.NOTE, "simpleClassName:" + parentClassName);
 		java.util.List<JCVariableDecl> jcVariableDeclList = new ArrayList<>();
 		java.util.List<JCAnnotation> jcAnnotations = new ArrayList<>();
-		JCAnnotation jcAnnotation = AnnotationUtil.makeAnnotation(Autowired.toString(), List.nil());
+		JCAnnotation jcAnnotation =
+				AnnotationUtil.makeAnnotation(treeMaker, names, SpringEnum.Autowired.toString(), List.nil());
 		jcAnnotations.add(jcAnnotation);
 		JCVariableDecl jcVariableDecl = treeMaker.VarDef(treeMaker.Modifiers(1, List.from(jcAnnotations)),
 				names.fromString(parentClassName.substring(0, 1).toLowerCase().concat(parentClassName.substring(1))),
@@ -82,8 +81,10 @@ public class AnnotationInnerUtil {
 	private static JCModifiers buildInnerClassAnnotation(TreeMaker treeMaker, Names names) {
 		JCExpression jcAssign = AnnotationUtil.makeArg(treeMaker, names, "value",
 				providerSourceAnnotationValue.get("feignClientPrefix").rhs.toString().replace("\"", ""));
-		JCAnnotation jcAnnotation = AnnotationUtil.makeAnnotation(RequestMapping.toString(), List.of(jcAssign));
-		JCAnnotation restController = AnnotationUtil.makeAnnotation(RestController.toString(), List.nil());
+		JCAnnotation jcAnnotation = AnnotationUtil.makeAnnotation(treeMaker, names,
+				SpringEnum.RequestMapping.toString(), List.of(jcAssign));
+		JCAnnotation restController =
+				AnnotationUtil.makeAnnotation(treeMaker, names, SpringEnum.RestController.toString(), List.nil());
 		JCModifiers mods =
 				treeMaker.Modifiers(Flags.PUBLIC | Flags.STATIC, List.of(jcAnnotation).append(restController));
 		return mods;
@@ -123,16 +124,19 @@ public class AnnotationInnerUtil {
 					if (i == 0) {
 						// 第一个参数加requestbody注解,其他参数加requestparam注解,否则会报错
 						if (!AnnotationUtil.isPrimitive(jcVariableDecl)) {
-							jcVariableDecl.mods.annotations = jcVariableDecl.mods.annotations
-									.append(AnnotationUtil.makeAnnotation(RequestBody.toString(), List.nil()));
+							jcVariableDecl.mods.annotations =
+									jcVariableDecl.mods.annotations.append(AnnotationUtil.makeAnnotation(treeMaker,
+											names, SpringEnum.RequestBody.toString(), List.nil()));
 						} else {
-							JCAnnotation requestParam = AnnotationUtil.makeAnnotation(RequestParam.toString(), List.of(
-									AnnotationUtil.makeArg(treeMaker, names, "value", jcVariableDecl.name.toString())));
+							JCAnnotation requestParam = AnnotationUtil.makeAnnotation(treeMaker, names,
+									SpringEnum.RequestParam.toString(), List.of(AnnotationUtil.makeArg(treeMaker,
+											names, "value", jcVariableDecl.name.toString())));
 							jcVariableDecl.mods.annotations = jcVariableDecl.mods.annotations.append(requestParam);
 						}
 					} else {
-						JCAnnotation requestParam = makeAnnotation(AnnotationUtil.RequestParam.toString(), List
-								.of(AnnotationUtil.makeArg(treeMaker, names, "value", jcVariableDecl.name.toString())));
+						JCAnnotation requestParam = AnnotationUtil.makeAnnotation(treeMaker, names,
+								SpringEnum.RequestParam.toString(), List.of(AnnotationUtil.makeArg(treeMaker,
+										names, "value", jcVariableDecl.name.toString())));
 						jcVariableDecl.mods.annotations = jcVariableDecl.mods.annotations.append(requestParam);
 					}
 
@@ -141,7 +145,8 @@ public class AnnotationInnerUtil {
 			messager.printMessage(Diagnostic.Kind.NOTE, "sourceMethods: {}" + e);
 			// value
 			JCExpression jcAssign = AnnotationUtil.makeArg(treeMaker, names, "value", "/" + e.name.toString());
-			JCAnnotation jcAnnotation = makeAnnotation(PostMapping.toString(), List.of(jcAssign));
+			JCAnnotation jcAnnotation = AnnotationUtil.makeAnnotation(treeMaker, names,
+					SpringEnum.PostMapping.toString(), List.of(jcAssign));
 			messager.printMessage(Diagnostic.Kind.NOTE, "annotation: {}" + jcAnnotation);
 			e.mods.annotations = e.mods.annotations.append(jcAnnotation);
 			JCExpressionStatement exec =
