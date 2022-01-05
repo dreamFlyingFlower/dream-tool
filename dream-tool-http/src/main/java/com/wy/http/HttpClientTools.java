@@ -16,6 +16,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpMessage;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
@@ -163,12 +164,30 @@ public class HttpClientTools {
 	 * @param params 参数
 	 * @param charset 字符编码集
 	 * @return HttpPost
-	 * @throws UnsupportedEncodingException
 	 */
-	public static HttpPost buildPost(String url, Map<String, String> params, Charset charset)
-			throws UnsupportedEncodingException {
+	public static HttpPost buildPost(String url, Map<String, String> params, Charset charset) {
 		HttpPost post = new HttpPost(url);
 		setCommonHttpMethod(post);
+		if (params != null) {
+			post.setEntity(buildParamsPost(params, charset));
+		}
+		return post;
+	}
+
+	/**
+	 * 构建post请求
+	 * 
+	 * @param url 请求地址
+	 * @param params 参数
+	 * @param charset 字符编码集
+	 * @param headerMap 请求头
+	 * @return HttpPost
+	 */
+	public static HttpPost buildPost(String url, Map<String, String> params, Charset charset,
+			Map<String, Object> headerMap) {
+		HttpPost post = new HttpPost(url);
+		setCommonHttpMethod(post);
+		setHeader(post, headerMap);
 		if (params != null) {
 			post.setEntity(buildParamsPost(params, charset));
 		}
@@ -225,8 +244,7 @@ public class HttpClientTools {
 	 * @return 表单请求对象
 	 * @throws UnsupportedEncodingException
 	 */
-	public static UrlEncodedFormEntity buildParamsPost(Map<String, String> params, Charset charset)
-			throws UnsupportedEncodingException {
+	public static UrlEncodedFormEntity buildParamsPost(Map<String, String> params, Charset charset) {
 		List<NameValuePair> ps = new ArrayList<>();
 		for (String key : params.keySet()) {
 			ps.add(new BasicNameValuePair(key, params.get(key)));
@@ -412,14 +430,16 @@ public class HttpClientTools {
 	 * @throws IOException
 	 * @throws ClientProtocolException
 	 */
-	public static String sendPostForm(String url, Map<String, String> params, Charset charset)
-			throws ClientProtocolException, IOException {
+	public static String sendPostForm(String url, Map<String, String> params, Charset charset) {
 		HttpPost postMethod = buildPost(url, params, charset);
 		try (CloseableHttpClient client = buildClient(true);
 				CloseableHttpResponse response = client.execute(postMethod);) {
 			assertResponseStatus(response);
 			return null != response.getEntity() ? EntityUtils.toString(response.getEntity(), charset) : null;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		return null;
 	}
 
 	/**
@@ -435,6 +455,21 @@ public class HttpClientTools {
 	public static String sendPostForm(String url, Map<String, String> params, String charsetName)
 			throws ClientProtocolException, IOException {
 		return sendPostForm(url, params, CharsetTool.defaultCharset(charsetName));
+	}
+
+	public static HttpResponse sendPostForm(String url, Map<String, String> params, Charset charset,
+			Map<String, Object> headerMap) {
+		HttpPost postMethod = buildPost(url, params, charset);
+		try (CloseableHttpClient client = buildClient(true);
+				CloseableHttpResponse response = client.execute(postMethod);) {
+			assertResponseStatus(response);
+			// return null != response.getEntity() ?
+			// EntityUtils.toString(response.getEntity(), charset) : null;
+			return response;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -494,7 +529,24 @@ public class HttpClientTools {
 	 * @param httpMethod
 	 */
 	public static void setCommonHttpMethod(HttpRequestBase httpMethod) {
+		// 保证消息一次性传输完,使用默认模式会出现异常
+		httpMethod.setProtocolVersion(HttpVersion.HTTP_1_0);
 		httpMethod.setHeader(HTTP.CONTENT_ENCODING, ConstantLang.DEFAULT_CHARSET.displayName());
+	}
+
+	/**
+	 * 设置请求头
+	 * 
+	 * @param httpMethod 请求
+	 * @param headerMap 请求头
+	 */
+	public static void setHeader(HttpRequestBase httpMethod, Map<String, Object> headerMap) {
+		if (MapTool.isNotEmpty(headerMap)) {
+			httpMethod.setHeader(HTTP.CONTENT_ENCODING, ConstantLang.DEFAULT_CHARSET.displayName());
+			for (Map.Entry<String, Object> entry : headerMap.entrySet()) {
+				httpMethod.addHeader(entry.getKey(), String.valueOf(entry.getValue()));
+			}
+		}
 	}
 
 	/**
