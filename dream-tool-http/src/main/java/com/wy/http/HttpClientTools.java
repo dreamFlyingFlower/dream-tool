@@ -1,7 +1,6 @@
 package com.wy.http;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -10,15 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpMessage;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -44,7 +41,6 @@ import org.apache.http.util.EntityUtils;
 import com.alibaba.fastjson.JSON;
 import com.wy.ConstantLang;
 import com.wy.collection.MapTool;
-import com.wy.result.ResultException;
 import com.wy.util.CharsetTool;
 
 /**
@@ -74,20 +70,6 @@ public class HttpClientTools {
 		// manager.closeExpiredConnections();
 		// 设置2次http握手的时间间隔
 		manager.setValidateAfterInactivity(2000);
-	}
-
-	/**
-	 * 判断服务器响应是否正常,状态码为200即为正常
-	 * 
-	 * @param response 响应
-	 */
-	private static void assertResponseStatus(HttpResponse response) {
-		switch (response.getStatusLine().getStatusCode()) {
-		case HttpStatus.SC_OK:
-			break;
-		default:
-			throw new ResultException("服务器响应状态异常,失败.");
-		}
 	}
 
 	/**
@@ -151,9 +133,8 @@ public class HttpClientTools {
 	 * @param params 参数
 	 * @param charset 字符编码集
 	 * @return HttpGet
-	 * @throws URISyntaxException
 	 */
-	public static HttpGet buildGet(String url, Map<String, String> params, Charset chatset) throws URISyntaxException {
+	public static HttpGet buildGet(String url, Map<String, Object> params, Charset chatset) {
 		return new HttpGet(buildParamsGet(url, params, chatset));
 	}
 
@@ -165,7 +146,7 @@ public class HttpClientTools {
 	 * @param charset 字符编码集
 	 * @return HttpPost
 	 */
-	public static HttpPost buildPost(String url, Map<String, String> params, Charset charset) {
+	public static HttpPost buildPost(String url, Map<String, Object> params, Charset charset) {
 		HttpPost post = new HttpPost(url);
 		setCommonHttpMethod(post);
 		if (params != null) {
@@ -183,7 +164,7 @@ public class HttpClientTools {
 	 * @param headerMap 请求头
 	 * @return HttpPost
 	 */
-	public static HttpPost buildPost(String url, Map<String, String> params, Charset charset,
+	public static HttpPost buildPost(String url, Map<String, Object> params, Charset charset,
 			Map<String, Object> headerMap) {
 		HttpPost post = new HttpPost(url);
 		setCommonHttpMethod(post);
@@ -222,18 +203,21 @@ public class HttpClientTools {
 	 * @param params 参数
 	 * @param charset 字符编码集
 	 * @return 完整url
-	 * @throws URISyntaxException
 	 */
-	public static URI buildParamsGet(String url, Map<String, String> params, Charset charset)
-			throws URISyntaxException {
-		URIBuilder builder = new URIBuilder(url);
-		if (MapTool.isEmpty(params)) {
+	public static URI buildParamsGet(String url, Map<String, Object> params, Charset charset) {
+		try {
+			URIBuilder builder = new URIBuilder(url);
+			if (MapTool.isEmpty(params)) {
+				return builder.build();
+			}
+			for (String key : params.keySet()) {
+				builder.addParameter(key, Objects.isNull(params.get(key)) ? "" : String.valueOf(params.get(key)));
+			}
 			return builder.build();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
 		}
-		for (String key : params.keySet()) {
-			builder.addParameter(key, params.get(key));
-		}
-		return builder.build();
+		return null;
 	}
 
 	/**
@@ -242,12 +226,12 @@ public class HttpClientTools {
 	 * @param params 参数
 	 * @param charset 字符编码集
 	 * @return 表单请求对象
-	 * @throws UnsupportedEncodingException
 	 */
-	public static UrlEncodedFormEntity buildParamsPost(Map<String, String> params, Charset charset) {
+	public static UrlEncodedFormEntity buildParamsPost(Map<String, Object> params, Charset charset) {
+		charset = CharsetTool.defaultCharset(charset);
 		List<NameValuePair> ps = new ArrayList<>();
 		for (String key : params.keySet()) {
-			ps.add(new BasicNameValuePair(key, params.get(key)));
+			ps.add(new BasicNameValuePair(key, Objects.isNull(params.get(key)) ? "" : String.valueOf(params.get(key))));
 		}
 		// URLEncodedUtils.format(ps, charset);
 		// 模拟表单
@@ -283,18 +267,18 @@ public class HttpClientTools {
 	 * 
 	 * @param url 请求地址
 	 * @return JSON字符串结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
 	 */
-	public static String poolGet(String url) throws ClientProtocolException, IOException {
+	public static String poolGet(String url) {
 		HttpGet httpGet = new HttpGet(url);
 		try (CloseableHttpClient client = HttpClients.custom().setConnectionManager(manager).build();
 				CloseableHttpResponse response = client.execute(httpGet);) {
-			assertResponseStatus(response);
 			return Objects.nonNull(response.getEntity())
 					? EntityUtils.toString(response.getEntity(), CharsetTool.defaultCharset())
 					: null;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		return null;
 	}
 
 	/**
@@ -302,12 +286,9 @@ public class HttpClientTools {
 	 * 
 	 * @param url 请求地址
 	 * @return 字符串结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
-	 * @throws URISyntaxException
 	 */
-	public static String sendGet(String url) throws ClientProtocolException, IOException, URISyntaxException {
-		return sendGet(url, null);
+	public static String get(String url) {
+		return get(url, null);
 	}
 
 	/**
@@ -316,13 +297,9 @@ public class HttpClientTools {
 	 * @param url url
 	 * @param params 参数
 	 * @return 请求结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
-	 * @throws URISyntaxException
 	 */
-	public static String sendGet(String url, Map<String, String> params)
-			throws ClientProtocolException, IOException, URISyntaxException {
-		return sendGet(url, params, CharsetTool.defaultCharset());
+	public static String get(String url, Map<String, Object> params) {
+		return get(url, params, CharsetTool.defaultCharset());
 	}
 
 	/**
@@ -332,22 +309,19 @@ public class HttpClientTools {
 	 * @param params 参数
 	 * @param charset 字符集
 	 * @return 请求结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
-	 * @throws URISyntaxException
 	 */
-	public static String sendGet(String url, Map<String, String> params, Charset charset)
-			throws ClientProtocolException, IOException, URISyntaxException {
+	public static String get(String url, Map<String, Object> params, Charset charset) {
 		HttpGet httpGet = buildGet(url, params, charset);
 		try (CloseableHttpClient httpclient = buildClient(true);
 				CloseableHttpResponse response = httpclient.execute(httpGet);) {
-			// 判断返回状态是否为200
-			assertResponseStatus(response);
 			// 直接可将返回的流转成字符串,但是转换一次后流就关闭了
 			return null != response.getEntity()
 					? EntityUtils.toString(response.getEntity(), CharsetTool.defaultCharset(charset))
 					: null;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		return null;
 	}
 
 	/**
@@ -357,13 +331,9 @@ public class HttpClientTools {
 	 * @param params 参数
 	 * @param charset 字符集
 	 * @return 请求结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
-	 * @throws URISyntaxException
 	 */
-	public static String sendGet(String url, Map<String, String> params, String charset)
-			throws ClientProtocolException, IOException, URISyntaxException {
-		return sendGet(url, params, CharsetTool.defaultCharset(charset));
+	public static String get(String url, Map<String, Object> params, String charset) {
+		return get(url, params, CharsetTool.defaultCharset(charset));
 	}
 
 	/**
@@ -371,27 +341,26 @@ public class HttpClientTools {
 	 * 
 	 * @param url url
 	 * @param params 参数
-	 * @param headerMap 请求头参数
+	 * @param headers 请求头参数
 	 * @param cookieStore cookie
 	 * @param proxy 代理
 	 * @param charset 字符集
 	 * @return JSON序列化后结果字符串
-	 * @throws IOException
-	 * @throws URISyntaxException
 	 */
-	public static String sendGet(String url, Map<String, String> params, Map<String, String> headerMap,
-			CookieStore cookieStore, HttpHost httpHost, Charset charset) throws IOException, URISyntaxException {
+	public static String sendGet(String url, Map<String, Object> params, Map<String, Object> headers,
+			CookieStore cookieStore, HttpHost httpHost, Charset charset) {
 		HttpGet httpGet = buildGet(url, params, charset);
-		setHeader(httpGet, headerMap);
+		setHeader(httpGet, headers);
 		try (CloseableHttpClient httpClient = buildClient(true, cookieStore, httpHost);
 				CloseableHttpResponse response = httpClient.execute(httpGet);) {
-			// 判断返回状态是否为200
-			assertResponseStatus(response);
 			// 直接可将返回的流转成字符串,但是转换一次后流就关闭了
 			return null != response.getEntity()
 					? EntityUtils.toString(response.getEntity(), CharsetTool.defaultCharset(charset))
 					: null;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		return null;
 	}
 
 	/**
@@ -399,11 +368,9 @@ public class HttpClientTools {
 	 * 
 	 * @param url 请求地址
 	 * @return JSON字符串结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
 	 */
-	public static String sendPostForm(String url) throws ClientProtocolException, IOException {
-		return sendPostForm(url, null, CharsetTool.defaultCharset());
+	public static String postForm(String url) {
+		return postForm(url, null, null, null);
 	}
 
 	/**
@@ -412,12 +379,9 @@ public class HttpClientTools {
 	 * @param url 请求地址
 	 * @param params 参数
 	 * @return JSON字符串结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
 	 */
-	public static String sendPostForm(String url, Map<String, String> params)
-			throws ClientProtocolException, IOException {
-		return sendPostForm(url, params, CharsetTool.defaultCharset());
+	public static String postForm(String url, Map<String, Object> params) {
+		return postForm(url, params, null, null);
 	}
 
 	/**
@@ -427,14 +391,50 @@ public class HttpClientTools {
 	 * @param params 参数
 	 * @param charset 字符集
 	 * @return JSON字符串结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
 	 */
-	public static String sendPostForm(String url, Map<String, String> params, Charset charset) {
+	public static String postForm(String url, Map<String, Object> params, Charset charset) {
+		return postForm(url, params, null, charset);
+	}
+
+	/**
+	 * Post表单请求
+	 * 
+	 * @param url 请求地址
+	 * @param params 参数
+	 * @param charsetName 字符编码集名
+	 * @return JSON字符串结果
+	 */
+	public static String postForm(String url, Map<String, Object> params, String charsetName) {
+		return postForm(url, params, null, CharsetTool.defaultCharset(charsetName));
+	}
+
+	/**
+	 * Post表单请求
+	 * 
+	 * @param url 请求地址
+	 * @param params 参数
+	 * @param headers 请求头
+	 * @return JSON字符串结果
+	 */
+	public static String postForm(String url, Map<String, Object> params, Map<String, Object> headers) {
+		return postForm(url, params, headers, null);
+	}
+
+	/**
+	 * Post表单请求
+	 * 
+	 * @param url 请求地址
+	 * @param params 参数
+	 * @param headers 请求头
+	 * @param charset 字符集
+	 * @return JSON字符串结果
+	 */
+	public static String postForm(String url, Map<String, Object> params, Map<String, Object> headers,
+			Charset charset) {
 		HttpPost postMethod = buildPost(url, params, charset);
+		setHeader(postMethod, headers);
 		try (CloseableHttpClient client = buildClient(true);
 				CloseableHttpResponse response = client.execute(postMethod);) {
-			assertResponseStatus(response);
 			return null != response.getEntity() ? EntityUtils.toString(response.getEntity(), charset) : null;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -446,25 +446,74 @@ public class HttpClientTools {
 	 * Post表单请求
 	 * 
 	 * @param url 请求地址
-	 * @param params 参数
-	 * @param charsetName 字符编码集名
-	 * @return JSON字符串结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
+	 * @return 请求响应,但获取不到结果,只能获取头信息
 	 */
-	public static String sendPostForm(String url, Map<String, String> params, String charsetName)
-			throws ClientProtocolException, IOException {
-		return sendPostForm(url, params, CharsetTool.defaultCharset(charsetName));
+	public static HttpResponse postFormResponse(String url) {
+		return postFormResponse(url, null, null, null);
 	}
 
-	public static HttpResponse sendPostForm(String url, Map<String, String> params, Charset charset,
-			Map<String, Object> headerMap) {
+	/**
+	 * Post表单请求
+	 * 
+	 * @param url 请求地址
+	 * @param params 参数
+	 * @return 请求响应,但获取不到结果,只能获取头信息
+	 */
+	public static HttpResponse postFormResponse(String url, Map<String, Object> params) {
+		return postFormResponse(url, params, null, null);
+	}
+
+	/**
+	 * Post表单请求
+	 * 
+	 * @param url 请求地址
+	 * @param params 参数
+	 * @param charset 字符集
+	 * @return 请求响应,但获取不到结果,只能获取头信息
+	 */
+	public static HttpResponse postFormResponse(String url, Map<String, Object> params, Charset charset) {
+		return postFormResponse(url, params, null, charset);
+	}
+
+	/**
+	 * Post表单请求
+	 * 
+	 * @param url 请求地址
+	 * @param params 参数
+	 * @param charsetName 字符编码集名
+	 * @return 请求响应,但获取不到结果,只能获取头信息
+	 */
+	public static HttpResponse postFormResponse(String url, Map<String, Object> params, String charsetName) {
+		return postFormResponse(url, params, null, CharsetTool.defaultCharset(charsetName));
+	}
+
+	/**
+	 * Post表单请求
+	 * 
+	 * @param url 请求地址
+	 * @param params 参数
+	 * @param headers 请求头
+	 * @return 请求响应,但获取不到结果,只能获取头信息
+	 */
+	public static HttpResponse postFormResponse(String url, Map<String, Object> params, Map<String, Object> headers) {
+		return postFormResponse(url, params, headers, null);
+	}
+
+	/**
+	 * Post表单请求
+	 * 
+	 * @param url 请求地址
+	 * @param params 参数
+	 * @param headers 请求头
+	 * @param charset 字符编码
+	 * @return 请求响应,但获取不到结果,只能获取头信息
+	 */
+	public static HttpResponse postFormResponse(String url, Map<String, Object> params, Map<String, Object> headers,
+			Charset charset) {
 		HttpPost postMethod = buildPost(url, params, charset);
+		setHeader(postMethod, headers);
 		try (CloseableHttpClient client = buildClient(true);
 				CloseableHttpResponse response = client.execute(postMethod);) {
-			assertResponseStatus(response);
-			// return null != response.getEntity() ?
-			// EntityUtils.toString(response.getEntity(), charset) : null;
 			return response;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -478,12 +527,9 @@ public class HttpClientTools {
 	 * @param url 请求地址
 	 * @param params 参数
 	 * @return JSON字符串结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
 	 */
-	public static String sendPostJson(String url, Map<String, Object> params)
-			throws ClientProtocolException, IOException {
-		return sendPostJson(url, params, CharsetTool.defaultCharset());
+	public static String postJson(String url, Map<String, Object> params) {
+		return postJson(url, params, null, CharsetTool.defaultCharset());
 	}
 
 	/**
@@ -493,19 +539,9 @@ public class HttpClientTools {
 	 * @param params 参数
 	 * @param charset 字符集
 	 * @return JSON字符串结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
 	 */
-	public static String sendPostJson(String url, Map<String, Object> params, Charset charset)
-			throws ClientProtocolException, IOException {
-		HttpPost httpPost = buildPostJson(url, params, charset);
-		// 执行http请求
-		try (CloseableHttpClient httpClient = buildClient(true);
-				CloseableHttpResponse response = httpClient.execute(httpPost);) {
-			assertResponseStatus(response);
-			return null != response.getEntity() ? EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8)
-					: null;
-		}
+	public static String postJson(String url, Map<String, Object> params, Charset charset) {
+		return postJson(url, params, null, charset);
 	}
 
 	/**
@@ -515,63 +551,83 @@ public class HttpClientTools {
 	 * @param params 参数
 	 * @param charsetName 字符编码名
 	 * @return JSON字符串结果
-	 * @throws IOException
-	 * @throws ClientProtocolException
 	 */
-	public static String sendPostJson(String url, Map<String, Object> params, String charsetName)
-			throws ClientProtocolException, IOException {
-		return sendPostJson(url, params, CharsetTool.defaultCharset(charsetName));
+	public static String postJson(String url, Map<String, Object> params, String charsetName) {
+		return postJson(url, params, CharsetTool.defaultCharset(charsetName));
+	}
+
+	/**
+	 * Post Json请求,参数将被序列化成字符串之后发送
+	 * 
+	 * @param url 请求地址
+	 * @param params 参数
+	 * @param headers 请求头
+	 * @param charset 字符集
+	 * @return JSON字符串结果
+	 */
+	public static String postJson(String url, Map<String, Object> params, Map<String, Object> headers,
+			Charset charset) {
+		HttpPost httpPost = buildPostJson(url, params, charset);
+		setHeader(httpPost, headers);
+		try (CloseableHttpClient httpClient = buildClient(true);
+				CloseableHttpResponse response = httpClient.execute(httpPost);) {
+			return Optional.ofNullable(response).isPresent()
+					? EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8)
+					: null;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Post Json请求,参数将被序列化成字符串之后发送
+	 * 
+	 * @param url 请求地址
+	 * @param params 参数
+	 * @param headers 请求头
+	 * @param charsetName 字符编码名
+	 * @return JSON字符串结果
+	 */
+	public static String postJson(String url, Map<String, Object> params, Map<String, Object> headers,
+			String charsetName) {
+		return postJson(url, params, headers, CharsetTool.defaultCharset(charsetName));
 	}
 
 	/**
 	 * 设置HttpMethod通用配置
 	 *
-	 * @param httpMethod
+	 * @param httpRequestBase
 	 */
-	public static void setCommonHttpMethod(HttpRequestBase httpMethod) {
+	public static void setCommonHttpMethod(HttpRequestBase httpRequestBase) {
 		// 保证消息一次性传输完,使用默认模式会出现异常
-		httpMethod.setProtocolVersion(HttpVersion.HTTP_1_0);
-		httpMethod.setHeader(HTTP.CONTENT_ENCODING, ConstantLang.DEFAULT_CHARSET.displayName());
-	}
-
-	/**
-	 * 设置请求头
-	 * 
-	 * @param httpMethod 请求
-	 * @param headerMap 请求头
-	 */
-	public static void setHeader(HttpRequestBase httpMethod, Map<String, Object> headerMap) {
-		if (MapTool.isNotEmpty(headerMap)) {
-			httpMethod.setHeader(HTTP.CONTENT_ENCODING, ConstantLang.DEFAULT_CHARSET.displayName());
-			for (Map.Entry<String, Object> entry : headerMap.entrySet()) {
-				httpMethod.addHeader(entry.getKey(), String.valueOf(entry.getValue()));
-			}
-		}
+		httpRequestBase.setProtocolVersion(HttpVersion.HTTP_1_0);
+		httpRequestBase.setHeader(HTTP.CONTENT_ENCODING, ConstantLang.DEFAULT_CHARSET.displayName());
 	}
 
 	/**
 	 * 设置成消息体的长度 setting MessageBody length
 	 *
-	 * @param httpMethod
-	 * @param httpEntity
+	 * @param httpRequestBase 请求
+	 * @param httpEntity 请求体
 	 */
-	public static void setContentLength(HttpRequestBase httpMethod, HttpEntity httpEntity) {
+	public static void setContentLength(HttpRequestBase httpRequestBase, HttpEntity httpEntity) {
 		if (httpEntity == null) {
 			return;
 		}
-		httpMethod.setHeader(HTTP.CONTENT_LEN, String.valueOf(httpEntity.getContentLength()));
+		httpRequestBase.setHeader(HTTP.CONTENT_LEN, String.valueOf(httpEntity.getContentLength()));
 	}
 
 	/**
-	 * Cookie处理
+	 * 设置请起头
 	 * 
-	 * @param httpMessage
-	 * @param headerMap
+	 * @param httpRequestBase 请求
+	 * @param headers 请求头
 	 */
-	public static void setHeader(HttpMessage httpMessage, Map<String, String> headerMap) {
-		if (null != headerMap && !headerMap.isEmpty()) {
-			for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-				httpMessage.addHeader(entry.getKey(), entry.getValue());
+	public static void setHeader(HttpRequestBase httpRequestBase, Map<String, Object> headers) {
+		if (MapTool.isNotEmpty(headers)) {
+			for (Map.Entry<String, Object> entry : headers.entrySet()) {
+				httpRequestBase.addHeader(entry.getKey(), String.valueOf(entry.getValue()));
 			}
 		}
 	}
@@ -579,10 +635,10 @@ public class HttpClientTools {
 	/**
 	 * 设置HttpMethod通用配置
 	 *
-	 * @param httpMethod
+	 * @param httpRequestBase
 	 */
-	public static void setJsonHttpMethod(HttpRequestBase httpMethod) {
-		httpMethod.setHeader(HTTP.CONTENT_ENCODING, ConstantLang.DEFAULT_CHARSET.displayName());
-		httpMethod.setHeader(HTTP.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+	public static void setJsonHttpMethod(HttpRequestBase httpRequestBase) {
+		httpRequestBase.setHeader(HTTP.CONTENT_ENCODING, ConstantLang.DEFAULT_CHARSET.displayName());
+		httpRequestBase.setHeader(HTTP.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
 	}
 }
