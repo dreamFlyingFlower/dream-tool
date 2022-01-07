@@ -1,13 +1,16 @@
 package com.wy.lang;
 
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.wy.Constant;
 import com.wy.ConstantLang;
+import com.wy.annotation.Example;
 import com.wy.enums.RegexEnum;
 import com.wy.util.ArrayTool;
 import com.wy.util.CharsetTool;
@@ -365,64 +368,6 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
-	 * 将多个参数连接起来
-	 * 
-	 * @param msgs 参数
-	 * @return 最终的字符串
-	 */
-	public static String formatBuffer(Object... msgs) {
-		StringBuffer builder = new StringBuffer();
-		for (Object msg : msgs) {
-			builder.append(msg);
-		}
-		return builder.toString();
-	}
-
-	/**
-	 * 用同一个分隔符将参数连接起来
-	 * 
-	 * @param delimiter 分隔符
-	 * @param msgs 参数
-	 * @return 最终的字符串
-	 */
-	public static String formatJoinBuffer(String delimiter, Object... msgs) {
-		StringBuffer builder = new StringBuffer();
-		for (Object msg : msgs) {
-			builder.append(delimiter).append(msg);
-		}
-		return builder.toString();
-	}
-
-	/**
-	 * 将多个参数连接起来
-	 * 
-	 * @param msgs 参数
-	 * @return 最终的字符串
-	 */
-	public static String formatBuilder(Object... msgs) {
-		StringBuilder builder = new StringBuilder();
-		for (Object msg : msgs) {
-			builder.append(msg);
-		}
-		return builder.toString();
-	}
-
-	/**
-	 * 用同一个分隔符将参数连接起来
-	 * 
-	 * @param delimiter 分隔符
-	 * @param msgs 参数
-	 * @return 最终的字符串
-	 */
-	public static String formatJoinBuilder(String delimiter, Object... msgs) {
-		StringBuilder builder = new StringBuilder();
-		for (Object msg : msgs) {
-			builder.append(delimiter).append(msg);
-		}
-		return builder.toString();
-	}
-
-	/**
 	 * 判断源字符串中是否只包含unicode表示的数字或纯数字,不包括小数点,非数字将删除;
 	 * 若是unicode表示的数字,直接返回unicode形式的字符串;数字直接返回
 	 *
@@ -514,24 +459,6 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
-	 * 从String数组末尾位置开始搜索待查找字符串第一次出现的索引
-	 * 
-	 * @param array 数组
-	 * @param searchStr 待查找字符串
-	 * @return 索引,未找到返回-1
-	 */
-	public static int lastIndexOf(String[] array, final String searchStr) {
-		if (ArrayTool.isNotEmpty(array) && isNotBlank(searchStr)) {
-			for (int i = array.length - 1; i >= 0; i--) {
-				if (searchStr.equals(array[i])) {
-					return i;
-				}
-			}
-		}
-		return ConstantLang.INDEX_NOT_FOUND;
-	}
-
-	/**
 	 * 从源字符串中查找不属于待查找字符串中字符的第一个字符索引,若全部都有,返回-1
 	 *
 	 * @param str 源字符串
@@ -553,6 +480,111 @@ public class StrTool extends CharSequenceTool {
 				}
 			} else {
 				if (!chFound) {
+					return i;
+				}
+			}
+		}
+		return ConstantLang.INDEX_NOT_FOUND;
+	}
+
+	/**
+	 * 将多个参数连接起来
+	 * 
+	 * @param msgs 参数
+	 * @return 最终的字符串
+	 */
+	public static String joinBuffer(Object... msgs) {
+		StringBuffer builder = new StringBuffer();
+		for (Object msg : msgs) {
+			builder.append(msg);
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * 用同一个分隔符将参数连接起来
+	 * 
+	 * @param delimiter 分隔符
+	 * @param msgs 参数
+	 * @return 最终的字符串
+	 */
+	public static String joinBuffer(String delimiter, Object... msgs) {
+		StringBuffer builder = new StringBuffer();
+		if (msgs.length == 0) {
+			return "";
+		}
+		if (msgs.length == 1) {
+			return builder.append(msgs[0]).toString();
+		}
+		builder.append(msgs[0]);
+		for (int i = 1; i < msgs.length;) {
+			builder.append(delimiter).append(msgs[i]);
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * 将多个参数连接起来
+	 * 
+	 * @param msgs 参数
+	 * @return 最终的字符串
+	 */
+	public static String joinBuilder(Object... msgs) {
+		StringBuilder builder = new StringBuilder();
+		for (Object msg : msgs) {
+			builder.append(msg);
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * 用同一个分隔符将参数连接起来
+	 * 
+	 * @param delimiter 分隔符
+	 * @param msgs 参数
+	 * @return 最终的字符串
+	 */
+	public static String joinBuilder(String delimiter, Object... msgs) {
+		StringBuilder builder = new StringBuilder();
+		if (msgs.length == 0) {
+			return "";
+		}
+		if (msgs.length == 1) {
+			return builder.append(msgs[0]).toString();
+		}
+		builder.append(msgs[0]);
+		for (int i = 1; i < msgs.length;) {
+			builder.append(delimiter).append(msgs[i]);
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * 用同一个分隔符将参数连接起来
+	 * 
+	 * @param delimiter 分隔符
+	 * @param msgs 参数
+	 * @return 最终的字符串
+	 */
+	public static String joinString(String delimiter, String... args) {
+		StringJoiner stringJoiner = new StringJoiner(delimiter);
+		for (String string : args) {
+			stringJoiner.add(string);
+		}
+		return stringJoiner.toString();
+	}
+
+	/**
+	 * 从String数组末尾位置开始搜索待查找字符串第一次出现的索引
+	 * 
+	 * @param array 数组
+	 * @param searchStr 待查找字符串
+	 * @return 索引,未找到返回-1
+	 */
+	public static int lastIndexOf(String[] array, final String searchStr) {
+		if (ArrayTool.isNotEmpty(array) && isNotBlank(searchStr)) {
+			for (int i = array.length - 1; i >= 0; i--) {
+				if (searchStr.equals(array[i])) {
 					return i;
 				}
 			}
@@ -1676,5 +1708,29 @@ public class StrTool extends CharSequenceTool {
 			builder.append(wrapStr);
 		}
 		return builder.toString();
+	}
+}
+
+@Example
+class StrToolExample {
+
+	/**
+	 * 使用 {@link MessageFormat}格式化.该方法只是一个例子
+	 * 
+	 * 该方法格式化单引号时,需要双单引号才能输出,双引号直接转义即可.单引号表示原样输出
+	 * 
+	 * <pre>
+	 * MessageFormat.format("飞{0}梦影","花");->飞花梦影
+	 * MessageFormat.format("飞'{0}'梦影","花");->飞{0}梦影
+	 * MessageFormat.format("飞''{0}''梦影","花");->飞'花'梦影
+	 * MessageFormat.format("飞\"{0}\"梦影","花");->飞"花"梦影
+	 * </pre>
+	 * 
+	 * @param format 模板,其中的参数需要用{0},{1}...
+	 * @param args 参数,下标和format中的数字对应.若少于format的数字,则直接输出{n},超出的丢弃
+	 * @return
+	 */
+	public static void formatMessage(String format, Object... args) {
+
 	}
 }

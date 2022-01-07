@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * @git {@link https://github.com/dreamFlyingFlower}
  */
 @Documented
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Example {
 
