@@ -1,6 +1,8 @@
 package com.wy.annotation.util;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -26,6 +28,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
 import com.wy.annotation.enums.AnnotationEnum;
+import com.wy.collection.MapTool;
 
 /**
  * 注解工具类
@@ -52,12 +55,9 @@ public class AnnotationUtil {
 	 * @param jcMethodDecl 方法定义
 	 * @return true->是,false->否
 	 */
-	public static boolean constructor(JCMethodDecl jcMethodDecl) {
+	public static boolean isConstructor(JCMethodDecl jcMethodDecl) {
 		String name = jcMethodDecl.name.toString();
-		if ("<init>".equals(name)) {
-			return true;
-		}
-		return false;
+		return Optional.of(jcMethodDecl).map(t -> "<init>".equals(name)).get();
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class AnnotationUtil {
 	 * @return true->是,false->否
 	 */
 	public static boolean constrcutorDefault(JCMethodDecl jcMethodDecl) {
-		if (AnnotationUtil.constructor(jcMethodDecl) && AnnotationUtil.methodNoArgs(jcMethodDecl)
+		if (AnnotationUtil.isConstructor(jcMethodDecl) && AnnotationUtil.methodNoArgs(jcMethodDecl)
 				&& AnnotationUtil.methodPublic(jcMethodDecl)) {
 			return true;
 		}
@@ -199,46 +199,96 @@ public class AnnotationUtil {
 	/**
 	 * 添加无参注解
 	 * 
-	 * @param treeMaker
-	 * @param names
-	 * @param annotationName
-	 * @param jcClassDecl
+	 * @param treeMaker AST树操作工具类
+	 * @param names 命名工具类
+	 * @param jcClassDecl 类定义
+	 * @param annotationName 需要添加的注解全路径
 	 */
-	public static void addAnnotation(TreeMaker treeMaker, Names names, String annotationName, JCClassDecl jcClassDecl) {
-		JCAnnotation jcAnnotation = AnnotationUtil.makeAnnotation(treeMaker, names, annotationName, List.nil());
-		jcClassDecl.mods.annotations = jcClassDecl.mods.annotations.append(jcAnnotation);
+	public static void addAnnotation(TreeMaker treeMaker, Names names, JCClassDecl jcClassDecl, String annotationName) {
+		addAnnotation(treeMaker, names, jcClassDecl, annotationName, List.nil());
 	}
 
 	/**
 	 * 添加有参数注解
 	 * 
-	 * @param treeMaker
-	 * @param names
-	 * @param annotationName
-	 * @param jcClassDecl
-	 * @param args
+	 * @param treeMaker AST树操作工具类
+	 * @param names 命名工具类
+	 * @param jcClassDecl 类定义
+	 * @param annotationName 需要添加的注解全路径
+	 * @param args 注解参数
 	 */
-	public static void addAnnotation(TreeMaker treeMaker, Names names, String annotationName, JCClassDecl jcClassDecl,
+	public static void addAnnotation(TreeMaker treeMaker, Names names, JCClassDecl jcClassDecl, String annotationName,
 			List<JCExpression> args) {
-		JCAnnotation jcAnnotation = AnnotationUtil.makeAnnotation(treeMaker, names, annotationName, args);
+		JCAnnotation jcAnnotation = makeAnnotation(treeMaker, names, annotationName, args);
 		jcClassDecl.mods.annotations = jcClassDecl.mods.annotations.append(jcAnnotation);
 	}
 
 	/**
-	 * 添加有参数注解
+	 * 添加单个参数注解
 	 * 
-	 * @param treeMaker
-	 * @param names
-	 * @param annotationName
-	 * @param jcClassDecl
-	 * @param key
-	 * @param value
+	 * @param treeMaker AST树操作工具类
+	 * @param names 命名工具类
+	 * @param jcClassDecl 类定义
+	 * @param annotationName 需要添加的注解全路径
+	 * @param key 注解参数key
+	 * @param value 注解参数key的值
 	 */
-	public static void addAnnotation(TreeMaker treeMaker, Names names, String annotationName, JCClassDecl jcClassDecl,
+	public static void addAnnotation(TreeMaker treeMaker, Names names, JCClassDecl jcClassDecl, String annotationName,
 			String key, Object value) {
-		JCExpression args = makeArg(treeMaker, names, key, value);
-		JCAnnotation jcAnnotation = AnnotationUtil.makeAnnotation(treeMaker, names, annotationName, List.of(args));
-		jcClassDecl.mods.annotations = jcClassDecl.mods.annotations.append(jcAnnotation);
+		addAnnotation(treeMaker, names, jcClassDecl, annotationName, List.of(makeArg(treeMaker, names, key, value)));
+	}
+
+	/**
+	 * 添加多参数注解
+	 * 
+	 * @param treeMaker AST树操作工具类
+	 * @param names 命名工具类
+	 * @param jcClassDecl 类定义
+	 * @param annotationName 需要添加的注解全路径
+	 * @param args 注解参数
+	 */
+	public static void addAnnotation(TreeMaker treeMaker, Names names, JCClassDecl jcClassDecl, String annotationName,
+			Map<String, Object> args) {
+		List<JCExpression> jcExpressions = List.nil();
+		if (MapTool.isNotEmpty(args)) {
+			for (Map.Entry<String, Object> entry : args.entrySet()) {
+				jcExpressions.add(makeArg(treeMaker, names, entry.getKey(), entry.getValue()));
+			}
+		}
+		addAnnotation(treeMaker, names, jcClassDecl, annotationName, jcExpressions);
+	}
+
+	/**
+	 * 给普通方法添加注解
+	 * 
+	 * @param treeMaker AST树操作工具类
+	 * @param names 命名工具类
+	 * @param jcMethodDecl 方法定义
+	 * @param annotationName 需要添加的注解全路径
+	 */
+	public static void addAnnotation(TreeMaker treeMaker, Names names, JCMethodDecl jcMethodDecl,
+			String annotationName) {
+		addAnnotation(treeMaker, names, jcMethodDecl, annotationName, List.nil());
+	}
+
+	/**
+	 * 给普通方法添加注解
+	 * 
+	 * @param treeMaker AST树操作工具类
+	 * @param names 命名工具类
+	 * @param jcMethodDecl 方法定义
+	 * @param annotationName 需要添加的注解全路径
+	 * @param args 注解参数
+	 */
+	public static void addAnnotation(TreeMaker treeMaker, Names names, JCMethodDecl jcMethodDecl, String annotationName,
+			List<JCExpression> args) {
+		// 构造方法也属于方法,但是普通的方法注解不能放到构造上,此处要排除构造方法
+		if ("<init>".equals(jcMethodDecl.name.toString())) {
+			return;
+		}
+		List<JCAnnotation> jcAnnotations = jcMethodDecl.mods.annotations
+				.append(AnnotationUtil.makeAnnotation(treeMaker, names, annotationName, args));
+		jcMethodDecl.mods.annotations = jcAnnotations;
 	}
 
 	/**

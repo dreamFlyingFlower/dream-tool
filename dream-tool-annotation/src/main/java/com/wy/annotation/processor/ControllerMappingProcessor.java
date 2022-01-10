@@ -19,7 +19,10 @@ import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCAnnotation;
+import com.sun.tools.javac.tree.JCTree.JCAssign;
 import com.sun.tools.javac.tree.JCTree.JCClassDecl;
+import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.Context;
@@ -30,7 +33,7 @@ import com.wy.annotation.enums.SpringEnum;
 import com.wy.annotation.util.AnnotationUtil;
 
 /**
- * 
+ * 处理{@link ControllerMapping}
  *
  * @author 飞花梦影
  * @date 2022-01-04 10:24:57
@@ -56,7 +59,7 @@ public class ControllerMappingProcessor extends AbstractProcessor {
 	@Override
 	public synchronized void init(ProcessingEnvironment processingEnv) {
 		super.init(processingEnv);
-		ControllerMappingProcessor.messager = processingEnv.getMessager();
+		messager = processingEnv.getMessager();
 		this.trees = JavacTrees.instance(processingEnv);
 		Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
 		this.treeMaker = TreeMaker.instance(context);
@@ -68,17 +71,17 @@ public class ControllerMappingProcessor extends AbstractProcessor {
 		// 得到使用了LombokAll的所有元素
 		Set<? extends Element> eleStrSet = roundEnv.getElementsAnnotatedWith(ControllerMapping.class);
 		for (Element eleStr : eleStrSet) {
-			addClassAnnotation(eleStr);
+			addAnnotation(eleStr);
 		}
 		return true;
 	}
 
 	/**
-	 * 该方法最后会给类新增Getter,Setter,ToString,NoArgConstructor,AllArgsConstructor,Builder注解
+	 * 该方法最后会给类新增RestController或Controller注解
 	 * 
 	 * @param element
 	 */
-	public void addClassAnnotation(Element element) {
+	public void addAnnotation(Element element) {
 		// 获得语法树
 		JCTree jcTree = trees.getTree(element);
 		ControllerMappingProcessor.messager.printMessage(Diagnostic.Kind.NOTE, jcTree.toString());
@@ -88,28 +91,45 @@ public class ControllerMappingProcessor extends AbstractProcessor {
 			// 遍历类定义
 			@Override
 			public void visitClassDef(JCClassDecl jcClassDecl) {
-				// 创建一个value的赋值语句,作为注解的参数
-				// JCExpression arg = AnnotationUtil.makeArg(treeMaker, names, "value", "");
 				ControllerMapping annotation = element.getAnnotation(ControllerMapping.class);
-				boolean rest = annotation.rest();
-				// 创建注解对象
-				JCAnnotation jcAnnotation = null;
-				if (rest) {
-					jcAnnotation = AnnotationUtil.makeAnnotation(treeMaker, names, SpringEnum.RestController.toString(),
-							List.nil());
-				} else {
-					jcAnnotation = AnnotationUtil.makeAnnotation(treeMaker, names, SpringEnum.Controller.toString(),
-							List.nil());
-				}
-				ControllerMappingProcessor.messager.printMessage(Diagnostic.Kind.NOTE,
-						"class Annotation add:" + jcAnnotation.toString());
-				// 在原有类定义中append新的注解对象
-				jcClassDecl.mods.annotations = jcClassDecl.mods.annotations.append(jcAnnotation);
+				AnnotationUtil.addAnnotation(treeMaker, names, jcClassDecl,
+						annotation.rest() ? SpringEnum.RestController.toString() : SpringEnum.Controller.toString());
 				jcClassDecl.mods.annotations.forEach(e -> {
-					ControllerMappingProcessor.messager.printMessage(Diagnostic.Kind.NOTE,
-							"class Annotation list:" + e.toString());
+					messager.printMessage(Diagnostic.Kind.NOTE, "class Annotation list:" + e.toString());
 				});
 				super.visitClassDef(jcClassDecl);
+			}
+
+			@Override
+			public void visitMethodDef(JCMethodDecl jcMethodDecl) {
+
+				List<JCAnnotation> annotations = jcMethodDecl.mods.getAnnotations();
+				for (JCAnnotation jcAnnotation : annotations) {
+					// 获得注解类型
+					// jcAnnotation.annotationType;
+					// 获得注解类型简称
+					// jcAnnotation.annotationType.toString();
+					// 获得注解类型的全路径名
+					// jcAnnotation.annotationType.type.toString();
+					if (jcAnnotation.annotationType.type.toString().equals("com.wy.annotation.TestAdd")) {
+						AnnotationUtil.addAnnotation(treeMaker, names, jcMethodDecl, "com.wy.annotation.TestMethod",
+								List.of(AnnotationUtil.makeArg(treeMaker, names, "value", "testettt")));
+						List<JCExpression> args = jcAnnotation.args;
+						for (JCExpression jcExpression : args) {
+							System.out.println(jcExpression);
+							JCAssign jcAssign = (JCAssign) jcExpression;
+							// 获得表达式左边的值,此处是value
+							JCExpression lhs = jcAssign.lhs;
+							System.out.println(lhs);
+							// 获得表达式右边的值
+							JCExpression rhs = jcAssign.rhs;
+							System.out.println(rhs);
+							// 修改表达式右边的值
+							jcAssign.rhs = treeMaker.Literal("测试我的11");
+						}
+					}
+				}
+				super.visitMethodDef(jcMethodDecl);
 			}
 		});
 	}

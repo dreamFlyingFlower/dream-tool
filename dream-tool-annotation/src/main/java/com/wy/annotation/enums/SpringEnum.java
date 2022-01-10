@@ -6,7 +6,7 @@ import java.util.List;
 import com.wy.lang.StrTool;
 
 /**
- * Spring相关注解
+ * Spring相关注解.注意,需要在使用的项目中存在指定的注解类,否则编译无法通过
  *
  * @author 飞花梦影
  * @date 2022-01-04 09:58:32
@@ -15,13 +15,10 @@ import com.wy.lang.StrTool;
 public enum SpringEnum implements AnnotationEnum {
 
 	Autowired("org.springframework.beans.factory.annotation.Autowired"),
-	RequestMapping("org.springframework.web.bind.annotation.RequestMapping"),
 	RestController("org.springframework.web.bind.annotation.RestController"),
 	Controller("org.springframework.stereotype"),
 	RequestBody("org.springframework.web.bind.annotation.RequestBody"),
-	RequestParam("org.springframework.web.bind.annotation.RequestParam"),
-	PostMapping("org.springframework.web.bind.annotation.PostMapping"),
-	GetMapping("org.springframework.web.bind.annotation.GetMapping");
+	RequestParam("org.springframework.web.bind.annotation.RequestParam");
 
 	/** 全路径类名 */
 	private String className;

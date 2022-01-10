@@ -168,7 +168,7 @@ import com.wy.annotation.util.AnnotationUtil;
 public class MyTestSourceProcessor extends AbstractProcessor {
 
 	/** 用于编译时的输出 */
-	private Messager messager;
+	private static Messager messager;
 
 	/** AST 树 */
 	private JavacTrees trees;
@@ -182,7 +182,7 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 	@Override
 	public synchronized void init(ProcessingEnvironment processingEnv) {
 		super.init(processingEnv);
-		this.messager = processingEnv.getMessager();
+		messager = processingEnv.getMessager();
 		this.trees = JavacTrees.instance(processingEnv);
 		Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
 		this.treeMaker = TreeMaker.instance(context);
@@ -196,7 +196,7 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 		for (Element eleStr : eleStrSet) {
 			// 获得语法树
 			JCTree jcTree = trees.getTree(eleStr);
-			this.messager.printMessage(Diagnostic.Kind.NOTE, jcTree.toString());
+			messager.printMessage(Diagnostic.Kind.NOTE, jcTree.toString());
 			// 修改jcTree的方式,可以修改类的定义
 			jcTree.accept(new TreeTranslator() {
 
@@ -270,29 +270,62 @@ public class MyTestSourceProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * 该方法最后会给类新增一个@FeignClient(value="")的注解
+	 * 给类和方法上添加注解
 	 * 
 	 * @param element
 	 */
-	public void addClassAnnotation(Element element) {
+	public void addAnnotation(Element element) {
 		JCTree jcTree = trees.getTree(element);
 		jcTree.accept(new TreeTranslator() {
 
-			// 遍历所有类定义
+			/**
+			 * 遍历所有类定义
+			 */
 			@Override
 			public void visitClassDef(JCClassDecl jcClassDecl) {
 				// 创建一个value的赋值语句,作为注解的参数
 				JCExpression arg = AnnotationUtil.makeArg(treeMaker, names, "value", "");
 				// 创建注解对象
-				JCAnnotation jcAnnotation =
-						AnnotationUtil.makeAnnotation(treeMaker, names, "lombok.Getter", List.of(arg));
-				messager.printMessage(Diagnostic.Kind.NOTE, "class Annotation add:" + jcAnnotation.toString());
-				// 在原有类定义中append新的注解对象
-				jcClassDecl.mods.annotations = jcClassDecl.mods.annotations.append(jcAnnotation);
+				AnnotationUtil.addAnnotation(treeMaker, names, jcClassDecl, "com.wy.annotation.TestClass", List.of(arg));
 				jcClassDecl.mods.annotations.forEach(e -> {
 					messager.printMessage(Diagnostic.Kind.NOTE, "class Annotation list:" + e.toString());
 				});
 				super.visitClassDef(jcClassDecl);
+			}
+
+			/**
+			 * 遍历所有方法定义
+			 */
+			@Override
+			public void visitMethodDef(JCMethodDecl jcMethodDecl) {
+
+				List<JCAnnotation> annotations = jcMethodDecl.mods.getAnnotations();
+				for (JCAnnotation jcAnnotation : annotations) {
+					// 获得注解类型
+					// jcAnnotation.annotationType;
+					// 获得注解类型简称
+					// jcAnnotation.annotationType.toString();
+					// 获得注解类型的全路径名
+					// jcAnnotation.annotationType.type.toString();
+					if (jcAnnotation.annotationType.type.toString().equals("com.wy.annotation.TestAdd")) {
+						AnnotationUtil.addAnnotation(treeMaker, names, jcMethodDecl, "com.wy.annotation.TestMethod",
+								List.of(AnnotationUtil.makeArg(treeMaker, names, "value", "testettt")));
+						List<JCExpression> args = jcAnnotation.args;
+						for (JCExpression jcExpression : args) {
+							System.out.println(jcExpression);
+							JCAssign jcAssign = (JCAssign) jcExpression;
+							// 获得表达式左边的值,此处是value
+							JCExpression lhs = jcAssign.lhs;
+							System.out.println(lhs);
+							// 获得表达式右边的值
+							JCExpression rhs = jcAssign.rhs;
+							System.out.println(rhs);
+							// 修改表达式右边的值
+							jcAssign.rhs = treeMaker.Literal("测试我的11");
+						}
+					}
+				}
+				super.visitMethodDef(jcMethodDecl);
 			}
 		});
 	}
