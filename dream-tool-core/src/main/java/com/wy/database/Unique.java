@@ -26,6 +26,13 @@ public @interface Unique {
 	String value() default "";
 
 	/**
+	 * 在同一个类中若存在多个unique时,每个字段是否单独校验
+	 * 
+	 * @return true->单独校验;false->所有false的字段同时检验
+	 */
+	boolean validSingle() default true;
+
+	/**
 	 * 当value为""时,取实体类Java属性名,实体类是否需要转换为蛇形,即下划线模式
 	 * 
 	 * @return 默认true->转下划线,false->不转下划线
