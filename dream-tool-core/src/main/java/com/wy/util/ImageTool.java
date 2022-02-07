@@ -6,7 +6,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.CropImageFilter;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,6 +22,9 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import com.wy.io.file.FileNameTool;
 import com.wy.result.ResultException;
 
 /**
@@ -27,6 +34,7 @@ import com.wy.result.ResultException;
  * @date 2021-03-08 09:02:51
  * @git {@link https://github.com/dreamFlyingFlower}
  */
+@SuppressWarnings("restriction")
 public class ImageTool {
 
 	/**
@@ -239,6 +247,138 @@ public class ImageTool {
 	}
 
 	/**
+	 * 转换图片操作
+	 * 
+	 * @param outputFile 输出文件
+	 * @param inputFile 输入文件
+	 * @param width 要压缩的宽度
+	 * @param height 要压缩的高度
+	 * @param proportion 是否进行等比例压缩
+	 * @throws IOException
+	 */
+	public static String compressImage(File outputFile, File inputFile, int width, int height, boolean proportion) {
+		try (InputStream is = new FileInputStream(inputFile); OutputStream os = new FileOutputStream(outputFile);) {
+			compressImage(os, is, width, height, proportion);
+			return outputFile.getAbsolutePath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 转换图片操作
+	 * 
+	 * @param outputFile 输出文件
+	 * @param is 输入流
+	 * @param width 要压缩的宽度
+	 * @param height 要压缩的高度
+	 * @param proportion 是否进行等比例压缩
+	 * @throws IOException
+	 */
+	public static String compressImage(File outputFile, InputStream is, int width, int height, boolean proportion) {
+		try (OutputStream os = new FileOutputStream(outputFile);) {
+			compressImage(os, is, width, height, proportion);
+			return outputFile.getAbsolutePath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 转换图片操作,需要调用者手动关闭流
+	 * 
+	 * @param os 要转换图片的输出流
+	 * @param is 要转换图片的输入流
+	 * @param width 要压缩的宽度
+	 * @param height 要压缩的高度
+	 * @param proportion 是否进行等比例压缩
+	 * @throws IOException
+	 */
+	public static void compressImage(OutputStream os, InputStream is, int width, int height, boolean proportion) {
+		compressImage(os, is, width, height, proportion, false);
+	}
+
+	/**
+	 * 转换图片操作,需要调用者手动关闭流
+	 * 
+	 * @param os 要转换图片的输出流
+	 * @param is 要转换图片的输入流
+	 * @param width 要压缩的宽度
+	 * @param height 要压缩的高度
+	 * @param proportion 是否进行等比例压缩
+	 * @param magnify 是否进行放大
+	 * @throws IOException
+	 */
+	public static void compressImage(OutputStream os, InputStream is, int width, int height, boolean proportion,
+			boolean magnify) {
+		try {
+			BufferedImage img = ImageIO.read(is);
+			int newWidth;
+			int newHeight;
+			int oldWidth = img.getWidth(null);
+			int oldHeight = img.getHeight(null);
+			boolean isWrite = false;
+			if (!magnify) {
+				boolean iw = width >= height ? true : false;
+				if (iw) {
+					if (width > oldWidth)
+						isWrite = true;
+				} else {
+					if (height > oldHeight)
+						isWrite = true;
+				}
+				if (isWrite) {
+					ImageIO.write(img, "jpg", os);
+					os.flush();
+				}
+			}
+			if (!isWrite) {
+				// 判断是否是等比缩放
+				if (proportion) {
+					// 为等比缩放计算输出的图片宽度及高度
+					double rate1 = ((double) oldWidth) / (double) width + 0.1;
+					double rate2 = ((double) oldHeight) / (double) height + 0.1;
+					System.out.println((rate1 + "," + rate2));
+					// 根据缩放比率大的进行缩放控制
+					double rate = rate1 < rate2 ? rate1 : rate2;
+					newWidth = (int) (((double) img.getWidth(null)) / rate);
+					newHeight = (int) (((double) img.getHeight(null)) / rate);
+				} else {
+					newWidth = width;
+					newHeight = height;
+				}
+				BufferedImage tag = new BufferedImage((int) newWidth, (int) newHeight, BufferedImage.TYPE_INT_RGB);
+				tag.getGraphics().drawImage(img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, null);
+				JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(os);
+				encoder.encode(tag);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 转换图片操作
+	 * 
+	 * @param oPath 输出路径
+	 * @param is 输入流
+	 * @param width 要压缩的宽度
+	 * @param height 要压缩的高度
+	 * @param proportion 是否进行等比例压缩
+	 * @throws IOException
+	 */
+	public static String compressImage(String oPath, InputStream is, int width, int height, boolean proportion) {
+		try (OutputStream os = new FileOutputStream(oPath);) {
+			compressImage(os, is, width, height, proportion);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return oPath;
+	}
+
+	/**
 	 * 压缩图片
 	 * 
 	 * @param filePath 源图片地址
@@ -275,20 +415,267 @@ public class ImageTool {
 					newHeight = 100;
 				}
 				BufferedImage tag = new BufferedImage((int) newWidth, (int) newHeight, BufferedImage.TYPE_INT_RGB);
-
 				// Image.SCALE_SMOOTH缩略算法,生成缩略图片的平滑度的优先级比速度高,生成的图片质量比较好,但速度慢
 				tag.getGraphics().drawImage(img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, null);
-				FileOutputStream out = new FileOutputStream(destPath);
-				// JPEGImageEncoder可适用于其他图片类型的转换
-				// com.sun.image.codec.jpeg.JPEGImageEncoder encoder =
-				// com.sun.image.codec.jpeg.JPEGCodec.createJPEGEncoder(out);
-				// encoder.encode(tag);
-				out.close();
+				try (FileOutputStream out = new FileOutputStream(destPath);) {
+					// JPEGImageEncoder可适用于其他图片类型的转换
+					JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+					encoder.encode(tag);
+				}
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
-			throw new ResultException(ex.getMessage());
 		}
 		return true;
+	}
+
+	/**
+	 * 转换图片操作
+	 * 
+	 * @param oPath 输出路径
+	 * @param iPath 输入路径
+	 * @param width 要压缩的宽度
+	 * @param height 要压缩的高度
+	 * @param proportion 是否进行等比例压缩
+	 * @throws IOException
+	 */
+	public static String compressImage(String oPath, String iPath, int width, int height, boolean proportion) {
+		try (InputStream is = new FileInputStream(iPath); OutputStream os = new FileOutputStream(oPath);) {
+			compressImage(os, is, width, height, proportion);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return oPath;
+	}
+
+	/**
+	 * 切割图片,需要调用者手动关闭流
+	 * 
+	 * @param os 切割后的输出流
+	 * @param is 输入流
+	 * @param type 文件的图片类型
+	 * @param x x坐标
+	 * @param y y坐标
+	 * @param width 宽度
+	 * @param height 高度
+	 */
+	public void cropImg(OutputStream os, InputStream is, String type, int x, int y, int width, int height) {
+		try {
+			BufferedImage imgBuf = ImageIO.read(is);
+			ImageFilter cropFilter = new CropImageFilter(x, y, width, height);
+			Image img =
+					Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(imgBuf.getSource(), cropFilter));
+			BufferedImage tag = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			tag.getGraphics().drawImage(img, 0, 0, null);
+			ImageIO.write(tag, type, os);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 切割图片
+	 * 
+	 * @param os 切割后的输出流
+	 * @param is 输入流
+	 * @param type 文件的图片类型
+	 * @param x x坐标
+	 * @param y y坐标
+	 * @param width 宽度
+	 * @param height 高度
+	 */
+	public String cropImg(String oPath, InputStream is, int x, int y, int width, int height) {
+		try (OutputStream os = new FileOutputStream(oPath);) {
+			cropImg(os, is, FileNameTool.getExtension(oPath), x, y, width, height);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 切割图片自动根据输入的文件名转换为xxx_small.type
+	 * 
+	 * @param filename 输入文件名
+	 * @param type 文件的图片类型
+	 * @param x x坐标
+	 * @param y y坐标
+	 * @param width 宽度
+	 * @param height 高度
+	 */
+	public String cropImg(String filename, int x, int y, int width, int height) {
+		String sname = generatorSmallFileName(filename);
+		try (InputStream is = new FileInputStream(filename); OutputStream os = new FileOutputStream(sname);) {
+			cropImg(os, is, FileNameTool.getExtension(filename), x, y, width, height);
+			return sname;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 切割图片
+	 * 
+	 * @param oPath 输出文件
+	 * @param iPath 输入文件名
+	 * @param type 文件的图片类型
+	 * @param x x坐标
+	 * @param y y坐标
+	 * @param width 宽度
+	 * @param height 高度
+	 */
+	public String cropImg(String oPath, String iPath, int x, int y, int width, int height) {
+		try (InputStream is = new FileInputStream(iPath); OutputStream os = new FileOutputStream(oPath);) {
+			cropImg(os, is, FileNameTool.getExtension(iPath), x, y, width, height);
+			return oPath;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private String generatorSmallFileName(String name) {
+		String fn = FileNameTool.getBaseName(name);
+		return name.replace(fn, fn + "_small");
+	}
+
+	/**
+	 * 获得图片的高
+	 * 
+	 * @param file 图片文件
+	 * @return 高,为0表示获取图片失败
+	 */
+	public static int getHeight(File file) {
+		try (InputStream is = new FileInputStream(file);) {
+			return getHeight(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/**
+	 * 获得图片的高
+	 * 
+	 * @param is 图片输入流
+	 * @return 高,为0表示获取图片失败
+	 */
+	public static int getHeight(InputStream is) {
+		try {
+			return ImageIO.read(is).getHeight(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/**
+	 * 获得图片的高
+	 * 
+	 * @param path 图片地址
+	 * @return 高,为0表示获取图片失败
+	 */
+	public static int getHeight(String path) {
+		try (InputStream is = new FileInputStream(path);) {
+			return getHeight(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/**
+	 * 获得图片的宽
+	 * 
+	 * @param path 图片文件
+	 * @return 高,为0表示获取图片失败
+	 */
+	public static int getWidth(File file) {
+		try (InputStream is = new FileInputStream(file);) {
+			return getWidth(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/**
+	 * 获得图片的宽
+	 * 
+	 * @param is 图片输入流
+	 * @return 高,为0表示获取图片失败
+	 */
+	public static int getWidth(InputStream is) {
+		try {
+			return ImageIO.read(is).getWidth(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/**
+	 * 获得图片的宽
+	 * 
+	 * @param path 图片地址
+	 * @return 高,为0表示获取图片失败
+	 */
+	public static int getWidth(String path) {
+		try (InputStream is = new FileInputStream(path);) {
+			return getWidth(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	/**
+	 * 获得一张图片的宽高
+	 * 
+	 * @param file 图片文件
+	 * @return 返回一个数组,第一个值是宽,第二个值是高
+	 * @throws IOException
+	 */
+	public static int[] getWidthHeight(File file) {
+		try (InputStream is = new FileInputStream(file);) {
+			return getWidthHeight(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 获得一张图片的宽高
+	 * 
+	 * @param is 图片输入流
+	 * @return 返回一个数组,第一个值是宽,第二个值是高
+	 * @throws IOException
+	 */
+	public static int[] getWidthHeight(InputStream is) {
+		try {
+			Image img = ImageIO.read(is);
+			return new int[] { img.getWidth(null), img.getHeight(null) };
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new int[0];
+	}
+
+	/**
+	 * 获得一张图片的宽高
+	 * 
+	 * @param path 图片路径
+	 * @return 返回一个数组,第一个值是宽,第二个值是高
+	 * @throws IOException
+	 */
+	public static int[] getWidthHeight(String path) {
+		try (InputStream is = new FileInputStream(path);) {
+			return getWidthHeight(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

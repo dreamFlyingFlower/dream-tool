@@ -67,6 +67,12 @@
 			<artifactId>metadata-extractor</artifactId>
 			<version>${metadata-extractor.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.belerweb/pinyin4j -->
+		<dependency>
+			<groupId>com.belerweb</groupId>
+			<artifactId>pinyin4j</artifactId>
+			<version>2.5.1</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
