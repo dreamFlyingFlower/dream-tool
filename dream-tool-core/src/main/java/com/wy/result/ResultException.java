@@ -33,6 +33,10 @@ public class ResultException extends RuntimeException {
 		this(null, code, message);
 	}
 
+	public ResultException(int code, String format, Object... args) {
+		this(null, code, format, args);
+	}
+
 	public ResultException(Throwable ex) {
 		this(ex, 0);
 	}
@@ -72,5 +76,10 @@ public class ResultException extends RuntimeException {
 	public static void throwResultException(Throwable throwable, String format, Object... args) {
 		throwable.printStackTrace();
 		throw new ResultException(throwable, String.format(format, args));
+	}
+
+	public static void throwResultException(Throwable throwable, int code, String format, Object... args) {
+		throwable.printStackTrace();
+		throw new ResultException(throwable, code, String.format(format, args));
 	}
 }

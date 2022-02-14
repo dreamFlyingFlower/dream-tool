@@ -90,16 +90,18 @@ public enum TipEnum implements StatusMsg {
 	/** 参数校验错误 */
 	TIP_PARAM_INVALID(1402, "msg_param_invalid"),
 
+	/** 数据库错误 */
+	TIP_DB_ERROR(1500, "msg_db_error"),
 	/** 数据新增失败 */
-	TIP_DB_CREATE(1500, "msg_db_create_fail"),
+	TIP_DB_CREATE(1501, "msg_db_create_fail"),
 	/** 数据删除失败 */
-	TIP_DB_DELETE(1501, "msg_db_delete_fail"),
+	TIP_DB_DELETE(1502, "msg_db_delete_fail"),
 	/** 数据修改失败 */
-	TIP_DB_MODIFY(1502, "msg_db_modify_fail"),
+	TIP_DB_MODIFY(1503, "msg_db_modify_fail"),
 	/** 数据查询失败 */
-	TIP_DB_QUERY(1503, "msg_db_query_fail"),
+	TIP_DB_QUERY(1504, "msg_db_query_fail"),
 	/** 数据库主键重复 */
-	TIP_DB_DUPLICATE_KEY_ERROR(1504, "msg_db_duplicate_key_error"),
+	TIP_DB_DUPLICATE_KEY_ERROR(1505, "msg_db_duplicate_key_error"),
 
 	/** 文件不存在 */
 	TIP_FILE_NOT_EXIST(1600, "msg_file_not_exist"),
