@@ -1,5 +1,12 @@
 package com.wy.lang;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Enum工具类
  * 
@@ -128,8 +135,8 @@ public class EnumTool {
 	 * @param name 待查找的枚举中的name()的值
 	 * @return Enum中和name()相等的值,若没有,返回null
 	 */
-	public static Enum<?> getByName(Class<? extends Enum<?>> enumClass, String name) {
-		return getByName(enumClass, name, false);
+	public static <E extends Enum<E>> E getByName(final Class<E> enumClass, String enumName) {
+		return getByName(enumClass, enumName, false);
 	}
 
 	/**
@@ -140,11 +147,42 @@ public class EnumTool {
 	 * @param caseSensitive 大小写敏感,true敏感
 	 * @return Enum中和name()相等的值,若没有,返回null
 	 */
-	public static Enum<?> getByName(Class<? extends Enum<?>> enumClass, String name, boolean caseSensitive) {
-		for (Enum<?> enumValue : enumClass.getEnumConstants()) {
-			return caseSensitive ? enumValue.name().equals(name) ? enumValue : null
-					: enumValue.name().equalsIgnoreCase(name) ? enumValue : null;
+	public static <E extends Enum<E>> E getByName(Class<E> enumClass, String name, boolean caseSensitive) {
+		for (E enumValue : enumClass.getEnumConstants()) {
+			if (caseSensitive && enumValue.name().equals(name)) {
+				return enumValue;
+			} else if (!caseSensitive && enumValue.name().equalsIgnoreCase(name)) {
+				return enumValue;
+			}
 		}
 		return null;
+	}
+
+	/**
+	 * 将枚举中的值转换为列表
+	 * 
+	 * @param <E>
+	 * @param enumClass 枚举类
+	 * @return 枚举列表
+	 */
+	public static <E extends Enum<E>> List<E> toList(final Class<E> enumClass) {
+		return enumClass.isEnum() ? new ArrayList<>(Arrays.asList(enumClass.getEnumConstants()))
+				: Collections.emptyList();
+	}
+
+	/**
+	 * 将枚举转换为Map,其中name()为key,枚举项为value
+	 * 
+	 * @param <E> 枚举
+	 * @param enumClass 枚举类
+	 * @return 枚举Map
+	 */
+	public static <E extends Enum<E>> Map<String, E> toMap(final Class<E> enumClass) {
+		AssertTool.isTrue(enumClass.isEnum(), "the class is not a enum");
+		final Map<String, E> map = new LinkedHashMap<>();
+		for (final E e : enumClass.getEnumConstants()) {
+			map.put(e.name(), e);
+		}
+		return map;
 	}
 }
