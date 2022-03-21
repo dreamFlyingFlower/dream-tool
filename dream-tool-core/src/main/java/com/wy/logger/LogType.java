@@ -37,7 +37,7 @@ public enum LogType implements StatusMsg, PropConverter {
 	}
 
 	@Override
-	public int getCode() {
+	public Integer getCode() {
 		return this.code;
 	}
 

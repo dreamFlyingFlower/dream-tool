@@ -27,7 +27,7 @@ public enum CommonEnum implements StatusMsg, PropConverter {
 	};
 
 	@Override
-	public int getCode() {
+	public Integer getCode() {
 		return this.ordinal();
 	}
 

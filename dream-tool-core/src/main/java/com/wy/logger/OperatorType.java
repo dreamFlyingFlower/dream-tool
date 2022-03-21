@@ -26,7 +26,7 @@ public enum OperatorType implements StatusMsg, PropConverter {
 	}
 
 	@Override
-	public int getCode() {
+	public Integer getCode() {
 		return this.code;
 	}
 

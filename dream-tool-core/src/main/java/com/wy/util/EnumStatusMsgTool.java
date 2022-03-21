@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.function.Predicate;
 
 import com.wy.common.StatusMsg;
 
@@ -20,7 +21,7 @@ import com.wy.common.StatusMsg;
 public class EnumStatusMsgTool {
 
 	/**
-	 * 根据没获得值
+	 * 根据枚举获得值
 	 * 
 	 * @param <E> 枚举类型
 	 * @param code 枚举code值
@@ -32,6 +33,42 @@ public class EnumStatusMsgTool {
 		for (E e : list) {
 			if (e.getCode() == code) {
 				return e;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 根据枚举获得msg
+	 * 
+	 * @param <E> 枚举类型
+	 * @param code 枚举code值
+	 * @param enumClass 枚举字节码
+	 * @return msg或null
+	 */
+	public static <E extends Enum<E> & StatusMsg> String getMsg(int code, Class<E> enumClass) {
+		List<E> list = toList(enumClass);
+		for (E e : list) {
+			if (e.getCode() == code) {
+				return e.getMsg();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 根据枚举获得name()
+	 * 
+	 * @param <E> 枚举类型
+	 * @param code 枚举code值
+	 * @param enumClass 枚举字节码
+	 * @return name()或null
+	 */
+	public static <E extends Enum<E> & StatusMsg> String getName(int code, Class<E> enumClass) {
+		List<E> list = toList(enumClass);
+		for (E e : list) {
+			if (e.getCode() == code) {
+				return e.name();
 			}
 		}
 		return null;
@@ -77,6 +114,27 @@ public class EnumStatusMsgTool {
 		List<E> list = toList(enumClass);
 		List<Map<String, String>> ret = new ArrayList<>();
 		list.forEach(t -> {
+			Map<String, String> map = new HashMap<>();
+			map.put("code", String.valueOf(t.getCode()));
+			map.put("msg", t.getMsg());
+			ret.add(map);
+		});
+		return ret;
+	}
+
+	/**
+	 * 将枚举转换为List<Map>,每个枚举项都是一个Map
+	 * 
+	 * @param <E> 枚举类型
+	 * @param enumClass 枚举字节码
+	 * @param predicate 过滤条件
+	 * @return List<Map>
+	 */
+	public static <E extends Enum<E> & StatusMsg> List<Map<String, String>> toListMap(Class<E> enumClass,
+			Predicate<E> predicate) {
+		List<E> list = toList(enumClass);
+		List<Map<String, String>> ret = new ArrayList<>();
+		list.stream().filter(predicate).forEach(t -> {
 			Map<String, String> map = new HashMap<>();
 			map.put("code", String.valueOf(t.getCode()));
 			map.put("msg", t.getMsg());

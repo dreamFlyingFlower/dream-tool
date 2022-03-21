@@ -144,7 +144,7 @@ public enum TipEnum implements StatusMsg {
 	}
 
 	@Override
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 

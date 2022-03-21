@@ -33,7 +33,7 @@ public enum TipFormatEnum implements StatusMsg {
 	}
 
 	@Override
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 

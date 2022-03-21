@@ -1,5 +1,7 @@
 package com.wy.common;
 
+import java.io.Serializable;
+
 /**
  * 自定义各种状态码以及状态信息
  * 
@@ -7,16 +9,14 @@ package com.wy.common;
  * @date 2020-02-20 15:14:26
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public interface StatusMsg extends CodeMsg<Integer> {
+public interface CodeMsg<ID extends Serializable> {
 
 	/**
 	 * 状态码,默认为成功状态码1
 	 * 
 	 * @return 数字状态码
 	 */
-	default Integer getCode() {
-		return 1;
-	}
+	ID getCode();
 
 	/**
 	 * 状态信息,默认为响应成功提示信息
