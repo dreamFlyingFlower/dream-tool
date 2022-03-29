@@ -31,7 +31,7 @@ public class EnumStatusMsgTool {
 	public static <E extends Enum<E> & StatusMsg> E getEnum(int code, Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		for (E e : list) {
-			if (e.getCode() == code) {
+			if (e.getCode().intValue() == code) {
 				return e;
 			}
 		}
@@ -49,7 +49,7 @@ public class EnumStatusMsgTool {
 	public static <E extends Enum<E> & StatusMsg> String getMsg(int code, Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		for (E e : list) {
-			if (e.getCode() == code) {
+			if (e.getCode().intValue() == code) {
 				return e.getMsg();
 			}
 		}
@@ -67,7 +67,7 @@ public class EnumStatusMsgTool {
 	public static <E extends Enum<E> & StatusMsg> String getName(int code, Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		for (E e : list) {
-			if (e.getCode() == code) {
+			if (e.getCode().intValue() == code) {
 				return e.name();
 			}
 		}
