@@ -42,12 +42,12 @@ public class Result<T> implements Serializable {
 	/**
 	 * 分页时当前页数
 	 */
-	private int pageIndex;
+	private long pageIndex;
 
 	/**
 	 * 分页时每页条数
 	 */
-	private int pageSize;
+	private long pageSize;
 
 	/**
 	 * 分页时数据的总条数
@@ -138,7 +138,7 @@ public class Result<T> implements Serializable {
 				.data(t).build();
 	}
 
-	public static <T> Result<T> page(T t, int pageIndex, int pageSize, long total) {
+	public static <T> Result<T> page(T t, long pageIndex, long pageSize, long total) {
 		return page(1, null, t, pageIndex, pageSize, total);
 	}
 
@@ -146,7 +146,7 @@ public class Result<T> implements Serializable {
 		return page(1, null, t, 0, 0, 0);
 	}
 
-	public static <T> Result<T> page(int code, String msg, T t, int pageIndex, int pageSize, long total) {
+	public static <T> Result<T> page(int code, String msg, T t, long pageIndex, long pageSize, long total) {
 		return Result.<T>builder().code(code)
 				.msg(StrTool.isBlank(msg)
 						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
@@ -220,13 +220,13 @@ public class Result<T> implements Serializable {
 			return this;
 		}
 
-		public ResultBuilder<T> pageIndex(int pageIndex) {
+		public ResultBuilder<T> pageIndex(long pageIndex) {
 			result.setPageIndex(pageIndex);
 			return this;
 		}
 
-		public ResultBuilder<T> pageSize(int data) {
-			result.setPageSize(data);
+		public ResultBuilder<T> pageSize(long pageSize) {
+			result.setPageSize(pageSize);
 			return this;
 		}
 
@@ -270,19 +270,19 @@ public class Result<T> implements Serializable {
 		this.data = data;
 	}
 
-	public int getPageIndex() {
+	public long getPageIndex() {
 		return pageIndex;
 	}
 
-	public void setPageIndex(int pageIndex) {
+	public void setPageIndex(long pageIndex) {
 		this.pageIndex = pageIndex;
 	}
 
-	public int getPageSize() {
+	public long getPageSize() {
 		return pageSize;
 	}
 
-	public void setPageSize(int pageSize) {
+	public void setPageSize(long pageSize) {
 		this.pageSize = pageSize;
 	}
 
