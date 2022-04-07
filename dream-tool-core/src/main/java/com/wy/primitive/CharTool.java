@@ -85,7 +85,7 @@ public class CharTool {
 	 * @return 源字符或默认字符
 	 */
 	public static char toChar(Object ch, final char defaultValue) {
-		return ch == null ? defaultValue : Character.valueOf((char) NumberTool.toInt(ch));
+		return ch == null ? defaultValue : Character.valueOf((char) NumberTool.toInt(ch).intValue());
 	}
 
 	/**

@@ -43,23 +43,6 @@ public class NumberTool {
 	}
 
 	/**
-	 * double类型避免精度缺失的加法运算,但仍会有精度丢失
-	 * 
-	 * @param array 数组
-	 * @return 加法运算的结果
-	 */
-	public static BigDecimal add(double... array) {
-		if (ArrayTool.isEmpty(array)) {
-			return BigDecimal.ZERO;
-		}
-		BigDecimal result = new BigDecimal(array[0]);
-		for (int i = 1; i < array.length; i++) {
-			result = result.add(new BigDecimal(array[i]));
-		}
-		return result;
-	}
-
-	/**
 	 * 数字类型避免精度缺失的加法运算,但仍会有精度丢失
 	 * 
 	 * @param array 数组
@@ -195,6 +178,22 @@ public class NumberTool {
 	}
 
 	/**
+	 * 判断 a 与 b 是否相等,并不精确
+	 * 
+	 * @param a 数字a
+	 * @param b 数字b
+	 * @return a==b 返回true, a!=b 返回false
+	 */
+	public static boolean equal(double a, double b) {
+		BigDecimal v1 = BigDecimal.valueOf(a);
+		BigDecimal v2 = BigDecimal.valueOf(b);
+		if (v1.compareTo(v2) == 0) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * 阶乘,如5!,阶乘不得超过64,会超出long的最大值
 	 * 
 	 * @return 阶乘结果,可能会抛数字过大异常
@@ -310,6 +309,32 @@ public class NumberTool {
 		NumberFormat format = NumberFormat.getPercentInstance();
 		format.setMaximumFractionDigits(scale);
 		return format.format(number);
+	}
+
+	/**
+	 * 判断 a 是否大于等于 b
+	 * 
+	 * @param a 数字a
+	 * @param b 数字b
+	 * @return a>=b 返回true, a<b 返回false
+	 */
+	public static boolean ge(double a, double b) {
+		BigDecimal v1 = BigDecimal.valueOf(a);
+		BigDecimal v2 = BigDecimal.valueOf(b);
+		return v1.compareTo(v2) >= 0;
+	}
+
+	/**
+	 * 判断 a 是否大于 b
+	 * 
+	 * @param a 数字a
+	 * @param b 数字b
+	 * @return a>b 返回true, a<=b 返回 false
+	 */
+	public static boolean gt(double a, double b) {
+		BigDecimal v1 = BigDecimal.valueOf(a);
+		BigDecimal v2 = BigDecimal.valueOf(b);
+		return v1.compareTo(v2) == 1;
 	}
 
 	/**
@@ -501,10 +526,30 @@ public class NumberTool {
 		return !allowSigns && foundDigit;
 	}
 
-	public static void main(String[] args) {
-		System.out.println(isNumber("00079"));
-		System.out.println(isNumber("0007E2"));
-		System.out.println(Integer.parseInt("00079"));
+	/**
+	 * 判断 a 是否小于等于 b
+	 * 
+	 * @param a 数字a
+	 * @param b 数字b
+	 * @return a<=b 返回true, a>b 返回 false
+	 */
+	public static boolean le(double a, double b) {
+		BigDecimal v1 = BigDecimal.valueOf(a);
+		BigDecimal v2 = BigDecimal.valueOf(b);
+		return v1.compareTo(v2) <= 0;
+	}
+
+	/**
+	 * 判断 a 是否小于 b
+	 * 
+	 * @param a 数字a
+	 * @param b 数字b
+	 * @return a<b 返回true, a>=b 返回 false
+	 */
+	public static boolean lt(double a, double b) {
+		BigDecimal v1 = BigDecimal.valueOf(a);
+		BigDecimal v2 = BigDecimal.valueOf(b);
+		return v1.compareTo(v2) == -1;
 	}
 
 	/**
@@ -981,6 +1026,29 @@ public class NumberTool {
 	}
 
 	/**
+	 * Object对象转BigDecimal.如果Object为空或不是数值型对象,返回0;为数值型,转为BigDecimal
+	 * 
+	 * @param obj 要转换的Object对象
+	 * @return BigDecimal
+	 */
+	public static BigDecimal toBigDecimal(Object obj) {
+		return toBigDecimal(obj, BigDecimal.ZERO);
+	}
+
+	/**
+	 * Object对象转BigDecimal.如果Object为空或不是数值型对象,抛异常;为数值型,转为BigDecimal
+	 * 
+	 * @param obj 要转换的Object对象
+	 * @return BigDecimal
+	 */
+	public static BigDecimal toBigDecimal(Object obj, BigDecimal defaultValue) {
+		if (!isDigits(obj)) {
+			return defaultValue;
+		}
+		return new BigDecimal(obj.toString());
+	}
+
+	/**
 	 * 将对象强行转换为byte,该对象必须是一个整数字符串,null返回0
 	 * 
 	 * @param obj 需要进行强转的对象,可以是object,string等
@@ -1009,17 +1077,17 @@ public class NumberTool {
 	 * @param obj 需要进行强转的对象,可以是object,string等
 	 * @return 强转后的值
 	 */
-	public static double toDouble(Object obj) {
+	public static Double toDouble(Object obj) {
 		return toDouble(obj, 0);
 	}
 
 	/**
-	 * 将一个对象强行转换为int类型,若该对象不可转为整数或小数,则返回默认值
+	 * 将一个对象强行转换为Double类型,若该对象不可转为整数或小数,则返回默认值
 	 * 
 	 * @param obj 需要进行强转的对象,可以是object,string等
 	 * @return 强转后的值
 	 */
-	public static double toDouble(Object obj, double defaultValue) {
+	public static Double toDouble(Object obj, double defaultValue) {
 		if (!isDigits(obj)) {
 			return defaultValue;
 		}
@@ -1032,7 +1100,7 @@ public class NumberTool {
 	 * @param obj 需要进行强转的对象,可以是object,string等
 	 * @return 强转后的值
 	 */
-	public static float toFloat(Object obj) {
+	public static Float toFloat(Object obj) {
 		return toFloat(obj, 0f);
 	}
 
@@ -1042,7 +1110,7 @@ public class NumberTool {
 	 * @param obj 需要进行强转的对象,可以是object,string等
 	 * @return 强转后的值
 	 */
-	public static float toFloat(Object obj, float defaultValue) {
+	public static Float toFloat(Object obj, float defaultValue) {
 		if (!isDigits(obj)) {
 			return defaultValue;
 		}
@@ -1055,7 +1123,7 @@ public class NumberTool {
 	 * @param obj 需要进行强转的对象,可以是object,string等
 	 * @return 强转后的值
 	 */
-	public static int toInt(Object obj) {
+	public static Integer toInt(Object obj) {
 		return toInt(obj, 0);
 	}
 
@@ -1065,7 +1133,7 @@ public class NumberTool {
 	 * @param obj 需要进行强转的对象,可以是object,string等
 	 * @return 强转后的值
 	 */
-	public static int toInt(Object obj, int defaultValue) {
+	public static Integer toInt(Object obj, int defaultValue) {
 		if (!isDigits(obj)) {
 			return defaultValue;
 		}
@@ -1078,7 +1146,7 @@ public class NumberTool {
 	 * @param obj 需要进行强转的对象,可以是object,string等
 	 * @return 强转后的long类型值
 	 */
-	public static long toLong(Object obj) {
+	public static Long toLong(Object obj) {
 		return toLong(obj, 0l);
 	}
 
@@ -1088,34 +1156,11 @@ public class NumberTool {
 	 * @param obj 需要进行强转的对象,可以是object,string等
 	 * @return 强转后的long类型值
 	 */
-	public static long toLong(Object obj, long defaultValue) {
+	public static Long toLong(Object obj, long defaultValue) {
 		if (!isDigits(obj)) {
 			return defaultValue;
 		}
 		return Long.parseLong(Optional.ofNullable(obj).get().toString());
-	}
-
-	/**
-	 * 将对象强行转换为short,该对象必须是一个整数字符串,null返回0
-	 * 
-	 * @param obj 需要进行强转的对象,可以是object,string等
-	 * @return 强转后的值
-	 */
-	public static short toShort(Object obj) {
-		return toShort(obj, (short) 0);
-	}
-
-	/**
-	 * 将对象强行转换为short,若该对象不可转为整数,则返回默认值
-	 * 
-	 * @param obj 需要进行强转的对象,可以是object,string等
-	 * @return 强转后的值
-	 */
-	public static short toShort(Object obj, short defaultValue) {
-		if (!isDigits(obj)) {
-			return defaultValue;
-		}
-		return Short.parseShort(Optional.ofNullable(obj).get().toString());
 	}
 
 	/**
@@ -1138,5 +1183,28 @@ public class NumberTool {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * 将对象强行转换为short,该对象必须是一个整数字符串,null返回0
+	 * 
+	 * @param obj 需要进行强转的对象,可以是object,string等
+	 * @return 强转后的值
+	 */
+	public static Short toShort(Object obj) {
+		return toShort(obj, (short) 0);
+	}
+
+	/**
+	 * 将对象强行转换为short,若该对象不可转为整数,则返回默认值
+	 * 
+	 * @param obj 需要进行强转的对象,可以是object,string等
+	 * @return 强转后的值
+	 */
+	public static Short toShort(Object obj, short defaultValue) {
+		if (!isDigits(obj)) {
+			return defaultValue;
+		}
+		return Short.parseShort(Optional.ofNullable(obj).get().toString());
 	}
 }

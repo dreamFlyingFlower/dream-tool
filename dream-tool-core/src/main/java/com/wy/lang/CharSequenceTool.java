@@ -913,7 +913,7 @@ public class CharSequenceTool {
 	}
 
 	/**
-	 * 判断字符序列是否只包含unicode数字,小数点,+,-不属于unicode数字,返回false
+	 * 判断字符序列是否只包含unicode数字.小数点,+,-不属于unicode数字,返回false
 	 *
 	 * @param cs 字符序列
 	 * @return true当所有字符都只包含unicode数字
