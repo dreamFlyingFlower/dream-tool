@@ -21,10 +21,13 @@ import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalUnit;
+import java.util.Calendar;
 import java.util.Date;
 
+import com.wy.annotation.Example;
 import com.wy.enums.DateEnum;
 import com.wy.lang.AssertTool;
+import com.wy.lang.StrTool;
 
 /**
  * {@link LocalDateTime}等工具类,jdk1.8的时间类工具类,和DateTool差不多
@@ -115,14 +118,14 @@ public class DateTimeTool {
 	 * @return 时间字符串
 	 */
 	public static String formatDate() {
-		return DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDateTime.now());
+		return DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now());
 	}
 
 	/**
 	 * 将Date转换为yyyy-MM-dd格式
 	 * 
 	 * @param date 需要进行转换的时间
-	 * @return 时间字符串
+	 * @return 日期字符串
 	 */
 	public static String formatDate(Date date) {
 		return DateTimeFormatter.ISO_LOCAL_DATE.format(date2Local(date));
@@ -132,7 +135,7 @@ public class DateTimeTool {
 	 * 将LocalDate转换为yyyy-MM-dd格式
 	 * 
 	 * @param localDate 需要进行转换的时间
-	 * @return 时间字符串
+	 * @return 日期字符串
 	 */
 	public static String formatDate(LocalDate localDate) {
 		return DateTimeFormatter.ISO_LOCAL_DATE.format(localDate);
@@ -141,11 +144,21 @@ public class DateTimeTool {
 	/**
 	 * 将LocalDateTime转换为yyyy-MM-dd格式
 	 * 
-	 * @param localDateTime 需要进行转换的时间
-	 * @return 时间字符串
+	 * @param localDate 需要进行转换的时间
+	 * @return 日期字符串
 	 */
 	public static String formatDate(LocalDateTime localDateTime) {
 		return DateTimeFormatter.ISO_LOCAL_DATE.format(localDateTime);
+	}
+
+	/**
+	 * 将当前时间转换为指定年月日格式
+	 * 
+	 * @param pattern 日期格式
+	 * @return 日期字符串
+	 */
+	public static String formatDate(String pattern) {
+		return DateTimeFormatter.ofPattern(pattern).format(LocalDate.now());
 	}
 
 	/**
@@ -178,47 +191,13 @@ public class DateTimeTool {
 	}
 
 	/**
-	 * 将Date转换为指定格式
+	 * 将当前时间转换为指定的年月日时分秒格式
 	 * 
-	 * @param date 需要转换的时间
-	 * @param pattern 需要转换的格式
+	 * @param pattern 时间格式
 	 * @return 时间字符串
 	 */
-	public static String formatDateTime(Date date, DateEnum pattern) {
-		return format(date, pattern.getPattern());
-	}
-
-	/**
-	 * 将Date转换为指定格式
-	 * 
-	 * @param date 需要转换的时间
-	 * @param pattern 需要转换的格式
-	 * @return 时间字符串
-	 */
-	public static String formatDateTime(Date date, String pattern) {
-		return format(date, pattern);
-	}
-
-	/**
-	 * 将LocalDateTime转换为指定格式
-	 * 
-	 * @param localDateTime 需要转换的时间
-	 * @param pattern 需要转换的格式
-	 * @return 时间字符串
-	 */
-	public static String formatDateTime(LocalDateTime localDateTime, DateEnum pattern) {
-		return format(localDateTime, pattern.getPattern());
-	}
-
-	/**
-	 * 将LocalDateTime转换为指定格式
-	 * 
-	 * @param localDateTime 需要转换的时间
-	 * @param pattern 需要转换的格式
-	 * @return 时间字符串
-	 */
-	public static String formatDateTime(LocalDateTime localDateTime, String pattern) {
-		return format(localDateTime, pattern);
+	public static String formatDateTime(String pattern) {
+		return DateTimeFormatter.ofPattern(pattern).format(LocalDateTime.now());
 	}
 
 	/**
@@ -236,22 +215,22 @@ public class DateTimeTool {
 	 * 将Date转换成指定格式字符串
 	 * 
 	 * @param date 时间
-	 * @param pattern 格式化样式
+	 * @param dateTimeFormatter 格式化样式
 	 * @return 格式化后字符串
 	 */
-	public static String format(Date date, String pattern) {
-		return format(date, DateTimeFormatter.ofPattern(pattern));
+	public static String format(Date date, DateTimeFormatter dateTimeFormatter) {
+		return format(date2Local(date), dateTimeFormatter);
 	}
 
 	/**
 	 * 将Date转换成指定格式字符串
 	 * 
 	 * @param date 时间
-	 * @param dateTimeFormatter 格式化样式
+	 * @param pattern 格式化样式
 	 * @return 格式化后字符串
 	 */
-	public static String format(Date date, DateTimeFormatter dateTimeFormatter) {
-		return format(date2Local(date), dateTimeFormatter);
+	public static String format(Date date, String pattern) {
+		return format(date, DateTimeFormatter.ofPattern(pattern));
 	}
 
 	/**
@@ -269,6 +248,17 @@ public class DateTimeTool {
 	 * 将LocalDateTime转换成指定格式字符串
 	 * 
 	 * @param localDateTime 时间
+	 * @param dateTimeFormatter 格式化样式
+	 * @return 格式化后字符串
+	 */
+	public static String format(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
+		return dateTimeFormatter.format(localDateTime);
+	}
+
+	/**
+	 * 将LocalDateTime转换成指定格式字符串
+	 * 
+	 * @param localDateTime 时间
 	 * @param pattern 格式化样式
 	 * @return 格式化后字符串
 	 */
@@ -277,14 +267,13 @@ public class DateTimeTool {
 	}
 
 	/**
-	 * 将LocalDateTime转换成指定格式字符串
+	 * 将当前时间转换为指定格式
 	 * 
-	 * @param localDateTime 时间
-	 * @param dateTimeFormatter 格式化样式
-	 * @return 格式化后字符串
+	 * @param pattern 时间格式
+	 * @return 时间格式字符串
 	 */
-	public static String format(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
-		return dateTimeFormatter.format(localDateTime);
+	public static String format(String pattern) {
+		return DateTimeFormatter.ofPattern(pattern).format(LocalDateTime.now());
 	}
 
 	/**
@@ -320,6 +309,35 @@ public class DateTimeTool {
 	/**
 	 * 获得当前时间所在日期的零点时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
 	 * 
+	 * @return 当前时间所在日期零点时间
+	 */
+	public static LocalDateTime getDayBeginLocal() {
+		return LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
+	}
+
+	/**
+	 * 获得指定时间所在日期的零点时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @return 当前时间所在日期零点时间
+	 */
+	public static LocalDateTime getDayBeginLocal(Date date) {
+		return LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MIN);
+	}
+
+	/**
+	 * 获得指定时间所在日期的零点时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 当前时间所在日期零点时间
+	 */
+	public static LocalDateTime getDayBeginLocal(LocalDateTime localDateTime) {
+		return LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.of(0, 0, 0));
+	}
+
+	/**
+	 * 获得当前时间所在日期的零点时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 
 	 * @return 当前时间所在日期零点时间字符串
 	 */
 	public static String getDayBeginStr() {
@@ -340,6 +358,45 @@ public class DateTimeTool {
 	}
 
 	/**
+	 * 获得指定时间所在日期的零点时间指定格式,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @param dateFormat 时间格式
+	 * @return 当前时间所在日期零点时间字符串
+	 */
+	public static String getDayBeginStr(Date date, DateEnum dateFormat) {
+		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MIN);
+		return dateFormat == null ? DEFAULT_FORMATTER.format(localDateTime)
+				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(localDateTime);
+	}
+
+	/**
+	 * 获得指定时间所在日期的零点时间指定格式,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @param dateTimeFormatter 时间格式
+	 * @return 当前时间所在日期零点时间字符串
+	 */
+	public static String getDayBeginStr(Date date, DateTimeFormatter dateTimeFormatter) {
+		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MIN);
+		return dateTimeFormatter == null ? DEFAULT_FORMATTER.format(localDateTime)
+				: dateTimeFormatter.format(localDateTime);
+	}
+
+	/**
+	 * 获得指定时间所在日期的零点时间指定格式,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @param format 时间格式
+	 * @return 当前时间所在日期零点时间字符串
+	 */
+	public static String getDayBeginStr(Date date, String format) {
+		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MIN);
+		return StrTool.isBlank(format) ? DEFAULT_FORMATTER.format(localDateTime)
+				: DateTimeFormatter.ofPattern(format).format(localDateTime);
+	}
+
+	/**
 	 * 获得指定时间所在日期的零点时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
 	 * 
 	 * @param localDateTime 指定时间
@@ -347,6 +404,47 @@ public class DateTimeTool {
 	 */
 	public static String getDayBeginStr(LocalDateTime localDateTime) {
 		return DEFAULT_FORMATTER.format(LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MIN));
+	}
+
+	/**
+	 * 获得指定时间所在日期的零点时间指定格式,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param dateFormat 时间格式
+	 * @return 当前时间所在日期零点时间字符串
+	 */
+	public static String getDayBeginStr(LocalDateTime localDateTime, DateEnum dateFormat) {
+		return dateFormat == null
+				? DEFAULT_FORMATTER.format(LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MIN))
+				: DateTimeFormatter.ofPattern(dateFormat.getPattern())
+						.format(LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MIN));
+	}
+
+	/**
+	 * 获得指定时间所在日期的零点时间指定格式,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param dateTimeFormatter 时间格式
+	 * @return 当前时间所在日期零点时间字符串
+	 */
+	public static String getDayBeginStr(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
+		return dateTimeFormatter == null
+				? DEFAULT_FORMATTER.format(LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MIN))
+				: dateTimeFormatter.format(LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MIN));
+	}
+
+	/**
+	 * 获得指定时间所在日期的零点时间指定格式,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param format 时间格式
+	 * @return 当前时间所在日期零点时间字符串
+	 */
+	public static String getDayBeginStr(LocalDateTime localDateTime, String format) {
+		return StrTool.isBlank(format)
+				? DEFAULT_FORMATTER.format(LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MIN))
+				: DateTimeFormatter.ofPattern(format)
+						.format(LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MIN));
 	}
 
 	/**
@@ -382,11 +480,40 @@ public class DateTimeTool {
 	/**
 	 * 获得当前时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
 	 * 
+	 * @return 当前时间所在日期结束时间
+	 */
+	public static LocalDateTime getDayEndLocal() {
+		return LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+	}
+
+	/**
+	 * 获得指定时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @return 当前时间所在日期结束时间
+	 */
+	public static LocalDateTime getDayEndLocal(Date date) {
+		LocalDateTime date2Local = date2Local(date);
+		return LocalDateTime.of(date2Local.toLocalDate(), LocalTime.MAX);
+	}
+
+	/**
+	 * 获得指定时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @return 当前时间所在日期结束时间
+	 */
+	public static LocalDateTime getDayEndLocal(LocalDateTime localDateTime) {
+		return LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
+	}
+
+	/**
+	 * 获得当前时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 
 	 * @return 当前时间所在日期结束时间字符串
 	 */
 	public static String getDayEndStr() {
-		LocalDateTime localDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-		return localDateTime.format(DEFAULT_FORMATTER);
+		return LocalDateTime.of(LocalDate.now(), LocalTime.MAX).format(DEFAULT_FORMATTER);
 	}
 
 	/**
@@ -396,9 +523,49 @@ public class DateTimeTool {
 	 * @return 当前时间所在日期结束时间字符串
 	 */
 	public static String getDayEndStr(Date date) {
-		LocalDateTime date2Local = date2Local(date);
-		LocalDateTime localDateTime = LocalDateTime.of(date2Local.toLocalDate(), LocalTime.MAX);
-		return localDateTime.format(DEFAULT_FORMATTER);
+		return getDayEndStr(date, DEFAULT_FORMATTER);
+	}
+
+	/**
+	 * 获得指定时间所在日期的指定格式的结束时间,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @param dateFormat 时间格式
+	 * @return 当前时间所在日期结束时间指定格式字符串
+	 */
+	public static String getDayEndStr(Date date, DateEnum dateFormat) {
+		AssertTool.notNull(date);
+		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MAX);
+		return dateFormat == null ? DEFAULT_FORMATTER.format(localDateTime)
+				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(localDateTime);
+	}
+
+	/**
+	 * 获得指定时间所在日期的指定格式的结束时间,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @param dateTimeFormatter 时间格式
+	 * @return 当前时间所在日期结束时间指定格式字符串
+	 */
+	public static String getDayEndStr(Date date, DateTimeFormatter dateTimeFormatter) {
+		AssertTool.notNull(date);
+		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MAX);
+		return dateTimeFormatter == null ? DEFAULT_FORMATTER.format(localDateTime)
+				: dateTimeFormatter.format(localDateTime);
+	}
+
+	/**
+	 * 获得指定时间所在日期的指定格式的结束时间,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @param format 时间格式
+	 * @return 当前时间所在日期结束时间指定格式字符串
+	 */
+	public static String getDayEndStr(Date date, String format) {
+		AssertTool.notNull(date);
+		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MAX);
+		return StrTool.isBlank(format) ? DEFAULT_FORMATTER.format(localDateTime)
+				: DateTimeFormatter.ofPattern(format).format(localDateTime);
 	}
 
 	/**
@@ -412,16 +579,69 @@ public class DateTimeTool {
 	}
 
 	/**
+	 * 获得指定时间所在日期的指定格式的结束时间,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param dateFormat 时间格式
+	 * @return 当前时间所在日期结束时间指定格式字符串
+	 */
+	public static String getDayEndStr(LocalDateTime localDateTime, DateEnum dateFormat) {
+		AssertTool.notNull(localDateTime);
+		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
+		return dateFormat == null ? DEFAULT_FORMATTER.format(localDateTime)
+				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(localDateTime);
+	}
+
+	/**
+	 * 获得指定时间所在日期的指定格式的结束时间,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param dateTimeFormatter 时间格式
+	 * @return 当前时间所在日期结束时间指定格式字符串
+	 */
+	public static String getDayEndStr(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
+		AssertTool.notNull(localDateTime);
+		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
+		return dateTimeFormatter == null ? DEFAULT_FORMATTER.format(localDateTime)
+				: dateTimeFormatter.format(localDateTime);
+	}
+
+	/**
+	 * 获得指定时间所在日期的指定格式的结束时间,默认格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param format 时间格式
+	 * @return 当前时间所在日期结束时间指定格式字符串
+	 */
+	public static String getDayEndStr(LocalDateTime localDateTime, String format) {
+		AssertTool.notNull(localDateTime);
+		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
+		return StrTool.isBlank(format) ? DEFAULT_FORMATTER.format(localDateTime)
+				: DateTimeFormatter.ofPattern(format).format(localDateTime);
+	}
+
+	/**
 	 * 获得当前时间所在月份的第一天时间,注意,只有年月日是第一天的,时分秒同当前时间
 	 * 
 	 * @return 当前时间所在月第一天的时间
 	 */
+	@Example
 	public static LocalDateTime getFirstDayOfMonth() {
 		// 得到上一个周六
 		TemporalAdjusters.previous(DayOfWeek.SATURDAY);
 		// 得到本月最后一个
 		TemporalAdjusters.lastInMonth(DayOfWeek.FRIDAY);
 		return LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth());
+	}
+
+	/**
+	 * 获得指定时间所在月份的第一天时间,注意,只有年月日是第一天的,时分秒同当前时间
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在月第一天的时间
+	 */
+	public static LocalDateTime getFirstDayOfMonth(Date date) {
+		return date2Local(date).with(TemporalAdjusters.firstDayOfMonth());
 	}
 
 	/**
@@ -446,11 +666,766 @@ public class DateTimeTool {
 	/**
 	 * 获得指定时间所在月份的最后一天时间,注意,只有年月日是第一天的,时分秒同当前时间
 	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在月最后一天的时间
+	 */
+	public static LocalDateTime getLastDayOfMonth(Date date) {
+		return date2Local(date).with(TemporalAdjusters.lastDayOfMonth());
+	}
+
+	/**
+	 * 获得指定时间所在月份的最后一天时间,注意,只有年月日是第一天的,时分秒同当前时间
+	 * 
 	 * @param localDateTime 指定时间
 	 * @return 指定时间所在月最后一天的时间
 	 */
 	public static LocalDateTime getLastDayOfMonth(LocalDateTime localDateTime) {
 		return localDateTime.with(TemporalAdjusters.lastDayOfMonth());
+	}
+
+	/**
+	 * 获得当前时间所在月的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-01 00:00:00
+	 * 
+	 * @return 当前时间所在月的开始时间
+	 */
+	public static Date getMonthBegin() {
+		return local2Date(LocalDateTime.of(LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),
+				LocalTime.MIN));
+	}
+
+	/**
+	 * 获得当前时间所在月的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在月的开始时间
+	 */
+	public static Date getMonthBegin(Date date) {
+		return local2Date(LocalDateTime.of(date2Local(date).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),
+				LocalTime.MIN));
+	}
+
+	/**
+	 * 获得当前时间所在月的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-01 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所在月的开始时间
+	 */
+	public static Date getMonthBegin(LocalDateTime localDateTime) {
+		return local2Date(
+				LocalDateTime.of(localDateTime.with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(), LocalTime.MIN));
+	}
+
+	/**
+	 * 获得当前时间所在月的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-01 00:00:00
+	 * 
+	 * @return 当前时间所在月的开始时间
+	 */
+	public static LocalDateTime getMonthBeginLocal() {
+		return LocalDateTime.of(LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),
+				LocalTime.MIN);
+	}
+
+	/**
+	 * 获得指定时间所在月的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在月的开始时间
+	 */
+	public static LocalDateTime getMonthBeginLocal(Date date) {
+		return LocalDateTime.of(date2Local(date).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),
+				LocalTime.MIN);
+	}
+
+	/**
+	 * 获得指定时间所在月的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-01 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所在月的开始时间
+	 */
+	public static LocalDateTime getMonthBeginLocal(LocalDateTime localDateTime) {
+		return LocalDateTime.of(localDateTime.with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(), LocalTime.MIN);
+	}
+
+	/**
+	 * 获得当前时间所在月的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @return 当前时间所在月的结束时间
+	 */
+	public static Date getMonthEnd() {
+		return local2Date(getMonthEndLocal());
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在月的结束时间
+	 */
+	public static Date getMonthEnd(Date date) {
+		return local2Date(getMonthEndLocal(date));
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所在月的结束时间
+	 */
+	public static Date getMonthEnd(LocalDateTime localDateTime) {
+		return local2Date(getMonthEndLocal(localDateTime));
+	}
+
+	/**
+	 * 获得当前时间所在月的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @return 当前时间所在月的结束时间
+	 */
+	public static LocalDateTime getMonthEndLocal() {
+		return LocalDateTime.of(LocalDateTime.now().with(TemporalAdjusters.lastDayOfMonth()).toLocalDate(),
+				LocalTime.MAX);
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在月的结束时间
+	 */
+	public static LocalDateTime getMonthEndLocal(Date date) {
+		AssertTool.notNull(date);
+		return LocalDateTime.of(date2Local(date).with(TemporalAdjusters.lastDayOfMonth()).toLocalDate(), LocalTime.MAX);
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所在月的结束时间
+	 */
+	public static LocalDateTime getMonthEndLocal(LocalDateTime localDateTime) {
+		AssertTool.notNull(localDateTime);
+		return LocalDateTime.of(localDateTime.with(TemporalAdjusters.lastDayOfMonth()).toLocalDate(), LocalTime.MAX);
+	}
+
+	/**
+	 * 获得当前时间所在月的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @return 当前时间所在月的结束时间字符串
+	 */
+	public static String getMonthEndStr() {
+		return DEFAULT_FORMATTER.format(LocalDateTime.of(LocalDate.now(), LocalTime.MAX));
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在月的结束时间字符串
+	 */
+	public static String getMonthEndStr(Date date) {
+		return getMonthEndStr(date, DEFAULT_FORMATTER);
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @param dateFormat 时间格式
+	 * @return 指定时间所在月的结束时间字符串
+	 */
+	public static String getMonthEndStr(Date date, DateEnum dateFormat) {
+		return getMonthEndStr(date2Local(date), dateFormat);
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @param dateTimeFormatter 时间格式
+	 * @return 指定时间所在月的结束时间字符串
+	 */
+	public static String getMonthEndStr(Date date, DateTimeFormatter dateTimeFormatter) {
+		return getMonthEndStr(date2Local(date), dateTimeFormatter);
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @param pattern 时间格式
+	 * @return 指定时间所在月的结束时间字符串
+	 */
+	public static String getMonthEndStr(Date date, String pattern) {
+		return getMonthEndStr(date2Local(date), pattern);
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所在月的结束时间
+	 */
+	public static String getMonthEndStr(LocalDateTime localDateTime) {
+		return getMonthEndStr(localDateTime, DEFAULT_FORMATTER);
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param dateFormat 时间格式
+	 * @return 指定时间所在月的结束时间字符串
+	 */
+	public static String getMonthEndStr(LocalDateTime localDateTime, DateEnum dateFormat) {
+		AssertTool.notNull(localDateTime);
+		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
+		return dateFormat == null ? DEFAULT_FORMATTER.format(localDateTime)
+				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(localDateTime);
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param dateTimeFormatter 时间格式
+	 * @return 指定时间所在月的结束时间
+	 */
+	public static String getMonthEndStr(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
+		AssertTool.notNull(localDateTime);
+		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
+		return dateTimeFormatter == null ? DEFAULT_FORMATTER.format(localDateTime)
+				: dateTimeFormatter.format(localDateTime);
+	}
+
+	/**
+	 * 获得指定时间所在月的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param pattern 时间格式
+	 * @return 指定时间所在月的结束时间字符串
+	 */
+	public static String getMonthEndStr(LocalDateTime localDateTime, String pattern) {
+		AssertTool.notNull(localDateTime);
+		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
+		return StrTool.isBlank(pattern) ? DEFAULT_FORMATTER.format(localDateTime)
+				: DateTimeFormatter.ofPattern(pattern).format(localDateTime);
+	}
+
+	/**
+	 * 判断指定时间所属季度
+	 * 
+	 * @param date 指定时间
+	 * @return 1->第一季度;2->第二季度;3->第三季度;4->第四季度
+	 */
+	public static int getSeason(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		int month = c.get(Calendar.MONTH);
+		if (month >= 0 && month < 3) {
+			return 1;
+		} else if (month >= 3 && month < 6) {
+			return 2;
+		} else if (month >= 6 && month < 9) {
+			return 3;
+		} else if (month >= 9 && month < 12) {
+			return 4;
+		}
+		return 0;
+	}
+
+	/**
+	 * 判断指定时间所属季度
+	 * 
+	 * @param date 指定时间
+	 * @return 1->第一季度;2->第二季度;3->第三季度;4->第四季度
+	 */
+	public static int getSeason(LocalDateTime localDateTime) {
+		int month = localDateTime.get(ChronoField.MONTH_OF_YEAR);
+		if (month > 0 && month <= 3) {
+			return 1;
+		} else if (month > 3 && month <= 6) {
+			return 2;
+		} else if (month > 6 && month <= 9) {
+			return 3;
+		} else if (month > 9 && month <= 12) {
+			return 4;
+		}
+		return 0;
+	}
+
+	/**
+	 * 获得当前时间所在月的所属季度的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @return 当前时间所在月的所属季度的开始时间
+	 */
+	public static Date getSeasonBegin() {
+		return getSeasonBegin(LocalDateTime.now());
+	}
+
+	/**
+	 * 获得指定时间所在月的所属季度的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在月的所属季度的开始时间
+	 */
+	public static Date getSeasonBegin(Date date) {
+		int beginMonth = (getSeason(date) - 1) * 3;
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.MONTH, beginMonth);
+		return getMonthBegin(c.getTime());
+	}
+
+	/**
+	 * 获得指定时间所在月的所属季度的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在月的所属季度的开始时间
+	 */
+	public static Date getSeasonBegin(LocalDateTime localDateTime) {
+		int beginMonth = (getSeason(localDateTime) - 1) * 3 + 1;
+		return getMonthBegin(LocalDateTime.of(localDateTime.getYear(), beginMonth, 1, 0, 0));
+	}
+
+	/**
+	 * 获得当前时间所在月的所属季度的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @return 当前时间所在月的所属季度的结束时间
+	 */
+	public static Date getSeasonEnd() {
+		return getSeasonEnd(LocalDateTime.now());
+	}
+
+	/**
+	 * 获得指定时间所在月的所属季度的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在月的所属季度的结束时间
+	 */
+	public static Date getSeasonEnd(Date date) {
+		int beginMonth = getSeason(date) * 3 - 1;
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.MONTH, beginMonth);
+		return getMonthEnd(c.getTime());
+	}
+
+	/**
+	 * 获得指定时间所在月的所属季度的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所在月的所属季度的结束时间
+	 */
+	public static Date getSeasonEnd(LocalDateTime localDateTime) {
+		int beginMonth = getSeason(localDateTime) * 3;
+		return getMonthEnd(LocalDateTime.of(localDateTime.getYear(), beginMonth, 1, 0, 0));
+	}
+
+	/**
+	 * 获得当前时间所在月的所属季度的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @return 当前时间所在月的所属季度的结束时间
+	 */
+	public static LocalDateTime getSeasonEndLocal() {
+		return getSeasonEndLocal(LocalDateTime.now());
+	}
+
+	/**
+	 * 获得指定时间所在月的所属季度的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在月的所属季度的结束时间
+	 */
+	public static LocalDateTime getSeasonEndLocal(Date date) {
+		return getSeasonEndLocal(date2Local(date));
+	}
+
+	/**
+	 * 获得指定时间所在月的所属季度的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所在月的所属季度的结束时间
+	 */
+	public static LocalDateTime getSeasonEndLocal(LocalDateTime localDateTime) {
+		int beginMonth = getSeason(localDateTime) * 3;
+		return getMonthEndLocal(LocalDateTime.of(localDateTime.getYear(), beginMonth, 1, 0, 0));
+	}
+
+	public static LocalDateTime getWeekBeginLocal() {
+		return getWeekBeginLocal(LocalDateTime.now());
+	}
+
+	public static LocalDateTime getWeekBeginLocal(LocalDateTime localDateTime) {
+		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 1);
+		return getDayBeginLocal(with);
+	}
+
+	public static LocalDateTime getWeekEndLocal(LocalDateTime localDateTime) {
+		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 7);
+		return getDayEndLocal(with);
+	}
+
+	public static void main(String[] args) {
+		// localtime默认不输出秒,差劲
+		System.out.println(getWeekBeginLocal(LocalDateTime.now()));
+		System.out.println(LocalTime.of(0, 0, 0));
+	}
+
+	/**
+	 * 获得当前时间所在年的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @return 当前时间所在年的开始时间
+	 */
+	public static Date getYearBegin() {
+		return local2Date(getYearBeginLocal());
+	}
+
+	/**
+	 * 获得指定时间所在年的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在年的开始时间
+	 */
+	public static Date getYearBegin(Date date) {
+		return local2Date(getYearBeginLocal(date2Local(date)));
+	}
+
+	/**
+	 * 获得指定时间所在年的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param pattern 时间格式
+	 * @return 指定时间所在年的开始时间
+	 */
+	public static Date getYearBegin(LocalDateTime localDateTime) {
+		return local2Date(getYearBeginLocal(localDateTime));
+	}
+
+	/**
+	 * 获得当前时间所在年的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @return 当前时间所在年的开始时间
+	 */
+	public static LocalDateTime getYearBeginLocal() {
+		return LocalDateTime.of(LocalDateTime.now().with(TemporalAdjusters.firstDayOfYear()).toLocalDate(),
+				LocalTime.MIN);
+	}
+
+	/**
+	 * 获得指定时间所在年的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在年的开始时间
+	 */
+	public static LocalDateTime getYearBeginLocal(Date date) {
+		AssertTool.notNull(date);
+		return LocalDateTime.of(date2Local(date).with(TemporalAdjusters.firstDayOfYear()).toLocalDate(), LocalTime.MIN);
+	}
+
+	/**
+	 * 获得指定时间所在年的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所在年的开始时间
+	 */
+	public static LocalDateTime getYearBeginLocal(LocalDateTime localDateTime) {
+		AssertTool.notNull(localDateTime);
+		return LocalDateTime.of(localDateTime.with(TemporalAdjusters.firstDayOfYear()).toLocalDate(), LocalTime.MIN);
+	}
+
+	/**
+	 * 获得当前时间所在年的开始时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @return 当前时间所在年的开始时间字符串
+	 */
+	public static String getYearBeginStr() {
+		return getYearBeginStr(LocalDateTime.now());
+	}
+
+	/**
+	 * 获得当前时间所在年的开始时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @return 当前时间所在年的开始时间字符串
+	 */
+	public static String getYearBeginStr(Date date) {
+		return getYearBeginStr(date2Local(date), DEFAULT_FORMATTER);
+	}
+
+	/**
+	 * 获得指定时间所在年的开始时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @param dateFormat 时间格式
+	 * @return 指定时间所在年的开始时间字符串
+	 */
+	public static String getYearBeginStr(Date date, DateEnum dateFormat) {
+		LocalDateTime yearBeginLocal = getYearBeginLocal(date2Local(date));
+		return null == dateFormat ? DEFAULT_FORMATTER.format(yearBeginLocal)
+				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(yearBeginLocal);
+	}
+
+	/**
+	 * 获得指定时间所在年的开始时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @param dateTimeFormatter 时间格式
+	 * @return 指定时间所在年的开始时间字符串
+	 */
+	public static String getYearBeginStr(Date date, DateTimeFormatter dateTimeFormatter) {
+		LocalDateTime yearBeginLocal = getYearBeginLocal(date2Local(date));
+		return null == dateTimeFormatter ? DEFAULT_FORMATTER.format(yearBeginLocal)
+				: dateTimeFormatter.format(yearBeginLocal);
+	}
+
+	/**
+	 * 获得指定时间所在年的开始时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param date 指定时间
+	 * @param pattern 时间格式
+	 * @return 指定时间所在年的开始时间字符串
+	 */
+	public static String getYearBeginStr(Date date, String pattern) {
+		LocalDateTime yearBeginLocal = getYearBeginLocal(date2Local(date));
+		return StrTool.isBlank(pattern) ? DEFAULT_FORMATTER.format(yearBeginLocal)
+				: DateTimeFormatter.ofPattern(pattern).format(yearBeginLocal);
+	}
+
+	/**
+	 * 获得当前时间所在年的开始时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 当前时间所在年的开始时间字符串
+	 */
+	public static String getYearBeginStr(LocalDateTime localDateTime) {
+		return getYearBeginStr(localDateTime, DEFAULT_FORMATTER);
+	}
+
+	/**
+	 * 获得指定时间所在年的开始时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param dateFormat 时间格式
+	 * @return 指定时间所在年的开始时间字符串
+	 */
+	public static String getYearBeginStr(LocalDateTime localDateTime, DateEnum dateFormat) {
+		LocalDateTime yearBeginLocal = getYearBeginLocal(localDateTime);
+		return null == dateFormat ? DEFAULT_FORMATTER.format(yearBeginLocal)
+				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(yearBeginLocal);
+	}
+
+	/**
+	 * 获得指定时间所在年的开始时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param dateTimeFormatter 时间格式
+	 * @return 指定时间所在年的开始时间字符串
+	 */
+	public static String getYearBeginStr(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
+		LocalDateTime yearBeginLocal = getYearBeginLocal(localDateTime);
+		return null == dateTimeFormatter ? DEFAULT_FORMATTER.format(yearBeginLocal)
+				: dateTimeFormatter.format(yearBeginLocal);
+	}
+
+	/**
+	 * 获得指定时间所在年的开始时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param pattern 时间格式
+	 * @return 指定时间所在年的开始时间字符串
+	 */
+	public static String getYearBeginStr(LocalDateTime localDateTime, String pattern) {
+		LocalDateTime yearBeginLocal = getYearBeginLocal(localDateTime);
+		return StrTool.isBlank(pattern) ? DEFAULT_FORMATTER.format(yearBeginLocal)
+				: DateTimeFormatter.ofPattern(pattern).format(yearBeginLocal);
+	}
+
+	/**
+	 * 获得当前时间所在年的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @return 当前时间所在年的结束时间
+	 */
+	public static Date getYearEnd() {
+		return local2Date(getYearEndLocal());
+	}
+
+	/**
+	 * 获得指定时间所在年的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在年的结束时间
+	 */
+	public static Date getYearEnd(Date date) {
+		return local2Date(getYearEndLocal(date2Local(date)));
+	}
+
+	/**
+	 * 获得指定时间所在年的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param pattern 时间格式
+	 * @return 指定时间所在年的结束时间
+	 */
+	public static Date getYearEnd(LocalDateTime localDateTime) {
+		return local2Date(getYearEndLocal(localDateTime));
+	}
+
+	/**
+	 * 获得当前时间所在年的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @return 当前时间所在年的结束时间
+	 */
+	public static LocalDateTime getYearEndLocal() {
+		return LocalDateTime.of(LocalDateTime.now().with(TemporalAdjusters.lastDayOfYear()).toLocalDate(),
+				LocalTime.MAX);
+	}
+
+	/**
+	 * 获得指定时间所在年的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所在年的结束时间
+	 */
+	public static LocalDateTime getYearEndLocal(Date date) {
+		AssertTool.notNull(date);
+		return LocalDateTime.of(date2Local(date).with(TemporalAdjusters.lastDayOfYear()).toLocalDate(), LocalTime.MAX);
+	}
+
+	/**
+	 * 获得指定时间所在年的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所在年的结束时间
+	 */
+	public static LocalDateTime getYearEndLocal(LocalDateTime localDateTime) {
+		AssertTool.notNull(localDateTime);
+		return LocalDateTime.of(localDateTime.with(TemporalAdjusters.lastDayOfYear()).toLocalDate(), LocalTime.MAX);
+	}
+
+	/**
+	 * 获得当前时间所在年的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @return 当前时间所在年的结束时间字符串
+	 */
+	public static String getYearEndStr() {
+		return getYearEndStr(LocalDateTime.now());
+	}
+
+	/**
+	 * 获得当前时间所在年的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @return 当前时间所在年的结束时间字符串
+	 */
+	public static String getYearEndStr(Date date) {
+		return getYearEndStr(date2Local(date), DEFAULT_FORMATTER);
+	}
+
+	/**
+	 * 获得指定时间所在年的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @param dateFormat 时间格式
+	 * @return 指定时间所在年的结束时间字符串
+	 */
+	public static String getYearEndStr(Date date, DateEnum dateFormat) {
+		LocalDateTime yearEndLocal = getYearEndLocal(date2Local(date));
+		return null == dateFormat ? DEFAULT_FORMATTER.format(yearEndLocal)
+				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(yearEndLocal);
+	}
+
+	/**
+	 * 获得指定时间所在年的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @param dateTimeFormatter 时间格式
+	 * @return 指定时间所在年的结束时间字符串
+	 */
+	public static String getYearEndStr(Date date, DateTimeFormatter dateTimeFormatter) {
+		LocalDateTime yearEndLocal = getYearEndLocal(date2Local(date));
+		return null == dateTimeFormatter ? DEFAULT_FORMATTER.format(yearEndLocal)
+				: dateTimeFormatter.format(yearEndLocal);
+	}
+
+	/**
+	 * 获得指定时间所在年的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param date 指定时间
+	 * @param pattern 时间格式
+	 * @return 指定时间所在年的结束时间字符串
+	 */
+	public static String getYearEndStr(Date date, String pattern) {
+		LocalDateTime yearEndLocal = getYearEndLocal(date2Local(date));
+		return StrTool.isBlank(pattern) ? DEFAULT_FORMATTER.format(yearEndLocal)
+				: DateTimeFormatter.ofPattern(pattern).format(yearEndLocal);
+	}
+
+	/**
+	 * 获得当前时间所在年的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 当前时间所在年的结束时间字符串
+	 */
+	public static String getYearEndStr(LocalDateTime localDateTime) {
+		return getYearEndStr(localDateTime, DEFAULT_FORMATTER);
+	}
+
+	/**
+	 * 获得指定时间所在年的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param dateFormat 时间格式
+	 * @return 指定时间所在年的结束时间字符串
+	 */
+	public static String getYearEndStr(LocalDateTime localDateTime, DateEnum dateFormat) {
+		LocalDateTime yearEndLocal = getYearEndLocal(localDateTime);
+		return null == dateFormat ? DEFAULT_FORMATTER.format(yearEndLocal)
+				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(yearEndLocal);
+	}
+
+	/**
+	 * 获得指定时间所在年的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param dateTimeFormatter 时间格式
+	 * @return 指定时间所在年的结束时间字符串
+	 */
+	public static String getYearEndStr(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
+		LocalDateTime yearEndLocal = getYearEndLocal(localDateTime);
+		return null == dateTimeFormatter ? DEFAULT_FORMATTER.format(yearEndLocal)
+				: dateTimeFormatter.format(yearEndLocal);
+	}
+
+	/**
+	 * 获得指定时间所在年的结束时间字符串,格式为yyyy-MM-dd HH:mm:ss,如2020-12-31 23:59:59
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param pattern 时间格式
+	 * @return 指定时间所在年的结束时间字符串
+	 */
+	public static String getYearEndStr(LocalDateTime localDateTime, String pattern) {
+		LocalDateTime yearEndLocal = getYearEndLocal(localDateTime);
+		return StrTool.isBlank(pattern) ? DEFAULT_FORMATTER.format(yearEndLocal)
+				: DateTimeFormatter.ofPattern(pattern).format(yearEndLocal);
+	}
+
+	/**
+	 * 获得当前时间的前1天,就是昨天,默认格式为yyyy-MM-dd HH:mm:ss
+	 * 
+	 * @return 昨天
+	 */
+	public static String getYesterdayStr() {
+		return formatDate(plusDay(-1));
+	}
+
+	/**
+	 * 获得指定时间的前1天,就是昨天,默认格式为yyyy-MM-dd HH:mm:ss
+	 * 
+	 * @param date 指定时间
+	 * @return 昨天
+	 */
+	public static String getYesterdayStr(Date date) {
+		return formatDate(plusDay(date, -1));
 	}
 
 	/**
@@ -526,23 +1501,13 @@ public class DateTimeTool {
 	}
 
 	/**
-	 * 将yyyy-MM-dd HH:mm:ss或yyyy-MM-ddTHH:mm:ss时间格式为Date类型
-	 * 
-	 * @param dateTime 时间字符串,若不符合指定格式将报错
-	 * @return date对象
-	 */
-	public static Date parseDateTime(String dateTime) {
-		return local2Date(parse(dateTime));
-	}
-
-	/**
 	 * 将指定时间字符串格式化格式化
 	 * 
 	 * @param dateTime 时间字符串,若不符合指定格式将报错
 	 * @param pattern 字符串时间的格式
 	 * @return date对象
 	 */
-	public static Date parseDateTime(String dateTime, DateEnum pattern) {
+	public static Date parseDate(String dateTime, DateEnum pattern) {
 		return local2Date(parse(dateTime, pattern.getPattern()));
 	}
 
@@ -553,8 +1518,18 @@ public class DateTimeTool {
 	 * @param pattern 字符串时间的格式
 	 * @return date对象
 	 */
-	public static Date parseDateTime(String dateTime, String pattern) {
+	public static Date parseDate(String dateTime, String pattern) {
 		return local2Date(parse(dateTime, pattern));
+	}
+
+	/**
+	 * 将yyyy-MM-dd HH:mm:ss或yyyy-MM-ddTHH:mm:ss时间格式为Date类型
+	 * 
+	 * @param dateTime 时间字符串,若不符合指定格式将报错
+	 * @return date对象
+	 */
+	public static Date parseDateTime(String dateTime) {
+		return local2Date(parse(dateTime));
 	}
 
 	/**

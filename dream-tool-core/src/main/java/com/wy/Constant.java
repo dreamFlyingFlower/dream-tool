@@ -30,6 +30,9 @@ public interface Constant {
 		/** 分页参数pageSize,默认每页数据量 */
 		int PAGE_SIZE_NUM = 10;
 
+		/** 若查询全部数据,每次最大查询1000条 */
+		int PAGE_MAX = 1000;
+
 		/** 分页参数,默认总页数字段 */
 		String TOTAL_PAGE = "totalPage";
 
