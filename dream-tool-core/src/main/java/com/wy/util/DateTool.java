@@ -7,6 +7,8 @@ import java.util.Date;
 
 import com.wy.enums.DateEnum;
 import com.wy.enums.RegexEnum;
+import com.wy.enums.RegionEnum;
+import com.wy.lang.AssertTool;
 import com.wy.lang.StrTool;
 
 /**
@@ -24,6 +26,15 @@ public final class DateTool {
 
 	public static final String DEFAULT_PATTERN = DateEnum.DATETIME.getPattern();
 
+	/** 比较日期的模式 --只比较日期,不比较时间 */
+	public static final int COMP_MODEL_DATE = 1;
+
+	/** 比较日期的模式 --只比较时间,不比较日期 */
+	public static final int COMP_MODEL_TIME = 2;
+
+	/** 比较日期的模式 --比较日期,也比较时间 */
+	public final static int COMP_MODEL_DATETIME = 3;
+
 	private static ThreadLocal<SimpleDateFormat> threadLocal = new ThreadLocal<SimpleDateFormat>() {
 
 		@Override
@@ -32,7 +43,8 @@ public final class DateTool {
 		}
 	};
 
-	private DateTool() {}
+	private DateTool() {
+	}
 
 	/**
 	 * 返回指定时间是周几
@@ -264,6 +276,92 @@ public final class DateTool {
 		Calendar c = Calendar.getInstance();
 		c.set(year, month - 1, date, hourOfDay, minute, second);
 		return c.getTime();
+	}
+
+	/**
+	 * 判断时间是否在指定时间区间内
+	 * 
+	 * @param now 目标时间
+	 * @param start 时间区间开始
+	 * @param end 时间区间结束
+	 * @param model 区间模式
+	 * @return 是否在区间内
+	 */
+	public static boolean isBetween(Date now, Date start, Date end, int model) {
+		return isBetween(now, start, end, RegionEnum.LEFT_OPEN_RIGHT_OPEN, model);
+	}
+
+	/**
+	 * 判断时间是否在指定的时间段之类
+	 * 
+	 * @param date 需要判断的时间
+	 * @param start 时间段的起始时间
+	 * @param end 时间段的截止时间
+	 * @param interModel 区间的模式
+	 * @param compModel 比较的模式<br>
+	 *        COMP_MODEL_DATE:只比较日期,不比较时间<br>
+	 *        COMP_MODEL_TIME:只比较时间,不比较日期<br>
+	 *        COMP_MODEL_DATETIME:比较日期,也比较时间
+	 * @return
+	 */
+	public static boolean isBetween(Date date, Date start, Date end, RegionEnum interModel, int compModel) {
+		AssertTool.notNull(date);
+		AssertTool.notNull(start);
+		AssertTool.notNull(end);
+		DateEnum dateFormat = null;
+		switch (compModel) {
+			case COMP_MODEL_DATE: {
+				dateFormat = DateEnum.DATE;
+				break;
+			}
+			case COMP_MODEL_TIME: {
+				dateFormat = DateEnum.TIME;
+				break;
+			}
+			case COMP_MODEL_DATETIME: {
+				dateFormat = DateEnum.DATETIME;
+				break;
+			}
+			default: {
+				throw new IllegalArgumentException(String.format("日期的比较模式[%d]有误", compModel));
+			}
+		}
+		long dateNumber = DateTimeTool.parseDate(DateTimeTool.format(date, dateFormat)).getTime();
+		long startNumber = DateTimeTool.parseDate(DateTimeTool.format(start, dateFormat)).getTime();
+		long endNumber = DateTimeTool.parseDate(DateTimeTool.format(end, dateFormat)).getTime();
+		switch (interModel) {
+			case LEFT_OPEN_RIGHT_OPEN: {
+				if (dateNumber <= startNumber || dateNumber >= endNumber) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+			case LEFT_CLOSE_RIGHT_OPEN: {
+				if (dateNumber < startNumber || dateNumber >= endNumber) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+			case LEFT_OPEN_RIGHT_CLOSE: {
+				if (dateNumber <= startNumber || dateNumber > endNumber) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+			case LEFT_CLOSE_RIGHT_CLOSE: {
+				if (dateNumber < startNumber || dateNumber > endNumber) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+			default: {
+				throw new IllegalArgumentException(String.format("日期的区间模式[%d]有误", interModel));
+			}
+		}
 	}
 
 	/**

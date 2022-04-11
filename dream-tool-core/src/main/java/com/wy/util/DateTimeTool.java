@@ -1051,15 +1051,121 @@ public class DateTimeTool {
 		return getMonthEndLocal(LocalDateTime.of(localDateTime.getYear(), beginMonth, 1, 0, 0));
 	}
 
+	/**
+	 * 获得当前时间所属周的周一开始时间
+	 * 
+	 * @return 当前时间所属周的周一的开始时间
+	 */
+	public static Date getWeekBegin() {
+		return local2Date(getWeekBeginLocal(LocalDateTime.now()));
+	}
+
+	/**
+	 * 获得指定时间所属周的周一开始时间
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所属周的周一的开始时间
+	 */
+	public static Date getWeekBegin(Date date) {
+		return local2Date(getWeekBeginLocal(date2Local(date)));
+	}
+
+	/**
+	 * 获得当前时间所属周的周天结束时间
+	 * 
+	 * @return 当前时间所属周的周天结束时间
+	 */
+	public static Date getWeekEndl() {
+		return local2Date(getWeekEndLocal(LocalDateTime.now()));
+	}
+
+	/**
+	 * 获得指定时间所属周的周天结束时间
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所属周的周天结束时间
+	 */
+	public static Date getWeekEnd(Date date) {
+		return local2Date(getWeekEndLocal(date2Local(date)));
+	}
+
+	/**
+	 * 获得指定时间所属周的周天结束时间
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所属周的周天结束时间
+	 */
+	public static Date getWeekEnd(LocalDateTime localDateTime) {
+		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 7);
+		return local2Date(getDayEndLocal(with));
+	}
+
+	/**
+	 * 获得指定时间所属周的周一开始时间
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所属周的周一的开始时间
+	 */
+	public static Date getWeekBegin(LocalDateTime localDateTime) {
+		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 1);
+		return local2Date(getDayBeginLocal(with));
+	}
+
+	/**
+	 * 获得当前时间所属周的周一开始时间
+	 * 
+	 * @return 当前时间所属周的周一的开始时间
+	 */
 	public static LocalDateTime getWeekBeginLocal() {
 		return getWeekBeginLocal(LocalDateTime.now());
 	}
 
+	/**
+	 * 获得指定时间所属周的周一开始时间
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所属周的周一的开始时间
+	 */
+	public static LocalDateTime getWeekBeginLocal(Date date) {
+		return getWeekBeginLocal(date2Local(date));
+	}
+
+	/**
+	 * 获得指定时间所属周的周一开始时间
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所属周的周一的开始时间
+	 */
 	public static LocalDateTime getWeekBeginLocal(LocalDateTime localDateTime) {
 		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 1);
 		return getDayBeginLocal(with);
 	}
 
+	/**
+	 * 获得当前时间所属周的周天结束时间
+	 * 
+	 * @return 当前时间所属周的周天结束时间
+	 */
+	public static LocalDateTime getWeekEndLocal() {
+		return getWeekEndLocal(LocalDateTime.now());
+	}
+
+	/**
+	 * 获得指定时间所属周的周天结束时间
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所属周的周天结束时间
+	 */
+	public static LocalDateTime getWeekEndLocal(Date date) {
+		return getWeekEndLocal(date2Local(date));
+	}
+
+	/**
+	 * 获得指定时间所属周的周天结束时间
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所属周的周天结束时间
+	 */
 	public static LocalDateTime getWeekEndLocal(LocalDateTime localDateTime) {
 		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 7);
 		return getDayEndLocal(with);
