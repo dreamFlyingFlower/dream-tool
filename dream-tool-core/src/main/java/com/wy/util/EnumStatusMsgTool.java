@@ -110,12 +110,12 @@ public class EnumStatusMsgTool {
 	 * @param enumClass 枚举字节码
 	 * @return List<Map>
 	 */
-	public static <E extends Enum<E> & StatusMsg> List<Map<String, String>> toListMap(Class<E> enumClass) {
+	public static <E extends Enum<E> & StatusMsg> List<Map<String, Object>> toListMap(Class<E> enumClass) {
 		List<E> list = toList(enumClass);
-		List<Map<String, String>> ret = new ArrayList<>();
+		List<Map<String, Object>> ret = new ArrayList<>();
 		list.forEach(t -> {
-			Map<String, String> map = new HashMap<>();
-			map.put("code", String.valueOf(t.getCode()));
+			Map<String, Object> map = new HashMap<>();
+			map.put("code", t.getCode());
 			map.put("msg", t.getMsg());
 			ret.add(map);
 		});
