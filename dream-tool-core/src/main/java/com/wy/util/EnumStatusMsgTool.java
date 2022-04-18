@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Predicate;
 
+import com.wy.common.CodeMsg;
 import com.wy.common.StatusMsg;
 
 /**
@@ -32,6 +33,24 @@ public class EnumStatusMsgTool {
 		List<E> list = toList(enumClass);
 		for (E e : list) {
 			if (e.getCode().intValue() == code) {
+				return e;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 根据枚举获得值
+	 * 
+	 * @param <E> 枚举类型
+	 * @param code 枚举code值
+	 * @param enumClass 枚举字节码
+	 * @return 枚举或null
+	 */
+	public static <E extends Enum<E> & CodeMsg<String>> E getEnum(String code, Class<E> enumClass) {
+		List<E> list = toList(enumClass);
+		for (E e : list) {
+			if (code.equals(e.getCode())) {
 				return e;
 			}
 		}
@@ -98,7 +117,7 @@ public class EnumStatusMsgTool {
 	 * @param enumClass 枚举字节码
 	 * @return List
 	 */
-	public static <E extends Enum<E> & StatusMsg> List<E> toList(Class<E> enumClass) {
+	public static <E extends Enum<E> & CodeMsg<?>> List<E> toList(Class<E> enumClass) {
 		return enumClass.isEnum() ? new ArrayList<>(Arrays.asList(enumClass.getEnumConstants()))
 				: Collections.emptyList();
 	}
@@ -110,7 +129,7 @@ public class EnumStatusMsgTool {
 	 * @param enumClass 枚举字节码
 	 * @return List<Map>
 	 */
-	public static <E extends Enum<E> & StatusMsg> List<Map<String, Object>> toListMap(Class<E> enumClass) {
+	public static <E extends Enum<E> & CodeMsg<?>> List<Map<String, Object>> toListMap(Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		List<Map<String, Object>> ret = new ArrayList<>();
 		list.forEach(t -> {
