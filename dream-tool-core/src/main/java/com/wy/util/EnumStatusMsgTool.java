@@ -149,13 +149,13 @@ public class EnumStatusMsgTool {
 	 * @param predicate 过滤条件
 	 * @return List<Map>
 	 */
-	public static <E extends Enum<E> & StatusMsg> List<Map<String, String>> toListMap(Class<E> enumClass,
+	public static <E extends Enum<E> & StatusMsg> List<Map<String, Object>> toListMap(Class<E> enumClass,
 			Predicate<E> predicate) {
 		List<E> list = toList(enumClass);
-		List<Map<String, String>> ret = new ArrayList<>();
+		List<Map<String, Object>> ret = new ArrayList<>();
 		list.stream().filter(predicate).forEach(t -> {
-			Map<String, String> map = new HashMap<>();
-			map.put("code", String.valueOf(t.getCode()));
+			Map<String, Object> map = new HashMap<>();
+			map.put("code", t.getCode());
 			map.put("msg", t.getMsg());
 			ret.add(map);
 		});
