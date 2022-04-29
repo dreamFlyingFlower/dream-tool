@@ -168,6 +168,47 @@ public class DigestTool {
 	}
 
 	/**
+	 * des加密
+	 * 
+	 * @param encryptString 待加密字符串
+	 * @param encryptKey 加密key
+	 * @return 加密后的base64字符串
+	 */
+	public static String desEncrypt(String encryptString, String encryptKey) {
+		SecretKeySpec key = new SecretKeySpec(encryptKey.getBytes(), CryptType.DES.getType());
+		try {
+			Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+			cipher.init(Cipher.ENCRYPT_MODE, key);
+			return Base64.getEncoder().encodeToString(cipher.doFinal(encryptString.getBytes()));
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException
+				| BadPaddingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * des解密
+	 * 
+	 * @param decryptString 待解密base64字符串
+	 * @param decryptKey 解密key
+	 * @return 加密后的字符串
+	 */
+	public static String desDecrypt(String decryptString, String decryptKey) {
+		byte[] byteMi = Base64.getDecoder().decode(decryptString);
+		SecretKeySpec key = new SecretKeySpec(decryptKey.getBytes(), CryptType.DES.getType());
+		try {
+			Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+			cipher.init(Cipher.DECRYPT_MODE, key);
+			return new String(cipher.doFinal(byteMi));
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException
+				| InvalidKeyException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
 	 * 字符串加密
 	 * 
 	 * @param messageDigestType 加密算法
