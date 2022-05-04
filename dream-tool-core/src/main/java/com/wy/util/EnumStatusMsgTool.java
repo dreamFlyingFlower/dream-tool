@@ -105,7 +105,7 @@ public class EnumStatusMsgTool {
 		StringJoiner sj = new StringJoiner(",", "[", "]");
 		list.forEach(t -> {
 			sj.add("{id:'").add(t.toString()).add("',msg:'").add(t.getMsg()).add("',code:'").add(t.getCode() + "")
-					.add("'}");
+					.add("',name:'").add(t.name()).add("'}");
 		});
 		return sj.toString();
 	}
@@ -136,6 +136,7 @@ public class EnumStatusMsgTool {
 			Map<String, Object> map = new HashMap<>();
 			map.put("code", t.getCode());
 			map.put("msg", t.getMsg());
+			map.put("name", t.name());
 			ret.add(map);
 		});
 		return ret;
@@ -157,6 +158,7 @@ public class EnumStatusMsgTool {
 			Map<String, Object> map = new HashMap<>();
 			map.put("code", t.getCode());
 			map.put("msg", t.getMsg());
+			map.put("name", t.name());
 			ret.add(map);
 		});
 		return ret;
@@ -177,6 +179,7 @@ public class EnumStatusMsgTool {
 			String key = String.valueOf(t.getCode());
 			map.put("code", String.valueOf(t.getCode()));
 			map.put("msg", t.getMsg());
+			map.put("name", t.name());
 			enumMap.put(key, map);
 		});
 		return enumMap;
@@ -197,6 +200,7 @@ public class EnumStatusMsgTool {
 			String key = String.valueOf(t.name());
 			map.put("code", String.valueOf(t.getCode()));
 			map.put("msg", t.getMsg());
+			map.put("name", t.name());
 			enumMap.put(key, map);
 		});
 		return enumMap;

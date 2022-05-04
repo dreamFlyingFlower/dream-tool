@@ -22,8 +22,6 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import com.wy.io.file.FileNameTool;
 import com.wy.result.ResultException;
 
@@ -34,7 +32,6 @@ import com.wy.result.ResultException;
  * @date 2021-03-08 09:02:51
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-@SuppressWarnings("restriction")
 public class ImageTool {
 
 	/**
@@ -351,8 +348,7 @@ public class ImageTool {
 				}
 				BufferedImage tag = new BufferedImage((int) newWidth, (int) newHeight, BufferedImage.TYPE_INT_RGB);
 				tag.getGraphics().drawImage(img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, null);
-				JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(os);
-				encoder.encode(tag);
+				tag.flush();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -417,11 +413,7 @@ public class ImageTool {
 				BufferedImage tag = new BufferedImage((int) newWidth, (int) newHeight, BufferedImage.TYPE_INT_RGB);
 				// Image.SCALE_SMOOTH缩略算法,生成缩略图片的平滑度的优先级比速度高,生成的图片质量比较好,但速度慢
 				tag.getGraphics().drawImage(img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH), 0, 0, null);
-				try (FileOutputStream out = new FileOutputStream(destPath);) {
-					// JPEGImageEncoder可适用于其他图片类型的转换
-					JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-					encoder.encode(tag);
-				}
+				tag.flush();
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
