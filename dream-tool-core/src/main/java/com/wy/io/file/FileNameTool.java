@@ -9,6 +9,7 @@ import java.util.Stack;
 
 import com.wy.Constant;
 import com.wy.io.IOCase;
+import com.wy.lang.StrTool;
 import com.wy.lang.SystemTool;
 
 /**
@@ -34,7 +35,471 @@ public class FileNameTool {
 		}
 	}
 
-	private FileNameTool() {}
+	private FileNameTool() {
+	}
+
+	/**
+	 * 使用常规命令行样式规则将文件名连接到基本路径,{@link Path#resolve(Path)}
+	 * 
+	 * <pre>
+	 * /foo/ + bar          -->   /foo/bar
+	 * /foo + bar           -->   /foo/bar
+	 * /foo + /bar          -->   /bar
+	 * /foo + C:/bar        -->   C:/bar
+	 * /foo + C:bar         -->   C:bar (*)
+	 * /foo/a/ + ../bar     -->   foo/bar
+	 * /foo/ + ../../bar    -->   null
+	 * /foo/ + /bar         -->   /bar
+	 * /foo/.. + /bar       -->   /bar
+	 * /foo + bar/c.txt     -->   /foo/bar/c.txt
+	 * /foo/c.txt + bar     -->   /foo/c.txt/bar (!)
+	 * </pre>
+	 * 
+	 * @param basePath 基本路径
+	 * @param fullFilenameToAdd 需要添加到基本路径的路径
+	 * @return 拼接后的路径
+	 */
+	public static String concat(String basePath, String fullFilenameToAdd) {
+		int prefix = getPrefixLength(fullFilenameToAdd);
+		if (prefix < 0) {
+			return null;
+		}
+		if (prefix > 0) {
+			return normalize(fullFilenameToAdd);
+		}
+		if (basePath == null) {
+			return null;
+		}
+		int len = basePath.length();
+		if (len == 0) {
+			return normalize(fullFilenameToAdd);
+		}
+		char ch = basePath.charAt(len - 1);
+		return isSeparator(ch) ? normalize(basePath + fullFilenameToAdd)
+				: normalize(basePath + File.separator + fullFilenameToAdd);
+	}
+
+	/**
+	 * 将原文件的后缀拼接到新文件上
+	 * 
+	 * @param originalFileName 原文件名,不带路径
+	 * @param newFileName 新文件名,不带路径
+	 * @return 拼接后的文件名
+	 */
+	public static String concatFileName(String originalFileName, String newFileName) {
+		String extension = getExtension(originalFileName);
+		return newFileName + (StrTool.isBlank(extension) ? "" : "." + extension);
+	}
+
+	/**
+	 * 判断parent目录是否包含child元素
+	 * 
+	 * @param parent 父目录
+	 * @param child 子目录
+	 * @return true->父目录包含子目录
+	 * @throws IOException
+	 */
+	public static boolean directoryContains(final String parent, final String child) throws IOException {
+		if (parent == null) {
+			throw new IllegalArgumentException("Directory must not be null");
+		}
+		if (child == null) {
+			return false;
+		}
+		if (IOCase.SYSTEM.checkEquals(parent, child)) {
+			return false;
+		}
+		return IOCase.SYSTEM.checkStartsWith(child, parent);
+	}
+
+	/**
+	 * 判断2个文件路径是否相同
+	 *
+	 * @param filename1 文件路径1
+	 * @param filename2 文件路径2
+	 * @return true->2个文件路径相同,false->不相同
+	 */
+	public static boolean equals(String filename1, String filename2) {
+		return equals(filename1, filename2, false, IOCase.SENSITIVE);
+	}
+
+	/**
+	 * 判断2个文件路径是否相同,使用系统默认的大小写规则
+	 *
+	 * @param filename1 文件路径1
+	 * @param filename2 文件路径2
+	 * @return true->2个文件路径相同,false->不相同
+	 */
+	public static boolean equalsOnSystem(String filename1, String filename2) {
+		return equals(filename1, filename2, false, IOCase.SYSTEM);
+	}
+
+	/**
+	 * 判断2个文件路径是否相同,规范化后,大小写敏感
+	 *
+	 * @param filename1 文件路径1
+	 * @param filename2 文件路径2
+	 * @return true->2个文件路径相同,false->不相同
+	 */
+	public static boolean equalsNormalized(String filename1, String filename2) {
+		return equals(filename1, filename2, true, IOCase.SENSITIVE);
+	}
+
+	/**
+	 * 判断2个文件路径是否相同,规范化之后使用系统默认的大小写规则
+	 *
+	 * @param filename1 文件路径1
+	 * @param filename2 文件路径2
+	 * @return true->2个文件路径相同,false->不相同
+	 */
+	public static boolean equalsNormalizedOnSystem(String filename1, String filename2) {
+		return equals(filename1, filename2, true, IOCase.SYSTEM);
+	}
+
+	/**
+	 * 判断2个文件路径是否相同
+	 *
+	 * @param filename1 文件路径1
+	 * @param filename2 文件路径2
+	 * @param normalized 是否规范化,true->规范化,false->不规范化
+	 * @param caseSensitivity 大小写使用规则
+	 * @return true->2个文件路径相同,false->不相同
+	 */
+	public static boolean equals(String filename1, String filename2, boolean normalized, IOCase caseSensitivity) {
+		if (filename1 == null || filename2 == null) {
+			return filename1 == null && filename2 == null;
+		}
+		if (normalized) {
+			filename1 = normalize(filename1);
+			filename2 = normalize(filename2);
+			if (filename1 == null || filename2 == null) {
+				throw new NullPointerException("Error normalizing one or both of the file names");
+			}
+		}
+		if (caseSensitivity == null) {
+			caseSensitivity = IOCase.SENSITIVE;
+		}
+		return caseSensitivity.checkEquals(filename1, filename2);
+	}
+
+	/**
+	 * 获得文件名称,不包括后缀和点,去除所有目录,即去除最后一个/之前所有字符串以及后缀和点
+	 * 
+	 * @param filename 文件路径
+	 * @return 文件名,不包括点和后缀
+	 */
+	public static String getBaseName(String filename) {
+		return removeExtension(getName(filename));
+	}
+
+	/**
+	 * 获得文件后缀,不包含点
+	 * 
+	 * @param filename 文件路径
+	 * @return 文件后缀,不包含点
+	 */
+	public static String getExtension(String filename) {
+		if (filename == null) {
+			return null;
+		}
+		int index = indexOfExtension(filename);
+		if (index == -1) {
+			return "";
+		} else {
+			return filename.substring(index + 1);
+		}
+	}
+
+	/**
+	 * 返回文件路径的目录部分,末尾添加/
+	 * 
+	 * <pre>
+	 * C:\a\b\c.txt --> C:\a\b\
+	 * a.txt        --> ""
+	 * a/b/c        --> a/b/
+	 * a/b/c/       --> a/b/c/
+	 * C:           --> C:
+	 * C:\          --> C:\
+	 * ~            --> ~/
+	 * ~user        --> ~user/
+	 * </pre>
+	 *
+	 * @param filename 文件路径
+	 * @return 文件路径的目录部分,末尾添加/
+	 */
+	public static String getFullPath(String filename) {
+		return doGetFullPath(filename, true);
+	}
+
+	/**
+	 * 返回文件路径的目录部分,末尾不添加/
+	 * 
+	 * <pre>
+	 * C:\a\b\c.txt --> C:\a\b
+	 * a.txt        --> ""
+	 * a/b/c        --> a/b
+	 * a/b/c/       --> a/b/c
+	 * C:           --> C:
+	 * C:\          --> C:\
+	 * ~/           --> ~
+	 * ~user/       --> ~user
+	 * </pre>
+	 *
+	 * @param filename 文件路径
+	 * @return 文件路径的目录部分,末尾不添加/
+	 */
+	public static String getFullPathNoEndSeparator(String filename) {
+		return doGetFullPath(filename, false);
+	}
+
+	/**
+	 * 返回文件路径的目录部分
+	 * 
+	 * @param filename 文件路径
+	 * @param includeSeparator 末尾是否添加/,true->添加,false->不添加
+	 * @return 文件路径的目录部分
+	 */
+	private static String doGetFullPath(String filename, boolean includeSeparator) {
+		if (filename == null) {
+			return null;
+		}
+		int prefix = getPrefixLength(filename);
+		if (prefix < 0) {
+			return null;
+		}
+		if (prefix >= filename.length()) {
+			if (includeSeparator) {
+				return getPrefix(filename);
+			} else {
+				return filename;
+			}
+		}
+		int index = indexOfLastSeparator(filename);
+		if (index < 0) {
+			return filename.substring(0, prefix);
+		}
+		int end = index + (includeSeparator ? 1 : 0);
+		if (end == 0) {
+			end++;
+		}
+		return filename.substring(0, end);
+	}
+
+	/**
+	 * 获得文件名称,包括后缀和点,去除所有目录,即去除最后一个/之前所有字符串
+	 * 
+	 * @param filename 文件路径
+	 * @return 文件名,包括点和后缀
+	 */
+	public static String getName(String filename) {
+		if (filename == null) {
+			return null;
+		}
+		int index = indexOfLastSeparator(filename);
+		return filename.substring(index + 1);
+	}
+
+	/**
+	 * 获得文件路径前缀长度,即从起始位置到第一个/的长度,如C:/,~/
+	 * 
+	 * <pre>
+	 * Windows:
+	 * a\b\c.txt           --> ""          --> relative
+	 * \a\b\c.txt          --> "\"         --> current drive absolute
+	 * C:a\b\c.txt         --> "C:"        --> drive relative
+	 * C:\a\b\c.txt        --> "C:\"       --> absolute
+	 * \\server\a\b\c.txt  --> "\\server\" --> UNC
+	 * Unix:
+	 * a/b/c.txt           --> ""          --> relative
+	 * /a/b/c.txt          --> "/"         --> absolute
+	 * ~/a/b/c.txt         --> "~/"        --> current user
+	 * ~                   --> "~/"        --> current user (slash added)
+	 * ~user/a/b/c.txt     --> "~user/"    --> named user
+	 * ~user               --> "~user/"    --> named user (slash added)
+	 * </pre>
+	 *
+	 * @param filename 文件路径,若为null或:开头,返回-1
+	 * @return 文件路径前缀
+	 */
+	public static int getPrefixLength(String filename) {
+		if (filename == null) {
+			return -1;
+		}
+		int len = filename.length();
+		if (len == 0) {
+			return 0;
+		}
+		char ch0 = filename.charAt(0);
+		if (ch0 == ':') {
+			return -1;
+		}
+		if (len == 1) {
+			if (ch0 == '~') {
+				return 2; // return a length greater than the input
+			}
+			return isSeparator(ch0) ? 1 : 0;
+		} else {
+			if (ch0 == '~') {
+				int posUnix = filename.indexOf(Constant.Langes.SEPARATOR_UNIX, 1);
+				int posWin = filename.indexOf(Constant.Langes.SEPARATOR_WINDOWS, 1);
+				if (posUnix == -1 && posWin == -1) {
+					return len + 1; // return a length greater than the input
+				}
+				posUnix = posUnix == -1 ? posWin : posUnix;
+				posWin = posWin == -1 ? posUnix : posWin;
+				return Math.min(posUnix, posWin) + 1;
+			}
+			char ch1 = filename.charAt(1);
+			if (ch1 == ':') {
+				ch0 = Character.toUpperCase(ch0);
+				if (ch0 >= 'A' && ch0 <= 'Z') {
+					if (len == 2 || isSeparator(filename.charAt(2)) == false) {
+						return 2;
+					}
+					return 3;
+				}
+				return -1;
+			} else if (isSeparator(ch0) && isSeparator(ch1)) {
+				int posUnix = filename.indexOf(Constant.Langes.SEPARATOR_UNIX, 2);
+				int posWin = filename.indexOf(Constant.Langes.SEPARATOR_WINDOWS, 2);
+				if (posUnix == -1 && posWin == -1 || posUnix == 2 || posWin == 2) {
+					return -1;
+				}
+				posUnix = posUnix == -1 ? posWin : posUnix;
+				posWin = posWin == -1 ? posUnix : posWin;
+				return Math.min(posUnix, posWin) + 1;
+			} else {
+				return isSeparator(ch0) ? 1 : 0;
+			}
+		}
+	}
+
+	/**
+	 * 获得文件路径前缀,即从起始位置到第一个/后的第一个字符的索引(包括/的索引)
+	 * 
+	 * <pre>
+	 * Windows:
+	 * a\b\c.txt           --> ""          --> relative
+	 * \a\b\c.txt          --> "\"         --> current drive absolute
+	 * C:a\b\c.txt         --> "C:"        --> drive relative
+	 * C:\a\b\c.txt        --> "C:\"       --> absolute
+	 * \\server\a\b\c.txt  --> "\\server\" --> UNC
+	 *
+	 * Unix:
+	 * a/b/c.txt           --> ""          --> relative
+	 * /a/b/c.txt          --> "/"         --> absolute
+	 * ~/a/b/c.txt         --> "~/"        --> current user
+	 * ~                   --> "~/"        --> current user (slash added)
+	 * ~user/a/b/c.txt     --> "~user/"    --> named user
+	 * ~user               --> "~user/"    --> named user (slash added)
+	 * </pre>
+	 *
+	 * @param filename 文件路径
+	 * @return 文件前缀
+	 */
+	public static String getPrefix(String filename) {
+		if (filename == null) {
+			return null;
+		}
+		int len = getPrefixLength(filename);
+		if (len < 0) {
+			return null;
+		}
+		if (len > filename.length()) {
+			return filename + Constant.Langes.SEPARATOR_UNIX;
+		}
+		return filename.substring(0, len);
+	}
+
+	/**
+	 * 获得文件路径,不包含文件前缀,即去掉从起始位置到第一个/(包括/)的字符串
+	 * 
+	 * <pre>
+	 * C:\a\b\c.txt --> a\b\
+	 * ~/a/b/c.txt  --> a/b/
+	 * a.txt        --> ""
+	 * a/b/c        --> a/b/
+	 * a/b/c/       --> a/b/c/
+	 * </pre>
+	 * <p>
+	 *
+	 * @param filename 文件路径
+	 * @return 不包含文件前缀的路径
+	 */
+	public static String getPath(String filename) {
+		return doGetPath(filename, 1);
+	}
+
+	/**
+	 * 获得文件路径,不包含第一个/之前(包含/)和最后一个/之后(包含/)的路径
+	 * 
+	 * <pre>
+	 * C:\a\b\c.txt --> a\b
+	 * ~/a/b/c.txt  --> a/b
+	 * a.txt        --> ""
+	 * a/b/c        --> a/b
+	 * a/b/c/       --> a/b/c
+	 * </pre>
+	 *
+	 * @param filename 文件路径
+	 * @return 不包含第一个/之前(包含/)和最后一个/之后(包含/)的路径
+	 */
+	public static String getPathNoEndSeparator(String filename) {
+		return doGetPath(filename, 0);
+	}
+
+	/**
+	 * 处理文件路径
+	 * 
+	 * @param filename 文件路径
+	 * @param separatorAdd 0省略结束分隔符,1返回
+	 * @return the path
+	 */
+	private static String doGetPath(String filename, int separatorAdd) {
+		if (filename == null) {
+			return null;
+		}
+		int prefix = getPrefixLength(filename);
+		if (prefix < 0) {
+			return null;
+		}
+		int index = indexOfLastSeparator(filename);
+		int endIndex = index + separatorAdd;
+		if (prefix >= filename.length() || index < 0 || prefix >= endIndex) {
+			return "";
+		}
+		return filename.substring(prefix, endIndex);
+	}
+
+	/**
+	 * 获得最后一个目录文件分隔符索引
+	 * 
+	 * @param filename 文件路径,null或找不到返回-1
+	 * @return 最后一个目录文件分隔符索引
+	 */
+	public static int indexOfLastSeparator(String filename) {
+		if (filename == null) {
+			return -1;
+		}
+		int lastUnixPos = filename.lastIndexOf(Constant.Langes.SEPARATOR_UNIX);
+		int lastWindowsPos = filename.lastIndexOf(Constant.Langes.SEPARATOR_WINDOWS);
+		return Math.max(lastUnixPos, lastWindowsPos);
+	}
+
+	/**
+	 * 获得最后一个点的索引
+	 * 
+	 * @param filename 文件路径,null或找不到返回-1
+	 * @return 最后一个点的索引
+	 */
+	public static int indexOfExtension(String filename) {
+		if (filename == null) {
+			return -1;
+		}
+		int extensionPos = filename.lastIndexOf(Constant.Langes.CHAR_DOT);
+		int lastSeparator = indexOfLastSeparator(filename);
+		return lastSeparator > extensionPos ? -1 : extensionPos;
+	}
 
 	/**
 	 * 判断字符是文件分隔符
@@ -49,7 +514,8 @@ public class FileNameTool {
 	/**
 	 * 规范化路径,删除双点和单点路径,如../和./.
 	 * 
-	 * 将尾部斜杠双斜杠转换为单斜杠.删除单点径段,双点将导致该路径段和之前的路径段被删除.如果双点没有父路径段 将返回<code>null</code> names
+	 * 将尾部斜杠双斜杠转换为单斜杠.删除单点径段,双点将导致该路径段和之前的路径段被删除.如果双点没有父路径段 将返回<code>null</code>
+	 * names
 	 * 
 	 * <pre>
 	 * /foo//               	=   /foo/
@@ -267,433 +733,6 @@ public class FileNameTool {
 	}
 
 	/**
-	 * 使用常规命令行样式规则将文件名连接到基本路径,{@link Path#resolve(Path)}
-	 * 
-	 * <pre>
-	 * /foo/ + bar          -->   /foo/bar
-	 * /foo + bar           -->   /foo/bar
-	 * /foo + /bar          -->   /bar
-	 * /foo + C:/bar        -->   C:/bar
-	 * /foo + C:bar         -->   C:bar (*)
-	 * /foo/a/ + ../bar     -->   foo/bar
-	 * /foo/ + ../../bar    -->   null
-	 * /foo/ + /bar         -->   /bar
-	 * /foo/.. + /bar       -->   /bar
-	 * /foo + bar/c.txt     -->   /foo/bar/c.txt
-	 * /foo/c.txt + bar     -->   /foo/c.txt/bar (!)
-	 * </pre>
-	 * 
-	 * @param basePath 基本路径
-	 * @param fullFilenameToAdd 需要添加到基本路径的路径
-	 * @return 拼接后的路径
-	 */
-	public static String concat(String basePath, String fullFilenameToAdd) {
-		int prefix = getPrefixLength(fullFilenameToAdd);
-		if (prefix < 0) {
-			return null;
-		}
-		if (prefix > 0) {
-			return normalize(fullFilenameToAdd);
-		}
-		if (basePath == null) {
-			return null;
-		}
-		int len = basePath.length();
-		if (len == 0) {
-			return normalize(fullFilenameToAdd);
-		}
-		char ch = basePath.charAt(len - 1);
-		if (isSeparator(ch)) {
-			return normalize(basePath + fullFilenameToAdd);
-		} else {
-			return normalize(basePath + '/' + fullFilenameToAdd);
-		}
-	}
-
-	/**
-	 * 判断parent目录是否包含child元素
-	 * 
-	 * @param parent 父目录
-	 * @param child 子目录
-	 * @return true->父目录包含子目录
-	 * @throws IOException
-	 */
-	public static boolean directoryContains(final String parent, final String child) throws IOException {
-		if (parent == null) {
-			throw new IllegalArgumentException("Directory must not be null");
-		}
-		if (child == null) {
-			return false;
-		}
-		if (IOCase.SYSTEM.checkEquals(parent, child)) {
-			return false;
-		}
-		return IOCase.SYSTEM.checkStartsWith(child, parent);
-	}
-
-	/**
-	 * 将文件分隔符全部转换为Unix文件分隔符
-	 * 
-	 * @param path 文件路径
-	 * @return 更新后的文件路径
-	 */
-	public static String separatorsToUnix(String path) {
-		if (path == null || path.indexOf(Constant.Langes.SEPARATOR_WINDOWS) == -1) {
-			return path;
-		}
-		return path.replace(Constant.Langes.SEPARATOR_WINDOWS, Constant.Langes.SEPARATOR_UNIX);
-	}
-
-	/**
-	 * 将文件分隔符全部转换为Windows文件分隔符
-	 * 
-	 * @param path 文件路径
-	 * @return 更新后的文件路径
-	 */
-	public static String separatorsToWindows(String path) {
-		if (path == null || path.indexOf(Constant.Langes.SEPARATOR_UNIX) == -1) {
-			return path;
-		}
-		return path.replace(Constant.Langes.SEPARATOR_UNIX, Constant.Langes.SEPARATOR_WINDOWS);
-	}
-
-	/**
-	 * 将文件分隔符全部转换为系统文件分隔符
-	 * 
-	 * @param path 文件路径
-	 * @return 更新后的文件路径
-	 */
-	public static String separatorsToSystem(String path) {
-		if (path == null) {
-			return null;
-		}
-		if (SystemTool.isWindows()) {
-			return separatorsToWindows(path);
-		} else {
-			return separatorsToUnix(path);
-		}
-	}
-
-	/**
-	 * 获得文件路径前缀长度,即从起始位置到第一个/的长度,如C:/,~/
-	 * 
-	 * <pre>
-	 * Windows:
-	 * a\b\c.txt           --> ""          --> relative
-	 * \a\b\c.txt          --> "\"         --> current drive absolute
-	 * C:a\b\c.txt         --> "C:"        --> drive relative
-	 * C:\a\b\c.txt        --> "C:\"       --> absolute
-	 * \\server\a\b\c.txt  --> "\\server\" --> UNC
-	 * Unix:
-	 * a/b/c.txt           --> ""          --> relative
-	 * /a/b/c.txt          --> "/"         --> absolute
-	 * ~/a/b/c.txt         --> "~/"        --> current user
-	 * ~                   --> "~/"        --> current user (slash added)
-	 * ~user/a/b/c.txt     --> "~user/"    --> named user
-	 * ~user               --> "~user/"    --> named user (slash added)
-	 * </pre>
-	 *
-	 * @param filename 文件路径,若为null或:开头,返回-1
-	 * @return 文件路径前缀
-	 */
-	public static int getPrefixLength(String filename) {
-		if (filename == null) {
-			return -1;
-		}
-		int len = filename.length();
-		if (len == 0) {
-			return 0;
-		}
-		char ch0 = filename.charAt(0);
-		if (ch0 == ':') {
-			return -1;
-		}
-		if (len == 1) {
-			if (ch0 == '~') {
-				return 2; // return a length greater than the input
-			}
-			return isSeparator(ch0) ? 1 : 0;
-		} else {
-			if (ch0 == '~') {
-				int posUnix = filename.indexOf(Constant.Langes.SEPARATOR_UNIX, 1);
-				int posWin = filename.indexOf(Constant.Langes.SEPARATOR_WINDOWS, 1);
-				if (posUnix == -1 && posWin == -1) {
-					return len + 1; // return a length greater than the input
-				}
-				posUnix = posUnix == -1 ? posWin : posUnix;
-				posWin = posWin == -1 ? posUnix : posWin;
-				return Math.min(posUnix, posWin) + 1;
-			}
-			char ch1 = filename.charAt(1);
-			if (ch1 == ':') {
-				ch0 = Character.toUpperCase(ch0);
-				if (ch0 >= 'A' && ch0 <= 'Z') {
-					if (len == 2 || isSeparator(filename.charAt(2)) == false) {
-						return 2;
-					}
-					return 3;
-				}
-				return -1;
-			} else if (isSeparator(ch0) && isSeparator(ch1)) {
-				int posUnix = filename.indexOf(Constant.Langes.SEPARATOR_UNIX, 2);
-				int posWin = filename.indexOf(Constant.Langes.SEPARATOR_WINDOWS, 2);
-				if (posUnix == -1 && posWin == -1 || posUnix == 2 || posWin == 2) {
-					return -1;
-				}
-				posUnix = posUnix == -1 ? posWin : posUnix;
-				posWin = posWin == -1 ? posUnix : posWin;
-				return Math.min(posUnix, posWin) + 1;
-			} else {
-				return isSeparator(ch0) ? 1 : 0;
-			}
-		}
-	}
-
-	/**
-	 * 获得最后一个目录文件分隔符索引
-	 * 
-	 * @param filename 文件路径,null或找不到返回-1
-	 * @return 最后一个目录文件分隔符索引
-	 */
-	public static int indexOfLastSeparator(String filename) {
-		if (filename == null) {
-			return -1;
-		}
-		int lastUnixPos = filename.lastIndexOf(Constant.Langes.SEPARATOR_UNIX);
-		int lastWindowsPos = filename.lastIndexOf(Constant.Langes.SEPARATOR_WINDOWS);
-		return Math.max(lastUnixPos, lastWindowsPos);
-	}
-
-	/**
-	 * 获得最后一个点的索引
-	 * 
-	 * @param filename 文件路径,null或找不到返回-1
-	 * @return 最后一个点的索引
-	 */
-	public static int indexOfExtension(String filename) {
-		if (filename == null) {
-			return -1;
-		}
-		int extensionPos = filename.lastIndexOf(Constant.Langes.CHAR_DOT);
-		int lastSeparator = indexOfLastSeparator(filename);
-		return lastSeparator > extensionPos ? -1 : extensionPos;
-	}
-
-	/**
-	 * 获得文件路径前缀,即从起始位置到第一个/后的第一个字符的索引(包括/的索引)
-	 * 
-	 * <pre>
-	 * Windows:
-	 * a\b\c.txt           --> ""          --> relative
-	 * \a\b\c.txt          --> "\"         --> current drive absolute
-	 * C:a\b\c.txt         --> "C:"        --> drive relative
-	 * C:\a\b\c.txt        --> "C:\"       --> absolute
-	 * \\server\a\b\c.txt  --> "\\server\" --> UNC
-	 *
-	 * Unix:
-	 * a/b/c.txt           --> ""          --> relative
-	 * /a/b/c.txt          --> "/"         --> absolute
-	 * ~/a/b/c.txt         --> "~/"        --> current user
-	 * ~                   --> "~/"        --> current user (slash added)
-	 * ~user/a/b/c.txt     --> "~user/"    --> named user
-	 * ~user               --> "~user/"    --> named user (slash added)
-	 * </pre>
-	 *
-	 * @param filename 文件路径
-	 * @return 文件前缀
-	 */
-	public static String getPrefix(String filename) {
-		if (filename == null) {
-			return null;
-		}
-		int len = getPrefixLength(filename);
-		if (len < 0) {
-			return null;
-		}
-		if (len > filename.length()) {
-			return filename + Constant.Langes.SEPARATOR_UNIX;
-		}
-		return filename.substring(0, len);
-	}
-
-	/**
-	 * 获得文件路径,不包含文件前缀,即去掉从起始位置到第一个/(包括/)的字符串
-	 * 
-	 * <pre>
-	 * C:\a\b\c.txt --> a\b\
-	 * ~/a/b/c.txt  --> a/b/
-	 * a.txt        --> ""
-	 * a/b/c        --> a/b/
-	 * a/b/c/       --> a/b/c/
-	 * </pre>
-	 * <p>
-	 *
-	 * @param filename 文件路径
-	 * @return 不包含文件前缀的路径
-	 */
-	public static String getPath(String filename) {
-		return doGetPath(filename, 1);
-	}
-
-	/**
-	 * 获得文件路径,不包含第一个/之前(包含/)和最后一个/之后(包含/)的路径
-	 * 
-	 * <pre>
-	 * C:\a\b\c.txt --> a\b
-	 * ~/a/b/c.txt  --> a/b
-	 * a.txt        --> ""
-	 * a/b/c        --> a/b
-	 * a/b/c/       --> a/b/c
-	 * </pre>
-	 *
-	 * @param filename 文件路径
-	 * @return 不包含第一个/之前(包含/)和最后一个/之后(包含/)的路径
-	 */
-	public static String getPathNoEndSeparator(String filename) {
-		return doGetPath(filename, 0);
-	}
-
-	/**
-	 * 处理文件路径
-	 * 
-	 * @param filename 文件路径
-	 * @param separatorAdd 0省略结束分隔符,1返回
-	 * @return the path
-	 */
-	private static String doGetPath(String filename, int separatorAdd) {
-		if (filename == null) {
-			return null;
-		}
-		int prefix = getPrefixLength(filename);
-		if (prefix < 0) {
-			return null;
-		}
-		int index = indexOfLastSeparator(filename);
-		int endIndex = index + separatorAdd;
-		if (prefix >= filename.length() || index < 0 || prefix >= endIndex) {
-			return "";
-		}
-		return filename.substring(prefix, endIndex);
-	}
-
-	/**
-	 * 返回文件路径的目录部分,末尾添加/
-	 * 
-	 * <pre>
-	 * C:\a\b\c.txt --> C:\a\b\
-	 * a.txt        --> ""
-	 * a/b/c        --> a/b/
-	 * a/b/c/       --> a/b/c/
-	 * C:           --> C:
-	 * C:\          --> C:\
-	 * ~            --> ~/
-	 * ~user        --> ~user/
-	 * </pre>
-	 *
-	 * @param filename 文件路径
-	 * @return 文件路径的目录部分,末尾添加/
-	 */
-	public static String getFullPath(String filename) {
-		return doGetFullPath(filename, true);
-	}
-
-	/**
-	 * 返回文件路径的目录部分,末尾不添加/
-	 * 
-	 * <pre>
-	 * C:\a\b\c.txt --> C:\a\b
-	 * a.txt        --> ""
-	 * a/b/c        --> a/b
-	 * a/b/c/       --> a/b/c
-	 * C:           --> C:
-	 * C:\          --> C:\
-	 * ~/           --> ~
-	 * ~user/       --> ~user
-	 * </pre>
-	 *
-	 * @param filename 文件路径
-	 * @return 文件路径的目录部分,末尾不添加/
-	 */
-	public static String getFullPathNoEndSeparator(String filename) {
-		return doGetFullPath(filename, false);
-	}
-
-	/**
-	 * 返回文件路径的目录部分
-	 * 
-	 * @param filename 文件路径
-	 * @param includeSeparator 末尾是否添加/,true->添加,false->不添加
-	 * @return 文件路径的目录部分
-	 */
-	private static String doGetFullPath(String filename, boolean includeSeparator) {
-		if (filename == null) {
-			return null;
-		}
-		int prefix = getPrefixLength(filename);
-		if (prefix < 0) {
-			return null;
-		}
-		if (prefix >= filename.length()) {
-			if (includeSeparator) {
-				return getPrefix(filename);
-			} else {
-				return filename;
-			}
-		}
-		int index = indexOfLastSeparator(filename);
-		if (index < 0) {
-			return filename.substring(0, prefix);
-		}
-		int end = index + (includeSeparator ? 1 : 0);
-		if (end == 0) {
-			end++;
-		}
-		return filename.substring(0, end);
-	}
-
-	/**
-	 * 获得文件名称,包括后缀和点,去除所有目录,即去除最后一个/之前所有字符串
-	 * 
-	 * @param filename 文件路径
-	 * @return 文件名,包括点和后缀
-	 */
-	public static String getName(String filename) {
-		if (filename == null) {
-			return null;
-		}
-		int index = indexOfLastSeparator(filename);
-		return filename.substring(index + 1);
-	}
-
-	/**
-	 * 获得文件名称,不包括后缀和点,去除所有目录,即去除最后一个/之前所有字符串以及后缀和点
-	 * 
-	 * @param filename 文件路径
-	 * @return 文件名,不包括点和后缀
-	 */
-	public static String getBaseName(String filename) {
-		return removeExtension(getName(filename));
-	}
-
-	/**
-	 * 获得文件后缀,不包含点
-	 * 
-	 * @param filename 文件路径
-	 * @return 文件后缀,不包含点
-	 */
-	public static String getExtension(String filename) {
-		if (filename == null) {
-			return null;
-		}
-		int index = indexOfExtension(filename);
-		if (index == -1) {
-			return "";
-		} else {
-			return filename.substring(index + 1);
-		}
-	}
-
-	/**
 	 * 删除文件路径后缀,即删除最后一个\之后的最后一个点之后所有字符串
 	 * 
 	 * @param filename 文件路径
@@ -709,76 +748,6 @@ public class FileNameTool {
 		} else {
 			return filename.substring(0, index);
 		}
-	}
-
-	/**
-	 * 判断2个文件路径是否相同
-	 *
-	 * @param filename1 文件路径1
-	 * @param filename2 文件路径2
-	 * @return true->2个文件路径相同,false->不相同
-	 */
-	public static boolean equals(String filename1, String filename2) {
-		return equals(filename1, filename2, false, IOCase.SENSITIVE);
-	}
-
-	/**
-	 * 判断2个文件路径是否相同,使用系统默认的大小写规则
-	 *
-	 * @param filename1 文件路径1
-	 * @param filename2 文件路径2
-	 * @return true->2个文件路径相同,false->不相同
-	 */
-	public static boolean equalsOnSystem(String filename1, String filename2) {
-		return equals(filename1, filename2, false, IOCase.SYSTEM);
-	}
-
-	/**
-	 * 判断2个文件路径是否相同,规范化后,大小写敏感
-	 *
-	 * @param filename1 文件路径1
-	 * @param filename2 文件路径2
-	 * @return true->2个文件路径相同,false->不相同
-	 */
-	public static boolean equalsNormalized(String filename1, String filename2) {
-		return equals(filename1, filename2, true, IOCase.SENSITIVE);
-	}
-
-	/**
-	 * 判断2个文件路径是否相同,规范化之后使用系统默认的大小写规则
-	 *
-	 * @param filename1 文件路径1
-	 * @param filename2 文件路径2
-	 * @return true->2个文件路径相同,false->不相同
-	 */
-	public static boolean equalsNormalizedOnSystem(String filename1, String filename2) {
-		return equals(filename1, filename2, true, IOCase.SYSTEM);
-	}
-
-	/**
-	 * 判断2个文件路径是否相同
-	 *
-	 * @param filename1 文件路径1
-	 * @param filename2 文件路径2
-	 * @param normalized 是否规范化,true->规范化,false->不规范化
-	 * @param caseSensitivity 大小写使用规则
-	 * @return true->2个文件路径相同,false->不相同
-	 */
-	public static boolean equals(String filename1, String filename2, boolean normalized, IOCase caseSensitivity) {
-		if (filename1 == null || filename2 == null) {
-			return filename1 == null && filename2 == null;
-		}
-		if (normalized) {
-			filename1 = normalize(filename1);
-			filename2 = normalize(filename2);
-			if (filename1 == null || filename2 == null) {
-				throw new NullPointerException("Error normalizing one or both of the file names");
-			}
-		}
-		if (caseSensitivity == null) {
-			caseSensitivity = IOCase.SENSITIVE;
-		}
-		return caseSensitivity.checkEquals(filename1, filename2);
 	}
 
 	/**
@@ -843,6 +812,49 @@ public class FileNameTool {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 将文件分隔符全部转换为Unix文件分隔符
+	 * 
+	 * @param path 文件路径
+	 * @return 更新后的文件路径
+	 */
+	public static String separatorsToUnix(String path) {
+		if (path == null || path.indexOf(Constant.Langes.SEPARATOR_WINDOWS) == -1) {
+			return path;
+		}
+		return path.replace(Constant.Langes.SEPARATOR_WINDOWS, Constant.Langes.SEPARATOR_UNIX);
+	}
+
+	/**
+	 * 将文件分隔符全部转换为Windows文件分隔符
+	 * 
+	 * @param path 文件路径
+	 * @return 更新后的文件路径
+	 */
+	public static String separatorsToWindows(String path) {
+		if (path == null || path.indexOf(Constant.Langes.SEPARATOR_UNIX) == -1) {
+			return path;
+		}
+		return path.replace(Constant.Langes.SEPARATOR_UNIX, Constant.Langes.SEPARATOR_WINDOWS);
+	}
+
+	/**
+	 * 将文件分隔符全部转换为系统文件分隔符
+	 * 
+	 * @param path 文件路径
+	 * @return 更新后的文件路径
+	 */
+	public static String separatorsToSystem(String path) {
+		if (path == null) {
+			return null;
+		}
+		if (SystemTool.isWindows()) {
+			return separatorsToWindows(path);
+		} else {
+			return separatorsToUnix(path);
+		}
 	}
 
 	/**

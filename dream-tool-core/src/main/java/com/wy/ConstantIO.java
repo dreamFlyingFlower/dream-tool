@@ -45,4 +45,14 @@ public interface ConstantIO {
 	 * windows换行符
 	 */
 	String LINE_SEPARATOR_WINDOWS = "\r\n";
+
+	/**
+	 * JVM读取流时的缓存大小,8K
+	 */
+	int BUFFER_SIZE = 8192;
+
+	/**
+	 * 直接内存读取流时的缓存大小,8M
+	 */
+	int BUFFER_SIZE_DIRECT = 8 << 20;
 }
