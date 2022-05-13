@@ -605,6 +605,69 @@ public final class DateTool {
 	}
 
 	/**
+	 * 获得当前时间年份,不会格式化
+	 * 
+	 * @return 年份
+	 */
+	public static String getYear() {
+		return getYear(new Date());
+	}
+
+	/**
+	 * 获得指定时间年份,不会格式化
+	 * 
+	 * @param date 指定时间
+	 * @return 年份
+	 */
+	public static String getYear(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar.get(Calendar.YEAR) + "";
+	}
+
+	/**
+	 * 获得当前时间月份,格式为2位字符
+	 * 
+	 * @return 月份
+	 */
+	public static String getMonth() {
+		return getMonth(new Date());
+	}
+
+	/**
+	 * 获得指定时间月份,格式为2位字符
+	 * 
+	 * @return 月份
+	 */
+	public static String getMonth(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		int month = calendar.get(Calendar.MONTH) + 1;
+		return month > 9 ? month + "" : "0" + month;
+	}
+
+	/**
+	 * 获得当前时间日期,格式为2位字符
+	 * 
+	 * @return 日期
+	 */
+	public static String getDay() {
+		return getDay(new Date());
+	}
+
+	/**
+	 * 获得指定时间月份,格式为2位字符
+	 * 
+	 * @return 日期
+	 */
+	public static String getDay(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
+		return day > 9 ? day + "" : "0" + day;
+	}
+
+	/**
 	 * 获得当前时间所在年的开始时间
 	 */
 	public static Date getYearBegin() {
