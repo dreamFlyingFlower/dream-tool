@@ -2,8 +2,7 @@ package com.wy.util;
 
 import java.nio.charset.Charset;
 
-import com.wy.Constant;
-import com.wy.ConstantLang;
+import com.wy.ConstLang;
 import com.wy.lang.StrTool;
 
 /**
@@ -21,7 +20,7 @@ public class CharsetTool {
 	 * @return UTF-8
 	 */
 	public static Charset defaultCharset() {
-		return Constant.Langes.DEFAULT_CHARSET;
+		return ConstLang.DEFAULT_CHARSET;
 	}
 
 	/**
@@ -31,7 +30,7 @@ public class CharsetTool {
 	 * @return 字符集
 	 */
 	public static Charset defaultCharset(final Charset charset) {
-		return charset == null ? ConstantLang.DEFAULT_CHARSET : charset;
+		return charset == null ? ConstLang.DEFAULT_CHARSET : charset;
 	}
 
 	/**
@@ -44,7 +43,7 @@ public class CharsetTool {
 		if (StrTool.isNotBlank(charsetName) && Charset.isSupported(charsetName)) {
 			return Charset.forName(charsetName);
 		} else {
-			return ConstantLang.DEFAULT_CHARSET;
+			return ConstLang.DEFAULT_CHARSET;
 		}
 	}
 

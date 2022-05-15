@@ -2,7 +2,7 @@ package com.wy.util;
 
 import java.util.Random;
 
-import com.wy.Constant;
+import com.wy.ConstLang;
 import com.wy.lang.AssertTool;
 
 /**
@@ -238,7 +238,7 @@ public class RandomTool {
 	public static String random(int count, int start, int end, final boolean letters, final boolean numbers,
 			final char[] chars, final Random random) {
 		if (count == 0) {
-			return Constant.Langes.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		} else if (count < 0) {
 			throw new IllegalArgumentException("Requested random string length " + count + " is less than 0.");
 		}

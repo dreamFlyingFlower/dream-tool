@@ -8,8 +8,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wy.ConstantClass;
-import com.wy.ConstantLang;
+import com.wy.ConstClass;
+import com.wy.ConstLang;
 import com.wy.collection.ListTool;
 import com.wy.lang.AssertTool;
 import com.wy.result.ResultException;
@@ -116,19 +116,19 @@ public class ClassTool {
 			throws ClassNotFoundException {
 		try {
 			Class<?> clazz;
-			if (ConstantClass.NAME_PRIMITIVE_MAP.containsKey(className)) {
-				clazz = ConstantClass.NAME_PRIMITIVE_MAP.get(className);
+			if (ConstClass.NAME_PRIMITIVE_MAP.containsKey(className)) {
+				clazz = ConstClass.NAME_PRIMITIVE_MAP.get(className);
 			} else {
 				clazz = Class.forName(getCanonicalName(className), initialize, classLoader);
 			}
 			return clazz;
 		} catch (final ClassNotFoundException ex) {
 			// 允许点(.)作为内部类的分隔符
-			final int lastDotIndex = className.lastIndexOf(ConstantLang.CHAR_DOT);
+			final int lastDotIndex = className.lastIndexOf(ConstLang.CHAR_DOT);
 			if (lastDotIndex != -1) {
 				try {
 					return getClass(classLoader, className.substring(0, lastDotIndex)
-							+ ConstantClass.INNER_CLASS_SEPARATOR_CHAR + className.substring(lastDotIndex + 1),
+							+ ConstClass.INNER_CLASS_SEPARATOR_CHAR + className.substring(lastDotIndex + 1),
 							initialize);
 				} catch (final ClassNotFoundException ex2) {
 					ex2.printStackTrace();
@@ -151,7 +151,7 @@ public class ClassTool {
 				className = className.substring(0, className.length() - 2);
 				classNameBuffer.append("[");
 			}
-			final String abbreviation = ConstantClass.ABBREVIATION_MAP.get(className);
+			final String abbreviation = ConstClass.ABBREVIATION_MAP.get(className);
 			if (abbreviation != null) {
 				classNameBuffer.append(abbreviation);
 			} else {
@@ -284,7 +284,7 @@ public class ClassTool {
 	 */
 	public static String getPackageName(String className) {
 		AssertTool.notNull(className, "Class name must not be null");
-		int lastDotIndex = className.lastIndexOf(ConstantLang.STR_DOT);
+		int lastDotIndex = className.lastIndexOf(ConstLang.STR_DOT);
 		return (lastDotIndex != -1 ? className.substring(0, lastDotIndex) : "");
 	}
 
@@ -307,13 +307,13 @@ public class ClassTool {
 	 */
 	public static String getShortName(String className) {
 		AssertTool.notBlank(className, "Class name must not be empty");
-		int lastDotIndex = className.lastIndexOf(ConstantLang.STR_DOT);
-		int nameEndIndex = className.indexOf(ConstantClass.CGLIB_CLASS_SEPARATOR);
+		int lastDotIndex = className.lastIndexOf(ConstLang.STR_DOT);
+		int nameEndIndex = className.indexOf(ConstClass.CGLIB_CLASS_SEPARATOR);
 		if (nameEndIndex == -1) {
 			nameEndIndex = className.length();
 		}
 		String shortName = className.substring(lastDotIndex + 1, nameEndIndex);
-		shortName = shortName.replace(ConstantClass.INNER_CLASS_SEPARATOR_CHAR, ConstantLang.CHAR_DOT);
+		shortName = shortName.replace(ConstClass.INNER_CLASS_SEPARATOR_CHAR, ConstLang.CHAR_DOT);
 		return shortName;
 	}
 
@@ -409,10 +409,10 @@ public class ClassTool {
 		}
 		if (autoBox) {
 			if (subType.isPrimitive()) {
-				Class<?> resolvedPrimitive = ConstantClass.WRAPPER_PRIMITIVE_MAP.get(superType);
+				Class<?> resolvedPrimitive = ConstClass.WRAPPER_PRIMITIVE_MAP.get(superType);
 				return subType == resolvedPrimitive;
 			} else {
-				Class<?> resolvedWrapper = ConstantClass.PRIMITIVE_WRAPPER_MAP.get(superType);
+				Class<?> resolvedWrapper = ConstClass.PRIMITIVE_WRAPPER_MAP.get(superType);
 				return (resolvedWrapper != null && subType.isAssignableFrom(resolvedWrapper));
 			}
 		}
@@ -563,7 +563,7 @@ public class ClassTool {
 	 * @return true当class为基本类型包装类
 	 */
 	public static boolean isPrimitiveWrapper(final Class<?> cls) {
-		return ConstantClass.WRAPPER_PRIMITIVE_MAP.containsKey(cls);
+		return ConstClass.WRAPPER_PRIMITIVE_MAP.containsKey(cls);
 	}
 
 	/**
@@ -623,7 +623,7 @@ public class ClassTool {
 	public static Class<?> primitiveToWrapper(final Class<?> cls) {
 		Class<?> convertedClass = cls;
 		if (cls != null && cls.isPrimitive()) {
-			convertedClass = ConstantClass.PRIMITIVE_WRAPPER_MAP.get(cls);
+			convertedClass = ConstClass.PRIMITIVE_WRAPPER_MAP.get(cls);
 		}
 		return convertedClass;
 	}
@@ -653,7 +653,7 @@ public class ClassTool {
 	 * @return 基本类型,可能为null
 	 */
 	public static Class<?> wrapperToPrimitive(final Class<?> cls) {
-		return ConstantClass.WRAPPER_PRIMITIVE_MAP.get(cls);
+		return ConstClass.WRAPPER_PRIMITIVE_MAP.get(cls);
 	}
 
 	/**

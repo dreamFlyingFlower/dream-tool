@@ -1,6 +1,6 @@
 package com.wy.util;
 
-import com.wy.ConstantLang;
+import com.wy.ConstLang;
 import com.wy.lang.StrTool;
 import com.wy.result.ResultException;
 
@@ -38,10 +38,10 @@ public class WeakPwdUtils {
 	 * @param str 需判断的字符串
 	 */
 	public static void assertContinueChar(String str) {
-		if (ConstantLang.HOLE_NUM.contains(str)) {
+		if (ConstLang.HOLE_NUMBER.contains(str)) {
 			throw new ResultException("不能是连续的数字");
 		}
-		if (ConstantLang.HOLE_ALPHABET.contains(str)) {
+		if (ConstLang.HOLE_ALPHABET.contains(str)) {
 			throw new ResultException("不能是连续的字符");
 		}
 	}

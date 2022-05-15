@@ -8,8 +8,7 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.wy.Constant;
-import com.wy.ConstantLang;
+import com.wy.ConstLang;
 import com.wy.annotation.Example;
 import com.wy.enums.RegexEnum;
 import com.wy.util.ArrayTool;
@@ -56,7 +55,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 带指定省略符的字符串
 	 */
 	public static String abbreviate(final String str, final String abbrevMarker, final int maxWidth) {
-		if (isNotEmpty(str) && ConstantLang.STR_EMPTY.equals(abbrevMarker) && maxWidth > 0) {
+		if (isNotEmpty(str) && ConstLang.STR_EMPTY.equals(abbrevMarker) && maxWidth > 0) {
 			return str.substring(0, maxWidth);
 		} else if (isAnyEmpty(str, abbrevMarker)) {
 			return str;
@@ -166,18 +165,18 @@ public class StrTool extends CharSequenceTool {
 		}
 		if (str.length() == 1) {
 			final char ch = str.charAt(0);
-			if (ch == ConstantLang.CHAR_CR || ch == ConstantLang.CHAR_LF) {
-				return ConstantLang.STR_EMPTY;
+			if (ch == ConstLang.CHAR_CR || ch == ConstLang.CHAR_LF) {
+				return ConstLang.STR_EMPTY;
 			}
 			return str;
 		}
 		int lastIdx = str.length() - 1;
 		final char last = str.charAt(lastIdx);
-		if (last == ConstantLang.CHAR_LF) {
-			if (str.charAt(lastIdx - 1) == ConstantLang.CHAR_CR) {
+		if (last == ConstLang.CHAR_LF) {
+			if (str.charAt(lastIdx - 1) == ConstLang.CHAR_CR) {
 				lastIdx--;
 			}
-		} else if (last != ConstantLang.CHAR_CR) {
+		} else if (last != ConstLang.CHAR_CR) {
 			lastIdx++;
 		}
 		return str.substring(0, lastIdx);
@@ -195,12 +194,12 @@ public class StrTool extends CharSequenceTool {
 		}
 		final int strLen = str.length();
 		if (strLen < 2) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int lastIdx = strLen - 1;
 		final String ret = str.substring(0, lastIdx);
 		final char last = str.charAt(lastIdx);
-		if (last == ConstantLang.CHAR_LF && ret.charAt(lastIdx - 1) == ConstantLang.CHAR_CR) {
+		if (last == ConstLang.CHAR_LF && ret.charAt(lastIdx - 1) == ConstLang.CHAR_CR) {
 			return ret.substring(0, lastIdx - 1);
 		}
 		return ret;
@@ -238,7 +237,7 @@ public class StrTool extends CharSequenceTool {
 		}
 		int count = 0;
 		int idx = 0;
-		while ((idx = str.indexOf(sub, idx)) != ConstantLang.INDEX_NOT_FOUND) {
+		while ((idx = str.indexOf(sub, idx)) != ConstLang.INDEX_NOT_FOUND) {
 			count++;
 			idx += sub.length();
 		}
@@ -260,8 +259,8 @@ public class StrTool extends CharSequenceTool {
 			return str1;
 		}
 		final int at = indexOfDifference(str1, str2);
-		if (at == ConstantLang.INDEX_NOT_FOUND) {
-			return ConstantLang.STR_EMPTY;
+		if (at == ConstLang.INDEX_NOT_FOUND) {
+			return ConstLang.STR_EMPTY;
 		}
 		return str2.substring(at);
 	}
@@ -332,7 +331,7 @@ public class StrTool extends CharSequenceTool {
 		int handledPosition = 0;
 		int delimIndex;// 占位符所在位置
 		for (int argIndex = 0; argIndex < args.length; argIndex++) {
-			delimIndex = template.indexOf(Constant.Langes.EMPTY_JSON, handledPosition);
+			delimIndex = template.indexOf(ConstLang.EMPTY_JSON, handledPosition);
 			if (delimIndex == -1) {
 				if (handledPosition == 0) {
 					return template;
@@ -341,8 +340,8 @@ public class StrTool extends CharSequenceTool {
 					return sbuf.toString();
 				}
 			} else {
-				if (delimIndex > 0 && template.charAt(delimIndex - 1) == Constant.Langes.CHAR_BACKSLASH) {
-					if (delimIndex > 1 && template.charAt(delimIndex - 2) == Constant.Langes.CHAR_BACKSLASH) {
+				if (delimIndex > 0 && template.charAt(delimIndex - 1) == ConstLang.CHAR_BACKSLASH) {
+					if (delimIndex > 1 && template.charAt(delimIndex - 2) == ConstLang.CHAR_BACKSLASH) {
 						// 转义符之前还有一个转义符，占位符依旧有效
 						sbuf.append(template, handledPosition, delimIndex - 1);
 						sbuf.append(Convert.utf8Str(args[argIndex]));
@@ -351,7 +350,7 @@ public class StrTool extends CharSequenceTool {
 						// 占位符被转义
 						argIndex--;
 						sbuf.append(template, handledPosition, delimIndex - 1);
-						sbuf.append(Constant.Langes.CHAR_DELIM_START);
+						sbuf.append(ConstLang.CHAR_DELIM_START);
 						handledPosition = delimIndex + 1;
 					}
 				} else {
@@ -397,16 +396,16 @@ public class StrTool extends CharSequenceTool {
 	 */
 	public static String getCommonPrefix(final String... strs) {
 		if (ArrayTool.isEmpty(strs)) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int smallestIndexOfDiff = indexOfDifference(strs);
-		if (smallestIndexOfDiff == ConstantLang.INDEX_NOT_FOUND) {
+		if (smallestIndexOfDiff == ConstLang.INDEX_NOT_FOUND) {
 			if (strs[0] == null) {
-				return ConstantLang.STR_EMPTY;
+				return ConstLang.STR_EMPTY;
 			}
 			return strs[0];
 		} else if (smallestIndexOfDiff == 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		} else {
 			return strs[0].substring(0, smallestIndexOfDiff);
 		}
@@ -455,7 +454,7 @@ public class StrTool extends CharSequenceTool {
 				}
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -467,7 +466,7 @@ public class StrTool extends CharSequenceTool {
 	 */
 	public static int indexOfAnyBut(final String str, final String searchStr) {
 		if (isEmpty(str) || isEmpty(searchStr)) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		final int strLen = str.length();
 		for (int i = 0; i < strLen; i++) {
@@ -484,7 +483,7 @@ public class StrTool extends CharSequenceTool {
 				}
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -589,7 +588,7 @@ public class StrTool extends CharSequenceTool {
 				}
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -648,7 +647,7 @@ public class StrTool extends CharSequenceTool {
 		if (pads <= 0) {
 			return str;
 		}
-		if (pads > ConstantLang.PAD_LIMIT) {
+		if (pads > ConstLang.PAD_LIMIT) {
 			return leftPad(str, size, String.valueOf(padChar));
 		}
 		return repeat(padChar, pads).concat(str);
@@ -676,7 +675,7 @@ public class StrTool extends CharSequenceTool {
 			return null;
 		}
 		if (isEmpty(padStr)) {
-			padStr = ConstantLang.STR_EMPTY;
+			padStr = ConstLang.STR_EMPTY;
 		}
 		final int padLen = padStr.length();
 		final int strLen = str.length();
@@ -684,7 +683,7 @@ public class StrTool extends CharSequenceTool {
 		if (pads <= 0) {
 			return str;
 		}
-		if (padLen == 1 && pads <= ConstantLang.PAD_LIMIT) {
+		if (padLen == 1 && pads <= ConstLang.PAD_LIMIT) {
 			return leftPad(str, size, padStr.charAt(0));
 		}
 		if (pads == padLen) {
@@ -749,13 +748,13 @@ public class StrTool extends CharSequenceTool {
 	private static int ordinalIndexOf(final String str, final String searchStr, final int ordinal,
 			final boolean lastIndex) {
 		if (ObjectTool.isNull(str, searchStr) || ordinal <= 0) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (searchStr.length() == 0) {
 			return lastIndex ? str.length() : 0;
 		}
 		int found = 0;
-		int index = lastIndex ? str.length() : ConstantLang.INDEX_NOT_FOUND;
+		int index = lastIndex ? str.length() : ConstLang.INDEX_NOT_FOUND;
 		do {
 			if (lastIndex) {
 				index = str.lastIndexOf(searchStr, index - 1);
@@ -784,7 +783,7 @@ public class StrTool extends CharSequenceTool {
 			return null;
 		}
 		if (overlay == null) {
-			overlay = ConstantLang.STR_EMPTY;
+			overlay = ConstLang.STR_EMPTY;
 		}
 		final int len = str.length();
 		start = start < 0 ? 0 : start;
@@ -935,7 +934,7 @@ public class StrTool extends CharSequenceTool {
 	 */
 	public static String repeat(final char ch, final int repeat) {
 		if (repeat <= 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final char[] buf = new char[repeat];
 		for (int i = repeat - 1; i >= 0; i--) {
@@ -956,13 +955,13 @@ public class StrTool extends CharSequenceTool {
 			return null;
 		}
 		if (repeat <= 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int inputLength = str.length();
 		if (repeat == 1 || inputLength == 0) {
 			return str;
 		}
-		if (inputLength == 1 && repeat <= ConstantLang.PAD_LIMIT) {
+		if (inputLength == 1 && repeat <= ConstLang.PAD_LIMIT) {
 			return repeat(str.charAt(0), repeat);
 		}
 		final int outputLength = inputLength * repeat;
@@ -1036,14 +1035,14 @@ public class StrTool extends CharSequenceTool {
 		}
 		int start = 0;
 		int end = ignoreCase ? indexOfIgnoreCase(str, searchStr, start) : str.indexOf(searchStr, start);
-		if (end == ConstantLang.INDEX_NOT_FOUND) {
+		if (end == ConstLang.INDEX_NOT_FOUND) {
 			return str;
 		}
 		final int replLength = searchStr.length();
 		int increase = Math.max(replacement.length() - replLength, 0);
 		increase *= max < 0 ? 16 : Math.min(max, 64);
 		final StringBuilder buf = new StringBuilder(str.length() + increase);
-		while (end != ConstantLang.INDEX_NOT_FOUND) {
+		while (end != ConstLang.INDEX_NOT_FOUND) {
 			buf.append(str, start, end).append(replacement);
 			start = end + replLength;
 			if (--max == 0) {
@@ -1122,7 +1121,7 @@ public class StrTool extends CharSequenceTool {
 		if (pads <= 0) {
 			return str;
 		}
-		if (pads > ConstantLang.PAD_LIMIT) {
+		if (pads > ConstLang.PAD_LIMIT) {
 			return rightPad(str, size, String.valueOf(padChar));
 		}
 		return str.concat(repeat(padChar, pads));
@@ -1152,7 +1151,7 @@ public class StrTool extends CharSequenceTool {
 			return null;
 		}
 		if (isEmpty(padStr)) {
-			padStr = ConstantLang.STR_SPACE;
+			padStr = ConstLang.STR_SPACE;
 		}
 		final int padLen = padStr.length();
 		final int strLen = str.length();
@@ -1160,7 +1159,7 @@ public class StrTool extends CharSequenceTool {
 		if (pads <= 0) {
 			return str;
 		}
-		if (padLen == 1 && pads <= ConstantLang.PAD_LIMIT) {
+		if (padLen == 1 && pads <= ConstLang.PAD_LIMIT) {
 			return rightPad(str, size, padStr.charAt(0));
 		}
 
@@ -1251,7 +1250,7 @@ public class StrTool extends CharSequenceTool {
 		} else if (stripChars.isEmpty()) {
 			return str;
 		} else {
-			while (end != 0 && stripChars.indexOf(str.charAt(end - 1)) != ConstantLang.INDEX_NOT_FOUND) {
+			while (end != 0 && stripChars.indexOf(str.charAt(end - 1)) != ConstLang.INDEX_NOT_FOUND) {
 				end--;
 			}
 		}
@@ -1312,7 +1311,7 @@ public class StrTool extends CharSequenceTool {
 		} else if (stripChars.isEmpty()) {
 			return str;
 		} else {
-			while (start != strLen && stripChars.indexOf(str.charAt(start)) != ConstantLang.INDEX_NOT_FOUND) {
+			while (start != strLen && stripChars.indexOf(str.charAt(start)) != ConstLang.INDEX_NOT_FOUND) {
 				start++;
 			}
 		}
@@ -1331,11 +1330,11 @@ public class StrTool extends CharSequenceTool {
 			return str;
 		}
 		if (separator == null) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int pos = str.indexOf(separator);
-		if (pos == ConstantLang.INDEX_NOT_FOUND) {
-			return ConstantLang.STR_EMPTY;
+		if (pos == ConstLang.INDEX_NOT_FOUND) {
+			return ConstLang.STR_EMPTY;
 		}
 		return str.substring(pos + separator.length());
 	}
@@ -1352,11 +1351,11 @@ public class StrTool extends CharSequenceTool {
 			return str;
 		}
 		if (isEmpty(separator)) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int pos = str.lastIndexOf(separator);
-		if (pos == ConstantLang.INDEX_NOT_FOUND || pos == str.length() - separator.length()) {
-			return ConstantLang.STR_EMPTY;
+		if (pos == ConstLang.INDEX_NOT_FOUND || pos == str.length() - separator.length()) {
+			return ConstLang.STR_EMPTY;
 		}
 		return str.substring(pos + separator.length());
 	}
@@ -1373,10 +1372,10 @@ public class StrTool extends CharSequenceTool {
 			return str;
 		}
 		if (separator.isEmpty()) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int pos = str.indexOf(separator);
-		if (pos == ConstantLang.INDEX_NOT_FOUND) {
+		if (pos == ConstLang.INDEX_NOT_FOUND) {
 			return str;
 		}
 		return str.substring(0, pos);
@@ -1394,7 +1393,7 @@ public class StrTool extends CharSequenceTool {
 			return str;
 		}
 		final int pos = str.lastIndexOf(separator);
-		if (pos == ConstantLang.INDEX_NOT_FOUND) {
+		if (pos == ConstLang.INDEX_NOT_FOUND) {
 			return str;
 		}
 		return str.substring(0, pos);
@@ -1424,9 +1423,9 @@ public class StrTool extends CharSequenceTool {
 			return null;
 		}
 		final int start = str.indexOf(open);
-		if (start != ConstantLang.INDEX_NOT_FOUND) {
+		if (start != ConstLang.INDEX_NOT_FOUND) {
 			final int end = str.indexOf(close, start + open.length());
-			if (end != ConstantLang.INDEX_NOT_FOUND) {
+			if (end != ConstLang.INDEX_NOT_FOUND) {
 				return str.substring(start + open.length(), end);
 			}
 		}
@@ -1529,7 +1528,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 源字符串或""
 	 */
 	public static String toString(final Object str) {
-		return toString(str, ConstantLang.STR_EMPTY);
+		return toString(str, ConstLang.STR_EMPTY);
 	}
 
 	/**
@@ -1551,7 +1550,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 字符串
 	 */
 	public static String toString(String str, final Charset charset) {
-		return new String(str.getBytes(charset), ConstantLang.DEFAULT_CHARSET);
+		return new String(str.getBytes(charset), ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1598,7 +1597,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 删除起始和末尾包裹的字符之后的新字符串
 	 */
 	public static String unwrap(final String str, final char wrapChar) {
-		if (isEmpty(str) || wrapChar == ConstantLang.CHAR_NUL || str.length() == 1) {
+		if (isEmpty(str) || wrapChar == ConstLang.CHAR_NUL || str.length() == 1) {
 			return str;
 		}
 		if (str.charAt(0) == wrapChar && str.charAt(str.length() - 1) == wrapChar) {
@@ -1636,7 +1635,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 起始和末尾同时添加指定字符之后的新字符串
 	 */
 	public static String wrap(final String str, final char wrapChar) {
-		if (isEmpty(str) || wrapChar == ConstantLang.CHAR_NUL) {
+		if (isEmpty(str) || wrapChar == ConstLang.CHAR_NUL) {
 			return str;
 		}
 		return wrapChar + str + wrapChar;
@@ -1664,7 +1663,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 起始和末尾同时添加指定字符之后的新字符串
 	 */
 	public static String wrapIfMissing(final String str, final char wrapChar) {
-		if (isEmpty(str) || wrapChar == ConstantLang.CHAR_NUL) {
+		if (isEmpty(str) || wrapChar == ConstLang.CHAR_NUL) {
 			return str;
 		}
 		final boolean wrapStart = str.charAt(0) != wrapChar;

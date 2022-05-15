@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.wy.Constant;
-import com.wy.ConstantLang;
+import com.wy.ConstLang;
 import com.wy.lang.AssertTool;
 import com.wy.lang.StrTool;
 
@@ -97,7 +96,7 @@ public class RegularTool {
 	 * @return 删除匹配正则之后的字符串
 	 */
 	public static String removeAll(final String text, final Pattern regex) {
-		return replaceAll(text, regex, ConstantLang.STR_EMPTY);
+		return replaceAll(text, regex, ConstLang.STR_EMPTY);
 	}
 
 	/**
@@ -108,7 +107,7 @@ public class RegularTool {
 	 * @return 删除匹配正则之后的字符串
 	 */
 	public static String removeAll(final String text, final String regex) {
-		return replaceAll(text, regex, ConstantLang.STR_EMPTY);
+		return replaceAll(text, regex, ConstLang.STR_EMPTY);
 	}
 
 	/**
@@ -119,7 +118,7 @@ public class RegularTool {
 	 * @return 删除匹配正则之后的字符串
 	 */
 	public static String removeFirst(final String text, final Pattern regex) {
-		return replaceFirst(text, regex, ConstantLang.STR_EMPTY);
+		return replaceFirst(text, regex, ConstLang.STR_EMPTY);
 	}
 
 	/**
@@ -130,7 +129,7 @@ public class RegularTool {
 	 * @return 删除匹配正则之后的字符串
 	 */
 	public static String removeFirst(final String text, final String regex) {
-		return replaceFirst(text, regex, ConstantLang.STR_EMPTY);
+		return replaceFirst(text, regex, ConstLang.STR_EMPTY);
 	}
 
 	/**
@@ -141,7 +140,7 @@ public class RegularTool {
 	 * @return The resulting {@code String}
 	 */
 	public static String removePattern(final String text, final String regex) {
-		return replacePattern(text, regex, Constant.Langes.STR_EMPTY);
+		return replacePattern(text, regex, ConstLang.STR_EMPTY);
 	}
 
 	/**

@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.wy.Constant;
+import com.wy.ConstIO;
 import com.wy.lang.AssertTool;
 import com.wy.util.CharsetTool;
 
@@ -331,8 +331,8 @@ public class PathTool {
 	 * @return 是否存在
 	 */
 	public static boolean exists(Path path, boolean followLink) {
-		final LinkOption[] options = followLink ? EMPTY_LINK_OPTION_ARRAY
-				: new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
+		final LinkOption[] options =
+				followLink ? EMPTY_LINK_OPTION_ARRAY : new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
 		return Files.exists(path, options);
 	}
 
@@ -360,8 +360,8 @@ public class PathTool {
 		if (null == path) {
 			return null;
 		}
-		final LinkOption[] options = followLink ? EMPTY_LINK_OPTION_ARRAY
-				: new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
+		final LinkOption[] options =
+				followLink ? EMPTY_LINK_OPTION_ARRAY : new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
 		return Files.readAttributes(path, BasicFileAttributes.class, options);
 	}
 
@@ -480,8 +480,8 @@ public class PathTool {
 		if (null == path) {
 			return false;
 		}
-		final LinkOption[] options = followLink ? EMPTY_LINK_OPTION_ARRAY
-				: new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
+		final LinkOption[] options =
+				followLink ? EMPTY_LINK_OPTION_ARRAY : new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
 		return Files.isDirectory(path, options);
 	}
 
@@ -542,8 +542,8 @@ public class PathTool {
 		if (null == path) {
 			return false;
 		}
-		final LinkOption[] options = followLink ? EMPTY_LINK_OPTION_ARRAY
-				: new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
+		final LinkOption[] options =
+				followLink ? EMPTY_LINK_OPTION_ARRAY : new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
 		return Files.isRegularFile(path, options);
 	}
 
@@ -619,8 +619,8 @@ public class PathTool {
 	public static Path move(Path source, Path target, boolean cover) throws IOException {
 		AssertTool.notNull(source, "Source path must be not null !");
 		AssertTool.notNull(target, "Target path must be not null !");
-		final CopyOption[] options = cover ? new CopyOption[] { StandardCopyOption.REPLACE_EXISTING }
-				: new CopyOption[] {};
+		final CopyOption[] options =
+				cover ? new CopyOption[] { StandardCopyOption.REPLACE_EXISTING } : new CopyOption[] {};
 		if (isDir(target)) {
 			target = target.resolve(source.getFileName());
 		}
@@ -701,8 +701,8 @@ public class PathTool {
 	 * @return true->文件不存在,false->文件存在
 	 */
 	public static boolean notExist(Path path, boolean followLink) {
-		final LinkOption[] options = followLink ? EMPTY_LINK_OPTION_ARRAY
-				: new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
+		final LinkOption[] options =
+				followLink ? EMPTY_LINK_OPTION_ARRAY : new LinkOption[] { LinkOption.NOFOLLOW_LINKS };
 		return Files.notExists(path, options);
 	}
 
@@ -806,14 +806,14 @@ public class PathTool {
 	 */
 	public static Path setReadOnly(final Path path, final boolean readOnly, final LinkOption... options)
 			throws IOException {
-		final DosFileAttributeView fileAttributeView = Files.getFileAttributeView(path, DosFileAttributeView.class,
-				options);
+		final DosFileAttributeView fileAttributeView =
+				Files.getFileAttributeView(path, DosFileAttributeView.class, options);
 		if (fileAttributeView != null) {
 			fileAttributeView.setReadOnly(readOnly);
 			return path;
 		}
-		final PosixFileAttributeView posixFileAttributeView = Files.getFileAttributeView(path,
-				PosixFileAttributeView.class, options);
+		final PosixFileAttributeView posixFileAttributeView =
+				Files.getFileAttributeView(path, PosixFileAttributeView.class, options);
 		if (posixFileAttributeView != null) {
 			// 只作用于Windows,不能作用于Linux
 			// Files.setAttribute(path, "unix:readonly", readOnly, options);
@@ -951,7 +951,7 @@ public class PathTool {
 	 * @throws IOException
 	 */
 	public static void write(Path path, byte[] bytes, OpenOption... options) throws IOException {
-		AssertTool.notNull(path, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(path, ConstIO.TOAST_FILE_NULL);
 		Files.write(path, bytes, null == options ? new OpenOption[0] : options);
 	}
 
@@ -989,7 +989,7 @@ public class PathTool {
 	 * @throws IOException
 	 */
 	public static void write(Path path, List<String> lines, Charset charset, OpenOption... options) throws IOException {
-		AssertTool.notNull(path, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(path, ConstIO.TOAST_FILE_NULL);
 		Files.write(path, lines, CharsetTool.defaultCharset(charset), options);
 	}
 

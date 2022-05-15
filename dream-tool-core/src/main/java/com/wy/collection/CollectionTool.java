@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import com.wy.ConstantLang;
+import com.wy.ConstLang;
 import com.wy.lang.AssertTool;
 
 /**
@@ -70,7 +70,7 @@ public class CollectionTool {
 			return null;
 		}
 		if (!iterator.hasNext()) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final Object first = iterator.next();
 		if (!iterator.hasNext()) {
@@ -404,9 +404,8 @@ public class CollectionTool {
 	 * @return CopyOnWriteArrayList
 	 */
 	public static <T> CopyOnWriteArrayList<T> newCopyOnWriteArrayList(Iterable<? extends T> elements) {
-		Collection<? extends T> elementsCollection = (elements instanceof Collection)
-				? (Collection<? extends T>) elements
-				: newArrayList(elements);
+		Collection<? extends T> elementsCollection =
+				(elements instanceof Collection) ? (Collection<? extends T>) elements : newArrayList(elements);
 		return new CopyOnWriteArrayList<>(elementsCollection);
 	}
 

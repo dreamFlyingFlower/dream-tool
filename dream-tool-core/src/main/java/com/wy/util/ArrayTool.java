@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.StringJoiner;
 
-import com.wy.ConstantLang;
+import com.wy.ConstLang;
 import com.wy.collection.ListTool;
 import com.wy.lang.StrTool;
 
@@ -301,7 +301,7 @@ public class ArrayTool {
 	 * @return true当源数组中存在待查找元素
 	 */
 	public static boolean contains(boolean[] array, boolean target) {
-		return indexOf(array, target) > ConstantLang.INDEX_NOT_FOUND;
+		return indexOf(array, target) > ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -312,7 +312,7 @@ public class ArrayTool {
 	 * @return true当源数组中存在待查找元素
 	 */
 	public static boolean contains(byte[] array, byte target) {
-		return indexOf(array, target) > ConstantLang.INDEX_NOT_FOUND;
+		return indexOf(array, target) > ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -323,7 +323,7 @@ public class ArrayTool {
 	 * @return true当源数组中存在待查找元素
 	 */
 	public static boolean contains(char[] array, char target) {
-		return indexOf(array, target) > ConstantLang.INDEX_NOT_FOUND;
+		return indexOf(array, target) > ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -334,7 +334,7 @@ public class ArrayTool {
 	 * @return true当源数组中存在待查找元素
 	 */
 	public static boolean contains(final double[] array, final double target) {
-		return indexOf(array, target) > ConstantLang.INDEX_NOT_FOUND;
+		return indexOf(array, target) > ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -345,7 +345,7 @@ public class ArrayTool {
 	 * @return true当源数组中存在待查找元素
 	 */
 	public static boolean contains(final float[] array, final float target) {
-		return indexOf(array, target) > ConstantLang.INDEX_NOT_FOUND;
+		return indexOf(array, target) > ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -356,7 +356,7 @@ public class ArrayTool {
 	 * @return true当源数组中存在待查找元素
 	 */
 	public static boolean contains(int[] array, int target) {
-		return indexOf(array, target) > ConstantLang.INDEX_NOT_FOUND;
+		return indexOf(array, target) > ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -367,7 +367,7 @@ public class ArrayTool {
 	 * @return true当源数组中存在待查找元素
 	 */
 	public static boolean contains(long[] array, long target) {
-		return indexOf(array, target) > ConstantLang.INDEX_NOT_FOUND;
+		return indexOf(array, target) > ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -378,7 +378,7 @@ public class ArrayTool {
 	 * @return true当源数组中存在待查找元素
 	 */
 	public static boolean contains(Object[] array, Object target) {
-		return indexOf(array, target) > ConstantLang.INDEX_NOT_FOUND;
+		return indexOf(array, target) > ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -389,7 +389,7 @@ public class ArrayTool {
 	 * @return true当源数组中存在待查找元素
 	 */
 	public static boolean contains(short[] array, short target) {
-		return indexOf(array, target) > ConstantLang.INDEX_NOT_FOUND;
+		return indexOf(array, target) > ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -420,7 +420,7 @@ public class ArrayTool {
 				}
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -451,7 +451,7 @@ public class ArrayTool {
 				}
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -482,7 +482,7 @@ public class ArrayTool {
 				}
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -506,7 +506,7 @@ public class ArrayTool {
 	 */
 	public static int indexOf(final float[] array, final float value, int start) {
 		if (isEmpty(array)) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (start < 0) {
 			start = 0;
@@ -516,7 +516,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -540,7 +540,7 @@ public class ArrayTool {
 	 */
 	public static int indexOf(final double[] array, final double value, int start) {
 		if (isEmpty(array)) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (start < 0) {
 			start = 0;
@@ -550,7 +550,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -568,7 +568,7 @@ public class ArrayTool {
 				}
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -581,7 +581,7 @@ public class ArrayTool {
 	 */
 	public static int indexOf(final int[] array, final int value, int start) {
 		if (array == null) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		start = start < 0 ? 0 : start;
 		for (int i = start; i < array.length; i++) {
@@ -589,7 +589,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -613,7 +613,7 @@ public class ArrayTool {
 	 */
 	public static int indexOf(final long[] array, final long value, int start) {
 		if (array == null) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		start = start < 0 ? 0 : start;
 		for (int i = start; i < array.length; i++) {
@@ -621,7 +621,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -645,7 +645,7 @@ public class ArrayTool {
 	 */
 	public static int indexOf(final Object[] array, final Object value, int start) {
 		if (array == null) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		start = start < 0 ? 0 : start;
 		if (value == null) {
@@ -661,7 +661,7 @@ public class ArrayTool {
 				}
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -692,7 +692,7 @@ public class ArrayTool {
 				}
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -908,11 +908,11 @@ public class ArrayTool {
 	 */
 	public static String join(final String separator, final byte[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -945,11 +945,11 @@ public class ArrayTool {
 	 */
 	public static String join(final String separator, final char[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -982,11 +982,11 @@ public class ArrayTool {
 	 */
 	public static String join(final String separator, final double[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -1022,7 +1022,7 @@ public class ArrayTool {
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -1054,11 +1054,11 @@ public class ArrayTool {
 	 */
 	public static String join(final String separator, final int[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -1090,11 +1090,11 @@ public class ArrayTool {
 	 */
 	public static String join(final String separator, final long[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -1126,12 +1126,12 @@ public class ArrayTool {
 	 */
 	public static String join(String separator, final Object[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		separator = StrTool.toString(separator);
 		final int noOfItems = end - start;
 		if (noOfItems <= 0 || start >= array.length) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		if (array[start] != null) {
@@ -1168,11 +1168,11 @@ public class ArrayTool {
 	 */
 	public static String join(final String separator, final short[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -1206,7 +1206,7 @@ public class ArrayTool {
 	 * @since JDK1.8
 	 */
 	public static String join8(final String separator, final double[] array, final int start, final int end) {
-		return join8(separator, array, start, end, ConstantLang.STR_EMPTY, ConstantLang.STR_EMPTY);
+		return join8(separator, array, start, end, ConstLang.STR_EMPTY, ConstLang.STR_EMPTY);
 	}
 
 	/**
@@ -1224,11 +1224,11 @@ public class ArrayTool {
 	public static String join8(final String separator, final double[] array, final int start, final int end,
 			String prefix, String suffix) {
 		if (isEmpty(array)) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		StringJoiner stringJoiner = new StringJoiner(separator, prefix, suffix);
 		for (int i = start; i < end; i++) {
@@ -1269,10 +1269,10 @@ public class ArrayTool {
 	 */
 	public static int lastIndexOf(final boolean[] array, final boolean value, int start) {
 		if (isEmpty(array)) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (start < 0) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		} else if (start >= array.length) {
 			start = array.length - 1;
 		}
@@ -1281,7 +1281,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -1305,10 +1305,10 @@ public class ArrayTool {
 	 */
 	public static int lastIndexOf(final byte[] array, final byte value, int start) {
 		if (array == null) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (start < 0) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		} else if (start >= array.length) {
 			start = array.length - 1;
 		}
@@ -1317,7 +1317,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -1341,10 +1341,10 @@ public class ArrayTool {
 	 */
 	public static int lastIndexOf(final char[] array, final char value, int start) {
 		if (array == null) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (start < 0) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		} else if (start >= array.length) {
 			start = array.length - 1;
 		}
@@ -1353,7 +1353,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -1377,10 +1377,10 @@ public class ArrayTool {
 	 */
 	public static int lastIndexOf(final double[] array, final double value, int start) {
 		if (isEmpty(array)) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (start < 0) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		} else if (start >= array.length) {
 			start = array.length - 1;
 		}
@@ -1389,7 +1389,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -1413,10 +1413,10 @@ public class ArrayTool {
 	 */
 	public static int lastIndexOf(final float[] array, final float value, int start) {
 		if (isEmpty(array)) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (start < 0) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		} else if (start >= array.length) {
 			start = array.length - 1;
 		}
@@ -1425,7 +1425,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -1449,10 +1449,10 @@ public class ArrayTool {
 	 */
 	public static int lastIndexOf(final int[] array, final int value, int start) {
 		if (array == null) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (start < 0) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		} else if (start >= array.length) {
 			start = array.length - 1;
 		}
@@ -1461,7 +1461,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -1485,10 +1485,10 @@ public class ArrayTool {
 	 */
 	public static int lastIndexOf(final long[] array, final long value, int start) {
 		if (array == null) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (start < 0) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		} else if (start >= array.length) {
 			start = array.length - 1;
 		}
@@ -1497,7 +1497,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -1521,10 +1521,10 @@ public class ArrayTool {
 	 */
 	public static int lastIndexOf(final Object[] array, final Object value, int start) {
 		if (array == null) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (start < 0) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		} else if (start >= array.length) {
 			start = array.length - 1;
 		}
@@ -1541,7 +1541,7 @@ public class ArrayTool {
 				}
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -1565,10 +1565,10 @@ public class ArrayTool {
 	 */
 	public static int lastIndexOf(final short[] array, final short value, int start) {
 		if (array == null) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		}
 		if (start < 0) {
-			return ConstantLang.INDEX_NOT_FOUND;
+			return ConstLang.INDEX_NOT_FOUND;
 		} else if (start >= array.length) {
 			start = array.length - 1;
 		}
@@ -1577,7 +1577,7 @@ public class ArrayTool {
 				return i;
 			}
 		}
-		return ConstantLang.INDEX_NOT_FOUND;
+		return ConstLang.INDEX_NOT_FOUND;
 	}
 
 	/**

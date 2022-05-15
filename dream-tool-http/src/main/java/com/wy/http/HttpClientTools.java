@@ -39,7 +39,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSON;
-import com.wy.ConstantLang;
+import com.wy.ConstLang;
 import com.wy.collection.MapTool;
 import com.wy.util.CharsetTool;
 
@@ -602,7 +602,7 @@ public class HttpClientTools {
 	public static void setCommonHttpMethod(HttpRequestBase httpRequestBase) {
 		// 保证消息一次性传输完,使用默认模式会出现异常
 		httpRequestBase.setProtocolVersion(HttpVersion.HTTP_1_0);
-		httpRequestBase.setHeader(HTTP.CONTENT_ENCODING, ConstantLang.DEFAULT_CHARSET.displayName());
+		httpRequestBase.setHeader(HTTP.CONTENT_ENCODING, ConstLang.DEFAULT_CHARSET.displayName());
 	}
 
 	/**
@@ -638,7 +638,7 @@ public class HttpClientTools {
 	 * @param httpRequestBase
 	 */
 	public static void setJsonHttpMethod(HttpRequestBase httpRequestBase) {
-		httpRequestBase.setHeader(HTTP.CONTENT_ENCODING, ConstantLang.DEFAULT_CHARSET.displayName());
+		httpRequestBase.setHeader(HTTP.CONTENT_ENCODING, ConstLang.DEFAULT_CHARSET.displayName());
 		httpRequestBase.setHeader(HTTP.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
 	}
 }

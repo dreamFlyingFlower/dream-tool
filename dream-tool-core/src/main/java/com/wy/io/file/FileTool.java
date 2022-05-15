@@ -62,8 +62,9 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.wy.Constant;
-import com.wy.ConstantIO;
+import com.wy.ConstArray;
+import com.wy.ConstIO;
+import com.wy.ConstLang;
 import com.wy.binary.HexTool;
 import com.wy.io.IOTool;
 import com.wy.lang.AssertTool;
@@ -118,7 +119,7 @@ public class FileTool {
 	 * @throws IllegalArgumentException
 	 */
 	public static File checkFile(final File file) {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		if (!file.exists()) {
 			throw new IllegalArgumentException(file + " does not exist");
 		}
@@ -155,7 +156,7 @@ public class FileTool {
 	 * @throws IllegalArgumentException
 	 */
 	public static File checkDirectory(final File directory) {
-		AssertTool.notNull(directory, Constant.IO.TOAST_DIR_NULL);
+		AssertTool.notNull(directory, ConstIO.TOAST_DIR_NULL);
 		if (!directory.exists()) {
 			throw new IllegalArgumentException(directory + " does not exist");
 		}
@@ -215,8 +216,8 @@ public class FileTool {
 				for (File childFile : listFiles) {
 					if (childFile.isFile()) {
 						String fileName = childFile.getParent() + File.separator
-						        + childFile.getName().replace("[YYDM-11FANS][Gundam_Seed-Destiny-HD-ReMaster]", "")
-						                .replace("[BDRIP][X264-10bit_AAC][720P]", "");
+								+ childFile.getName().replace("[YYDM-11FANS][Gundam_Seed-Destiny-HD-ReMaster]", "")
+										.replace("[BDRIP][X264-10bit_AAC][720P]", "");
 						childFile.renameTo(new File(fileName));
 					}
 				}
@@ -286,11 +287,11 @@ public class FileTool {
 		List<File> fileList = Arrays.asList(files);
 		Collections.sort(fileList, (file1, file2) -> {
 			if (Integer.parseInt(
-			        file1.getName().indexOf("_") > -1 ? file1.getName().substring(file1.getName().indexOf("_") + 1)
-			                : file1.getName()) > Integer
-			                        .parseInt(file2.getName().indexOf("_") > -1
-			                                ? file2.getName().substring(file2.getName().indexOf("_") + 1)
-			                                : file2.getName())) {
+					file1.getName().indexOf("_") > -1 ? file1.getName().substring(file1.getName().indexOf("_") + 1)
+							: file1.getName()) > Integer
+									.parseInt(file2.getName().indexOf("_") > -1
+											? file2.getName().substring(file2.getName().indexOf("_") + 1)
+											: file2.getName())) {
 				return 1;
 			}
 			return -1;
@@ -364,7 +365,7 @@ public class FileTool {
 	 * @throws IOException in case of an I/O error
 	 */
 	public static boolean contentEqualsIgnoreEOL(final File file1, final File file2, final String charsetName)
-	        throws IOException {
+			throws IOException {
 		if (file1 == null && file2 == null) {
 			return true;
 		}
@@ -388,8 +389,8 @@ public class FileTool {
 			return true;
 		}
 		try (Reader input1 = new InputStreamReader(new FileInputStream(file1), CharsetTool.defaultCharset(charsetName));
-		        Reader input2 =
-		                new InputStreamReader(new FileInputStream(file2), CharsetTool.defaultCharset(charsetName))) {
+				Reader input2 =
+						new InputStreamReader(new FileInputStream(file2), CharsetTool.defaultCharset(charsetName))) {
 			return IOTool.contentEqualsIgnoreEOL(input1, input2);
 		}
 	}
@@ -441,7 +442,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static void copyDir(final File srcDir, final File destDir, final FileFilter filter,
-	        final CopyOption... copyOptions) throws IOException {
+			final CopyOption... copyOptions) throws IOException {
 		if (!srcDir.isDirectory()) {
 			throw new IOException("Source '" + srcDir + "' exists but is not a directory");
 		}
@@ -475,7 +476,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static void copyDir(final File srcDir, final File destDir, final FileFilter filter,
-	        final List<String> exclusionList, final CopyOption... copyOptions) throws IOException {
+			final List<String> exclusionList, final CopyOption... copyOptions) throws IOException {
 		final File[] srcFiles = filter == null ? srcDir.listFiles() : srcDir.listFiles(filter);
 		if (srcFiles == null) {
 			throw new IOException("Failed to list contents of " + srcDir);
@@ -524,7 +525,7 @@ public class FileTool {
 	 * @throws IOException in case of I/O errors
 	 */
 	public static void copyFile(final File srcFile, final File destFile, final CopyOption... copyOptions)
-	        throws IOException {
+			throws IOException {
 		checkFile(srcFile);
 		checkFile(destFile);
 		if (srcFile.isDirectory()) {
@@ -568,7 +569,7 @@ public class FileTool {
 	 * @throws IOException in case of I/O errors
 	 */
 	public static byte[] copyToByteArray(File file) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return copyToByteArray(Files.newInputStream(file.toPath()));
 	}
 
@@ -581,9 +582,9 @@ public class FileTool {
 	 */
 	public static byte[] copyToByteArray(InputStream input) throws IOException {
 		if (input == null) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
-		ByteArrayOutputStream out = new ByteArrayOutputStream(Constant.IO.DEFAULT_BUFFER_SIZE);
+		ByteArrayOutputStream out = new ByteArrayOutputStream(ConstIO.DEFAULT_BUFFER_SIZE);
 		IOTool.copy(input, out);
 		return out.toByteArray();
 	}
@@ -606,7 +607,7 @@ public class FileTool {
 	 * @return true->新建目录成功,false->新建目录失败
 	 */
 	public static boolean createDir(File file) {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		if (!file.exists() && file.isDirectory()) {
 			return file.mkdirs();
 		}
@@ -633,7 +634,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static boolean createFile(File file) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return file.createNewFile();
 	}
 
@@ -646,7 +647,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static boolean createFile(File file, boolean cover) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		if (cover && file.exists() && file.isFile()) {
 			file.delete();
 		} else {
@@ -663,7 +664,7 @@ public class FileTool {
 	 * @throws IOException if an I/O error occurs
 	 */
 	public static void createParentDirs(File file) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		File parent = file.getCanonicalFile().getParentFile();
 		if (parent == null) {
 			return;
@@ -682,7 +683,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static File createTempFile(File dir) throws IOException {
-		return createTempFile(Constant.IO.FILE_TEMP_PREFIX, null, dir);
+		return createTempFile(ConstIO.FILE_TEMP_PREFIX, null, dir);
 	}
 
 	/**
@@ -771,7 +772,7 @@ public class FileTool {
 	 * @return the file 文件
 	 */
 	public static File getFile(final File directory, final String... names) {
-		AssertTool.notNull(directory, Constant.IO.TOAST_DIR_NULL);
+		AssertTool.notNull(directory, ConstIO.TOAST_DIR_NULL);
 		AssertTool.notNull(names, "names");
 		return Paths.get(directory.getAbsolutePath(), names).toFile();
 	}
@@ -784,7 +785,7 @@ public class FileTool {
 	 * @return the file 文件
 	 */
 	public static File getFile(final String directory, final String... names) {
-		AssertTool.notNull(directory, Constant.IO.TOAST_DIR_NULL);
+		AssertTool.notNull(directory, ConstIO.TOAST_DIR_NULL);
 		AssertTool.notNull(names, "names");
 		return Paths.get(directory, names).toFile();
 	}
@@ -907,7 +908,7 @@ public class FileTool {
 	 * @return 不带点和后缀的文件名
 	 */
 	public static String getNameNoExtension(File file) {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		String fileName = file.getName();
 		int dotIndex = fileName.lastIndexOf('.');
 		return (dotIndex == -1) ? fileName : fileName.substring(0, dotIndex);
@@ -931,7 +932,7 @@ public class FileTool {
 	 * @return 文件名后缀,不带点,可能为""
 	 */
 	public static String getFileExtension(File file) {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		String fileName = file.getName();
 		int dotIndex = fileName.lastIndexOf('.');
 		return (dotIndex == -1) ? "" : fileName.substring(dotIndex + 1);
@@ -955,7 +956,7 @@ public class FileTool {
 	 * @return 父目录
 	 */
 	public static File getParent(File file) {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return file.getParentFile();
 	}
 
@@ -967,7 +968,7 @@ public class FileTool {
 	 * @return 父目录
 	 */
 	public static File getParent(File file, int index) {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return PathTool.getParent(file.toPath(), index).toFile();
 	}
 
@@ -991,7 +992,7 @@ public class FileTool {
 	 * @return true->文件存在且比指定时间更晚更新
 	 */
 	public static boolean isFileNewer(final File file, final ChronoLocalDate chronoLocalDate,
-	        final LocalTime localTime) {
+			final LocalTime localTime) {
 		AssertTool.notNull(chronoLocalDate);
 		AssertTool.notNull(localTime);
 		return isFileNewer(file, chronoLocalDate.atTime(localTime));
@@ -1017,7 +1018,7 @@ public class FileTool {
 	 * @return true->文件存在且比指定时间更晚更新
 	 */
 	public static boolean isFileNewer(final File file, final ChronoLocalDateTime<?> chronoLocalDateTime,
-	        final ZoneId zoneId) {
+			final ZoneId zoneId) {
 		AssertTool.notNull(chronoLocalDateTime, "chronoLocalDateTime");
 		AssertTool.notNull(zoneId, "zoneId");
 		return isFileNewer(file, chronoLocalDateTime.atZone(zoneId));
@@ -1082,7 +1083,7 @@ public class FileTool {
 	 * @return true->文件存在且比指定时间更晚更新
 	 */
 	public static boolean isFileNewer(final File file, final long timeMillis) {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		if (!file.exists()) {
 			return false;
 		}
@@ -1109,7 +1110,7 @@ public class FileTool {
 	 * @return true->文件存在且比指定时间更早更旧
 	 */
 	public static boolean isFileOlder(final File file, final ChronoLocalDate chronoLocalDate,
-	        final LocalTime localTime) {
+			final LocalTime localTime) {
 		AssertTool.notNull(chronoLocalDate, "chronoLocalDate");
 		AssertTool.notNull(localTime, "localTime");
 		return isFileOlder(file, chronoLocalDate.atTime(localTime));
@@ -1134,7 +1135,7 @@ public class FileTool {
 	 * @return true->文件存在且比指定时间更早更旧
 	 */
 	public static boolean isFileOlder(final File file, final ChronoLocalDateTime<?> chronoLocalDateTime,
-	        final ZoneId zoneId) {
+			final ZoneId zoneId) {
 		AssertTool.notNull(chronoLocalDateTime, "chronoLocalDateTime");
 		AssertTool.notNull(zoneId, "zoneId");
 		return isFileOlder(file, chronoLocalDateTime.atZone(zoneId));
@@ -1262,11 +1263,11 @@ public class FileTool {
 	 * @see FileChannel#map(MapMode, long, long)
 	 */
 	private static MappedByteBuffer mapInternal(File file, MapMode mode, long size) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		AssertTool.notNull(mode);
 		AssertTool.isTrue(size >= 0, "size (%s) may not be negative", size);
 		try (RandomAccessFile raf = new RandomAccessFile(file, mode == MapMode.READ_ONLY ? "r" : "rw");
-		        FileChannel channel = raf.getChannel();) {
+				FileChannel channel = raf.getChannel();) {
 			return channel.map(mode, 0, size == -1 ? channel.size() : size);
 		}
 	}
@@ -1289,7 +1290,7 @@ public class FileTool {
 		}
 		if (!to.exists()) {
 			throw new FileNotFoundException(
-			        "Destination directory '" + to + "' does not exist [createDestDir=" + create + "]");
+					"Destination directory '" + to + "' does not exist [createDestDir=" + create + "]");
 		}
 		if (!to.isDirectory()) {
 			throw new IOException("Destination '" + to + "' is not a directory");
@@ -1380,7 +1381,7 @@ public class FileTool {
 		}
 		if (!to.exists()) {
 			throw new FileNotFoundException(
-			        "Destination directory '" + to + "' does not exist [createDestDir=" + create + "]");
+					"Destination directory '" + to + "' does not exist [createDestDir=" + create + "]");
 		}
 		if (!to.isDirectory()) {
 			throw new IOException("Destination '" + to + "' is not a directory");
@@ -1416,7 +1417,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static BufferedInputStream newBufferedInputStream(File file) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return new BufferedInputStream(new FileInputStream(file));
 	}
 
@@ -1454,7 +1455,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static BufferedOutputStream newBufferedOutputStream(File file, boolean append) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return new BufferedOutputStream(new FileOutputStream(file, append));
 	}
 
@@ -1467,7 +1468,7 @@ public class FileTool {
 	 * @throws FileNotFoundException
 	 */
 	public static BufferedReader newBufferedReader(File file, Charset charset) throws FileNotFoundException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
 	}
 
@@ -1478,7 +1479,7 @@ public class FileTool {
 	 * @return BufferedWriter
 	 */
 	public static BufferedWriter newBufferedWriter(File file) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return Files.newBufferedWriter(file.toPath(), CharsetTool.defaultCharset());
 	}
 
@@ -1490,7 +1491,7 @@ public class FileTool {
 	 * @return BufferedWriter
 	 */
 	public static BufferedWriter newBufferedWriter(File file, Charset charset) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return Files.newBufferedWriter(file.toPath(), CharsetTool.defaultCharset(charset));
 	}
 
@@ -1504,8 +1505,8 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static BufferedWriter newBufferedWriter(File file, Charset charset, OpenOption... options)
-	        throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+			throws IOException {
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return Files.newBufferedWriter(file.toPath(), CharsetTool.defaultCharset(charset), options);
 	}
 
@@ -1519,8 +1520,8 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static BufferedWriter newBufferedWriter(File file, String charsetName, OpenOption... options)
-	        throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+			throws IOException {
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return Files.newBufferedWriter(file.toPath(), CharsetTool.defaultCharset(charsetName), options);
 	}
 
@@ -1536,7 +1537,7 @@ public class FileTool {
 	public static BufferedWriter newBufferedWriter(File file, Charset charset, boolean append) throws IOException {
 		checkFile(file);
 		return new BufferedWriter(
-		        new OutputStreamWriter(new FileOutputStream(file, append), CharsetTool.defaultCharset(charset)));
+				new OutputStreamWriter(new FileOutputStream(file, append), CharsetTool.defaultCharset(charset)));
 	}
 
 	/**
@@ -1551,7 +1552,7 @@ public class FileTool {
 	public static BufferedWriter newBufferedWriter(File file, String charsetName, boolean append) throws IOException {
 		checkFile(file);
 		return new BufferedWriter(
-		        new OutputStreamWriter(new FileOutputStream(file, append), CharsetTool.defaultCharset(charsetName)));
+				new OutputStreamWriter(new FileOutputStream(file, append), CharsetTool.defaultCharset(charsetName)));
 	}
 
 	/**
@@ -1575,7 +1576,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static InputStream newInputStream(File file) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return Files.newInputStream(file.toPath());
 	}
 
@@ -1588,7 +1589,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static InputStream newInputStream(File file, OpenOption... options) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return Files.newInputStream(file.toPath(), options);
 	}
 
@@ -1600,7 +1601,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static OutputStream newOutputStream(File file) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return Files.newOutputStream(file.toPath());
 	}
 
@@ -1613,7 +1614,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static OutputStream newOutputStream(File file, OpenOption... options) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return Files.newOutputStream(file.toPath(), options);
 	}
 
@@ -1662,8 +1663,8 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static OutputStreamWriter newOutputStreamWriter(File file, Charset charset, boolean append)
-	        throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+			throws IOException {
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		return new OutputStreamWriter(new FileOutputStream(file, append), CharsetTool.defaultCharset(charset));
 	}
 
@@ -1724,7 +1725,7 @@ public class FileTool {
 	 */
 	public static String readBuffer(File file) throws IOException {
 		if (null == file) {
-			return Constant.Langes.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		StringBuffer sb = new StringBuffer();
 		try (BufferedReader br = new BufferedReader(new FileReader(file));) {
@@ -1744,7 +1745,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static List<String> readLines(File file) throws IOException {
-		return readLines(file, Constant.Langes.DEFAULT_CHARSET);
+		return readLines(file, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1800,12 +1801,12 @@ public class FileTool {
 	public static byte[] readToByteDirect(final File file) throws IOException {
 		MappedByteBuffer mappedByteBuffer = null;
 		try (RandomAccessFile tempRaf = new RandomAccessFile(file, "rw");) {
-			byte[] dst = new byte[ConstantIO.BUFFER_SIZE_DIRECT];
+			byte[] dst = new byte[ConstIO.DEFAULT_BUFFER_SIZE_DIRECT];
 			long length = file.length();
 			mappedByteBuffer = tempRaf.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, length);
-			for (int offset = 0; offset < length; offset += ConstantIO.BUFFER_SIZE_DIRECT) {
-				if (length - offset >= ConstantIO.BUFFER_SIZE_DIRECT) {
-					for (int i = 0; i < ConstantIO.BUFFER_SIZE_DIRECT; i++)
+			for (int offset = 0; offset < length; offset += ConstIO.DEFAULT_BUFFER_SIZE_DIRECT) {
+				if (length - offset >= ConstIO.DEFAULT_BUFFER_SIZE_DIRECT) {
+					for (int i = 0; i < ConstIO.DEFAULT_BUFFER_SIZE_DIRECT; i++)
 						dst[i] = mappedByteBuffer.get(offset + i);
 				} else {
 					for (int i = 0; i < length - offset; i++)
@@ -1844,7 +1845,7 @@ public class FileTool {
 	 */
 	public static File[] toFiles(final URL... urls) {
 		if (urls == null || urls.length == 0) {
-			return Constant.Arrayes.EMPTY_FILE;
+			return ConstArray.EMPTY_FILE;
 		}
 		final File[] files = new File[urls.length];
 		for (int i = 0; i < urls.length; i++) {
@@ -1882,8 +1883,8 @@ public class FileTool {
 	 */
 	public static byte[] unzip(byte[] source) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-		        ByteArrayInputStream in = new ByteArrayInputStream(source);
-		        GZIPInputStream zipIn = new GZIPInputStream(in);) {
+				ByteArrayInputStream in = new ByteArrayInputStream(source);
+				GZIPInputStream zipIn = new GZIPInputStream(in);) {
 			byte[] temp = new byte[1024];
 			int length = 0;
 			while ((length = zipIn.read(temp, 0, temp.length)) != -1) {
@@ -1949,7 +1950,7 @@ public class FileTool {
 	 * @throws IOException in case of an I/O error
 	 */
 	public static void write(final File file, final byte[] data, final int off, final int len, final boolean append)
-	        throws IOException {
+			throws IOException {
 		try (OutputStream out = newFileOutputStream(file, append)) {
 			out.write(data, off, len);
 		}
@@ -1973,8 +1974,8 @@ public class FileTool {
 	 * @param append true->追加写入,false->覆盖写入
 	 */
 	public static void write(File file, String content, boolean append) {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
-		byte[] bytes = content.getBytes(Constant.Langes.DEFAULT_CHARSET);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
+		byte[] bytes = content.getBytes(ConstLang.DEFAULT_CHARSET);
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file, append));) {
 			bos.write(bytes);
 		} catch (Exception e) {
@@ -1991,7 +1992,7 @@ public class FileTool {
 	 * @param append true->追加写入,false->覆盖写入
 	 */
 	public static void write(File file, String content, String charsetName, boolean append) {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		byte[] bytes = content.getBytes(CharsetTool.defaultCharset(charsetName));
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file, append));) {
 			bos.write(bytes);
@@ -2009,7 +2010,7 @@ public class FileTool {
 	 * @param append true->追加写入,false->覆盖写入
 	 */
 	public static void write(File file, String content, Charset charset, boolean append) {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		byte[] bytes = content.getBytes(CharsetTool.defaultCharset(charset));
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file, append));) {
 			bos.write(bytes);
@@ -2038,7 +2039,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static void write(File file, InputStream input, boolean append) throws IOException {
-		AssertTool.notNull(file, Constant.IO.TOAST_FILE_NULL);
+		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		try (OutputStream bos = newFileOutputStream(file, append);) {
 			IOTool.copy(input, bos);
 		}
@@ -2067,7 +2068,7 @@ public class FileTool {
 	 * @throws IOException
 	 */
 	public static void write(final File destFile, final URL source, final int connectionTimeout, final int readTimeout)
-	        throws IOException {
+			throws IOException {
 		final URLConnection connection = source.openConnection();
 		connection.setConnectTimeout(connectionTimeout);
 		connection.setReadTimeout(readTimeout);
@@ -2118,7 +2119,7 @@ public class FileTool {
 	 * @throws IOException in case of an I/O error
 	 */
 	public static void writeLines(final File file, final Collection<?> lines, final String lineEnding)
-	        throws IOException {
+			throws IOException {
 		writeLines(file, null, lines, lineEnding, false);
 	}
 
@@ -2132,7 +2133,7 @@ public class FileTool {
 	 * @throws IOException in case of an I/O error
 	 */
 	public static void writeLines(final File file, final Collection<?> lines, final String lineEnding,
-	        final boolean append) throws IOException {
+			final boolean append) throws IOException {
 		writeLines(file, null, lines, lineEnding, append);
 	}
 
@@ -2147,7 +2148,7 @@ public class FileTool {
 	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines)
-	        throws IOException {
+			throws IOException {
 		writeLines(file, charset, lines, null, false);
 	}
 
@@ -2163,7 +2164,7 @@ public class FileTool {
 	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
-	        final boolean append) throws IOException {
+			final boolean append) throws IOException {
 		writeLines(file, charset, lines, null, append);
 	}
 
@@ -2179,7 +2180,7 @@ public class FileTool {
 	 *         by the VM
 	 */
 	public static void writeLines(final File file, final String charsetName, final Collection<?> lines,
-	        final String lineEnding) throws IOException {
+			final String lineEnding) throws IOException {
 		writeLines(file, CharsetTool.defaultCharset(charsetName), lines, lineEnding, false);
 	}
 
@@ -2195,7 +2196,7 @@ public class FileTool {
 	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
-	        final String lineEnding) throws IOException {
+			final String lineEnding) throws IOException {
 		writeLines(file, charset, lines, lineEnding, false);
 	}
 
@@ -2212,7 +2213,7 @@ public class FileTool {
 	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
-	        final String lineEnding, final boolean append) throws IOException {
+			final String lineEnding, final boolean append) throws IOException {
 		try (OutputStream out = newBufferedOutputStream(file, append)) {
 			IOTool.writeLines(lines, lineEnding, out, charset);
 		}
@@ -2226,7 +2227,7 @@ public class FileTool {
 	 */
 	public static byte[] zip(byte[] source) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-		        GZIPOutputStream zipOut = new GZIPOutputStream(out);) {
+				GZIPOutputStream zipOut = new GZIPOutputStream(out);) {
 			// 将压缩信息写入到内存, 写入的过程会实现解压
 			zipOut.write(source);
 			zipOut.finish();
@@ -2248,7 +2249,7 @@ public class FileTool {
 		checkFile(desPath);
 		File file = new File(desPath);
 		try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file));
-		        InputStream is = new FileInputStream(srcPath);) {
+				InputStream is = new FileInputStream(srcPath);) {
 			ZipEntry zipEntry = new ZipEntry(file.getName());
 			zipEntry.setSize(is.available());
 			zos.putNextEntry(zipEntry);
@@ -2273,9 +2274,9 @@ public class FileTool {
 		File file = new File(srcPath);
 		File desFile = new File(desPath);
 		try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(desFile));
-		        WritableByteChannel channel = Channels.newChannel(zipOutputStream);
-		        FileInputStream fis = new FileInputStream(file);
-		        FileChannel fileChannel = fis.getChannel();) {
+				WritableByteChannel channel = Channels.newChannel(zipOutputStream);
+				FileInputStream fis = new FileInputStream(file);
+				FileChannel fileChannel = fis.getChannel();) {
 			zipOutputStream.putNextEntry(new ZipEntry("test"));
 			fileChannel.transferTo(0, file.getTotalSpace(), channel);
 		} catch (IOException e) {
@@ -2291,12 +2292,12 @@ public class FileTool {
 		File zipFile = new File(desPath);
 		File file = new File(srcPath);
 		try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));
-		        WritableByteChannel writableByteChannel = Channels.newChannel(zipOut);
-		        RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");) {
+				WritableByteChannel writableByteChannel = Channels.newChannel(zipOut);
+				RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");) {
 			zipOut.putNextEntry(new ZipEntry(".zip"));
 			// 内存中的映射文件
 			MappedByteBuffer mappedByteBuffer =
-			        randomAccessFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 1024);
+					randomAccessFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 1024);
 			writableByteChannel.write(mappedByteBuffer);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2316,8 +2317,8 @@ public class FileTool {
 			// 异步任务
 			CompletableFuture.runAsync(() -> {
 				try (ZipOutputStream zos = new ZipOutputStream(Channels.newOutputStream(pipe.sink()));
-				        WritableByteChannel innerOut = Channels.newChannel(zos);
-				        FileChannel jpgChannel = new FileInputStream(new File(srcPath)).getChannel();) {
+						WritableByteChannel innerOut = Channels.newChannel(zos);
+						FileChannel jpgChannel = new FileInputStream(new File(srcPath)).getChannel();) {
 					zos.putNextEntry(new ZipEntry(".zip"));
 					jpgChannel.transferTo(0, new File(srcPath).getTotalSpace(), innerOut);
 					jpgChannel.close();
@@ -2360,7 +2361,7 @@ class Example {
 	 */
 	public static byte[] combine(List<File> files) {
 		if (null == files || files.size() == 0) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		try (FileInputStream fis = new FileInputStream(files.get(0));) {
 			if (files.size() == 1) {

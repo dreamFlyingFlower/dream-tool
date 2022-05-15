@@ -11,8 +11,8 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 
-import com.wy.ConstantIO;
-import com.wy.ConstantLang;
+import com.wy.ConstIO;
+import com.wy.ConstLang;
 import com.wy.io.output.ByteArrayOutputStream;
 import com.wy.lang.AssertTool;
 import com.wy.util.CharsetTool;
@@ -111,7 +111,7 @@ public class NioTool {
 		if (null != channelProgress) {
 			channelProgress.start();
 		}
-		while (input.read(byteBuffer) != ConstantIO.EOF) {
+		while (input.read(byteBuffer) != ConstIO.EOF) {
 			byteBuffer.flip();
 			size += output.write(byteBuffer);
 			byteBuffer.clear();
@@ -156,7 +156,7 @@ public class NioTool {
 	 * @return 内容
 	 */
 	public static String readUtf8(FileChannel fileChannel) throws IOException {
-		return read(fileChannel, ConstantLang.DEFAULT_CHARSET);
+		return read(fileChannel, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**

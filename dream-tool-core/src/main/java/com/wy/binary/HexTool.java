@@ -4,7 +4,8 @@ import java.awt.Color;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-import com.wy.Constant;
+import com.wy.ConstArray;
+import com.wy.ConstLang;
 import com.wy.result.ResultException;
 import com.wy.util.CharsetTool;
 
@@ -24,7 +25,7 @@ public class HexTool {
 	 * @return 转换编码后解码的字节数组
 	 */
 	public byte[] decode(final byte[] data) {
-		return decode(new String(data, Constant.Langes.DEFAULT_CHARSET).toCharArray());
+		return decode(new String(data, ConstLang.DEFAULT_CHARSET).toCharArray());
 	}
 
 	/**
@@ -56,7 +57,7 @@ public class HexTool {
 	 * @return 转换编码后解码的字节数组
 	 */
 	public byte[] decode(final ByteBuffer buffer) {
-		return decode(new String(toByteArray(buffer), Constant.Langes.DEFAULT_CHARSET).toCharArray());
+		return decode(new String(toByteArray(buffer), ConstLang.DEFAULT_CHARSET).toCharArray());
 	}
 
 	/**
@@ -149,7 +150,7 @@ public class HexTool {
 	 * @return 转换为16进制字符串之后再转换为UTF8编码的字节数组
 	 */
 	public byte[] encode(final byte[] array) {
-		return encodeHexString(array).getBytes(Constant.Langes.DEFAULT_CHARSET);
+		return encodeHexString(array).getBytes(ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -159,7 +160,7 @@ public class HexTool {
 	 * @return 转换为16进制字符串之后再进行UTF8编码的字节数组,长度是源字节数组的2倍
 	 */
 	public byte[] encode(final ByteBuffer data) {
-		return encodeHexString(data).getBytes(Constant.Langes.DEFAULT_CHARSET);
+		return encodeHexString(data).getBytes(ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -171,7 +172,7 @@ public class HexTool {
 	public char[] encode(final Object object) {
 		byte[] byteArray;
 		if (object instanceof String) {
-			byteArray = ((String) object).getBytes(Constant.Langes.DEFAULT_CHARSET);
+			byteArray = ((String) object).getBytes(ConstLang.DEFAULT_CHARSET);
 		} else if (object instanceof ByteBuffer) {
 			byteArray = toByteArray((ByteBuffer) object);
 		} else {
@@ -240,7 +241,7 @@ public class HexTool {
 	 * @return 结果字符数组,长度是原字节数组的2倍
 	 */
 	public static char[] encodeHex(final byte[] data, final boolean toLowerCase) {
-		return encodeHex(data, toLowerCase ? Constant.Arrayes.DIGITS_LOWER : Constant.Arrayes.DIGITS_UPPER);
+		return encodeHex(data, toLowerCase ? ConstArray.DIGITS_LOWER : ConstArray.DIGITS_UPPER);
 	}
 
 	/**
@@ -269,7 +270,7 @@ public class HexTool {
 	public static char[] encodeHex(final byte[] data, final int byteStart, final int dataLen,
 			final boolean toLowerCase) {
 		final char[] out = new char[dataLen << 1];
-		encodeHex(data, byteStart, dataLen, toLowerCase ? Constant.Arrayes.DIGITS_LOWER : Constant.Arrayes.DIGITS_UPPER,
+		encodeHex(data, byteStart, dataLen, toLowerCase ? ConstArray.DIGITS_LOWER : ConstArray.DIGITS_UPPER,
 				out, 0);
 		return out;
 	}
@@ -286,7 +287,7 @@ public class HexTool {
 	 */
 	public static void encodeHex(final byte[] data, final int byteStart, final int dataLen, final boolean toLowerCase,
 			final char[] charOut, final int charStart) {
-		encodeHex(data, byteStart, dataLen, toLowerCase ? Constant.Arrayes.DIGITS_LOWER : Constant.Arrayes.DIGITS_UPPER,
+		encodeHex(data, byteStart, dataLen, toLowerCase ? ConstArray.DIGITS_LOWER : ConstArray.DIGITS_UPPER,
 				charOut, charStart);
 	}
 
@@ -329,7 +330,7 @@ public class HexTool {
 	 * @return 转换为16进制之后的字符数组,长度是源字节数组的2倍
 	 */
 	public static char[] encodeHex(final ByteBuffer data, final boolean toLowerCase) {
-		return encodeHex(data, toLowerCase ? Constant.Arrayes.DIGITS_LOWER : Constant.Arrayes.DIGITS_UPPER);
+		return encodeHex(data, toLowerCase ? ConstArray.DIGITS_LOWER : ConstArray.DIGITS_UPPER);
 	}
 
 	/**
@@ -467,7 +468,7 @@ public class HexTool {
 	 * @return Unicode表现形式
 	 */
 	public static String toUnicodeHex(char ch) {
-		return "\\u" + Constant.Arrayes.DIGITS_LOWER[(ch >> 12) & 15] + Constant.Arrayes.DIGITS_LOWER[(ch >> 8) & 15]
-				+ Constant.Arrayes.DIGITS_LOWER[(ch >> 4) & 15] + Constant.Arrayes.DIGITS_LOWER[(ch) & 15];
+		return "\\u" + ConstArray.DIGITS_LOWER[(ch >> 12) & 15] + ConstArray.DIGITS_LOWER[(ch >> 8) & 15]
+				+ ConstArray.DIGITS_LOWER[(ch >> 4) & 15] + ConstArray.DIGITS_LOWER[(ch) & 15];
 	}
 }

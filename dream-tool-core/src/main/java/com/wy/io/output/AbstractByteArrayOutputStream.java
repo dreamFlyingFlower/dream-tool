@@ -8,8 +8,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wy.ConstantIO;
-import com.wy.ConstantLang;
+import com.wy.ConstIO;
+import com.wy.ConstLang;
 
 /**
  * 该类为字节输出流,写数据进入字节数组的基类,写入数据时字节数组会自动扩容,该类使用close()无效
@@ -50,7 +50,8 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream {
 	 * JDK的同方法中close()也是空方法,字节数组无需关闭
 	 */
 	@Override
-	public void close() throws IOException {}
+	public void close() throws IOException {
+	}
 
 	/**
 	 * 创建一个新的字节数据或循环使用已经存在的字节数组
@@ -146,7 +147,7 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream {
 	 */
 	@Override
 	public String toString() {
-		return new String(toByteArray(), ConstantLang.DEFAULT_CHARSET);
+		return new String(toByteArray(), ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -196,7 +197,7 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream {
 		int readCount = 0;
 		int inBufferPos = count - filledBufferSum;
 		int n = in.read(buf, inBufferPos, buf.length - inBufferPos);
-		while (n != ConstantIO.EOF) {
+		while (n != ConstIO.EOF) {
 			readCount += n;
 			inBufferPos += n;
 			count += n;

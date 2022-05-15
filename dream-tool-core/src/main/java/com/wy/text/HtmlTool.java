@@ -1,6 +1,7 @@
 package com.wy.text;
 
-import com.wy.Constant;
+import com.wy.ConstEscape;
+import com.wy.ConstLang;
 import com.wy.lang.StrTool;
 import com.wy.util.EscapeTool;
 import com.wy.util.RegularTool;
@@ -24,11 +25,11 @@ public class HtmlTool {
 		for (int i = 0; i < 64; i++) {
 			TEXT[i] = new char[] { (char) i };
 		}
-		TEXT['\''] = Constant.Escape.APOS.toCharArray();
-		TEXT['"'] = Constant.Escape.QUOTE.toCharArray();
-		TEXT['&'] = Constant.Escape.AMP.toCharArray();
-		TEXT['<'] = Constant.Escape.LT.toCharArray();
-		TEXT['>'] = Constant.Escape.GT.toCharArray();
+		TEXT['\''] = ConstEscape.APOS.toCharArray();
+		TEXT['"'] = ConstEscape.QUOTE.toCharArray();
+		TEXT['&'] = ConstEscape.AMP.toCharArray();
+		TEXT['<'] = ConstEscape.LT.toCharArray();
+		TEXT['>'] = ConstEscape.GT.toCharArray();
 	}
 
 	/**
@@ -68,7 +69,7 @@ public class HtmlTool {
 	 * @return 清除标签后的文本
 	 */
 	public static String cleanHtmlTag(String content) {
-		return content.replaceAll(RE_HTML_MARK, Constant.Langes.STR_EMPTY);
+		return content.replaceAll(RE_HTML_MARK, ConstLang.STR_EMPTY);
 	}
 
 	/**
@@ -137,7 +138,7 @@ public class HtmlTool {
 			// \s+(?=>) 表示属性值后跟空格加>,即末尾的属性,此时去掉空格
 			// (?=\s|>) 表示属性值后跟空格（属性后还有别的属性）或者跟>（最后一个属性）
 			regex = StrTool.format("(?i)(\\s*{}\\s*=[^>]+?\\s+(?=>))|(\\s*{}\\s*=[^>]+?(?=\\s|>))", attr, attr);
-			content = content.replaceAll(regex, Constant.Langes.STR_EMPTY);
+			content = content.replaceAll(regex, ConstLang.STR_EMPTY);
 		}
 		return content;
 	}
@@ -167,7 +168,7 @@ public class HtmlTool {
 	private static String encode(String text) {
 		int len;
 		if ((text == null) || ((len = text.length()) == 0)) {
-			return Constant.Langes.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		StringBuilder buffer = new StringBuilder(len + (len >> 2));
 		char c;

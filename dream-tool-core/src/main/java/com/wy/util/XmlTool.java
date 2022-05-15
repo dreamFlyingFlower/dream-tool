@@ -53,7 +53,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.wy.ConstantLang;
+import com.wy.ConstLang;
 import com.wy.bean.BeanTool;
 import com.wy.collection.MapTool;
 import com.wy.io.IOTool;
@@ -233,7 +233,7 @@ public class XmlTool {
 		if (xmlContent == null) {
 			return null;
 		}
-		return xmlContent.replaceAll(COMMENT_REGEX, ConstantLang.STR_EMPTY);
+		return xmlContent.replaceAll(COMMENT_REGEX, ConstLang.STR_EMPTY);
 	}
 
 	/**

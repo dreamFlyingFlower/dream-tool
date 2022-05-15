@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import com.wy.Constant;
+import com.wy.ConstIO;
+import com.wy.ConstLang;
 import com.wy.io.file.FileNameTool;
 import com.wy.result.ResultException;
 import com.wy.util.ThreadMonitor;
@@ -41,23 +42,26 @@ public class SystemTool {
 	/** Java文件编码集,如UTF-8 */
 	public static final String FILE_ENCODING = getSystemProperty("file.encoding");
 
-	private SystemTool() {}
+	private SystemTool() {
+	}
 
 	/**
-	 * Returns the free space on a drive or volume in kilobytes by invoking the command line.
+	 * Returns the free space on a drive or volume in kilobytes by invoking the
+	 * command line.
 	 * 
 	 * <pre>
 	 * FileSystemUtils.freeSpaceKb("C:"); // Windows
 	 * FileSystemUtils.freeSpaceKb("/volume"); // *nix
 	 * </pre>
 	 * 
-	 * The free space is calculated via the command line. It uses 'dir /-c' on Windows, 'df -kP' on
-	 * AIX/HP-UX and 'df -k' on other Unix.
+	 * The free space is calculated via the command line. It uses 'dir /-c' on
+	 * Windows, 'df -kP' on AIX/HP-UX and 'df -k' on other Unix.
 	 * <p>
-	 * In order to work, you must be running Windows, or have a implementation of Unix df that supports
-	 * GNU format when passed -k (or -kP). If you are going to rely on this code, please check that it
-	 * works on your OS by running some simple tests to compare the command line with the output from
-	 * this class. If your operating system isn't supported, please raise a JIRA call detailing the
+	 * In order to work, you must be running Windows, or have a implementation of
+	 * Unix df that supports GNU format when passed -k (or -kP). If you are going to
+	 * rely on this code, please check that it works on your OS by running some
+	 * simple tests to compare the command line with the output from this class. If
+	 * your operating system isn't supported, please raise a JIRA call detailing the
 	 * exact result from df -k and as much other detail as possible, thanks.
 	 *
 	 * @param path the path to get free space for, not null, not empty on Unix
@@ -72,24 +76,27 @@ public class SystemTool {
 	}
 
 	/**
-	 * Returns the free space on a drive or volume in kilobytes by invoking the command line.
+	 * Returns the free space on a drive or volume in kilobytes by invoking the
+	 * command line.
 	 * 
 	 * <pre>
 	 * FileSystemUtils.freeSpaceKb("C:"); // Windows
 	 * FileSystemUtils.freeSpaceKb("/volume"); // *nix
 	 * </pre>
 	 * 
-	 * The free space is calculated via the command line. It uses 'dir /-c' on Windows, 'df -kP' on
-	 * AIX/HP-UX and 'df -k' on other Unix.
+	 * The free space is calculated via the command line. It uses 'dir /-c' on
+	 * Windows, 'df -kP' on AIX/HP-UX and 'df -k' on other Unix.
 	 * <p>
-	 * In order to work, you must be running Windows, or have a implementation of Unix df that supports
-	 * GNU format when passed -k (or -kP). If you are going to rely on this code, please check that it
-	 * works on your OS by running some simple tests to compare the command line with the output from
-	 * this class. If your operating system isn't supported, please raise a JIRA call detailing the
+	 * In order to work, you must be running Windows, or have a implementation of
+	 * Unix df that supports GNU format when passed -k (or -kP). If you are going to
+	 * rely on this code, please check that it works on your OS by running some
+	 * simple tests to compare the command line with the output from this class. If
+	 * your operating system isn't supported, please raise a JIRA call detailing the
 	 * exact result from df -k and as much other detail as possible, thanks.
 	 *
 	 * @param path the path to get free space for, not null, not empty on Unix
-	 * @param timeout The timout amount in milliseconds or no timeout if the value is zero or less
+	 * @param timeout The timout amount in milliseconds or no timeout if the value
+	 *        is zero or less
 	 * @return the amount of free drive space on the drive or volume in kilobytes
 	 * @throws IllegalArgumentException if the path is invalid
 	 * @throws IllegalStateException if an error occurred in initialisation
@@ -125,7 +132,8 @@ public class SystemTool {
 	 * freeSpaceKb(new File(".").getAbsolutePath())
 	 * </pre>
 	 * 
-	 * @param timeout The timout amount in milliseconds or no timeout if the value is zero or less
+	 * @param timeout The timout amount in milliseconds or no timeout if the value
+	 *        is zero or less
 	 * @return the amount of free drive space on the drive or volume in kilobytes
 	 * @throws IllegalStateException if an error occurred in initialisation
 	 * @throws IOException if an error occurs when finding the free space
@@ -137,20 +145,22 @@ public class SystemTool {
 
 	// -----------------------------------------------------------------------
 	/**
-	 * Returns the free space on a drive or volume in a cross-platform manner. Note that some OS's are
-	 * NOT currently supported, including OS/390.
+	 * Returns the free space on a drive or volume in a cross-platform manner. Note
+	 * that some OS's are NOT currently supported, including OS/390.
 	 * 
 	 * <pre>
 	 * FileSystemUtils.freeSpace("C:"); // Windows
 	 * FileSystemUtils.freeSpace("/volume"); // *nix
 	 * </pre>
 	 * 
-	 * The free space is calculated via the command line. It uses 'dir /-c' on Windows and 'df' on *nix.
+	 * The free space is calculated via the command line. It uses 'dir /-c' on
+	 * Windows and 'df' on *nix.
 	 *
 	 * @param path the path to get free space for, not null, not empty on Unix
 	 * @param os the operating system code
 	 * @param kb whether to normalize to kilobytes
-	 * @param timeout The timout amount in milliseconds or no timeout if the value is zero or less
+	 * @param timeout The timout amount in milliseconds or no timeout if the value
+	 *        is zero or less
 	 * @return the amount of free drive space on the drive or volume
 	 * @throws IllegalArgumentException if the path is invalid
 	 * @throws IllegalStateException if an error occurred in initialisation
@@ -161,7 +171,7 @@ public class SystemTool {
 			throw new IllegalArgumentException("Path must not be empty");
 		}
 		if (isOSNameMatch(PropertySystem.OS_NAME, "windows")) {
-			return kb ? freeSpaceWindows(path, timeout) / Constant.IO.ONE_KB : freeSpaceWindows(path, timeout);
+			return kb ? freeSpaceWindows(path, timeout) / ConstIO.ONE_KB : freeSpaceWindows(path, timeout);
 		} else if (isOSNameMatch(PropertySystem.OS_NAME, "unix")) {
 			return freeSpaceUnix(path, kb, false, timeout);
 		} else {
@@ -176,7 +186,8 @@ public class SystemTool {
 	 * @param path the path to get free space for
 	 * @param kb whether to normalize to kilobytes
 	 * @param posix whether to use the posix standard format flag
-	 * @param timeout The timout amount in milliseconds or no timeout if the value is zero or less
+	 * @param timeout The timout amount in milliseconds or no timeout if the value
+	 *        is zero or less
 	 * @return the amount of free drive space on the volume
 	 * @throws IOException if an error occurs
 	 */
@@ -229,7 +240,8 @@ public class SystemTool {
 	 * Find free space on the Windows platform using the 'dir' command.
 	 *
 	 * @param path the path to get free space for, including the colon
-	 * @param timeout The timout amount in milliseconds or no timeout if the value is zero or less
+	 * @param timeout The timout amount in milliseconds or no timeout if the value
+	 *        is zero or less
 	 * @return the amount of free drive space on the drive
 	 * @throws IOException if an error occurs
 	 */
@@ -490,7 +502,7 @@ public class SystemTool {
 	 * @return true->是Unix系统,false->不是
 	 */
 	public static boolean isUnix() {
-		return File.separatorChar == Constant.Langes.SEPARATOR_UNIX;
+		return File.separatorChar == ConstLang.SEPARATOR_UNIX;
 	}
 
 	/**
@@ -499,7 +511,7 @@ public class SystemTool {
 	 * @return true->是Windows系统,false->不是
 	 */
 	public static boolean isWindows() {
-		return File.separatorChar == Constant.Langes.SEPARATOR_WINDOWS;
+		return File.separatorChar == ConstLang.SEPARATOR_WINDOWS;
 	}
 
 	/**
@@ -593,7 +605,8 @@ public class SystemTool {
 	 *
 	 * @param cmdAttribs the command line parameters
 	 * @param max The maximum limit for the lines returned
-	 * @param timeout The timout amount in milliseconds or no timeout if the value is zero or less
+	 * @param timeout The timout amount in milliseconds or no timeout if the value
+	 *        is zero or less
 	 * @return the parsed data
 	 * @throws IOException if an error occurs
 	 */
@@ -760,8 +773,8 @@ public class SystemTool {
 		public static final String JAVA_SPECIFICATION_VERSION = getSystemProperty("java.specification.version");
 
 		/** java.util.prefs.PreferencesFactory如null */
-		public static final String JAVA_UTIL_PREFS_PREFERENCES_FACTORY = getSystemProperty(
-				"java.util.prefs.PreferencesFactory");
+		public static final String JAVA_UTIL_PREFS_PREFERENCES_FACTORY =
+				getSystemProperty("java.util.prefs.PreferencesFactory");
 
 		/** Java执行时环境供应商,如Oracle Corporation */
 		public static final String JAVA_VENDOR = getSystemProperty("java.vendor");
@@ -825,9 +838,9 @@ public class SystemTool {
 	public static class PropertyUser {
 
 		/** 操作系统国家或地区缩写,如CN */
-		public static final String USER_COUNTRY = getSystemProperty("user.country") == null
-				? getSystemProperty("user.region")
-				: getSystemProperty("user.country");
+		public static final String USER_COUNTRY =
+				getSystemProperty("user.country") == null ? getSystemProperty("user.region")
+						: getSystemProperty("user.country");
 
 		/** 当前项目的根目录 */
 		public static final String USER_DIR = getSystemProperty("user.dir");

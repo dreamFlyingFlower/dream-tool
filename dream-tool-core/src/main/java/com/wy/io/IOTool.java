@@ -26,9 +26,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.wy.Constant;
-import com.wy.ConstantIO;
-import com.wy.ConstantLang;
+import com.wy.ConstIO;
+import com.wy.ConstLang;
 import com.wy.io.output.ByteArrayOutputStream;
 import com.wy.io.output.NullOutputStream;
 import com.wy.io.output.StringBuilderWriter;
@@ -151,14 +150,14 @@ public final class IOTool {
 		final BufferedInputStream bufferedInput2 = toBufferedInputStream(input2);
 		try {
 			int ch = bufferedInput1.read();
-			while (Constant.IO.EOF != ch) {
+			while (ConstIO.EOF != ch) {
 				final int ch2 = bufferedInput2.read();
 				if (ch != ch2) {
 					return false;
 				}
 				ch = bufferedInput1.read();
 			}
-			return bufferedInput2.read() == Constant.IO.EOF;
+			return bufferedInput2.read() == ConstIO.EOF;
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new ResultException(e);
@@ -185,14 +184,14 @@ public final class IOTool {
 		final BufferedReader bufferedInput2 = toBufferedReader(input2);
 		try {
 			int ch = bufferedInput1.read();
-			while (Constant.IO.EOF != ch) {
+			while (ConstIO.EOF != ch) {
 				final int ch2 = bufferedInput2.read();
 				if (ch != ch2) {
 					return false;
 				}
 				ch = bufferedInput1.read();
 			}
-			return bufferedInput2.read() == Constant.IO.EOF;
+			return bufferedInput2.read() == ConstIO.EOF;
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new ResultException(e);
@@ -264,7 +263,7 @@ public final class IOTool {
 		long count = 0;
 		int n;
 		try {
-			while (ConstantIO.EOF != (n = input.read(buffer))) {
+			while (ConstIO.EOF != (n = input.read(buffer))) {
 				output.write(buffer, 0, n);
 				count += n;
 			}
@@ -316,7 +315,7 @@ public final class IOTool {
 		}
 		int read;
 		long totalRead = 0;
-		while (bytesToRead > 0 && ConstantIO.EOF != (read = input.read(buffer, 0, bytesToRead))) {
+		while (bytesToRead > 0 && ConstIO.EOF != (read = input.read(buffer, 0, bytesToRead))) {
 			output.write(buffer, 0, read);
 			totalRead += read;
 			// 防止length并不是读到字节末尾
@@ -334,7 +333,7 @@ public final class IOTool {
 	 * @param output 字符输出流,写数据
 	 */
 	public static void copy(final InputStream input, final Writer output) throws IOException {
-		copy(input, output, ConstantLang.DEFAULT_CHARSET);
+		copy(input, output, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -370,7 +369,7 @@ public final class IOTool {
 	 * @param output 字节输出流,写数据
 	 */
 	public static void copy(final Reader input, final OutputStream output) throws IOException {
-		copy(input, output, ConstantLang.DEFAULT_CHARSET);
+		copy(input, output, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -425,7 +424,7 @@ public final class IOTool {
 		Objects.requireNonNull(output, "outputstream can't by null");
 		long count = 0;
 		int n;
-		while (ConstantIO.EOF != (n = input.read(buffer))) {
+		while (ConstIO.EOF != (n = input.read(buffer))) {
 			output.write(buffer, 0, n);
 			count += n;
 		}
@@ -472,7 +471,7 @@ public final class IOTool {
 		}
 		int read;
 		long totalRead = 0;
-		while (bytesToRead > 0 && ConstantIO.EOF != (read = input.read(buffer, 0, bytesToRead))) {
+		while (bytesToRead > 0 && ConstIO.EOF != (read = input.read(buffer, 0, bytesToRead))) {
 			output.write(buffer, 0, read);
 			totalRead += read;
 			// 防止length并不是读到字节末尾
@@ -490,7 +489,7 @@ public final class IOTool {
 	 * @return 字符行迭代器
 	 */
 	public static ReaderLineIterator lineIterator(final InputStream input) throws IOException {
-		return new ReaderLineIterator(new InputStreamReader(input, ConstantLang.DEFAULT_CHARSET));
+		return new ReaderLineIterator(new InputStreamReader(input, ConstLang.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -555,7 +554,7 @@ public final class IOTool {
 		while (remaining > 0) {
 			final int location = length - remaining;
 			final int count = input.read(buffer, offset + location, remaining);
-			if (ConstantIO.EOF == count) {
+			if (ConstIO.EOF == count) {
 				break;
 			}
 			remaining -= count;
@@ -574,7 +573,7 @@ public final class IOTool {
 		final int length = buffer.remaining();
 		while (buffer.remaining() > 0) {
 			final int count = input.read(buffer);
-			if (ConstantIO.EOF == count) {
+			if (ConstIO.EOF == count) {
 				break;
 			}
 		}
@@ -610,7 +609,7 @@ public final class IOTool {
 		while (remaining > 0) {
 			final int location = length - remaining;
 			final int count = reader.read(buffer, offset + location, remaining);
-			if (ConstantIO.EOF == count) {
+			if (ConstIO.EOF == count) {
 				break;
 			}
 			remaining -= count;
@@ -625,7 +624,7 @@ public final class IOTool {
 	 * @return 字节流中所有的行
 	 */
 	public static List<String> readLines(final InputStream input) throws IOException {
-		return readLines(input, ConstantLang.DEFAULT_CHARSET);
+		return readLines(input, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -777,7 +776,7 @@ public final class IOTool {
 			skipByteBuffer.position(0);
 			skipByteBuffer.limit((int) Math.min(remain, SKIP_BYTE_BUFFER.length));
 			final int n = input.read(skipByteBuffer);
-			if (n == ConstantIO.EOF) {
+			if (n == ConstIO.EOF) {
 				break;
 			}
 			remain -= n;
@@ -905,7 +904,7 @@ public final class IOTool {
 		List<byte[]> buffers = new ArrayList<>();
 		int read;
 		byte[] buf;
-		while ((read = input.read(temp)) != ConstantIO.EOF) {
+		while ((read = input.read(temp)) != ConstIO.EOF) {
 			buf = new byte[read];
 			System.arraycopy(temp, 0, buf, 0, read);
 			buffers.add(buf);
@@ -920,7 +919,7 @@ public final class IOTool {
 	 * @return 字节数组
 	 */
 	public static byte[] toByteArray(final Reader input) throws IOException {
-		return toByteArray(input, ConstantLang.DEFAULT_CHARSET);
+		return toByteArray(input, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -996,7 +995,7 @@ public final class IOTool {
 	 * @return 字节输入流中的字符数组
 	 */
 	public static char[] toCharArray(final InputStream is) throws IOException {
-		return toCharArray(is, ConstantLang.DEFAULT_CHARSET);
+		return toCharArray(is, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1042,7 +1041,7 @@ public final class IOTool {
 	 * @return 字节数组输入流
 	 */
 	public static InputStream toInputStream(final CharSequence input) {
-		return toInputStream(input, ConstantLang.DEFAULT_CHARSET);
+		return toInputStream(input, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1075,7 +1074,7 @@ public final class IOTool {
 	 * @return 字符串
 	 */
 	public static String toString(final InputStream input) throws IOException {
-		return toString(input, ConstantLang.DEFAULT_CHARSET);
+		return toString(input, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1124,7 +1123,7 @@ public final class IOTool {
 	 * @return URI资源中的字符串
 	 */
 	public static String toString(final URI uri) throws IOException {
-		return toString(uri, ConstantLang.DEFAULT_CHARSET);
+		return toString(uri, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1157,7 +1156,7 @@ public final class IOTool {
 	 * @return 字符串
 	 */
 	public static String toString(final URL url) throws IOException {
-		return toString(url, ConstantLang.DEFAULT_CHARSET);
+		return toString(url, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1204,7 +1203,7 @@ public final class IOTool {
 	 * @param output 字符输出流,往流中写数据
 	 */
 	public static void write(final byte[] data, final Writer output) throws IOException {
-		write(data, output, ConstantLang.DEFAULT_CHARSET);
+		write(data, output, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1238,7 +1237,7 @@ public final class IOTool {
 	 * @param output 字节输出流,往流中写数据
 	 */
 	public static void write(final char[] data, final OutputStream output) throws IOException {
-		write(data, output, ConstantLang.DEFAULT_CHARSET);
+		write(data, output, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1285,7 +1284,7 @@ public final class IOTool {
 	 * @param output 字节输出流,往流中写数据
 	 */
 	public static void write(final CharSequence data, final OutputStream output) throws IOException {
-		write(data, output, ConstantLang.DEFAULT_CHARSET);
+		write(data, output, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1395,7 +1394,7 @@ public final class IOTool {
 	 * @param output 输出流
 	 */
 	public static void writeLines(final Collection<?> lines, final OutputStream output) throws IOException {
-		writeLines(lines, System.lineSeparator(), output, ConstantLang.DEFAULT_CHARSET);
+		writeLines(lines, System.lineSeparator(), output, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1407,7 +1406,7 @@ public final class IOTool {
 	 */
 	public static void writeLines(final Collection<?> lines, final String lineEnding, final OutputStream output)
 			throws IOException {
-		writeLines(lines, lineEnding, output, ConstantLang.DEFAULT_CHARSET);
+		writeLines(lines, lineEnding, output, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**

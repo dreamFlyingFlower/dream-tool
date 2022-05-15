@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import com.wy.ConstantLang;
+import com.wy.ConstLang;
 import com.wy.reflect.ReflectTool;
 
 /**
@@ -131,7 +131,7 @@ public class ListTool extends CollectionTool {
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		final List<?> subList = list.subList(start, end);
 		return join(separator, subList.iterator());

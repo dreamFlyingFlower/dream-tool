@@ -3,8 +3,8 @@ package com.wy.binary;
 import java.nio.charset.Charset;
 import java.util.Base64;
 
-import com.wy.Constant;
-import com.wy.ConstantLang;
+import com.wy.ConstArray;
+import com.wy.ConstLang;
 import com.wy.lang.StrTool;
 import com.wy.util.CharsetTool;
 
@@ -25,7 +25,7 @@ public class Base64Tool {
 	 */
 	public static byte[] decode(byte[] src) {
 		if (src == null || src.length == 0) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getDecoder().decode(src);
 	}
@@ -38,9 +38,9 @@ public class Base64Tool {
 	 */
 	public static byte[] decode(String src) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
-		return decode(src.getBytes(Constant.Langes.DEFAULT_CHARSET));
+		return decode(src.getBytes(ConstLang.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class Base64Tool {
 	 */
 	public static byte[] decode(String src, Charset charset) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return decode(src.getBytes(CharsetTool.defaultCharset(charset)));
 	}
@@ -66,7 +66,7 @@ public class Base64Tool {
 	 */
 	public static byte[] decode(String src, String encoding) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return decode(src.getBytes(CharsetTool.defaultCharset(encoding)));
 	}
@@ -79,7 +79,7 @@ public class Base64Tool {
 	 */
 	public static byte[] decodeUrl(byte[] src) {
 		if (src == null || src.length == 0) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getUrlDecoder().decode(src);
 	}
@@ -92,9 +92,9 @@ public class Base64Tool {
 	 */
 	public static byte[] decodeUrl(String src) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
-		return Base64.getUrlDecoder().decode(src.getBytes(ConstantLang.DEFAULT_CHARSET));
+		return Base64.getUrlDecoder().decode(src.getBytes(ConstLang.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class Base64Tool {
 	 */
 	public static byte[] decodeUrl(String src, Charset charset) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getUrlDecoder().decode(src.getBytes(CharsetTool.defaultCharset(charset)));
 	}
@@ -120,7 +120,7 @@ public class Base64Tool {
 	 */
 	public static byte[] decodeUrl(String src, String encoding) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getUrlDecoder().decode(src.getBytes(CharsetTool.defaultCharset(encoding)));
 	}
@@ -133,7 +133,7 @@ public class Base64Tool {
 	 */
 	public static byte[] encode(byte[] src) {
 		if (src == null || src.length == 0) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getEncoder().encode(src);
 	}
@@ -146,9 +146,9 @@ public class Base64Tool {
 	 */
 	public static byte[] encode(String src) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
-		return Base64.getEncoder().encode(src.getBytes(Constant.Langes.DEFAULT_CHARSET));
+		return Base64.getEncoder().encode(src.getBytes(ConstLang.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -160,7 +160,7 @@ public class Base64Tool {
 	 */
 	public static byte[] encode(String src, Charset charset) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getEncoder().encode(src.getBytes(CharsetTool.defaultCharset(charset)));
 	}
@@ -174,7 +174,7 @@ public class Base64Tool {
 	 */
 	public static byte[] encode(String src, String encoding) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getEncoder().encode(src.getBytes(CharsetTool.defaultCharset(encoding)));
 	}
@@ -187,7 +187,7 @@ public class Base64Tool {
 	 */
 	public static byte[] encodeUrl(byte[] src) {
 		if (src == null || src.length == 0) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getUrlEncoder().encode(src);
 	}
@@ -200,9 +200,9 @@ public class Base64Tool {
 	 */
 	public static byte[] encodeUrl(String src) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
-		return Base64.getUrlEncoder().encode(src.getBytes(Constant.Langes.DEFAULT_CHARSET));
+		return Base64.getUrlEncoder().encode(src.getBytes(ConstLang.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class Base64Tool {
 	 */
 	public static byte[] encodeUrl(String src, Charset charset) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getUrlEncoder().encode(src.getBytes(CharsetTool.defaultCharset(charset)));
 	}
@@ -228,7 +228,7 @@ public class Base64Tool {
 	 */
 	public static byte[] encodeUrl(String src, String encoding) {
 		if (StrTool.isBlank(src)) {
-			return Constant.Arrayes.EMPTY_BYTE;
+			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getUrlEncoder().encode(src.getBytes(CharsetTool.defaultCharset(encoding)));
 	}
@@ -241,9 +241,9 @@ public class Base64Tool {
 	 */
 	public static String encodeString(byte[] src) {
 		if (src == null || src.length == 0) {
-			return Constant.Langes.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
-		return new String(encode(src), Constant.Langes.DEFAULT_CHARSET);
+		return new String(encode(src), ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -254,8 +254,8 @@ public class Base64Tool {
 	 */
 	public static String encodeUrlString(byte[] src) {
 		if (src == null || src.length == 0) {
-			return Constant.Langes.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
-		return new String(encodeUrl(src), Constant.Langes.DEFAULT_CHARSET);
+		return new String(encodeUrl(src), ConstLang.DEFAULT_CHARSET);
 	}
 }

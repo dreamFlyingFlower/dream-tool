@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
-import com.wy.ConstantLang;
+import com.wy.ConstLang;
 import com.wy.lang.StrTool;
 
 /**
@@ -83,7 +83,7 @@ public class BufferTool {
 	 * @return {@link ByteBuffer}
 	 */
 	public static ByteBuffer create(CharSequence data) {
-		return create(data.toString().getBytes(ConstantLang.DEFAULT_CHARSET));
+		return create(data.toString().getBytes(ConstLang.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -128,9 +128,9 @@ public class BufferTool {
 		while (buffer.hasRemaining()) {
 			b = buffer.get();
 			charIndex++;
-			if (b == ConstantLang.CHAR_CR) {
+			if (b == ConstLang.CHAR_CR) {
 				canEnd = true;
-			} else if (b == ConstantLang.CHAR_LF) {
+			} else if (b == ConstLang.CHAR_LF) {
 				return canEnd ? charIndex - 2 : charIndex - 1;
 			} else {
 				// 只有\r无法确认换行
@@ -165,7 +165,7 @@ public class BufferTool {
 	 * @return 字符串
 	 */
 	public static String read(ByteBuffer buffer) {
-		return read(buffer, ConstantLang.DEFAULT_CHARSET);
+		return read(buffer, ConstLang.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -244,7 +244,7 @@ public class BufferTool {
 			byte[] bs = readBytes(buffer, startPosition, endPosition);
 			return StrTool.toString(bs, charset);
 		} else if (endPosition == startPosition) {
-			return ConstantLang.STR_EMPTY;
+			return ConstLang.STR_EMPTY;
 		}
 		return null;
 	}
