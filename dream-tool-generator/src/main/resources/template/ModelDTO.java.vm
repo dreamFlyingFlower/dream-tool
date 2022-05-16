@@ -1,0 +1,46 @@
+package ${common.pathPackage}.entity.dto;
+
+import javax.validation.constraints.NotNull;
+
+import com.coconut.uim.vlidate.GroupUpdate;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+#if(${tableinfo.hasBigDecimal})
+import java.math.BigDecimal;
+#end
+#if(${tableinfo.hasDate})
+import java.util.Date;
+#end
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * ${tableinfo.comments}DTO
+ * 
+ * @author ${common.author}
+ * @date ${datetime}
+ */
+@ApiModel(description = "${tableinfo.comments}DTO")
+@Getter
+@Setter
+@ToString
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ${tableinfo.className}DTO {
+
+#foreach ($column in $columns)
+
+	/**
+	 * $column.comments
+	 */
+	@ApiModelProperty("$column.comments")
+#if($column.columnName == 'id')
+	@NotNull(groups = GroupUpdate.class)
+#end
+	private $column.attrType $column.attrNameLower;
+#end
+}

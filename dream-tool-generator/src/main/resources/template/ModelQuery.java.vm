@@ -1,0 +1,45 @@
+package ${common.pathPackage}.entity.query;
+
+import ${common.pathBasePackage}.BaseQuery;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+#if(${tableinfo.hasBigDecimal})
+import java.math.BigDecimal;
+#end
+#if(${tableinfo.hasDate})
+import java.util.Date;
+#end
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+
+/**
+ * ${tableinfo.comments}查询参数
+ * 
+ * @author ${common.author}
+ * @date ${datetime}
+ */
+@ApiModel(description = "${tableinfo.comments}查询参数")
+@Getter
+@Setter
+@ToString
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ${tableinfo.className}Query extends BaseQuery {
+
+	private static final long serialVersionUID = 1L;
+
+#foreach ($column in $columns)
+
+	/**
+	 * $column.comments
+	 */
+	@ApiModelProperty("$column.comments")
+	private $column.attrType $column.attrNameLower;
+#end
+}

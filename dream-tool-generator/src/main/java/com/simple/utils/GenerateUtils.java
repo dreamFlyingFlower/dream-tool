@@ -40,10 +40,11 @@ public class GenerateUtils {
 	public static byte[] generateCode(Tableinfo tableinfo, ConfigProperties config, boolean localOrRemote,
 			DataSourceProperties dataSourceProperties) {
 		// 封装模板数据
-		Map<String, Object> map = MapTool.builder("tableinfo", tableinfo).put("tableName", tableinfo.getTableName())
-				.put("datasource", dataSourceProperties).put("primaryKey", tableinfo.getPrimaryKey())
-				.put("columns", tableinfo.getColumns()).put("common", config.getCommon())
-				.put("datetime", DateTool.formatDateTime()).build();
+		Map<String,
+				Object> map = MapTool.builder("tableinfo", tableinfo).put("tableName", tableinfo.getTableName())
+						.put("datasource", dataSourceProperties).put("primaryKey", tableinfo.getPrimaryKey())
+						.put("columns", tableinfo.getColumns()).put("common", config.getCommon())
+						.put("datetime", DateTool.formatDateTime()).build();
 		return VelocityUtils.generateFiles(map, tableinfo, getTemplates(config), localOrRemote);
 	}
 
@@ -100,18 +101,18 @@ public class GenerateUtils {
 			ConfigProperties config) {
 		List<Columninfo> columsList = new ArrayList<>();
 		for (Map<String, String> column : columns) {
-			Columninfo columninfo = Columninfo.builder().columnName(column.get("columnName"))
-					.dataType(column.get("dataType")).comments(column.get("columnComment"))
-					.columnKey(column.get("columnKey"))
-					.extra(StrTool.getDefault(column.get("extra"), column.get("EXTRA"))).build();
+			Columninfo columninfo =
+					Columninfo.builder().columnName(column.get("columnName")).dataType(column.get("dataType"))
+							.comments(column.get("columnComment")).columnKey(column.get("columnKey"))
+							.extra(StrTool.getDefault(column.get("extra"), column.get("EXTRA"))).build();
 			// 列名转换成Java属性名
 			String attrName = StrTool.snake2Hump(columninfo.getColumnName());
 			columninfo.setAttrNameUpper(attrName);
 			columninfo.setAttrNameLower(StrTool.firstLower(attrName));
 
 			// 列的数据类型,转换成Java类型
-			String attrType = StrTool.getDefault(config.getDatabase().getDb2JavaType().get(columninfo.getDataType()),
-					"String");
+			String attrType =
+					StrTool.getDefault(config.getDatabase().getDb2JavaType().get(columninfo.getDataType()), "String");
 			columninfo.setAttrType(attrType);
 
 			// 判断是否为主键
@@ -198,7 +199,16 @@ public class GenerateUtils {
 			pathMain += config.getCommon().getModuleName() + File.separator;
 		}
 		if (template.contains("Model.java.vm")) {
-			return pathMain + "model" + File.separator + className + ".java";
+			return pathMain + "entity" + File.separator + className + ".java";
+		}
+		if (template.contains("ModelDTO.java.vm")) {
+			return pathMain + "dto" + File.separator + className + "DTO" + ".java";
+		}
+		if (template.contains("ModelQuery.java.vm")) {
+			return pathMain + "query" + File.separator + className + "Query" + ".java";
+		}
+		if (template.contains("Convert.java.vm")) {
+			return pathMain + "convert" + File.separator + className + "Convert" + ".java";
 		}
 		if (template.contains("Mapper.java.vm")) {
 			return pathMain + "mapper" + File.separator + className + "Mapper.java";
