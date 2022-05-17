@@ -23,7 +23,7 @@
 		<plugin type="com.simple.plugins.CommonPlugin" />
 
 		<!-- 连接数据库配置 -->
-		<jdbcConnection driverClass="com.mysql.cj.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/simpleoa?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=Asia/Shanghai"
+		<jdbcConnection driverClass="com.mysql.cj.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/simpleoa?useUnicode=true&amp;amp;amp;characterEncoding=UTF-8&amp;amp;amp;useSSL=false&amp;amp;amp;serverTimezone=Asia/Shanghai"
 			userId="root" password="52LDforever">
 			<property name="nullCatalogMeansCurrent" value="true" />
 		</jdbcConnection>
@@ -41,54 +41,204 @@
 		<!-- 生成的Mapper文件地址 -->
 		<javaClientGenerator type="XMLMAPPER" targetProject="src\main\java\" targetPackage="com.wy.mapper" />
 
+		<table tableName="aoa_status_list" domainObjectName="AoaStatusList">
+			<generatedKey column="status_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_type_list" domainObjectName="AoaTypeList">
+			<generatedKey column="type_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_stay" domainObjectName="AoaStay">
+			<generatedKey column="stay_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_user" domainObjectName="AoaUser">
+			<generatedKey column="user_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_subject" domainObjectName="AoaSubject">
+			<generatedKey column="subject_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_user_log" domainObjectName="AoaUserLog">
+			<generatedKey column="log_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_sys_menu" domainObjectName="AoaSysMenu">
+			<generatedKey column="menu_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_user_login_record" domainObjectName="AoaUserLoginRecord">
+			<generatedKey column="record_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_task_list" domainObjectName="AoaTaskList">
+			<generatedKey column="task_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_vote_list" domainObjectName="AoaVoteList">
+			<generatedKey column="vote_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_task_logger" domainObjectName="AoaTaskLogger">
+			<generatedKey column="logger_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_vote_title_user" domainObjectName="AoaVoteTitleUser">
+			<generatedKey column="vote_title_user_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_schedule_list" domainObjectName="AoaScheduleList">
+			<generatedKey column="rc_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_task_user" domainObjectName="AoaTaskUser">
+			<generatedKey column="pk_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_vote_titles" domainObjectName="AoaVoteTitles">
+			<generatedKey column="title_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_schedule_user" domainObjectName="AoaScheduleUser">
+		</table>
+		<table tableName="aoa_traffic" domainObjectName="AoaTraffic">
+			<generatedKey column="traffic_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_dept" domainObjectName="AoaDept">
+			<generatedKey column="dept_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_file_path" domainObjectName="AoaFilePath">
+			<generatedKey column="path_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_notepaper" domainObjectName="AoaNotepaper">
+			<generatedKey column="notepaper_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_regular" domainObjectName="AoaRegular">
+			<generatedKey column="regular_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_detailsburse" domainObjectName="AoaDetailsburse">
+			<generatedKey column="detailsburse_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_holiday" domainObjectName="AoaHoliday">
+			<generatedKey column="holiday_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_notice_list" domainObjectName="AoaNoticeList">
+			<generatedKey column="notice_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_reply_list" domainObjectName="AoaReplyList">
+			<generatedKey column="reply_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_director" domainObjectName="AoaDirector">
+			<generatedKey column="director_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_in_mail_list" domainObjectName="AoaInMailList">
+			<generatedKey column="mail_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_notice_user_relation" domainObjectName="AoaNoticeUserRelation">
+			<generatedKey column="relatin_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_resign" domainObjectName="AoaResign">
+			<generatedKey column="resign_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_director_users" domainObjectName="AoaDirectorUsers">
+			<generatedKey column="director_users_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_love_discuss_user" domainObjectName="AoaLoveDiscussUser">
+		</table>
+		<table tableName="aoa_overtime" domainObjectName="AoaOvertime">
+			<generatedKey column="overtime_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_reviewed" domainObjectName="AoaReviewed">
+			<generatedKey column="reviewed_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_discuss_list" domainObjectName="AoaDiscussList">
+			<generatedKey column="discuss_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_love_user" domainObjectName="AoaLoveUser">
+		</table>
+		<table tableName="aoa_plan_list" domainObjectName="AoaPlanList">
+			<generatedKey column="plan_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_role_" domainObjectName="AoaRole_">
+			<generatedKey column="role_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_evection" domainObjectName="AoaEvection">
+			<generatedKey column="evection_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_mail_reciver" domainObjectName="AoaMailReciver">
+			<generatedKey column="pk_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_position" domainObjectName="AoaPosition">
+			<generatedKey column="position_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_role_power_list" domainObjectName="AoaRolePowerList">
+			<generatedKey column="pk_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_evectionmoney" domainObjectName="AoaEvectionmoney">
+			<generatedKey column="evectionmoney_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_mailnumber" domainObjectName="AoaMailnumber">
+			<generatedKey column="mail_number_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_process_list" domainObjectName="AoaProcessList">
+			<generatedKey column="process_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_comment_list" domainObjectName="AoaCommentList">
+			<generatedKey column="comment_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_file_list" domainObjectName="AoaFileList">
+			<generatedKey column="file_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_note_list" domainObjectName="AoaNoteList">
+			<generatedKey column="note_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_receiver_note" domainObjectName="AoaReceiverNote">
+			<generatedKey column="id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_attachment_list" domainObjectName="AoaAttachmentList">
+			<generatedKey column="attachment_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_attends_list" domainObjectName="AoaAttendsList">
+			<generatedKey column="attends_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_bursement" domainObjectName="AoaBursement">
+			<generatedKey column="bursement_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="aoa_catalog" domainObjectName="AoaCatalog">
+			<generatedKey column="catalog_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="ts_notice" domainObjectName="Notice">
+			<generatedKey column="notice_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="ts_dict" domainObjectName="Dict">
+			<generatedKey column="dict_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="ts_fileinfo" domainObjectName="Fileinfo">
+			<generatedKey column="file_id" sqlStatement="JDBC" />
+		</table>
 		<table tableName="ts_menu" domainObjectName="Menu">
 			<generatedKey column="menu_id" sqlStatement="JDBC" />
 		</table>
-		<table tableName="tb_operate_log" domainObjectName="OperateLog">
-			<generatedKey column="operate_id" sqlStatement="JDBC" />
+		<table tableName="ts_role" domainObjectName="Role">
+			<generatedKey column="role_id" sqlStatement="JDBC" />
 		</table>
-		<table tableName="tb_login_log" domainObjectName="LoginLog">
-			<generatedKey column="login_id" sqlStatement="JDBC" />
+		<table tableName="ts_salary" domainObjectName="Salary">
+			<generatedKey column="salary_id" sqlStatement="JDBC" />
 		</table>
 		<table tableName="ts_user" domainObjectName="User">
 			<generatedKey column="user_id" sqlStatement="JDBC" />
 		</table>
-		<table tableName="tb_apply" domainObjectName="Apply">
-			<generatedKey column="apply_id" sqlStatement="JDBC" />
+		<table tableName="ts_userinfo" domainObjectName="Userinfo">
+		</table>
+		<table tableName="tb_login_log" domainObjectName="LoginLog">
+			<generatedKey column="login_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="tb_operate_log" domainObjectName="OperateLog">
+			<generatedKey column="operate_id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="tb_sign" domainObjectName="Sign">
+			<generatedKey column="sign_id" sqlStatement="JDBC" />
 		</table>
 		<table tableName="tr_role_depart" domainObjectName="RoleDepart">
-		</table>
-		<table tableName="ts_depart" domainObjectName="Depart">
-			<generatedKey column="depart_id" sqlStatement="JDBC" />
-		</table>
-		<table tableName="ts_salary" domainObjectName="Salary">
-			<generatedKey column="salary_id" sqlStatement="JDBC" />
 		</table>
 		<table tableName="tr_role_menu" domainObjectName="RoleMenu">
 		</table>
 		<table tableName="tr_user_role" domainObjectName="UserRole">
 		</table>
-		<table tableName="tr_role_button" domainObjectName="RoleButton">
+		<table tableName="tb_apply" domainObjectName="Apply">
+			<generatedKey column="apply_id" sqlStatement="JDBC" />
 		</table>
-		<table tableName="ts_notice" domainObjectName="Notice">
-			<generatedKey column="notice_id" sqlStatement="JDBC" />
+		<table tableName="ts_depart" domainObjectName="Depart">
+			<generatedKey column="depart_id" sqlStatement="JDBC" />
 		</table>
-		<table tableName="ts_role" domainObjectName="Role">
-			<generatedKey column="role_id" sqlStatement="JDBC" />
-		</table>
-		<table tableName="tb_sign" domainObjectName="Sign">
-			<generatedKey column="sign_id" sqlStatement="JDBC" />
-		</table>
-		<table tableName="ts_fileinfo" domainObjectName="Fileinfo">
-			<generatedKey column="file_id" sqlStatement="JDBC" />
-		</table>
-		<table tableName="ts_button" domainObjectName="Button">
-			<generatedKey column="button_id" sqlStatement="JDBC" />
-		</table>
-		<table tableName="ts_dict" domainObjectName="Dict">
-			<generatedKey column="dict_id" sqlStatement="JDBC" />
-		</table>
-		<table tableName="ts_userinfo" domainObjectName="Userinfo">
+		<table tableName="tr_user_notice" domainObjectName="UserNotice">
 		</table>
 		<!-- 自动从数据库中生成uuid赋值给VARCHAR类型主键 -->
 		<!-- <table tableName="ti_user" domainObjectName="User"> -->

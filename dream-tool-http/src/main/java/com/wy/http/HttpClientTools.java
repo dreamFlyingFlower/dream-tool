@@ -38,7 +38,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.wy.ConstLang;
 import com.wy.collection.MapTool;
 import com.wy.util.CharsetTool;

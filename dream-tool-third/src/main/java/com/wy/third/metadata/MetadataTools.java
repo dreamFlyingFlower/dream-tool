@@ -3,7 +3,8 @@ package com.wy.third.metadata;
 import java.io.File;
 import java.io.IOException;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
@@ -112,16 +113,16 @@ public class MetadataTools {
 		String apiKey = "YNxcSCAphFvuPD4LwcgWXwC3SEZZc7Ra";
 		// 百度经纬度坐标转换地址,coords为经纬度坐标
 		String url = "http://api.map.baidu.com/reverse_geocoding/v3/?ak=" + apiKey
-				+ "&output=json&coordtype=wgs84ll&location=" + (gps_latitude + "," + gps_longitude);
+		        + "&output=json&coordtype=wgs84ll&location=" + (gps_latitude + "," + gps_longitude);
 		String res = HttpClientTools.get(url);
-		JSONObject object = JSONObject.parseObject(res);
+		JSONObject object = JSON.parseObject(res);
 		if (object.containsKey("result")) {
 			JSONObject result = object.getJSONObject("result");
 			if (result.containsKey("addressComponent")) {
 				JSONObject address = object.getJSONObject("result").getJSONObject("addressComponent");
 				System.err.println("拍摄地点：" + address.get("country") + " " + address.get("province") + " "
-						+ address.get("city") + " " + address.get("district") + " " + address.get("street") + " "
-						+ result.get("formatted_address") + " " + result.get("business"));
+				        + address.get("city") + " " + address.get("district") + " " + address.get("street") + " "
+				        + result.get("formatted_address") + " " + result.get("business"));
 			}
 		}
 	}
