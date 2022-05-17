@@ -26,10 +26,10 @@ public class JsonTools {
 
 	/** 格式化输出 */
 	private static final JSONWriter.Feature[] FORMAT_SERIALIZER_FEATURES = { JSONWriter.Feature.NotWriteRootClassName,
-	        // 格式化输出
-	        JSONWriter.Feature.PrettyFormat,
-	        // 无默认值
-	        JSONWriter.Feature.NotWriteDefaultValue };
+			// 格式化输出
+			JSONWriter.Feature.PrettyFormat,
+			// 无默认值
+			JSONWriter.Feature.NotWriteDefaultValue };
 
 	/**
 	 * JSON将对象序列化为字符串
@@ -65,7 +65,7 @@ public class JsonTools {
 	public static String toJson(Object object, List<String> filterNames) {
 		AssertTool.notNull(object, "The data must not be null");
 		SimplePropertyPreFilter filter =
-		        new SimplePropertyPreFilter(filterNames.toArray(new String[filterNames.size()]));
+				new SimplePropertyPreFilter(filterNames.toArray(new String[filterNames.size()]));
 		return JSON.toJSONString(object, filter, FORMAT_SERIALIZER_FEATURES);
 	}
 
@@ -82,7 +82,7 @@ public class JsonTools {
 			return Collections.emptyList();
 		}
 		return String.class == json.getClass() ? JSON.parseArray((String) json, clazz)
-		        : JSON.parseArray(JSON.toJSONString(json), clazz);
+				: JSON.parseArray(JSON.toJSONString(json), clazz);
 	}
 
 	/**
@@ -95,11 +95,9 @@ public class JsonTools {
 		if (Objects.isNull(json)) {
 			return Collections.emptyList();
 		}
-		return String.class == json.getClass()
-		        ? JSON.parseObject((String) json, new TypeReference<List<Map<String, Object>>>() {
-		        })
-		        : JSON.parseObject(JSON.toJSONString(json), new TypeReference<List<Map<String, Object>>>() {
-		        });
+		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
+				new TypeReference<List<Map<String, Object>>>() {
+				});
 	}
 
 	/**
@@ -115,9 +113,9 @@ public class JsonTools {
 		if (Objects.isNull(json)) {
 			return Collections.emptyList();
 		}
-		return String.class == json.getClass() ? JSON.parseObject((String) json, new TypeReference<List<Map<K, V>>>() {
-		}) : JSON.parseObject(JSON.toJSONString(json), new TypeReference<List<Map<K, V>>>() {
-		});
+		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
+				new TypeReference<List<Map<K, V>>>() {
+				});
 	}
 
 	/**
@@ -132,7 +130,7 @@ public class JsonTools {
 			return Collections.emptyList();
 		}
 		return String.class == json.getClass() ? JSON.parseArray((String) json, String.class)
-		        : JSON.parseArray(JSON.toJSONString(json), String.class);
+				: JSON.parseArray(JSON.toJSONString(json), String.class);
 	}
 
 	/**
@@ -145,11 +143,9 @@ public class JsonTools {
 		if (Objects.isNull(json)) {
 			return Collections.emptyMap();
 		}
-		return String.class == json.getClass()
-		        ? JSON.parseObject((String) json, new TypeReference<Map<String, Object>>() {
-		        })
-		        : JSON.parseObject(JSON.toJSONString(json), new TypeReference<Map<String, Object>>() {
-		        });
+		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
+				new TypeReference<Map<String, Object>>() {
+				});
 	}
 
 	/**
@@ -165,9 +161,9 @@ public class JsonTools {
 		if (Objects.isNull(json)) {
 			return Collections.emptyMap();
 		}
-		return String.class == json.getClass() ? JSON.parseObject((String) json, new TypeReference<Map<K, V>>() {
-		}) : JSON.parseObject(JSON.toJSONString(json), new TypeReference<Map<K, V>>() {
-		});
+		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
+				new TypeReference<Map<K, V>>() {
+				});
 	}
 
 	/**
