@@ -16,6 +16,16 @@ public class EscapeTool {
 
 	private static final char[][] TEXT = new char[64][];
 
+	private static final String QUOT = "&quot;";
+
+	private static final String AMP = "&amp;";
+
+	private static final String APOS = "&apos;";
+
+	private static final String GT = "&gt;";
+
+	private static final String LT = "&lt;";
+
 	static {
 		for (int i = 0; i < 64; i++) {
 			TEXT[i] = new char[] { (char) i };
@@ -117,5 +127,41 @@ public class EscapeTool {
 			}
 		}
 		return tmp.toString();
+	}
+
+	/**
+	 * XML字符转义包括(<,>,',&,")五个字符
+	 * 
+	 * @param value 所需转义的字符串
+	 * @return 转义后的字符串
+	 */
+	public static String escapeXml(String value) {
+		StringBuilder writer = new StringBuilder();
+		char[] chars = value.trim().toCharArray();
+		for (int i = 0; i < chars.length; i++) {
+			char c = chars[i];
+			switch (c) {
+			case '<':
+				writer.append(LT);
+				break;
+			case '>':
+				writer.append(GT);
+				break;
+			case '\'':
+				writer.append(APOS);
+				break;
+			case '&':
+				writer.append(AMP);
+				break;
+			case '\"':
+				writer.append(QUOT);
+				break;
+			default:
+				if ((c == 0x9) || (c == 0xA) || (c == 0xD) || ((c >= 0x20) && (c <= 0xD7FF))
+				        || ((c >= 0xE000) && (c <= 0xFFFD)) || ((c >= 0x10000) && (c <= 0x10FFFF)))
+					writer.append(c);
+			}
+		}
+		return writer.toString();
 	}
 }
