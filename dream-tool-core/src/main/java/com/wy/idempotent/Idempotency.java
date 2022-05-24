@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 自定义注解防止重复提交,提升接口幂等性
+ * 自定义注解防止重复提交,提升接口幂等性.事例查看dream-study-java-common/com.wy.redis.idempotent
  *
  * @author 飞花梦影
  * @date 2021-02-03 17:32:42
