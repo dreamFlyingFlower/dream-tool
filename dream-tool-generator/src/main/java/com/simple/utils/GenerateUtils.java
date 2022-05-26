@@ -38,13 +38,13 @@ public class GenerateUtils {
 	 * @param localOrRemote 本地生成或远程传输,true本地生成,false远程传输
 	 */
 	public static byte[] generateCode(Tableinfo tableinfo, ConfigProperties config, boolean localOrRemote,
-			DataSourceProperties dataSourceProperties) {
+	        DataSourceProperties dataSourceProperties) {
 		// 封装模板数据
 		Map<String,
-				Object> map = MapTool.builder("tableinfo", tableinfo).put("tableName", tableinfo.getTableName())
-						.put("datasource", dataSourceProperties).put("primaryKey", tableinfo.getPrimaryKey())
-						.put("columns", tableinfo.getColumns()).put("common", config.getCommon())
-						.put("datetime", DateTool.formatDateTime()).build();
+		        Object> map = MapTool.builder("tableinfo", tableinfo).put("tableName", tableinfo.getTableName())
+		                .put("datasource", dataSourceProperties).put("primaryKey", tableinfo.getPrimaryKey())
+		                .put("columns", tableinfo.getColumns()).put("common", config.getCommon())
+		                .put("datetime", DateTool.formatDateTime()).build();
 		return VelocityUtils.generateFiles(map, tableinfo, getTemplates(config), localOrRemote);
 	}
 
@@ -55,10 +55,10 @@ public class GenerateUtils {
 	 * @param config 配置
 	 */
 	public static void generateTableinfoMap(Map<String, Object> table, List<Map<String, String>> columns,
-			ConfigProperties config) {
+	        ConfigProperties config) {
 		// 表名转换成Java类名
 		String className = TableinfoUtils.tableToJava(String.valueOf(table.get("tableName")),
-				config.getDatabase().getTablePrefix(), true);
+		        config.getDatabase().getTablePrefix(), true);
 		table.put("className", className);
 		table.put("objectName", StrTool.firstLower(className));
 		// 将处理后的字段信息添加到表信息中
@@ -78,13 +78,13 @@ public class GenerateUtils {
 	 * @param config 配置
 	 */
 	public static Tableinfo generateTableinfo(Map<String, Object> table, List<Map<String, String>> columns,
-			ConfigProperties config, DataSourceProperties dataSourceProperties) {
+	        ConfigProperties config, DataSourceProperties dataSourceProperties) {
 		// 表名转换成Java类名
 		String className = TableinfoUtils.tableToJava(String.valueOf(table.get("tableName")),
-				config.getDatabase().getTablePrefix(), true);
+		        config.getDatabase().getTablePrefix(), true);
 		Tableinfo tableinfo = Tableinfo.builder().tableName(String.valueOf(table.get("tableName")))
-				.comments(String.valueOf(table.get("tableComment"))).className(className)
-				.objectName(StrTool.firstLower(className)).build();
+		        .comments(String.valueOf(table.get("tableComment"))).className(className)
+		        .objectName(StrTool.firstLower(className)).build();
 		// 将处理后的字段信息添加到表信息中
 		handlerColumninfo(tableinfo, columns, config);
 		return tableinfo;
@@ -98,13 +98,13 @@ public class GenerateUtils {
 	 * @param config 配置信息
 	 */
 	public static void handlerColumninfo(Tableinfo tableinfo, List<Map<String, String>> columns,
-			ConfigProperties config) {
+	        ConfigProperties config) {
 		List<Columninfo> columsList = new ArrayList<>();
 		for (Map<String, String> column : columns) {
 			Columninfo columninfo =
-					Columninfo.builder().columnName(column.get("columnName")).dataType(column.get("dataType"))
-							.comments(column.get("columnComment")).columnKey(column.get("columnKey"))
-							.extra(StrTool.getDefault(column.get("extra"), column.get("EXTRA"))).build();
+			        Columninfo.builder().columnName(column.get("columnName")).dataType(column.get("dataType"))
+			                .comments(column.get("columnComment")).columnKey(column.get("columnKey"))
+			                .extra(StrTool.getDefault(column.get("extra"), column.get("EXTRA"))).build();
 			// 列名转换成Java属性名
 			String attrName = StrTool.snake2Hump(columninfo.getColumnName());
 			columninfo.setAttrNameUpper(attrName);
@@ -112,7 +112,7 @@ public class GenerateUtils {
 
 			// 列的数据类型,转换成Java类型
 			String attrType =
-					StrTool.getDefault(config.getDatabase().getDb2JavaType().get(columninfo.getDataType()), "String");
+			        StrTool.getDefault(config.getDatabase().getDb2JavaType().get(columninfo.getDataType()), "String");
 			columninfo.setAttrType(attrType);
 
 			// 判断是否为主键
@@ -133,7 +133,7 @@ public class GenerateUtils {
 
 			// 判断是否为排序字段
 			if (!tableinfo.isHasSort()
-					&& config.getDatabase().getSortColumn().equalsIgnoreCase(column.get("columnName"))) {
+			        && config.getDatabase().getSortColumn().equalsIgnoreCase(column.get("columnName"))) {
 				columninfo.setSortColumn(true);
 				tableinfo.setHasSort(true);
 			}
@@ -142,7 +142,7 @@ public class GenerateUtils {
 				tableinfo.setHasBigDecimal(true);
 			}
 			if (!tableinfo.isHasDate() && (attrType.equalsIgnoreCase("timestamp"))
-					|| attrType.equalsIgnoreCase("datetime") || attrType.equalsIgnoreCase("date")) {
+			        || attrType.equalsIgnoreCase("datetime") || attrType.equalsIgnoreCase("date")) {
 				tableinfo.setHasDate(true);
 			}
 			if (!tableinfo.isHasArray() && "array".equalsIgnoreCase(columninfo.getExtra())) {
@@ -178,8 +178,8 @@ public class GenerateUtils {
 			if (!config.getCommon().isGenerateServiceImpl() && t.toLowerCase().contains("serviceimpl.java.vm")) {
 				return false;
 			}
-			if (!config.getCommon().isGenerateCrl() && (t.toLowerCase().contains("crl.java.vm"))
-					|| t.toLowerCase().contains("controller.java.vm")) {
+			if (!config.getCommon().isGenerateCrl()
+			        && (t.toLowerCase().contains("crl.java.vm") || t.toLowerCase().contains("controller.java.vm"))) {
 				return false;
 			}
 			return true;
@@ -193,7 +193,7 @@ public class GenerateUtils {
 		String pathMain = config.getCommon().getPathMain();
 		if (StrTool.isNotBlank(config.getCommon().getPathPackage())) {
 			pathMain += config.getCommon().getPathPackage().replaceAll("\\.", Matcher.quoteReplacement(File.separator))
-					+ File.separator;
+			        + File.separator;
 		}
 		if (StrTool.isNotBlank(config.getCommon().getModuleName())) {
 			pathMain += config.getCommon().getModuleName() + File.separator;
@@ -226,20 +226,20 @@ public class GenerateUtils {
 		}
 		if (template.contains("Mapper.xml.vm")) {
 			return "main" + File.separator + "resources" + File.separator + "mapper" + File.separator
-					+ config.getCommon().getModuleName() + File.separator + className + "Dao.xml";
+			        + config.getCommon().getModuleName() + File.separator + className + "Dao.xml";
 		}
 		if (template.contains("menu.sql.vm")) {
 			return className.toLowerCase() + "_menu.sql";
 		}
 		if (template.contains("index.vue.vm")) {
 			return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views"
-					+ File.separator + "modules" + File.separator + config.getCommon().getModuleName() + File.separator
-					+ className.toLowerCase() + ".vue";
+			        + File.separator + "modules" + File.separator + config.getCommon().getModuleName() + File.separator
+			        + className.toLowerCase() + ".vue";
 		}
 		if (template.contains("add-or-update.vue.vm")) {
 			return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views"
-					+ File.separator + "modules" + File.separator + config.getCommon().getModuleName() + File.separator
-					+ className.toLowerCase() + "-add-or-update.vue";
+			        + File.separator + "modules" + File.separator + config.getCommon().getModuleName() + File.separator
+			        + className.toLowerCase() + "-add-or-update.vue";
 		}
 		return null;
 	}
@@ -252,10 +252,10 @@ public class GenerateUtils {
 	 * @param localOrRemote 本地生成代码或远程生成代码
 	 */
 	public static void generateMapperXml(List<Map<String, Object>> tableinfos, ConfigProperties config,
-			boolean localOrRemote, DataSourceProperties dataSourceProperties) {
+	        boolean localOrRemote, DataSourceProperties dataSourceProperties) {
 		// 封装模板数据
 		Map<String, Object> map = MapTool.builder("tableinfos", tableinfos).put("datasource", dataSourceProperties)
-				.put("common", JsonTools.parseMap(JSON.toJSONString(config.getCommon()))).build();
+		        .put("common", JsonTools.parseMap(JSON.toJSONString(config.getCommon()))).build();
 		VelocityUtils.generateFiles(map, localOrRemote);
 	}
 
