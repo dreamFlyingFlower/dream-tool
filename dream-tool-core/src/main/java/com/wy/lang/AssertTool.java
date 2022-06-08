@@ -478,6 +478,162 @@ public class AssertTool {
 	}
 
 	/**
+	 * 判断对象是一个正数,返回该数
+	 * 
+	 * @param object 对象
+	 * @return Number
+	 * @throws IllegalArgumentException 当对象不是一个数
+	 */
+	public static Number isPositiveNumber(Object object) {
+		if (!NumberTool.isNumber(notNull(object))) {
+			throw new IllegalArgumentException("[Assertion failed] - the object is not a number");
+		}
+		if (Double.parseDouble(object.toString()) <= 0) {
+			throw new IllegalArgumentException("the object is not a positive number");
+		}
+		return NumberTool.toNumber(object);
+	}
+
+	/**
+	 * 判断对象是一个正数,返回该数
+	 * 
+	 * @param object 对象
+	 * @param message 提示信息
+	 * @return Number
+	 * @throws IllegalArgumentException 当对象不是一个数
+	 */
+	public static Number isPositiveNumber(Object object, String message) {
+		if (!NumberTool.isNumber(notNull(object))) {
+			throw new IllegalArgumentException(message);
+		}
+		if (Double.parseDouble(object.toString()) <= 0) {
+			throw new IllegalArgumentException(message);
+		}
+		return NumberTool.toNumber(object);
+	}
+
+	/**
+	 * 判断对象是一个正数,返回该数
+	 * 
+	 * @param object 对象
+	 * @param messageSupplier 提示信息
+	 * @return Number
+	 * @throws IllegalArgumentException 当对象不是一个数
+	 */
+	public static Number isPositiveNumber(Object object, Supplier<String> messageSupplier) {
+		if (!NumberTool.isNumber(notNull(object))) {
+			throw new IllegalArgumentException(nullSafeGet(messageSupplier));
+		}
+		if (Double.parseDouble(object.toString()) <= 0) {
+			throw new IllegalArgumentException(nullSafeGet(messageSupplier));
+		}
+		return NumberTool.toNumber(object);
+	}
+
+	/**
+	 * 判断对象是一个正数,返回该数
+	 * 
+	 * @param object 对象
+	 * @param format 格式化信息
+	 * @param args 格式化信息参数
+	 * @return Number
+	 * @throws IllegalArgumentException 当对象不是一个数
+	 */
+	public static Number isPositiveNumber(Object object, String format, Object... args) {
+		if (!NumberTool.isNumber(notNull(object))) {
+			throw new IllegalArgumentException(String.format(format, args));
+		}
+		if (Double.parseDouble(object.toString()) <= 0) {
+			throw new IllegalArgumentException(String.format(format, args));
+		}
+		return NumberTool.toNumber(object);
+	}
+
+	/**
+	 * 判断对象是一个正整数,返回该数
+	 * 
+	 * @param object 对象
+	 * @return Number
+	 * @throws IllegalArgumentException 当对象不是一个数
+	 */
+	public static Number isPositiveInteger(Object object) {
+		if (!NumberTool.isNumber(notNull(object))) {
+			throw new IllegalArgumentException("[Assertion failed] - the object is not a number");
+		}
+		if (Double.parseDouble(object.toString()) <= 0) {
+			throw new IllegalArgumentException("the object is not a positive number");
+		}
+		if (!NumberTool.isDigits(object)) {
+			throw new IllegalArgumentException("the object is not a integral number");
+		}
+		return NumberTool.toNumber(object);
+	}
+
+	/**
+	 * 判断对象是一个正整数,返回该数
+	 * 
+	 * @param object 对象
+	 * @param message 提示信息
+	 * @return Number
+	 * @throws IllegalArgumentException 当对象不是一个数
+	 */
+	public static Number isPositiveInteger(Object object, String message) {
+		if (!NumberTool.isNumber(notNull(object))) {
+			throw new IllegalArgumentException(message);
+		}
+		if (Double.parseDouble(object.toString()) <= 0) {
+			throw new IllegalArgumentException(message);
+		}
+		if (!NumberTool.isDigits(object)) {
+			throw new IllegalArgumentException(message);
+		}
+		return NumberTool.toNumber(object);
+	}
+
+	/**
+	 * 判断对象是一个正整数,返回该数
+	 * 
+	 * @param object 对象
+	 * @param messageSupplier 提示信息
+	 * @return Number
+	 * @throws IllegalArgumentException 当对象不是一个数
+	 */
+	public static Number isPositiveInteger(Object object, Supplier<String> messageSupplier) {
+		if (!NumberTool.isNumber(notNull(object))) {
+			throw new IllegalArgumentException(nullSafeGet(messageSupplier));
+		}
+		if (Double.parseDouble(object.toString()) <= 0) {
+			throw new IllegalArgumentException(nullSafeGet(messageSupplier));
+		}
+		if (!NumberTool.isDigits(object)) {
+			throw new IllegalArgumentException(nullSafeGet(messageSupplier));
+		}
+		return NumberTool.toNumber(object);
+	}
+
+	/**
+	 * 判断对象是一个正整数,返回该数
+	 * 
+	 * @param object 对象
+	 * @param format 格式化信息
+	 * @param args 格式化信息参数
+	 * @return Number
+	 * @throws IllegalArgumentException 当对象不是一个数
+	 */
+	public static Number isPositiveInteger(Object object, String format, Object... args) {
+		if (!NumberTool.isNumber(notNull(object))) {
+			throw new IllegalArgumentException(String.format(format, args));
+		}
+		if (Double.parseDouble(object.toString()) <= 0) {
+			throw new IllegalArgumentException(String.format(format, args));
+		}
+		if (!NumberTool.isDigits(object)) {
+			throw new IllegalArgumentException(String.format(format, args));
+		}
+		return NumberTool.toNumber(object);
+	}
+
+	/**
 	 * 判断表达式为true
 	 * 
 	 * @param expression boolean表达式

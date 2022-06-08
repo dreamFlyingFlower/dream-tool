@@ -24,17 +24,22 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.wy.ConstantOffice;
+import com.wy.ConstOffice;
 import com.wy.collection.ListTool;
 import com.wy.enums.TipFormatEnum;
 import com.wy.io.file.FileTool;
+import com.wy.lang.AssertTool;
 import com.wy.lang.NumberTool;
 import com.wy.lang.StrTool;
 import com.wy.result.ResultException;
@@ -56,47 +61,106 @@ import com.wy.util.DateTool;
 public interface ExcelTools {
 
 	/**
-	 * 指定图片类型为jpg
+	 * Excel中添加图片
 	 * 
-	 * @param wb
-	 * @param patriarch
-	 * @param pic
-	 * @param iRow
-	 * @param iCol
-	 * @throws IOException
+	 * @param wb Workbook
+	 * @param targetFilePath 输出文件地址
+	 * @param picPath 图片地址
+	 * @param beginRow 从第几行开始绘制图片
+	 * @param beginCol 从第几列开始绘制图片
 	 */
-	public static void addPicture(Workbook wb, Drawing<?> patriarch, String pic, int iRow, int iCol)
-			throws IOException {
-		File imgFile = FileTool.checkFile(pic);
-		ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
-		BufferedImage bufferImg = ImageIO.read(imgFile);
-		ImageIO.write(bufferImg, "jpg", byteArrayOut);
-		HSSFClientAnchor anchor =
-				new HSSFClientAnchor(190, 0, 1000, 0, (short) (iCol), iRow - 1, (short) (iCol + 1), iRow);
-		patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
+	public static void addPicture(Workbook wb, String targetFilePath, String picPath, int beginRow, int beginCol) {
+		addPicture(wb, wb.createSheet().createDrawingPatriarch(), targetFilePath, picPath, beginRow, beginCol);
+	}
+
+	/**
+	 * Excel中添加图片
+	 * 
+	 * @param wb Workbook
+	 * @param patriarch 绘图对象
+	 * @param targetFilePath 输出文件地址
+	 * @param picPath 图片地址
+	 * @param beginRow 从第几行开始绘制图片
+	 * @param beginCol 从第几列开始绘制图片
+	 */
+	public static void addPicture(Workbook wb, Drawing<?> patriarch, String targetFilePath, String picPath,
+	        int beginRow, int beginCol) {
+		AssertTool.isPositiveInteger(beginRow);
+		AssertTool.isPositiveInteger(beginCol);
+		FileTool.checkFile(picPath);
+		int pictureIdx = -1;
+		try (FileInputStream stream = new FileInputStream(picPath);) {
+			byte[] bytes = IOUtils.toByteArray(stream);
+			// 读取图片到二进制数组
+			stream.read(bytes);
+			// 向Excel添加一张图片,并返回该图片在Excel中的图片集合中的下标
+			pictureIdx = wb.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// 绘图工具类
+		CreationHelper helper = wb.getCreationHelper();
+		// 创建锚点,设置图片坐标
+		ClientAnchor anchor = helper.createClientAnchor();
+		anchor.setRow1(beginRow);
+		anchor.setCol1(beginCol);
+		// 创建图片
+		Picture picture = patriarch.createPicture(anchor, pictureIdx);
+		picture.resize();
+		try (FileOutputStream fos = new FileOutputStream(targetFilePath);) {
+			// 写入文件
+			wb.write(fos);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * 指定图片类型为jpg
 	 * 
-	 * @param wb
-	 * @param patriarch
-	 * @param pic
-	 * @param iRowStart
-	 * @param iColStart
-	 * @param iRowStop
-	 * @param iColStop
+	 * @param wb Workbook
+	 * @param picPath 图片地址
+	 * @param beginRow 从第几行开始绘制图片
+	 * @param beginCol 从第几列开始绘制图片
 	 * @throws IOException
 	 */
-	public static void addPicture(Workbook wb, Drawing<?> patriarch, String pic, int iRowStart, int iColStart,
-			int iRowStop, int iColStop) {
-		File imgFile = FileTool.checkFile(pic);
+	public static void addPicture(Workbook wb, String picPath, int beginRow, int beginCol) throws IOException {
+		addPicture(wb, wb.createSheet().createDrawingPatriarch(), picPath, beginRow, beginCol);
+	}
+
+	/**
+	 * 指定图片类型为jpg
+	 * 
+	 * @param wb Workbook
+	 * @param patriarch 绘图对象
+	 * @param picPath 图片地址
+	 * @param beginRow 从第几行开始绘制图片
+	 * @param beginCol 从第几列开始绘制图片
+	 */
+	public static void addPicture(Workbook wb, Drawing<?> patriarch, String picPath, int beginRow, int beginCol) {
+		addPicture(wb, patriarch, picPath, beginRow, beginCol, beginRow, beginCol + 1);
+	}
+
+	/**
+	 * 指定图片类型为jpg
+	 * 
+	 * @param wb Workbook
+	 * @param patriarch 绘图对象
+	 * @param picPath 图片地址
+	 * @param beginRow 从第几行开始绘制图片
+	 * @param beginCol 从第几列开始绘制图片
+	 * @param endRow 到第几行结束绘制图片
+	 * @param endCol 到第几列结束绘制图片
+	 */
+	public static void addPicture(Workbook wb, Drawing<?> patriarch, String picPath, int beginRow, int beginCol,
+	        int endRow, int endCol) {
+		File imgFile = FileTool.checkFile(picPath);
 		try (ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();) {
 			BufferedImage bufferImg = ImageIO.read(imgFile);
 			ImageIO.write(bufferImg, "jpg", byteArrayOut);
 			// 左,上(0-255),右(0-1023),下
 			HSSFClientAnchor anchor =
-					new HSSFClientAnchor(20, 1, 1018, 0, (short) (iColStart), iRowStart, (short) (iColStop), iRowStop);
+			        new HSSFClientAnchor(20, 1, 1018, 0, (short) (beginCol), beginRow, (short) (endCol), endRow);
 			patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -116,7 +180,7 @@ public interface ExcelTools {
 	 * @param datas 需要导出的数据
 	 */
 	default <T> void exportExcel(List<T> datas, HttpServletResponse resp) {
-		exportExcel(datas, resp, ConstantOffice.EXCEL_FILE_NAME);
+		exportExcel(datas, resp, ConstOffice.EXCEL_DEFAULT_FILE_NAME);
 	}
 
 	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName) {
@@ -128,17 +192,17 @@ public interface ExcelTools {
 	}
 
 	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, Charset encode,
-			Charset decode) {
+	        Charset decode) {
 		exportExcel(datas, resp, excelName, encode.displayName(), decode.displayName());
 	}
 
 	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
-			String decode) {
-		exportExcel(datas, resp, excelName, encode, decode, ConstantOffice.EXCEL_SHEET_MAX);
+	        String decode) {
+		exportExcel(datas, resp, excelName, encode, decode, ConstOffice.EXCEL_SHEET_MAX_ROW);
 	}
 
 	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
-			String decode, int sheetMax) {
+	        String decode, int sheetMax) {
 		exportExcel(datas, resp, excelName, encode, decode, sheetMax, true);
 	}
 
@@ -155,19 +219,19 @@ public interface ExcelTools {
 	 * @param subject 是否添加标题,默认true添加false不添加,真实数据从第2行开始写入
 	 */
 	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
-			String decode, int sheetMax, boolean subject) {
+	        String decode, int sheetMax, boolean subject) {
 		resp.setContentType("application/download");
 		try (OutputStream os = resp.getOutputStream();) {
 			// 处理文件名后缀
 			String fileExtension = FileTool.getFileExtension(excelName);
 			if (StrTool.isBlank(fileExtension)) {
-				excelName += "." + ConstantOffice.EXCEL_FILE_NAME_SUFFIX;
+				excelName += "." + ConstOffice.EXCEL_DEFAULT_FILE_NAME_SUFFIX;
 			}
 			// 处理文件编码
 			resp.setHeader("Content-Disposition",
-					"attchament;filename=" + new String(excelName.getBytes(encode), Charset.forName(decode)));
+			        "attchament;filename=" + new String(excelName.getBytes(encode), Charset.forName(decode)));
 			// 处理每个sheet页最大行数据
-			sheetMax = sheetMax >= ConstantOffice.EXCEL_SHEET_MAX ? ConstantOffice.EXCEL_SHEET_MAX : sheetMax;
+			sheetMax = sheetMax >= ConstOffice.EXCEL_SHEET_MAX_ROW ? ConstOffice.EXCEL_SHEET_MAX_ROW : sheetMax;
 			long sheetNum = Math.round(NumberTool.div(datas.size(), sheetMax).floatValue());
 			for (int i = 1; i <= sheetNum; i++) {
 				handleSheet(i, datas, os, sheetMax, subject);
@@ -241,8 +305,10 @@ public interface ExcelTools {
 		case FORMULA:
 			if (cell.getCachedFormulaResultType() == CellType.NUMERIC) {
 				return cell.getNumericCellValue();
-			} else {
+			} else if (cell.getCachedFormulaResultType() == CellType.STRING) {
 				return cell.getRichStringCellValue().getString();
+			} else {
+				return cell.getCellFormula();
 			}
 		default:
 			return cell.getErrorCellValue();
@@ -269,8 +335,7 @@ public interface ExcelTools {
 	 * @param t 需要写入到单元格的数据
 	 * @param field 当前字段
 	 */
-	default <T> void handleCell(Cell cell, T t, Field field) {
-	}
+	default <T> void handleCell(Cell cell, T t, Field field) {}
 
 	/**
 	 * 读取excel表格数据,默认表格中第一行是key值,且可以使用,不计入数据,从第2行第1列读取数据
@@ -304,7 +369,7 @@ public interface ExcelTools {
 	 * @return list集合
 	 */
 	public static List<Map<String, Object>> readExcel(String path, boolean firstUse, List<String> titles,
-			int beginRow) {
+	        int beginRow) {
 		return readExcel(path, firstUse, titles, beginRow, 0);
 	}
 
@@ -319,7 +384,7 @@ public interface ExcelTools {
 	 * @return 结果集
 	 */
 	public static List<Map<String, Object>> readExcel(String path, boolean firstUse, List<String> titles, int beginRow,
-			int beginCol) {
+	        int beginCol) {
 		return null;
 	}
 
@@ -369,7 +434,7 @@ public interface ExcelTools {
 	 * @return 结果集
 	 */
 	default List<Map<String, Object>> readExcel(InputStream is, boolean firstUse, List<String> titles, int beginRow,
-			int beginCol) {
+	        int beginCol) {
 		return null;
 	}
 
@@ -431,11 +496,11 @@ public interface ExcelTools {
 	 * @param path 文件路径,若文件路径不带后缀,则默认后缀为.xls
 	 */
 	default <T> void write(List<T> datas, String path) throws IOException {
-		write(datas, path, ConstantOffice.EXCEL_SHEET_MAX);
+		write(datas, path, ConstOffice.EXCEL_SHEET_MAX_ROW);
 	}
 
 	default <T> void write(List<T> datas, File file) throws IOException {
-		write(datas, file, ConstantOffice.EXCEL_SHEET_MAX);
+		write(datas, file, ConstOffice.EXCEL_SHEET_MAX_ROW);
 	}
 
 	/**
@@ -538,7 +603,7 @@ public interface ExcelTools {
 			throw new ResultException(TipFormatEnum.TIP_LOG_ERROR.getMsg("excel写入文件不能为空"));
 		}
 		FileTool.createFile(file, true);
-		sheetMax = sheetMax >= ConstantOffice.EXCEL_SHEET_MAX ? ConstantOffice.EXCEL_SHEET_MAX : sheetMax;
+		sheetMax = sheetMax >= ConstOffice.EXCEL_SHEET_MAX_ROW ? ConstOffice.EXCEL_SHEET_MAX_ROW : sheetMax;
 		long sheetNum = Math.round(NumberTool.div(datas.size(), sheetMax).floatValue());
 		for (int i = 1; i <= sheetNum; i++) {
 			writeSheet(i, datas, file, sheetMax, subject);
