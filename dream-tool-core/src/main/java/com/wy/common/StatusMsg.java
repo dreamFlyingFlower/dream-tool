@@ -14,6 +14,7 @@ public interface StatusMsg extends CodeMsg<Integer> {
 	 * 
 	 * @return 数字状态码
 	 */
+	@Override
 	default Integer getCode() {
 		return 1;
 	}
@@ -23,6 +24,7 @@ public interface StatusMsg extends CodeMsg<Integer> {
 	 * 
 	 * @return 状态信息
 	 */
+	@Override
 	default String getMsg() {
 		return Internation.getStr("msg_success");
 	}
@@ -34,6 +36,7 @@ public interface StatusMsg extends CodeMsg<Integer> {
 	 * @param args 格式化参数
 	 * @return 状态信息
 	 */
+	@Override
 	default String getMsg(String format, Object... args) {
 		return String.format(format, args);
 	}

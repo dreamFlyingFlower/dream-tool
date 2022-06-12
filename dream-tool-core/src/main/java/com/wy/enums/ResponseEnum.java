@@ -24,10 +24,12 @@ public enum ResponseEnum implements StatusMsg {
 		this.msg = msg;
 	}
 
+	@Override
 	public Integer getCode() {
 		return code;
 	}
 
+	@Override
 	public String getMsg() {
 		return msg;
 	}

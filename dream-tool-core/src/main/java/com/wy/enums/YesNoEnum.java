@@ -24,6 +24,7 @@ public enum YesNoEnum implements StatusMsg {
 		this.msg = msg;
 	}
 
+	@Override
 	public String getMsg() {
 		return msg;
 	}

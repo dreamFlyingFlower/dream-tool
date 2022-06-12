@@ -12,7 +12,9 @@ import com.google.zxing.LuminanceSource;
 public class QRDecode extends LuminanceSource {
 
 	private final BufferedImage image;
+
 	private final int left;
+
 	private final int top;
 
 	public QRDecode(BufferedImage image) {
@@ -64,18 +66,22 @@ public class QRDecode extends LuminanceSource {
 		return matrix;
 	}
 
+	@Override
 	public boolean isCropSupported() {
 		return true;
 	}
 
+	@Override
 	public LuminanceSource crop(int left, int top, int width, int height) {
 		return new QRDecode(image, this.left + left, this.top + top, width, height);
 	}
 
+	@Override
 	public boolean isRotateSupported() {
 		return true;
 	}
 
+	@Override
 	public LuminanceSource rotateCounterClockwise() {
 		int sourceWidth = image.getWidth();
 		int sourceHeight = image.getHeight();

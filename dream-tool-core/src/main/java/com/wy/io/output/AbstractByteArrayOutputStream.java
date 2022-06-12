@@ -218,6 +218,7 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream {
 	 * @param len 写入的字节数组长度
 	 * @see java.io.ByteArrayOutputStream#write(byte[], int, int)
 	 */
+	@Override
 	public void write(final byte[] b, final int off, final int len) {
 		// 需要写入的总长度
 		final int newcount = count + len;
