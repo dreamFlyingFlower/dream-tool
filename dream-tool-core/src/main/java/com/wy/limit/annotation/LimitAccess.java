@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
-import com.wy.limit.LimitAccesser;
+import com.wy.limit.LimitAccessHandler;
 
 /**
  * 访问限制
@@ -50,9 +50,16 @@ public @interface LimitAccess {
 	boolean login() default false;
 
 	/**
+	 * 是否使用自定义的拦截器实现,默认false
+	 * 
+	 * @return true->是,false->否
+	 */
+	boolean custom() default false;
+
+	/**
 	 * 限制访问处理类
 	 * 
 	 * @return 限制访问处理类
 	 */
-	Class<? extends LimitAccesser> handler() default LimitAccesser.class;
+	Class<? extends LimitAccessHandler> handler() default LimitAccessHandler.class;
 }

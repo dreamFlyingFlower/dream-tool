@@ -1,5 +1,7 @@
 package com.wy.limit;
 
+import com.wy.limit.annotation.LimitAccess;
+
 /**
  * 限制访问自定义处理接口
  * 
@@ -7,7 +9,8 @@ package com.wy.limit;
  * @date 2021-02-16 11:30:10
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public interface LimitAccesser {
+@FunctionalInterface
+public interface LimitAccessHandler {
 
-	void handler();
+	boolean handler(LimitAccess limitAccess);
 }
