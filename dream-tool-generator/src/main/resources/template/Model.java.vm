@@ -1,4 +1,4 @@
-package ${common.pathPackage}.model;
+package ${common.pathPackageEntity};
 
 import ${common.pathBasePackage}.AbstractModel;
 #if(${tableinfo.hasSort})
@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 #end
 #if(${tableinfo.hasDate})
-import java.util.Date;
+import java.time.LocalDateTime;
 #end
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -48,14 +48,15 @@ public class DatabaseProperties {
 			put("bigint", "Long");
 			put("int8", "Long");
 			put("LONG", "Long");
-			put("float", "Float");
-			put("FLOAT", "Float");
-			put("BINARY_FLOAT", "Float");
-			put("double", "Double");
-			put("decimal", "Double");
-			put("DECIMAL", "Double");
-			put("DOUBLE", "Double");
-			put("BINARY_DOUBLE", "Double");
+			put("float", "BigDecimal");
+			put("FLOAT", "BigDecimal");
+			put("BINARY_FLOAT", "BigDecimal");
+			put("double", "BigDecimal");
+			put("decimal", "BigDecimal");
+			put("DECIMAL", "BigDecimal");
+			put("DOUBLE", "BigDecimal");
+			put("BINARY_DOUBLE", "BigDecimal");
+			put("numeric", "BigDecimal");
 			put("char", "String");
 			put("varchar", "String");
 			put("tinytext", "String");
@@ -70,15 +71,14 @@ public class DatabaseProperties {
 			put("CLOB", "String");
 			put("BLOB", "String");
 			put("nvarchar", "String");
-			put("numeric", "BigDecimal");
-			put("bit", "Boolean");
-			put("date", "Date");
-			put("datetime", "Date");
-			put("timestamp", "Date");
-			put("DATE", "Date");
-			put("DATETIME", "Date");
-			put("TIMESTAMP", "Date");
-			put("TIMESTAMP(6)", "Date");
+			put("bit", "Integer");
+			put("date", "LocalDate");
+			put("datetime", "LocalDateTime");
+			put("timestamp", "LocalDateTime");
+			put("DATE", "LocalDateTime");
+			put("DATETIME", "LocalDateTime");
+			put("TIMESTAMP", "LocalDateTime");
+			put("TIMESTAMP(6)", "LocalDateTime");
 		}
 	};
 }

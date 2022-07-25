@@ -1,10 +1,10 @@
-package ${common.pathPackage}.service.impl;
+package ${common.pathPackageServiceImpl};
 
 import org.springframework.stereotype.Service;
 
 import ${common.pathBasePackage}.AbstractService;
-import ${common.pathPackage}.model.${tableinfo.className};
-import ${common.pathPackage}.service.${tableinfo.className}Service;
+import ${common.pathPackageEntity}.${tableinfo.className};
+import ${common.pathPackageService}.${tableinfo.className}Service;
 
 /**
  * ${tableinfo.comments}

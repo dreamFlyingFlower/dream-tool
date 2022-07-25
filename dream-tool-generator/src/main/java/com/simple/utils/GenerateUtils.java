@@ -190,43 +190,38 @@ public class GenerateUtils {
 	 * 获取文件名
 	 */
 	public static String getFileName(ConfigProperties config, String template, String className) {
-		String pathMain = config.getCommon().getPathMain();
-		if (StrTool.isNotBlank(config.getCommon().getPathPackage())) {
-			pathMain += config.getCommon().getPathPackage().replaceAll("\\.", Matcher.quoteReplacement(File.separator))
-			        + File.separator;
-		}
-		if (StrTool.isNotBlank(config.getCommon().getModuleName())) {
-			pathMain += config.getCommon().getModuleName() + File.separator;
-		}
 		if (template.contains("Model.java.vm")) {
-			return pathMain + "entity" + File.separator + className + ".java";
+			return buildPath(config, config.getCommon().getPathPackageEntity()) + className + ".java";
 		}
 		if (template.contains("ModelDTO.java.vm")) {
-			return pathMain + "dto" + File.separator + className + "DTO" + ".java";
+			return buildPath(config, config.getCommon().getPathPackageEntity()) + "dto" + File.separator + className
+			        + "DTO" + ".java";
 		}
 		if (template.contains("ModelQuery.java.vm")) {
-			return pathMain + "query" + File.separator + className + "Query" + ".java";
+			return buildPath(config, config.getCommon().getPathPackageEntity()) + "query" + File.separator + className
+			        + "Query" + ".java";
 		}
 		if (template.contains("Convert.java.vm")) {
-			return pathMain + "convert" + File.separator + className + "Convert" + ".java";
+			return buildPath(config, config.getCommon().getPathPackageEntity()) + "convert" + File.separator + className
+			        + "Convert" + ".java";
 		}
 		if (template.contains("Mapper.java.vm")) {
-			return pathMain + "mapper" + File.separator + className + "Mapper.java";
+			return buildPath(config, config.getCommon().getPathPackageMapper()) + className + "Mapper.java";
 		}
 		if (template.contains("Service.java.vm")) {
-			return pathMain + "service" + File.separator + className + "Service.java";
+			return buildPath(config, config.getCommon().getPathPackageService()) + className + "Service.java";
 		}
 		if (template.contains("ServiceImpl.java.vm")) {
-			return pathMain + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
+			return buildPath(config, config.getCommon().getPathPackageServiceImpl()) + className + "ServiceImpl.java";
 		}
 		if (template.contains("Crl.java.vm")) {
-			return pathMain + "crl" + File.separator + className + "Crl.java";
+			return buildPath(config, config.getCommon().getPathPackageCrl()) + className + "Crl.java";
 		} else if (template.contains("Controller.java.vm")) {
-			return pathMain + "Controller" + File.separator + className + "Controller.java";
+			return buildPath(config, config.getCommon().getPathPackageController()) + className + "Controller.java";
 		}
 		if (template.contains("Mapper.xml.vm")) {
 			return "main" + File.separator + "resources" + File.separator + "mapper" + File.separator
-			        + config.getCommon().getModuleName() + File.separator + className + "Dao.xml";
+			        + config.getCommon().getModuleName() + File.separator + className + "Mapper.xml";
 		}
 		if (template.contains("menu.sql.vm")) {
 			return className.toLowerCase() + "_menu.sql";
@@ -242,6 +237,22 @@ public class GenerateUtils {
 			        + className.toLowerCase() + "-add-or-update.vue";
 		}
 		return null;
+	}
+
+	public static String buildPath(ConfigProperties config, String pathPackage) {
+		String holePath = config.getCommon().getPathMain();
+		if (StrTool.isNotBlank(config.getCommon().getPathPackageRoot())) {
+			holePath +=
+			        config.getCommon().getPathPackageRoot().replaceAll("\\.", Matcher.quoteReplacement(File.separator))
+			                + File.separator;
+		}
+		if (StrTool.isNotBlank(config.getCommon().getModuleName())) {
+			holePath += config.getCommon().getModuleName() + File.separator;
+		}
+		if (StrTool.isNotBlank(pathPackage)) {
+			holePath += pathPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator)) + File.separator;
+		}
+		return holePath;
 	}
 
 	/**

@@ -8,7 +8,7 @@ import lombok.Setter;
 /**
  * 通用属性
  * 
- * @author ParadiseWY
+ * @author 飞花梦影
  * @date 2020-12-13 22:39:35
  * @git {@link https://github.com/mygodness100}
  */
@@ -29,13 +29,23 @@ public class CommonProperties {
 	private String pathResources = "src" + File.separator + "main" + File.separator + "resources" + File.separator;
 
 	/** Java文件根目录 */
-	private String pathPackage = "com.wy";
-
-	/** 实体类在java文件根目录下的目录 */
-	private String pathPackageModel = "com.wy.model";
+	private String pathPackageRoot = "com.wy";
 
 	/** 基础包根目录 */
-	private String pathBasePackage = "com.wy.base";
+	private String pathPackageBase = pathPackageRoot + "." + "base";
+
+	/** 实体类在java文件根目录下的目录 */
+	private String pathPackageEntity = pathPackageRoot + "." + "entity";
+
+	private String pathPackageMapper = pathPackageRoot + "." + "mapper";
+
+	private String pathPackageService = pathPackageRoot + "." + "service";
+
+	private String pathPackageServiceImpl = pathPackageRoot + "." + "service.impl";
+
+	private String pathPackageCrl = pathPackageRoot + "." + "crl";
+
+	private String pathPackageController = pathPackageRoot + "." + "controller";
 
 	/** mybatis xml文件在资源根目录下的目录 */
 	private String pathResourcesMapper = "mappers";

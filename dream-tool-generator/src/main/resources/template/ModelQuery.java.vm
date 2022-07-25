@@ -1,4 +1,4 @@
-package ${common.pathPackage}.entity.query;
+package ${common.pathPackageEntity}.query;
 
 import ${common.pathBasePackage}.BaseQuery;
 

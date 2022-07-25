@@ -1,4 +1,4 @@
-package ${common.pathPackage}.entity.dto;
+package ${common.pathPackageEntity}.dto;
 
 import javax.validation.constraints.NotNull;
 
@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 #end
 #if(${tableinfo.hasDate})
-import java.util.Date;
+import java.time.LocalDateTime;
 #end
 import lombok.AllArgsConstructor;
 import lombok.Builder;

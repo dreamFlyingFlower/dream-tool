@@ -1,8 +1,8 @@
-package ${common.pathPackage}.mapper;
+package ${common.pathPackageMappe};
 
 import ${common.pathBasePackage}.BaseMapper;
-import ${common.pathPackage}.model.${tableinfo.className};
-import ${common.pathPackage}.model.${tableinfo.className}Example;
+import ${common.pathPackageEntity}.${tableinfo.className};
+import ${common.pathPackageEntity}.${tableinfo.className}Example;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
