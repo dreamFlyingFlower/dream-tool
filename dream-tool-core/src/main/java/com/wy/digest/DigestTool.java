@@ -67,15 +67,15 @@ public class DigestTool {
 	 * @param content 需解密16进制字符串
 	 * @return 解密后的字符串
 	 */
-	public static String aesDecrypt(String secret, String content) {
-		aesCheck(secret, content);
+	public static String AESDecrypt(String secret, String content) {
+		AESCheck(secret, content);
 		// 若是将此解密方法放到linux机器报错,则使用以下方法生成随机源
 		// SecretKeySpec key2 = null;
 		// SecureRandom random =
 		// SecureRandom.getInstance("SHA1PRNG");
 		// random.setSeed(secret.getBytes());
 		// keygen.init(128, random);
-		byte[] byte_decode = aesSimpleCrypt(secret.getBytes(CharsetTool.defaultCharset()), HexTool.decode(content),
+		byte[] byte_decode = AESSimpleCrypt(secret.getBytes(CharsetTool.defaultCharset()), HexTool.decode(content),
 				Cipher.DECRYPT_MODE);
 		return new String(byte_decode, CharsetTool.defaultCharset());
 	}
@@ -87,9 +87,9 @@ public class DigestTool {
 	 * @param content 加密内容
 	 * @return 加密转换为16进制之后的大写字符串
 	 */
-	public static String aesEncrypt(String secret, String content) {
-		aesCheck(secret, content);
-		return HexTool.encodeHexString(aesSimpleCrypt(secret.getBytes(CharsetTool.defaultCharset()),
+	public static String AESEncrypt(String secret, String content) {
+		AESCheck(secret, content);
+		return HexTool.encodeHexString(AESSimpleCrypt(secret.getBytes(CharsetTool.defaultCharset()),
 				content.getBytes(CharsetTool.defaultCharset()), Cipher.ENCRYPT_MODE));
 	}
 
@@ -99,7 +99,7 @@ public class DigestTool {
 	 * @param secret 密钥
 	 * @param content 加密内容
 	 */
-	private static void aesCheck(String secret, String content) {
+	private static void AESCheck(String secret, String content) {
 		if (StrTool.isAnyBlank(secret, content)) {
 			throw new ResultException("加密内容或密钥不能为空");
 		}
@@ -116,12 +116,12 @@ public class DigestTool {
 	 * @param flag 加解密.true->加密,false->解密
 	 * @return 加解密转换为16进制之后的大写字符串
 	 */
-	public static String aesSimpleCrypt(String secret, String content, boolean flag) {
-		aesCheck(secret, content);
+	public static String AESSimpleCrypt(String secret, String content, boolean flag) {
+		AESCheck(secret, content);
 		return flag
-				? HexTool.encodeHexString(aes(content.getBytes(CharsetTool.defaultCharset()),
+				? HexTool.encodeHexString(AES(content.getBytes(CharsetTool.defaultCharset()),
 						secret.getBytes(CharsetTool.defaultCharset()), Cipher.ENCRYPT_MODE))
-				: new String(aes(HexTool.decode(content), secret.getBytes(CharsetTool.defaultCharset()),
+				: new String(AES(HexTool.decode(content), secret.getBytes(CharsetTool.defaultCharset()),
 						Cipher.DECRYPT_MODE), CharsetTool.defaultCharset());
 	}
 
@@ -133,7 +133,7 @@ public class DigestTool {
 	 * @param mode 加解密模式
 	 * @return 加解密后的字符串
 	 */
-	public static byte[] aesSimpleCrypt(byte[] secret, byte[] content, int mode) {
+	public static byte[] AESSimpleCrypt(byte[] secret, byte[] content, int mode) {
 		try {
 			// 构造密钥生成器,指定为AES算法,不区分大小写
 			KeyGenerator keygen = KeyGenerator.getInstance(CryptType.AES.getType());
@@ -143,14 +143,14 @@ public class DigestTool {
 			SecretKey originalKey = keygen.generateKey();
 			// 获得原始对称密钥的字节数组
 			byte[] raw = originalKey.getEncoded();
-			return aes(content, raw, mode);
+			return AES(content, raw, mode);
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			throw new ResultException(e.getMessage());
 		}
 	}
 
-	private static final byte[] aes(byte[] content, byte[] raw, int mode) {
+	private static final byte[] AES(byte[] content, byte[] raw, int mode) {
 		// 根据字节数组生成AES密钥
 		SecretKey key = new SecretKeySpec(raw, CryptType.AES.getType());
 		try {
@@ -174,7 +174,7 @@ public class DigestTool {
 	 * @param encryptKey 加密key
 	 * @return 加密后的base64字符串
 	 */
-	public static String desEncrypt(String encryptString, String encryptKey) {
+	public static String DESEncrypt(String encryptString, String encryptKey) {
 		SecretKeySpec key = new SecretKeySpec(encryptKey.getBytes(), CryptType.DES.getType());
 		try {
 			Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
@@ -194,7 +194,7 @@ public class DigestTool {
 	 * @param decryptKey 解密key
 	 * @return 加密后的字符串
 	 */
-	public static String desDecrypt(String decryptString, String decryptKey) {
+	public static String DESDecrypt(String decryptString, String decryptKey) {
 		byte[] byteMi = Base64.getDecoder().decode(decryptString);
 		SecretKeySpec key = new SecretKeySpec(decryptKey.getBytes(), CryptType.DES.getType());
 		try {
@@ -315,7 +315,7 @@ public class DigestTool {
 	 * @param bytes 需要进行加密的字节数组
 	 * @return MD5加密后的原始字节数组
 	 */
-	public static byte[] md5(byte[] bytes) {
+	public static byte[] MD5(byte[] bytes) {
 		return digest(MessageDigestType.MD5, bytes);
 	}
 
@@ -325,7 +325,7 @@ public class DigestTool {
 	 * @param content 需要进行加密的字符串
 	 * @return MD5加密后的原始字节数组
 	 */
-	public static byte[] md5(String content) {
+	public static byte[] MD5(String content) {
 		return digest(MessageDigestType.MD5, content.getBytes(CharsetTool.defaultCharset()));
 	}
 
@@ -335,7 +335,7 @@ public class DigestTool {
 	 * @param bytes 需要进行加密的字节数组
 	 * @return 加密后的16进制大写字符串
 	 */
-	public static String md5Hex(byte[] bytes) {
+	public static String MD5Hex(byte[] bytes) {
 		return digestHex(MessageDigestType.MD5, bytes);
 	}
 
@@ -345,8 +345,8 @@ public class DigestTool {
 	 * @param content 需要进行加密的字符串
 	 * @return 加密后的16进制大写字符串
 	 */
-	public static String md5Hex(String content) {
-		return md5Hex(content.getBytes(CharsetTool.defaultCharset()));
+	public static String MD5Hex(String content) {
+		return MD5Hex(content.getBytes(CharsetTool.defaultCharset()));
 	}
 
 	/**
@@ -356,8 +356,8 @@ public class DigestTool {
 	 * @param charset 字符编码
 	 * @return 加密后的16进制大写字符串
 	 */
-	public static String md5Hex(String content, Charset charset) {
-		return md5Hex(content.getBytes(CharsetTool.defaultCharset(charset)));
+	public static String MD5Hex(String content, Charset charset) {
+		return MD5Hex(content.getBytes(CharsetTool.defaultCharset(charset)));
 	}
 
 	/**
@@ -367,8 +367,20 @@ public class DigestTool {
 	 * @param charset 字符编码字符串
 	 * @return 加密后的16进制大写字符串
 	 */
-	public static String md5Hex(String content, String charset) {
-		return md5Hex(content.getBytes(CharsetTool.defaultCharset(charset)));
+	public static String MD5Hex(String content, String charset) {
+		return MD5Hex(content.getBytes(CharsetTool.defaultCharset(charset)));
+	}
+
+	/**
+	 * RSA私钥解密
+	 * 
+	 * @param privateKeyStr 私钥字符串
+	 * @param content 若是分段加密,则需要分段解密
+	 * @return 加密后字符串
+	 */
+	public static String RSADecrypt(String privateKeyStr, String content) {
+		RSAPrivateKey rsaPrivateKey = RSAPrivateKey(privateKeyStr);
+		return RSADecrypt(rsaPrivateKey, content);
 	}
 
 	/**
@@ -378,7 +390,7 @@ public class DigestTool {
 	 * @param content 若是分段加密,则需要分段解密
 	 * @return 加密后字符串
 	 */
-	public static String rsaDecrypt(PrivateKey privateKey, String content) {
+	public static String RSADecrypt(PrivateKey privateKey, String content) {
 		// base64编码规定一行字符串不能超过76个,超过换行,换行符会导致编码失败
 		content = content.replaceAll("\r|\n", "");
 		byte[] textb = Base64.getDecoder().decode(content);
@@ -408,10 +420,21 @@ public class DigestTool {
 	/**
 	 * RSA公钥加密
 	 * 
+	 * @param publicKeyStr 公钥字符串
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容长度大于(秘钥长度(1024)/8-11=117), 则需要分段加密
+	 */
+	public static String RSAEncrypt(String publicKeyStr, String content) {
+		RSAPublicKey rsaPublicKey = RSAPublicKey(publicKeyStr);
+		return RSAEncrypt(rsaPublicKey, content);
+	}
+
+	/**
+	 * RSA公钥加密
+	 * 
 	 * @param publicKey
 	 * @param content 加密内容长度受秘钥长度限制,若加密内容长度大于(秘钥长度(1024)/8-11=117), 则需要分段加密
 	 */
-	public static String rsaEncrypt(PublicKey publicKey, String content) {
+	public static String RSAEncrypt(PublicKey publicKey, String content) {
 		byte[] plainText = content.getBytes(CharsetTool.defaultCharset());
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
 			Cipher cipher = Cipher.getInstance(CryptType.RSA.getType());
@@ -441,10 +464,22 @@ public class DigestTool {
 	 * 
 	 * @return 公私钥键值对,公私钥都已经经过base64编码
 	 */
-	public static Map<String, String> rsaGenerateKey() {
+	public static Map<String, String> RSAGenerateKey() {
+		return RSAGenerateKey(1024);
+	}
+
+	/**
+	 * RSA生成公私钥
+	 * 
+	 * @return 公私钥键值对,公私钥都已经经过base64编码
+	 */
+	public static Map<String, String> RSAGenerateKey(int length) {
+		if (length % 512 != 0) {
+			throw new ResultException("密钥长度错误,必须是512的倍数");
+		}
 		try {
 			KeyPairGenerator key = KeyPairGenerator.getInstance(CryptType.RSA.getType());
-			key.initialize(1024);
+			key.initialize(length);
 			KeyPair keyPair = key.generateKeyPair();
 			return MapTool
 					.builderGeneric(PUBLIC_KEY, Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()))
@@ -461,8 +496,9 @@ public class DigestTool {
 	 * @param publicKeyStr 公钥字符串
 	 * @return RSA公钥
 	 */
-	public static final RSAPublicKey rsaPublicKey(String publicKeyStr) {
-		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyStr));
+	public static final RSAPublicKey RSAPublicKey(String publicKeyStr) {
+		X509EncodedKeySpec keySpec =
+				new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyStr.replaceAll("\r|\n", "")));
 		try {
 			KeyFactory keyFactory = KeyFactory.getInstance(CryptType.RSA.getType());
 			return (RSAPublicKey) keyFactory.generatePublic(keySpec);
@@ -478,9 +514,9 @@ public class DigestTool {
 	 * @param privateKeyStr 私钥字符串
 	 * @return RSA私钥
 	 */
-	public static RSAPrivateKey rsaPrivateKey(String privateKeyStr) {
-		byte[] buffer = Base64.getDecoder().decode(privateKeyStr);
-		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(buffer);
+	public static RSAPrivateKey RSAPrivateKey(String privateKeyStr) {
+		PKCS8EncodedKeySpec keySpec =
+				new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyStr.replaceAll("\r|\n", "")));
 		try {
 			KeyFactory keyFactory = KeyFactory.getInstance(CryptType.RSA.getType());
 			return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
@@ -497,10 +533,10 @@ public class DigestTool {
 	 * @param privateKeyStr 私钥字符串
 	 * @return 签名后的字节数组
 	 */
-	public static byte[] rsaSign(byte[] data, String privateKeyStr) {
+	public static byte[] RSASign(byte[] data, String privateKeyStr) {
 		try {
-			PrivateKey privateKey = rsaPrivateKey(privateKeyStr);
-			Signature signature = Signature.getInstance(CryptType.RSA.getType());
+			PrivateKey privateKey = RSAPrivateKey(privateKeyStr.replaceAll("\r|\n", ""));
+			Signature signature = Signature.getInstance(CryptType.SHA1_WITH_RSA.getType());
 			signature.initSign(privateKey);
 			signature.update(data);
 			return signature.sign();
@@ -511,20 +547,68 @@ public class DigestTool {
 	}
 
 	/**
-	 * RSA公钥验证
+	 * RSA私钥签名,和加密正好相反
 	 * 
 	 * @param data 签名数据
-	 * @param sign 签名后的字节数组
+	 * @param privateKeyStr 私钥字符串
+	 * @return 签名后的Base64字符串
+	 */
+	public static String RSASignString(byte[] data, String privateKeyStr) {
+		try {
+			PrivateKey privateKey = RSAPrivateKey(privateKeyStr.replaceAll("\r|\n", ""));
+			Signature signature = Signature.getInstance(CryptType.SHA1_WITH_RSA.getType());
+			signature.initSign(privateKey);
+			signature.update(data);
+			return Base64.getEncoder().encodeToString(signature.sign());
+		} catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+			e.printStackTrace();
+			throw new ResultException(e.getMessage());
+		}
+	}
+
+	/**
+	 * RSA公钥验证
+	 * 
+	 * @param data 原数据
+	 * @param sign 签名后的字符串
 	 * @param publicKeyStr 公钥字符串
 	 * @return 验证是否正确.true->正确,false->错误
 	 */
-	public static boolean rsaVerify(byte[] data, byte[] sign, String publicKeyStr)
-			throws SignatureException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException {
-		PublicKey publicKey = rsaPublicKey(publicKeyStr);
-		Signature signature = Signature.getInstance(CryptType.RSA.getType());
-		signature.initVerify(publicKey);
-		signature.update(data);
-		return signature.verify(sign);
+	public static boolean RSAVerify(String data, String sign, String publicKeyStr) {
+		return RSAVerify(data.getBytes(), Base64.getDecoder().decode(sign), publicKeyStr);
+	}
+
+	/**
+	 * RSA公钥验证
+	 * 
+	 * @param data 原数据字节数组
+	 * @param sign 签名后的字符串
+	 * @param publicKeyStr 公钥字符串
+	 * @return 验证是否正确.true->正确,false->错误
+	 */
+	public static boolean RSAVerify(byte[] data, String sign, String publicKeyStr) {
+		return RSAVerify(data, Base64.getDecoder().decode(sign), publicKeyStr);
+	}
+
+	/**
+	 * RSA公钥验证
+	 * 
+	 * @param data 原数据字节数组
+	 * @param sign 签名后经过Base64解码的字节数组
+	 * @param publicKeyStr 公钥字符串
+	 * @return 验证是否正确.true->正确,false->错误
+	 */
+	public static boolean RSAVerify(byte[] data, byte[] sign, String publicKeyStr) {
+		PublicKey publicKey = RSAPublicKey(publicKeyStr);
+		try {
+			Signature signature = Signature.getInstance(CryptType.SHA1_WITH_RSA.getType());
+			signature.initVerify(publicKey);
+			signature.update(data);
+			return signature.verify(sign);
+		} catch (NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	/**

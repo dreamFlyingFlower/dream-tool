@@ -11,7 +11,9 @@ public enum CryptType {
 
 	AES("AES"),
 	DES("DES"),
-	RSA("RSA");
+	RSA("RSA"),
+
+	SHA1_WITH_RSA("SHA1withRSA");
 
 	private String type;
 
