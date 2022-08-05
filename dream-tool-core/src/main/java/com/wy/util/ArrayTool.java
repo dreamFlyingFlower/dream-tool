@@ -46,9 +46,9 @@ public class ArrayTool {
 	private ArrayTool() {}
 
 	/**
-	 * 在数组末尾添加一个元素
+	 * 在新数组末尾添加一个元素,原数组不改变,返回一个新的数组
 	 * 
-	 * @param array 数组
+	 * @param array 原数组
 	 * @param element 新的元素
 	 * @return 新的数组
 	 */
@@ -60,9 +60,9 @@ public class ArrayTool {
 	}
 
 	/**
-	 * 在数组末尾添加一个元素
+	 * 在新数组末尾添加一个元素,原数组不改变,返回一个新的数组
 	 * 
-	 * @param array 数组
+	 * @param array 原数组
 	 * @param element 新的元素
 	 * @return 新的数组
 	 */
@@ -74,9 +74,9 @@ public class ArrayTool {
 	}
 
 	/**
-	 * 在数组末尾添加一个元素
+	 * 在新数组末尾添加一个元素,原数组不改变,返回一个新的数组
 	 * 
-	 * @param array 数组
+	 * @param array 原数组
 	 * @param element 新的元素
 	 * @return 新的数组
 	 */
@@ -88,9 +88,9 @@ public class ArrayTool {
 	}
 
 	/**
-	 * 在数组末尾添加一个元素
+	 * 在新数组末尾添加一个元素,原数组不改变,返回一个新的数组
 	 * 
-	 * @param array 数组
+	 * @param array 原数组
 	 * @param element 新的元素
 	 * @return 新的数组
 	 */
@@ -102,9 +102,9 @@ public class ArrayTool {
 	}
 
 	/**
-	 * 在数组末尾添加一个元素
+	 * 在新数组末尾添加一个元素,原数组不改变,返回一个新的数组
 	 * 
-	 * @param array 数组
+	 * @param array 原数组
 	 * @param element 新的元素
 	 * @return 新的数组
 	 */
@@ -116,9 +116,9 @@ public class ArrayTool {
 	}
 
 	/**
-	 * 在数组末尾添加一个元素
+	 * 在新数组末尾添加一个元素,原数组不改变,返回一个新的数组
 	 * 
-	 * @param array 数组
+	 * @param array 原数组
 	 * @param element 新的元素
 	 * @return 新的数组
 	 */
@@ -130,9 +130,9 @@ public class ArrayTool {
 	}
 
 	/**
-	 * 在数组末尾添加一个元素
+	 * 在新数组末尾添加一个元素,原数组不改变,返回一个新的数组
 	 * 
-	 * @param array 数组
+	 * @param array 原数组
 	 * @param element 新的元素
 	 * @return 新的数组
 	 */
@@ -144,9 +144,9 @@ public class ArrayTool {
 	}
 
 	/**
-	 * 在数组末尾添加一个元素
+	 * 在新数组末尾添加一个元素,原数组不改变,返回一个新的数组
 	 * 
-	 * @param array 数组
+	 * @param array 原数组
 	 * @param element 新的元素
 	 * @return 新的数组
 	 */
@@ -155,6 +155,47 @@ public class ArrayTool {
 		System.arraycopy(array, 0, result, 0, array.length);
 		result[result.length - 1] = element;
 		return result;
+	}
+
+	/**
+	 * 在新数组末尾添加一个元素,原数组不改变,返回一个新的数组
+	 * 
+	 * @param <T> 泛型
+	 * @param array 原数组
+	 * @param element 新元素
+	 * @return 新的数组
+	 */
+	public static <T> T[] append(T[] array, T element) {
+		return appendAssignable(array, element);
+	}
+
+	/**
+	 * 在新数组末尾添加一个元素,原数组不改变,返回一个新的数组
+	 * 
+	 * @param <P> 父类泛型
+	 * @param <C> 子类泛型
+	 * @param array 原数组
+	 * @param element 新元素
+	 * @return 新的数组
+	 */
+	public static <P, C extends P> P[] appendAssignable(P[] array, C element) {
+		if (element == null) {
+			return array;
+		}
+		Class<?> compType = null;
+		if (array != null) {
+			compType = array.getClass().getComponentType();
+		} else {
+			compType = element.getClass();
+		}
+		int newArrLength = (array != null ? array.length + 1 : 1);
+		@SuppressWarnings("unchecked")
+		P[] newArr = (P[]) Array.newInstance(compType, newArrLength);
+		if (array != null) {
+			System.arraycopy(array, 0, newArr, 0, array.length);
+		}
+		newArr[newArr.length - 1] = element;
+		return newArr;
 	}
 
 	/**
@@ -1222,7 +1263,7 @@ public class ArrayTool {
 	 * @since JDK1.8
 	 */
 	public static String join8(final String separator, final double[] array, final int start, final int end,
-			String prefix, String suffix) {
+	        String prefix, String suffix) {
 		if (isEmpty(array)) {
 			return ConstLang.STR_EMPTY;
 		}
@@ -1795,7 +1836,7 @@ public class ArrayTool {
 			final Class<?> type2 = array2.getClass().getComponentType();
 			if (!type1.isAssignableFrom(type2)) {
 				throw new IllegalArgumentException(
-						"Cannot store " + type2.getName() + " in an array of " + type1.getName(), ase);
+				        "Cannot store " + type2.getName() + " in an array of " + type1.getName(), ase);
 			}
 			throw ase;
 		}
@@ -2952,7 +2993,7 @@ public class ArrayTool {
 	public static double[] toArrayDouble8(Collection<Double> collection) {
 		if (ListTool.isNotEmpty(collection)) {
 			return Arrays.stream(collection.toArray(new Double[collection.size()])).mapToDouble(Double::valueOf)
-					.toArray();
+			        .toArray();
 		}
 		return null;
 	}
@@ -3024,7 +3065,7 @@ public class ArrayTool {
 	public static int[] toArrayInt8(Collection<Integer> collection) {
 		if (ListTool.isNotEmpty(collection)) {
 			return Arrays.stream(collection.toArray(new Integer[collection.size()])).mapToInt(Integer::valueOf)
-					.toArray();
+			        .toArray();
 		}
 		return null;
 	}

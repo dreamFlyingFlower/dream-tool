@@ -44,7 +44,7 @@ public class ObjectTool {
 					result = clone.invoke(obj);
 					return (T) result;
 				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException e) {
+				        | InvocationTargetException e) {
 					e.printStackTrace();
 				}
 			}
@@ -70,6 +70,16 @@ public class ObjectTool {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * 获取对象 HashCode(十六进制形式字符串).参数为 null 时,返回 0
+	 * 
+	 * @param obj 参数
+	 * @return 对象 HashCode
+	 */
+	public static String getIdentityHexString(Object obj) {
+		return Integer.toHexString(System.identityHashCode(obj));
 	}
 
 	/**
