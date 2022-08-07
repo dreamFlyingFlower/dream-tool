@@ -8,12 +8,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wy.ConstArray;
 import com.wy.ConstClass;
 import com.wy.ConstLang;
 import com.wy.collection.ListTool;
 import com.wy.lang.AssertTool;
 import com.wy.result.ResultException;
-import com.wy.util.ArrayTool;
 
 /**
  * Class工具类,不涉及构造,方法,字段 FIXME
@@ -636,7 +636,7 @@ public class ClassTool {
 	 */
 	public static Class<?>[] toClass(final Object... array) {
 		if (null == array || array.length == 0) {
-			return ArrayTool.ARRAY_EMPTY_CLASS;
+			return ConstArray.EMPTY_CLASS;
 		}
 		final Class<?>[] classes = new Class[array.length];
 		for (int i = 0; i < array.length; i++) {

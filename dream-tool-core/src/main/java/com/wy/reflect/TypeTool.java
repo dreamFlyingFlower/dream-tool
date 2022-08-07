@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import com.wy.ConstArray;
 import com.wy.lang.AssertTool;
 import com.wy.lang.ObjectTool;
 import com.wy.util.ArrayTool;
@@ -41,7 +42,8 @@ public class TypeTool {
 	 */
 	public static class WildcardTypeBuilder implements Supplier<WildcardType> {
 
-		private WildcardTypeBuilder() {}
+		private WildcardTypeBuilder() {
+		}
 
 		private Type[] upperBounds;
 
@@ -198,8 +200,8 @@ public class TypeTool {
 		 * @param lowerBounds of this type
 		 */
 		private WildcardTypeImpl(final Type[] upperBounds, final Type[] lowerBounds) {
-			this.upperBounds = ObjectTool.getNull(upperBounds, ArrayTool.ARRAY_EMPTY_TYPE);
-			this.lowerBounds = ObjectTool.getNull(lowerBounds, ArrayTool.ARRAY_EMPTY_TYPE);
+			this.upperBounds = ObjectTool.getNull(upperBounds, ConstArray.EMPTY_TYPE);
+			this.lowerBounds = ObjectTool.getNull(lowerBounds, ConstArray.EMPTY_TYPE);
 		}
 
 		@Override
@@ -237,12 +239,14 @@ public class TypeTool {
 	 */
 	public static final WildcardType WILDCARD_ALL = wildcardType().withUpperBounds(Object.class).get();
 
-	public TypeTool() {}
+	public TypeTool() {
+	}
 
 	/**
 	 * <p>
-	 * Checks if the subject type may be implicitly cast to the target type following the Java generics
-	 * rules. If both types are {@link Class} objects, the method returns the result of
+	 * Checks if the subject type may be implicitly cast to the target type
+	 * following the Java generics rules. If both types are {@link Class} objects,
+	 * the method returns the result of
 	 * {@link ClassTool#isAssignable(Class, Class)}.
 	 * </p>
 	 *
@@ -256,8 +260,8 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Checks if the subject type may be implicitly cast to the target type following the Java generics
-	 * rules.
+	 * Checks if the subject type may be implicitly cast to the target type
+	 * following the Java generics rules.
 	 * </p>
 	 *
 	 * @param type the subject type to be assigned to the target type
@@ -288,8 +292,8 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Checks if the subject type may be implicitly cast to the target class following the Java generics
-	 * rules.
+	 * Checks if the subject type may be implicitly cast to the target class
+	 * following the Java generics rules.
 	 * </p>
 	 *
 	 * @param type the subject type to be assigned to the target type
@@ -347,8 +351,8 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Checks if the subject type may be implicitly cast to the target parameterized type following the
-	 * Java generics rules.
+	 * Checks if the subject type may be implicitly cast to the target parameterized
+	 * type following the Java generics rules.
 	 * </p>
 	 *
 	 * @param type the subject type to be assigned to the target type
@@ -392,8 +396,8 @@ public class TypeTool {
 		}
 
 		// get the target type's type arguments including owner type arguments
-		final Map<TypeVariable<?>, Type> toTypeVarAssigns = getTypeArguments(toParameterizedType, toClass,
-				typeVarAssigns);
+		final Map<TypeVariable<?>, Type> toTypeVarAssigns =
+				getTypeArguments(toParameterizedType, toClass, typeVarAssigns);
 
 		// now to check each type argument
 		for (final TypeVariable<?> var : toTypeVarAssigns.keySet()) {
@@ -416,8 +420,8 @@ public class TypeTool {
 	}
 
 	/**
-	 * Look up {@code var} in {@code typeVarAssigns} <em>transitively</em>, i.e. keep looking until the
-	 * value found is <em>not</em> a type variable.
+	 * Look up {@code var} in {@code typeVarAssigns} <em>transitively</em>, i.e.
+	 * keep looking until the value found is <em>not</em> a type variable.
 	 * 
 	 * @param typeVariable the type variable to look up
 	 * @param typeVarAssigns the map used for the look up
@@ -439,14 +443,15 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Checks if the subject type may be implicitly cast to the target generic array type following the
-	 * Java generics rules.
+	 * Checks if the subject type may be implicitly cast to the target generic array
+	 * type following the Java generics rules.
 	 * </p>
 	 *
 	 * @param type the subject type to be assigned to the target type
 	 * @param toGenericArrayType the target generic array type
 	 * @param typeVarAssigns a map with type variables
-	 * @return {@code true} if {@code type} is assignable to {@code toGenericArrayType}.
+	 * @return {@code true} if {@code type} is assignable to
+	 *         {@code toGenericArrayType}.
 	 */
 	private static boolean isAssignable(final Type type, final GenericArrayType toGenericArrayType,
 			final Map<TypeVariable<?>, Type> typeVarAssigns) {
@@ -514,8 +519,8 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Checks if the subject type may be implicitly cast to the target wildcard type following the Java
-	 * generics rules.
+	 * Checks if the subject type may be implicitly cast to the target wildcard type
+	 * following the Java generics rules.
 	 * </p>
 	 *
 	 * @param type the subject type to be assigned to the target type
@@ -600,8 +605,8 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Checks if the subject type may be implicitly cast to the target type variable following the Java
-	 * generics rules.
+	 * Checks if the subject type may be implicitly cast to the target type variable
+	 * following the Java generics rules.
 	 * </p>
 	 *
 	 * @param type the subject type to be assigned to the target type
@@ -671,13 +676,16 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Retrieves all the type arguments for this parameterized type including owner hierarchy arguments
-	 * such as {@code Outer<K, V>.Inner<T>.DeepInner<E>} . The arguments are returned in a {@link Map}
-	 * specifying the argument type for each {@link TypeVariable}.
+	 * Retrieves all the type arguments for this parameterized type including owner
+	 * hierarchy arguments such as {@code Outer<K, V>.Inner<T>.DeepInner<E>} . The
+	 * arguments are returned in a {@link Map} specifying the argument type for each
+	 * {@link TypeVariable}.
 	 * </p>
 	 *
-	 * @param type specifies the subject parameterized type from which to harvest the parameters.
-	 * @return a {@code Map} of the type arguments to their respective type variables.
+	 * @param type specifies the subject parameterized type from which to harvest
+	 *        the parameters.
+	 * @return a {@code Map} of the type arguments to their respective type
+	 *         variables.
 	 */
 	public static Map<TypeVariable<?>, Type> getTypeArguments(final ParameterizedType type) {
 		return getTypeArguments(type, getRawType(type), null);
@@ -685,34 +693,40 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Gets the type arguments of a class/interface based on a subtype. For instance, this method will
-	 * determine that both of the parameters for the interface {@link Map} are {@link Object} for the
-	 * subtype {@link java.util.Properties Properties} even though the subtype does not directly
-	 * implement the {@code Map} interface.
+	 * Gets the type arguments of a class/interface based on a subtype. For
+	 * instance, this method will determine that both of the parameters for the
+	 * interface {@link Map} are {@link Object} for the subtype
+	 * {@link java.util.Properties Properties} even though the subtype does not
+	 * directly implement the {@code Map} interface.
 	 * </p>
 	 * <p>
-	 * This method returns {@code null} if {@code type} is not assignable to {@code toClass}. It returns
-	 * an empty map if none of the classes or interfaces in its inheritance hierarchy specify any type
-	 * arguments.
+	 * This method returns {@code null} if {@code type} is not assignable to
+	 * {@code toClass}. It returns an empty map if none of the classes or interfaces
+	 * in its inheritance hierarchy specify any type arguments.
 	 * </p>
 	 * <p>
-	 * A side effect of this method is that it also retrieves the type arguments for the classes and
-	 * interfaces that are part of the hierarchy between {@code type} and {@code toClass}. So with the
-	 * above example, this method will also determine that the type arguments for
-	 * {@link java.util.Hashtable Hashtable} are also both {@code Object}. In cases where the interface
-	 * specified by {@code toClass} is (indirectly) implemented more than once (e.g. where
-	 * {@code toClass} specifies the interface {@link java.lang.Iterable Iterable} and {@code type}
-	 * specifies a parameterized type that implements both {@link java.util.Set Set} and
-	 * {@link java.util.Collection Collection}), this method will look at the inheritance hierarchy of
-	 * only one of the implementations/subclasses; the first interface encountered that isn't a
-	 * subinterface to one of the others in the {@code type} to {@code toClass} hierarchy.
+	 * A side effect of this method is that it also retrieves the type arguments for
+	 * the classes and interfaces that are part of the hierarchy between
+	 * {@code type} and {@code toClass}. So with the above example, this method will
+	 * also determine that the type arguments for {@link java.util.Hashtable
+	 * Hashtable} are also both {@code Object}. In cases where the interface
+	 * specified by {@code toClass} is (indirectly) implemented more than once (e.g.
+	 * where {@code toClass} specifies the interface {@link java.lang.Iterable
+	 * Iterable} and {@code type} specifies a parameterized type that implements
+	 * both {@link java.util.Set Set} and {@link java.util.Collection Collection}),
+	 * this method will look at the inheritance hierarchy of only one of the
+	 * implementations/subclasses; the first interface encountered that isn't a
+	 * subinterface to one of the others in the {@code type} to {@code toClass}
+	 * hierarchy.
 	 * </p>
 	 *
-	 * @param type the type from which to determine the type parameters of {@code toClass}
-	 * @param toClass the class whose type parameters are to be determined based on the subtype
-	 *        {@code type}
-	 * @return a {@code Map} of the type assignments for the type variables in each type in the
-	 *         inheritance hierarchy from {@code type} to {@code toClass} inclusive.
+	 * @param type the type from which to determine the type parameters of
+	 *        {@code toClass}
+	 * @param toClass the class whose type parameters are to be determined based on
+	 *        the subtype {@code type}
+	 * @return a {@code Map} of the type assignments for the type variables in each
+	 *         type in the inheritance hierarchy from {@code type} to
+	 *         {@code toClass} inclusive.
 	 */
 	public static Map<TypeVariable<?>, Type> getTypeArguments(final Type type, final Class<?> toClass) {
 		return getTypeArguments(type, toClass, null);
@@ -720,7 +734,8 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Return a map of the type arguments of {@code type} in the context of {@code toClass}.
+	 * Return a map of the type arguments of {@code type} in the context of
+	 * {@code toClass}.
 	 * </p>
 	 *
 	 * @param type the type in question
@@ -771,7 +786,8 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Return a map of the type arguments of a parameterized type in the context of {@code toClass}.
+	 * Return a map of the type arguments of a parameterized type in the context of
+	 * {@code toClass}.
 	 * </p>
 	 *
 	 * @param parameterizedType the parameterized type
@@ -794,8 +810,8 @@ public class TypeTool {
 		if (ownerType instanceof ParameterizedType) {
 			// get the owner type arguments first
 			final ParameterizedType parameterizedOwnerType = (ParameterizedType) ownerType;
-			typeVarAssigns = getTypeArguments(parameterizedOwnerType, getRawType(parameterizedOwnerType),
-					subtypeVarAssigns);
+			typeVarAssigns =
+					getTypeArguments(parameterizedOwnerType, getRawType(parameterizedOwnerType), subtypeVarAssigns);
 		} else {
 			// no owner, prep the type variable assignments map
 			typeVarAssigns = subtypeVarAssigns == null ? new HashMap<>() : new HashMap<>(subtypeVarAssigns);
@@ -823,7 +839,8 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Return a map of the type arguments of a class in the context of {@code toClass}.
+	 * Return a map of the type arguments of a class in the context of
+	 * {@code toClass}.
 	 * </p>
 	 *
 	 * @param cls the class in question
@@ -852,8 +869,8 @@ public class TypeTool {
 		}
 
 		// create a copy of the incoming map, or an empty one if it's null
-		final HashMap<TypeVariable<?>, Type> typeVarAssigns = subtypeVarAssigns == null ? new HashMap<>()
-				: new HashMap<>(subtypeVarAssigns);
+		final HashMap<TypeVariable<?>, Type> typeVarAssigns =
+				subtypeVarAssigns == null ? new HashMap<>() : new HashMap<>(subtypeVarAssigns);
 
 		// has target class been reached?
 		if (toClass.equals(cls)) {
@@ -866,30 +883,35 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Tries to determine the type arguments of a class/interface based on a super parameterized type's
-	 * type arguments. This method is the inverse of {@link #getTypeArguments(Type, Class)} which gets a
-	 * class/interface's type arguments based on a subtype. It is far more limited in determining the
-	 * type arguments for the subject class's type variables in that it can only determine those
-	 * parameters that map from the subject {@link Class} object to the supertype.
+	 * Tries to determine the type arguments of a class/interface based on a super
+	 * parameterized type's type arguments. This method is the inverse of
+	 * {@link #getTypeArguments(Type, Class)} which gets a class/interface's type
+	 * arguments based on a subtype. It is far more limited in determining the type
+	 * arguments for the subject class's type variables in that it can only
+	 * determine those parameters that map from the subject {@link Class} object to
+	 * the supertype.
 	 * </p>
 	 * <p>
-	 * Example: {@link java.util.TreeSet TreeSet} sets its parameter as the parameter for
-	 * {@link java.util.NavigableSet NavigableSet}, which in turn sets the parameter of
-	 * {@link java.util.SortedSet}, which in turn sets the parameter of {@link Set}, which in turn sets
-	 * the parameter of {@link java.util.Collection}, which in turn sets the parameter of
-	 * {@link java.lang.Iterable}. Since {@code TreeSet}'s parameter maps (indirectly) to
-	 * {@code Iterable}'s parameter, it will be able to determine that based on the super type
-	 * {@code Iterable<? extends
+	 * Example: {@link java.util.TreeSet TreeSet} sets its parameter as the
+	 * parameter for {@link java.util.NavigableSet NavigableSet}, which in turn sets
+	 * the parameter of {@link java.util.SortedSet}, which in turn sets the
+	 * parameter of {@link Set}, which in turn sets the parameter of
+	 * {@link java.util.Collection}, which in turn sets the parameter of
+	 * {@link java.lang.Iterable}. Since {@code TreeSet}'s parameter maps
+	 * (indirectly) to {@code Iterable}'s parameter, it will be able to determine
+	 * that based on the super type {@code Iterable<? extends
 	 * Map<Integer, ? extends Collection<?>>>}, the parameter of {@code TreeSet} is
 	 * {@code ? extends Map<Integer, ? extends
 	 * Collection<?>>}.
 	 * </p>
 	 *
-	 * @param cls the class whose type parameters are to be determined, not {@code null}
-	 * @param superType the super type from which {@code cls}'s type arguments are to be determined, not
+	 * @param cls the class whose type parameters are to be determined, not
 	 *        {@code null}
-	 * @return a {@code Map} of the type assignments that could be determined for the type variables in
-	 *         each type in the inheritance hierarchy from {@code type} to {@code toClass} inclusive.
+	 * @param superType the super type from which {@code cls}'s type arguments are
+	 *        to be determined, not {@code null}
+	 * @return a {@code Map} of the type assignments that could be determined for
+	 *         the type variables in each type in the inheritance hierarchy from
+	 *         {@code type} to {@code toClass} inclusive.
 	 */
 	public static Map<TypeVariable<?>, Type> determineTypeArguments(final Class<?> cls,
 			final ParameterizedType superType) {
@@ -976,7 +998,8 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Get the closest parent type to the super class specified by {@code superClass}.
+	 * Get the closest parent type to the super class specified by
+	 * {@code superClass}.
 	 * </p>
 	 *
 	 * @param cls the class in question
@@ -1023,7 +1046,8 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Checks if the given value can be assigned to the target type following the Java generics rules.
+	 * Checks if the given value can be assigned to the target type following the
+	 * Java generics rules.
 	 * </p>
 	 *
 	 * @param value the value to be checked
@@ -1041,8 +1065,9 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * This method strips out the redundant upper bound types in type variable types and wildcard types
-	 * (or it would with wildcard types if multiple upper bounds were allowed).
+	 * This method strips out the redundant upper bound types in type variable types
+	 * and wildcard types (or it would with wildcard types if multiple upper bounds
+	 * were allowed).
 	 * </p>
 	 * <p>
 	 * Example, with the variable type declaration:
@@ -1053,17 +1078,18 @@ public class TypeTool {
 	 * </pre>
 	 *
 	 * <p>
-	 * since {@code List} is a subinterface of {@code Collection}, this method will return the bounds as
-	 * if the declaration had been:
+	 * since {@code List} is a subinterface of {@code Collection}, this method will
+	 * return the bounds as if the declaration had been:
 	 * </p>
 	 *
 	 * <pre>
 	 * &lt;K extends java.util.List&lt;String&gt;&gt;
 	 * </pre>
 	 *
-	 * @param bounds an array of types representing the upper bounds of either {@link WildcardType} or
-	 *        {@link TypeVariable}, not {@code null}.
-	 * @return an array containing the values from {@code bounds} minus the redundant types.
+	 * @param bounds an array of types representing the upper bounds of either
+	 *        {@link WildcardType} or {@link TypeVariable}, not {@code null}.
+	 * @return an array containing the values from {@code bounds} minus the
+	 *         redundant types.
 	 */
 	public static Type[] normalizeUpperBounds(final Type[] bounds) {
 		AssertTool.notNull(bounds, "null value specified for bounds array");
@@ -1089,14 +1115,15 @@ public class TypeTool {
 			}
 		}
 
-		return types.toArray(ArrayTool.ARRAY_EMPTY_TYPE);
+		return types.toArray(ConstArray.EMPTY_TYPE);
 	}
 
 	/**
 	 * <p>
-	 * Returns an array containing the sole type of {@link Object} if {@link TypeVariable#getBounds()}
-	 * returns an empty array. Otherwise, it returns the result of {@link TypeVariable#getBounds()}
-	 * passed into {@link #normalizeUpperBounds}.
+	 * Returns an array containing the sole type of {@link Object} if
+	 * {@link TypeVariable#getBounds()} returns an empty array. Otherwise, it
+	 * returns the result of {@link TypeVariable#getBounds()} passed into
+	 * {@link #normalizeUpperBounds}.
 	 * </p>
 	 *
 	 * @param typeVariable the subject type variable, not {@code null}
@@ -1112,8 +1139,9 @@ public class TypeTool {
 	/**
 	 * <p>
 	 * Returns an array containing the sole value of {@link Object} if
-	 * {@link WildcardType#getUpperBounds()} returns an empty array. Otherwise, it returns the result of
-	 * {@link WildcardType#getUpperBounds()} passed into {@link #normalizeUpperBounds}.
+	 * {@link WildcardType#getUpperBounds()} returns an empty array. Otherwise, it
+	 * returns the result of {@link WildcardType#getUpperBounds()} passed into
+	 * {@link #normalizeUpperBounds}.
 	 * </p>
 	 *
 	 * @param wildcardType the subject wildcard type, not {@code null}
@@ -1128,8 +1156,8 @@ public class TypeTool {
 	/**
 	 * <p>
 	 * Returns an array containing a single value of {@code null} if
-	 * {@link WildcardType#getLowerBounds()} returns an empty array. Otherwise, it returns the result of
-	 * {@link WildcardType#getLowerBounds()}.
+	 * {@link WildcardType#getLowerBounds()} returns an empty array. Otherwise, it
+	 * returns the result of {@link WildcardType#getLowerBounds()}.
 	 * </p>
 	 *
 	 * @param wildcardType the subject wildcard type, not {@code null}
@@ -1144,15 +1172,18 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Determines whether or not specified types satisfy the bounds of their mapped type variables. When
-	 * a type parameter extends another (such as {@code <T, S extends T>}), uses another as a type
-	 * parameter (such as {@code <T, S extends Comparable>>}), or otherwise depends on another type
-	 * variable to be specified, the dependencies must be included in {@code typeVarAssigns}.
+	 * Determines whether or not specified types satisfy the bounds of their mapped
+	 * type variables. When a type parameter extends another (such as
+	 * {@code <T, S extends T>}), uses another as a type parameter (such as
+	 * {@code <T, S extends Comparable>>}), or otherwise depends on another type
+	 * variable to be specified, the dependencies must be included in
+	 * {@code typeVarAssigns}.
 	 * </p>
 	 *
-	 * @param typeVarAssigns specifies the potential types to be assigned to the type variables, not
-	 *        {@code null}.
-	 * @return whether or not the types can be assigned to their respective type variables.
+	 * @param typeVarAssigns specifies the potential types to be assigned to the
+	 *        type variables, not {@code null}.
+	 * @return whether or not the types can be assigned to their respective type
+	 *         variables.
 	 */
 	public static boolean typesSatisfyVariables(final Map<TypeVariable<?>, Type> typeVarAssigns) {
 		AssertTool.notNull(typeVarAssigns, "typeVarAssigns is null");
@@ -1173,7 +1204,8 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Transforms the passed in type to a {@link Class} object. Type-checking method of convenience.
+	 * Transforms the passed in type to a {@link Class} object. Type-checking method
+	 * of convenience.
 	 * </p>
 	 *
 	 * @param parameterizedType the type to be converted
@@ -1197,15 +1229,17 @@ public class TypeTool {
 
 	/**
 	 * <p>
-	 * Get the raw type of a Java type, given its context. Primarily for use with {@link TypeVariable}s
-	 * and {@link GenericArrayType}s, or when you do not know the runtime type of {@code type}: if you
-	 * know you have a {@link Class} instance, it is already raw; if you know you have a
+	 * Get the raw type of a Java type, given its context. Primarily for use with
+	 * {@link TypeVariable}s and {@link GenericArrayType}s, or when you do not know
+	 * the runtime type of {@code type}: if you know you have a {@link Class}
+	 * instance, it is already raw; if you know you have a
 	 * {@link ParameterizedType}, its raw type is only a method call away.
 	 * </p>
 	 *
 	 * @param type to resolve
 	 * @param assigningType type to be resolved against
-	 * @return the resolved {@link Class} object or {@code null} if the type could not be resolved
+	 * @return the resolved {@link Class} object or {@code null} if the type could
+	 *         not be resolved
 	 */
 	public static Class<?> getRawType(final Type type, final Type assigningType) {
 		if (type instanceof Class<?>) {
@@ -1234,8 +1268,8 @@ public class TypeTool {
 
 			// get the type arguments for the declaring class/interface based
 			// on the enclosing type
-			final Map<TypeVariable<?>, Type> typeVarAssigns = getTypeArguments(assigningType,
-					(Class<?>) genericDeclaration);
+			final Map<TypeVariable<?>, Type> typeVarAssigns =
+					getTypeArguments(assigningType, (Class<?>) genericDeclaration);
 
 			// enclosingType has to be a subclass (or subinterface) of the
 			// declaring type
@@ -1256,8 +1290,8 @@ public class TypeTool {
 
 		if (type instanceof GenericArrayType) {
 			// get raw component type
-			final Class<?> rawComponentType = getRawType(((GenericArrayType) type).getGenericComponentType(),
-					assigningType);
+			final Class<?> rawComponentType =
+					getRawType(((GenericArrayType) type).getGenericComponentType(), assigningType);
 
 			// create array type from raw component type and return its class
 			return Array.newInstance(rawComponentType, 0).getClass();
@@ -1275,7 +1309,8 @@ public class TypeTool {
 	 * Learn whether the specified type denotes an array type.
 	 * 
 	 * @param type the type to be checked
-	 * @return {@code true} if {@code type} is an array class or a {@link GenericArrayType}.
+	 * @return {@code true} if {@code type} is an array class or a
+	 *         {@link GenericArrayType}.
 	 */
 	public static boolean isArrayType(final Type type) {
 		return type instanceof GenericArrayType || type instanceof Class<?> && ((Class<?>) type).isArray();
@@ -1364,8 +1399,8 @@ public class TypeTool {
 	}
 
 	/**
-	 * Learn, recursively, whether any of the type parameters associated with {@code type} are bound to
-	 * variables.
+	 * Learn, recursively, whether any of the type parameters associated with
+	 * {@code type} are bound to variables.
 	 *
 	 * @param type the type to check for type variables
 	 * @return boolean
@@ -1502,8 +1537,8 @@ public class TypeTool {
 	/**
 	 * Create a generic array type instance.
 	 *
-	 * @param componentType the type of the elements of the array. For example the component type of
-	 *        {@code boolean[]} is {@code boolean}
+	 * @param componentType the type of the elements of the array. For example the
+	 *        component type of {@code boolean[]} is {@code boolean}
 	 * @return {@link GenericArrayType}
 	 */
 	public static GenericArrayType genericArrayType(final Type componentType) {
@@ -1632,7 +1667,8 @@ public class TypeTool {
 	/**
 	 * Format a {@link TypeVariable} including its {@link GenericDeclaration}.
 	 *
-	 * @param var the type variable to create a String representation for, not {@code null}
+	 * @param var the type variable to create a String representation for, not
+	 *        {@code null}
 	 * @return String
 	 * @since 3.2
 	 */
@@ -1757,7 +1793,8 @@ public class TypeTool {
 		for (int i = 0; i < recursiveTypeIndexes.length; i++) {
 			appendAllTo(builder.append('<'), ", ", argumentTypes[i].toString()).append('>');
 		}
-		// final Type[] argumentsFiltered = ArrayUtils.removeAll(argumentTypes, recursiveTypeIndexes);
+		// final Type[] argumentsFiltered = ArrayUtils.removeAll(argumentTypes,
+		// recursiveTypeIndexes);
 		boolean flag = true;
 		int count = 0;
 		Type[] argumentsFiltered = new Type[argumentTypes.length - recursiveTypeIndexes.length];

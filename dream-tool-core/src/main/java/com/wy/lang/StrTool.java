@@ -1590,6 +1590,27 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
+	 * 以 . 作为分隔符,获取指定字符串最后一部分
+	 * 
+	 * @param str 指定字符串
+	 * @return 最后一部分字符串
+	 */
+	public static String unqualify(String str) {
+		return unqualify(str, '.');
+	}
+
+	/**
+	 * 以指定字符作为分隔符,获取指定字符串最后一部分
+	 * 
+	 * @param str 指定字符串
+	 * @param separator 分隔符
+	 * @return 最后一部分字符串
+	 */
+	public static String unqualify(String str, char separator) {
+		return str.substring(str.lastIndexOf(separator) + 1);
+	}
+
+	/**
 	 * 展开源字符串,删除起始和末尾的指定字符.注意,起始和末尾必须都有才删除
 	 *
 	 * @param str 源字符串

@@ -1,17 +1,17 @@
 package com.wy.util;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.StringJoiner;
+import java.util.stream.Stream;
 
+import com.wy.ConstArray;
 import com.wy.ConstLang;
 import com.wy.collection.ListTool;
 import com.wy.lang.StrTool;
@@ -25,25 +25,8 @@ import com.wy.lang.StrTool;
  */
 public class ArrayTool {
 
-	/** 一个空Throwable数组 */
-	public static final Throwable[] ARRAY_EMPTY_THROWABLE = new Throwable[0];
-
-	/** 一个空Class数组 */
-	public static final Class<?>[] ARRAY_EMPTY_CLASS = new Class[0];
-
-	/** 一个空对象数组 */
-	public static final Object[] ARRAY_EMPTY_OBJECT = new Object[0];
-
-	/** 一个不可变的空Type数组 */
-	public static final Type[] ARRAY_EMPTY_TYPE = new Type[0];
-
-	/** 一个不可变的空Field数组 */
-	public static final Field[] ARRAY_EMPTY_FIELD = new Field[0];
-
-	/** 一个不可变的空Method数组 */
-	public static final Method[] ARRAY_EMPTY_METHOD = new Method[0];
-
-	private ArrayTool() {}
+	private ArrayTool() {
+	}
 
 	/**
 	 * 在新数组末尾添加一个元素,原数组不改变,返回一个新的数组
@@ -1263,7 +1246,7 @@ public class ArrayTool {
 	 * @since JDK1.8
 	 */
 	public static String join8(final String separator, final double[] array, final int start, final int end,
-	        String prefix, String suffix) {
+			String prefix, String suffix) {
 		if (isEmpty(array)) {
 			return ConstLang.STR_EMPTY;
 		}
@@ -1836,7 +1819,7 @@ public class ArrayTool {
 			final Class<?> type2 = array2.getClass().getComponentType();
 			if (!type1.isAssignableFrom(type2)) {
 				throw new IllegalArgumentException(
-				        "Cannot store " + type2.getName() + " in an array of " + type1.getName(), ase);
+						"Cannot store " + type2.getName() + " in an array of " + type1.getName(), ase);
 			}
 			throw ase;
 		}
@@ -2898,12 +2881,137 @@ public class ArrayTool {
 	}
 
 	/**
+	 * 将基础类型数组转换为包装类型数组
+	 * 
+	 * @param array 基本类型数组
+	 * @return 包装类型数组
+	 */
+	public static Boolean[] toBoxed(boolean[] array) {
+		if (array == null) {
+			return null;
+		} else if (array.length == 0) {
+			return ConstArray.EMPTY_BOOLEAN_BOXED;
+		}
+		final Boolean[] result = new Boolean[array.length];
+		for (int i = 0; i < array.length; i++) {
+			result[i] = (array[i] ? Boolean.TRUE : Boolean.FALSE);
+		}
+		return result;
+	}
+
+	/**
+	 * 将基础类型数组转换为包装类型数组
+	 * 
+	 * @param array 基本类型数组
+	 * @return 包装类型数组
+	 */
+	public static Byte[] toBoxed(byte[] array) {
+		if (array == null) {
+			return null;
+		} else if (array.length == 0) {
+			return ConstArray.EMPTY_BYTE_BOXED;
+		}
+		final Byte[] result = new Byte[array.length];
+		for (int i = 0; i < array.length; i++) {
+			result[i] = Byte.valueOf(array[i]);
+		}
+		return result;
+	}
+
+	/**
+	 * 将基础类型数组转换为包装类型数组
+	 * 
+	 * @param array 基本类型数组
+	 * @return 包装类型数组
+	 */
+	public static Character[] toBoxed(char[] array) {
+		if (array == null) {
+			return null;
+		} else if (array.length == 0) {
+			return ConstArray.EMPTY_CHAR_BOXED;
+		}
+		final Character[] result = new Character[array.length];
+		for (int i = 0; i < array.length; i++) {
+			result[i] = Character.valueOf(array[i]);
+		}
+		return result;
+	}
+
+	/**
+	 * 将基础类型数组转换为包装类型数组
+	 * 
+	 * @param array 基本类型数组
+	 * @return 包装类型数组
+	 */
+	public static Double[] toBoxed(double[] array) {
+		return Arrays.stream(array).boxed().toArray(Double[]::new);
+	}
+
+	/**
+	 * 将基础类型数组转换为包装类型数组
+	 * 
+	 * @param array 基本类型数组
+	 * @return 包装类型数组
+	 */
+	public static Float[] toBoxed(float[] array) {
+		if (array == null) {
+			return null;
+		} else if (array.length == 0) {
+			return ConstArray.EMPTY_FLOAT_BOXED;
+		}
+		final Float[] result = new Float[array.length];
+		for (int i = 0; i < array.length; i++) {
+			result[i] = Float.valueOf(array[i]);
+		}
+		return result;
+	}
+
+	/**
+	 * 将基础类型数组转换为包装类型数组
+	 * 
+	 * @param array 基本类型数组
+	 * @return 包装类型数组
+	 */
+	public static Integer[] toBoxed(int[] array) {
+		return Arrays.stream(array).boxed().toArray(Integer[]::new);
+	}
+
+	/**
+	 * 将基础类型数组转换为包装类型数组
+	 * 
+	 * @param array 基本类型数组
+	 * @return 包装类型数组
+	 */
+	public static Long[] toBoxed(long[] array) {
+		return Arrays.stream(array).boxed().toArray(Long[]::new);
+	}
+
+	/**
+	 * 将基础类型数组转换为包装类型数组
+	 * 
+	 * @param array 基本类型数组
+	 * @return 包装类型数组
+	 */
+	public static Short[] toBoxed(short[] array) {
+		if (array == null) {
+			return null;
+		} else if (array.length == 0) {
+			return ConstArray.EMPTY_SHORT_BOXED;
+		}
+		final Short[] result = new Short[array.length];
+		for (int i = 0; i < array.length; i++) {
+			result[i] = Short.valueOf(array[i]);
+		}
+		return result;
+	}
+
+	/**
 	 * 将集合转换为数组
 	 * 
 	 * @param collection 集合
 	 * @return 转换后的数组
 	 */
-	public static byte[] toArrayByte(Collection<Byte> collection) {
+	public static byte[] toByte(Collection<Byte> collection) {
 		if (ListTool.isEmpty(collection)) {
 			return new byte[0];
 		}
@@ -2932,7 +3040,7 @@ public class ArrayTool {
 	 * @param collection 集合
 	 * @return 转换后的数组
 	 */
-	public static char[] toArrayChar(Collection<Character> collection) {
+	public static char[] toChar(Collection<Character> collection) {
 		if (ListTool.isEmpty(collection)) {
 			return new char[0];
 		}
@@ -2961,7 +3069,7 @@ public class ArrayTool {
 	 * @param collection 集合
 	 * @return 转换后的数组
 	 */
-	public static double[] toArrayDouble(Collection<Double> collection) {
+	public static double[] toDouble(Collection<Double> collection) {
 		if (ListTool.isEmpty(collection)) {
 			return new double[0];
 		}
@@ -2990,10 +3098,10 @@ public class ArrayTool {
 	 * @param collection 集合
 	 * @return 转换后的数组
 	 */
-	public static double[] toArrayDouble8(Collection<Double> collection) {
+	public static double[] toDouble8(Collection<Double> collection) {
 		if (ListTool.isNotEmpty(collection)) {
 			return Arrays.stream(collection.toArray(new Double[collection.size()])).mapToDouble(Double::valueOf)
-			        .toArray();
+					.toArray();
 		}
 		return null;
 	}
@@ -3004,7 +3112,7 @@ public class ArrayTool {
 	 * @param collection 集合
 	 * @return 转换后的数组
 	 */
-	public static float[] toArrayFloat(Collection<Float> collection) {
+	public static float[] toFloat(Collection<Float> collection) {
 		if (ListTool.isEmpty(collection)) {
 			return new float[0];
 		}
@@ -3033,7 +3141,7 @@ public class ArrayTool {
 	 * @param collection 集合
 	 * @return 转换后的数组
 	 */
-	public static int[] toArrayInt(Collection<Integer> collection) {
+	public static int[] toInt(Collection<Integer> collection) {
 		if (ListTool.isEmpty(collection)) {
 			return new int[0];
 		}
@@ -3062,10 +3170,10 @@ public class ArrayTool {
 	 * @param collection 集合
 	 * @return 转换后的数组
 	 */
-	public static int[] toArrayInt8(Collection<Integer> collection) {
+	public static int[] toInt8(Collection<Integer> collection) {
 		if (ListTool.isNotEmpty(collection)) {
 			return Arrays.stream(collection.toArray(new Integer[collection.size()])).mapToInt(Integer::valueOf)
-			        .toArray();
+					.toArray();
 		}
 		return null;
 	}
@@ -3076,7 +3184,7 @@ public class ArrayTool {
 	 * @param collection 集合
 	 * @return 转换后的数组
 	 */
-	public static long[] toArrayLong(Collection<Long> collection) {
+	public static long[] toLong(Collection<Long> collection) {
 		if (ListTool.isEmpty(collection)) {
 			return new long[0];
 		}
@@ -3105,7 +3213,7 @@ public class ArrayTool {
 	 * @param collection 集合
 	 * @return 转换后的数组
 	 */
-	public static long[] toArrayLong8(Collection<Long> collection) {
+	public static long[] toLong8(Collection<Long> collection) {
 		if (ListTool.isNotEmpty(collection)) {
 			return Arrays.stream(collection.toArray(new Long[collection.size()])).mapToLong(Long::valueOf).toArray();
 		}
@@ -3118,7 +3226,7 @@ public class ArrayTool {
 	 * @param collection 集合
 	 * @return 转换后的数组
 	 */
-	public static short[] toArrayShort(Collection<Short> collection) {
+	public static short[] toShort(Collection<Short> collection) {
 		if (ListTool.isEmpty(collection)) {
 			return new short[0];
 		}
@@ -3137,6 +3245,131 @@ public class ArrayTool {
 			if (array[i] != null) {
 				result[i] = array[i].shortValue();
 			}
+		}
+		return result;
+	}
+
+	/**
+	 * 将包装类型转换为基类
+	 * 
+	 * @param array 包装类型数组
+	 * @return 基类数组
+	 */
+	public static boolean[] toPrimitive(final Boolean[] array) {
+		if (array == null) {
+			return null;
+		} else if (array.length == 0) {
+			return ConstArray.EMPTY_BOOLEAN;
+		}
+		final boolean[] result = new boolean[array.length];
+		for (int i = 0; i < array.length; i++) {
+			result[i] = array[i].booleanValue();
+		}
+		return result;
+	}
+
+	/**
+	 * 将包装类型转换为基类
+	 * 
+	 * @param array 包装类型数组
+	 * @return 基类数组
+	 */
+	public static byte[] toPrimitive(final Byte[] array) {
+		if (array == null) {
+			return null;
+		} else if (array.length == 0) {
+			return ConstArray.EMPTY_BYTE;
+		}
+		final byte[] result = new byte[array.length];
+		for (int i = 0; i < array.length; i++) {
+			result[i] = array[i].byteValue();
+		}
+		return result;
+	}
+
+	/**
+	 * 将包装类型转换为基类
+	 * 
+	 * @param array 包装类型数组
+	 * @return 基类数组
+	 */
+	public static char[] toPrimitive(final Character[] array) {
+		if (array == null) {
+			return null;
+		} else if (array.length == 0) {
+			return ConstArray.EMPTY_CHAR;
+		}
+		final char[] result = new char[array.length];
+		for (int i = 0; i < array.length; i++) {
+			result[i] = array[i].charValue();
+		}
+		return result;
+	}
+
+	/**
+	 * 将包装类型转换为基类
+	 * 
+	 * @param array 包装类型数组
+	 * @return 基类数组
+	 */
+	public static double[] toPrimitive(final Double[] array) {
+		return Stream.of(Optional.ofNullable(array).orElse(new Double[0])).mapToDouble(t -> t.doubleValue()).toArray();
+	}
+
+	/**
+	 * 将包装类型转换为基类
+	 * 
+	 * @param array 包装类型数组
+	 * @return 基类数组
+	 */
+	public static float[] toPrimitive(final Float[] array) {
+		if (array == null) {
+			return null;
+		} else if (array.length == 0) {
+			return ConstArray.EMPYT_FLOAT;
+		}
+		final float[] result = new float[array.length];
+		for (int i = 0; i < array.length; i++) {
+			result[i] = array[i].floatValue();
+		}
+		return result;
+	}
+
+	/**
+	 * 将包装类型转换为基类
+	 * 
+	 * @param array 包装类型数组
+	 * @return 基类数组
+	 */
+	public static int[] toPrimitive(final Integer[] array) {
+		return Stream.of(Optional.ofNullable(array).orElse(new Integer[0])).mapToInt(t -> t.intValue()).toArray();
+	}
+
+	/**
+	 * 将包装类型转换为基类
+	 * 
+	 * @param array 包装类型数组
+	 * @return 基类数组
+	 */
+	public static long[] toPrimitive(final Long[] array) {
+		return Stream.of(Optional.ofNullable(array).orElse(new Long[0])).mapToLong(t -> t.longValue()).toArray();
+	}
+
+	/**
+	 * 将包装类型转换为基类
+	 * 
+	 * @param array 包装类型数组
+	 * @return 基类数组
+	 */
+	public static short[] toPrimitive(final Short[] array) {
+		if (array == null) {
+			return null;
+		} else if (array.length == 0) {
+			return ConstArray.EMPTY_SHORT;
+		}
+		final short[] result = new short[array.length];
+		for (int i = 0; i < array.length; i++) {
+			result[i] = array[i].shortValue();
 		}
 		return result;
 	}

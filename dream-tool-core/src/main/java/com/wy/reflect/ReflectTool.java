@@ -23,11 +23,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
+import com.wy.ConstArray;
 import com.wy.collection.ListTool;
 import com.wy.collection.ListTool.ListBuilder;
 import com.wy.lang.AssertTool;
 import com.wy.result.ResultException;
-import com.wy.util.ArrayTool;
 
 /**
  * Reflect反射工具类 FIXME
@@ -44,7 +44,8 @@ public class ReflectTool {
 	/** 字段缓存,{@link org.springframework.util.ReflectionUtils} */
 	private static final Map<Class<?>, Field[]> DECLARED_FIELDS_CACHE = new ConcurrentHashMap<>(256);
 
-	private ReflectTool() {}
+	private ReflectTool() {
+	}
 
 	/**
 	 * 强制修改访问类中的成员权限
@@ -107,8 +108,8 @@ public class ReflectTool {
 	public static <T> Constructor<T> getConstructor(Class<T> type, boolean forceAccess)
 			throws NoSuchMethodException, SecurityException {
 		AssertTool.notNull(type, "class cannot be null");
-		return forceAccess ? type.getDeclaredConstructor(ArrayTool.ARRAY_EMPTY_CLASS)
-				: type.getConstructor(ArrayTool.ARRAY_EMPTY_CLASS);
+		return forceAccess ? type.getDeclaredConstructor(ConstArray.EMPTY_CLASS)
+				: type.getConstructor(ConstArray.EMPTY_CLASS);
 	}
 
 	/**
@@ -433,7 +434,7 @@ public class ReflectTool {
 		if (result == null) {
 			try {
 				result = clazz.getDeclaredFields();
-				DECLARED_FIELDS_CACHE.put(clazz, (result.length == 0 ? ArrayTool.ARRAY_EMPTY_FIELD : result));
+				DECLARED_FIELDS_CACHE.put(clazz, (result.length == 0 ? ConstArray.EMPTY_FIELD : result));
 			} catch (Throwable ex) {
 				throw new IllegalStateException("Failed to introspect Class [" + clazz.getName()
 						+ "] from ClassLoader [" + clazz.getClassLoader() + "]", ex);
@@ -478,7 +479,7 @@ public class ReflectTool {
 				} else {
 					result = declaredMethods;
 				}
-				DECLARED_METHODS_CACHE.put(clazz, (result.length == 0 ? ArrayTool.ARRAY_EMPTY_METHOD : result));
+				DECLARED_METHODS_CACHE.put(clazz, (result.length == 0 ? ConstArray.EMPTY_METHOD : result));
 			} catch (Throwable ex) {
 				throw new IllegalStateException("Failed to introspect Class [" + clazz.getName()
 						+ "] from ClassLoader [" + clazz.getClassLoader() + "]", ex);
@@ -497,7 +498,7 @@ public class ReflectTool {
 	 * @throws NoSuchMethodException
 	 */
 	public static Method getMethod(Class<?> clazz, String name) throws NoSuchMethodException, SecurityException {
-		return getMethod(clazz, name, true, true, ArrayTool.ARRAY_EMPTY_CLASS);
+		return getMethod(clazz, name, true, true, ConstArray.EMPTY_CLASS);
 	}
 
 	/**
@@ -640,8 +641,8 @@ public class ReflectTool {
 			final Class<? extends Annotation> annotationCls, final boolean searchSupers, final boolean ignoreAccess) {
 		AssertTool.notNull(clazz, "The class must not be null");
 		AssertTool.notNull(annotationCls, "The annotation class must not be null");
-		final List<Class<?>> classes = (searchSupers ? ClassTool.getSuperclassesAndInterfaces(clazz)
-				: new ArrayList<>());
+		final List<Class<?>> classes =
+				(searchSupers ? ClassTool.getSuperclassesAndInterfaces(clazz) : new ArrayList<>());
 		classes.add(0, clazz);
 		final List<Method> annotatedMethods = new ArrayList<>();
 		for (final Class<?> acls : classes) {
@@ -711,8 +712,8 @@ public class ReflectTool {
 	public static <T> T newProxy(Class<T> interfaceType, InvocationHandler handler) {
 		AssertTool.notNull(handler);
 		AssertTool.notNull(interfaceType.isInterface(), "%s is not an interface", interfaceType);
-		Object object = Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class<?>[] { interfaceType },
-				handler);
+		Object object =
+				Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class<?>[] { interfaceType }, handler);
 		return interfaceType.cast(object);
 	}
 
@@ -847,7 +848,7 @@ public class ReflectTool {
 	 */
 	public static Object invokeMethod(final Object object, final String methodName)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		return invokeMethod(object, methodName, ArrayTool.ARRAY_EMPTY_OBJECT, null);
+		return invokeMethod(object, methodName, ConstArray.EMPTY_OBJECT, null);
 	}
 
 	/**
@@ -863,7 +864,7 @@ public class ReflectTool {
 	 */
 	public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		return invokeMethod(object, forceAccess, methodName, ArrayTool.ARRAY_EMPTY_OBJECT, null);
+		return invokeMethod(object, forceAccess, methodName, ConstArray.EMPTY_OBJECT, null);
 	}
 
 	/**
@@ -966,7 +967,7 @@ public class ReflectTool {
 	 */
 	public static Object invokeMethod(Method method, Object target)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return invokeMethod(method, target, true, ArrayTool.ARRAY_EMPTY_OBJECT);
+		return invokeMethod(method, target, true, ConstArray.EMPTY_OBJECT);
 	}
 
 	/**
@@ -999,7 +1000,7 @@ public class ReflectTool {
 	public static Object invokeMethod(Method method, Object target, boolean forceAccess)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		fixAccessible(method, forceAccess);
-		return method.invoke(target, ArrayTool.ARRAY_EMPTY_OBJECT);
+		return method.invoke(target, ConstArray.EMPTY_OBJECT);
 	}
 
 	/**
@@ -1032,7 +1033,7 @@ public class ReflectTool {
 	 */
 	public static Object invokeMethodStatic(final Class<?> cls, final String methodName)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		return invokeMethodStatic(cls, methodName, ArrayTool.ARRAY_EMPTY_OBJECT, ArrayTool.ARRAY_EMPTY_CLASS);
+		return invokeMethodStatic(cls, methodName, ConstArray.EMPTY_OBJECT, ConstArray.EMPTY_CLASS);
 	}
 
 	/**

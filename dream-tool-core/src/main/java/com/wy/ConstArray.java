@@ -20,8 +20,35 @@ public interface ConstArray {
 	/** 用于hex输出 */
 	char[] DIGITS_UPPER = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
+	/** 空boolean数组 */
+	boolean[] EMPTY_BOOLEAN = new boolean[0];
+
+	/** 空Boolean数组 */
+	Boolean[] EMPTY_BOOLEAN_BOXED = new Boolean[0];
+
 	/** 空byte[]数组 */
 	byte[] EMPTY_BYTE = new byte[0];
+
+	/** 空Byte数组 */
+	Byte[] EMPTY_BYTE_BOXED = new Byte[0];
+
+	/** 空char数组 */
+	char[] EMPTY_CHAR = new char[0];
+
+	/** 空Character数组 */
+	Character[] EMPTY_CHAR_BOXED = new Character[0];
+
+	/** 空float数组 */
+	float[] EMPYT_FLOAT = new float[0];
+
+	/** 空Float数组 */
+	Float[] EMPTY_FLOAT_BOXED = new Float[0];
+
+	/** 空short数组 */
+	short[] EMPTY_SHORT = new short[0];
+
+	/** 空Short数组 */
+	Short[] EMPTY_SHORT_BOXED = new Short[0];
 
 	/** 空Class数组 */
 	Class<?>[] EMPTY_CLASS = new Class[0];

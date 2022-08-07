@@ -8,8 +8,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -56,6 +58,41 @@ public class CollectionTool {
 	 */
 	public static String join(final String separator, final Iterable<?> iterable) {
 		return join(separator, iterable.iterator());
+	}
+
+	/**
+	 * 获得Set中的最后一个元素
+	 * 
+	 * @param set 待查找的Set
+	 * @return 最后一个元素,可能为null
+	 */
+	public static <T> T lastElement(Set<T> set) {
+		if (isEmpty(set)) {
+			return null;
+		}
+		if (set instanceof SortedSet) {
+			return ((SortedSet<T>) set).last();
+		}
+
+		Iterator<T> it = set.iterator();
+		T last = null;
+		while (it.hasNext()) {
+			last = it.next();
+		}
+		return last;
+	}
+
+	/**
+	 * 获得List中的最后一个元素
+	 * 
+	 * @param list 待查找的List
+	 * @return 最后一个元素,可能为null
+	 */
+	public static <T> T lastElement(List<T> list) {
+		if (isEmpty(list)) {
+			return null;
+		}
+		return list.get(list.size() - 1);
 	}
 
 	/**
