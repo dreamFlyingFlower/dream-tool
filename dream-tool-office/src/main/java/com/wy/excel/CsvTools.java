@@ -4,7 +4,6 @@ import java.io.FileReader;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +11,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.CollectionUtils;
+
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 
 /**
  * CSV工具类
@@ -41,11 +43,9 @@ public class CsvTools {
 		String[] titles = new String[] { "编号", "姓名", "手机号", "入职日期", "现住址" };
 		csvWriter.writeNext(titles);
 
-		int page = 1;
 		while (true) {
 			// 该数据从数据库从取
 			List<Map<String, Object>> datas = new ArrayList<>();
-
 			if (CollectionUtils.isEmpty(datas)) {
 				break;
 			}
@@ -54,7 +54,6 @@ public class CsvTools {
 				        data.get("phone").toString(), simpleDateFormat.format(data.get("hireDate").toString()),
 				        data.get("address").toString() });
 			}
-			page++;
 			csvWriter.flush();
 		}
 		csvWriter.close();
@@ -63,26 +62,25 @@ public class CsvTools {
 	/**
 	 * 读取百万级数据的csv文件
 	 * 
-	 * @param args
+	 * @param filePath CSV文件地址
 	 * @throws Exception
 	 */
-	public static void read() throws Exception {
-//		CSVReader csvReader = new CSVReader(new FileReader("d:\\百万用户数据的导出.csv"));
-//		String[] titles = csvReader.readNext(); // 读取到第一行 是小标题
-//		// "编号","姓名","手机号","入职日期","现住址"
-//		User user = null;
-//		while (true) {
-//			user = new User();
-//			String[] content = csvReader.readNext();
-//			if (content == null) {
-//				break;
-//			}
-//			user.setId(Long.parseLong(content[0]));
-//			user.setUserName(content[1]);
-//			user.setPhone(content[2]);
-//			user.setHireDate(simpleDateFormat.parse(content[3]));
-//			user.setAddress(content[4]);
-//			System.out.println(user);
-//		}
+	public static void read(String filePath) throws Exception {
+		CSVReader csvReader = new CSVReader(new FileReader(filePath));
+		// 读取到第一行 是小标题
+		String[] titles = csvReader.readNext();
+		System.out.println(titles);
+		// "编号","姓名","手机号","入职日期","现住址"
+		while (true) {
+			String[] content = csvReader.readNext();
+			if (content == null) {
+				break;
+			}
+			System.out.println(Long.parseLong(content[0]));
+			System.out.println(content[1]);
+			System.out.println(content[2]);
+			System.out.println(simpleDateFormat.parse(content[3]));
+			System.out.println(content[4]);
+		}
 	}
 }
