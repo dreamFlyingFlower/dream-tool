@@ -38,7 +38,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson.JSON;
 import com.wy.ConstLang;
 import com.wy.collection.MapTool;
 import com.wy.util.CharsetTool;
@@ -80,15 +80,15 @@ public class HttpClientTools {
 	 */
 	public static CloseableHttpClient buildClient(boolean multiThread) {
 		return multiThread ? HttpClientBuilder.create()
-				// 设置通用请求参数
-				.setDefaultRequestConfig(buildRequestConfig())
-				// 设置禁止重定向
-				.disableRedirectHandling()
-				// 设置重试策略
-				.setRetryHandler(new DefaultHttpRequestRetryHandler())
-				// 设置连接策略
-				.setConnectionManager(new PoolingHttpClientConnectionManager()).build()
-				: HttpClientBuilder.create().setDefaultRequestConfig(buildRequestConfig()).build();
+		        // 设置通用请求参数
+		        .setDefaultRequestConfig(buildRequestConfig())
+		        // 设置禁止重定向
+		        .disableRedirectHandling()
+		        // 设置重试策略
+		        .setRetryHandler(new DefaultHttpRequestRetryHandler())
+		        // 设置连接策略
+		        .setConnectionManager(new PoolingHttpClientConnectionManager()).build()
+		        : HttpClientBuilder.create().setDefaultRequestConfig(buildRequestConfig()).build();
 	}
 
 	/**
@@ -101,12 +101,12 @@ public class HttpClientTools {
 	 */
 	public static CloseableHttpClient buildClient(boolean multiThread, CookieStore cookieStore, HttpHost httpHost) {
 		return multiThread
-				? HttpClientBuilder.create().setDefaultCookieStore(cookieStore)
-						.setDefaultRequestConfig(buildRequestConfig(httpHost))
-						.setRetryHandler(new DefaultHttpRequestRetryHandler())
-						.setConnectionManager(new PoolingHttpClientConnectionManager()).build()
-				: HttpClientBuilder.create().setDefaultRequestConfig(buildRequestConfig(httpHost))
-						.setDefaultCookieStore(cookieStore).build();
+		        ? HttpClientBuilder.create().setDefaultCookieStore(cookieStore)
+		                .setDefaultRequestConfig(buildRequestConfig(httpHost))
+		                .setRetryHandler(new DefaultHttpRequestRetryHandler())
+		                .setConnectionManager(new PoolingHttpClientConnectionManager()).build()
+		        : HttpClientBuilder.create().setDefaultRequestConfig(buildRequestConfig(httpHost))
+		                .setDefaultCookieStore(cookieStore).build();
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class HttpClientTools {
 	 * @return HttpPost
 	 */
 	public static HttpPost buildPost(String url, Map<String, Object> params, Charset charset,
-			Map<String, Object> headerMap) {
+	        Map<String, Object> headerMap) {
 		HttpPost post = new HttpPost(url);
 		setCommonHttpMethod(post);
 		setHeader(post, headerMap);
@@ -190,7 +190,7 @@ public class HttpClientTools {
 		if (params != null) {
 			StringEntity stringEntity = new StringEntity(JSON.toJSONString(params), charset);
 			stringEntity
-					.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType()));
+			        .setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType()));
 			post.setEntity(stringEntity);
 		}
 		return post;
@@ -247,7 +247,7 @@ public class HttpClientTools {
 	public static RequestConfig buildRequestConfig() {
 		// 设置连接超时时间,从连接池中获取连接的最长时间,数据传输的最长时间
 		return RequestConfig.custom().setConnectTimeout(TIMEOUT_CONNECT).setConnectionRequestTimeout(TIMEOUT_CONNECT)
-				.setSocketTimeout(TIMEOUT_SOCKET).build();
+		        .setSocketTimeout(TIMEOUT_SOCKET).build();
 	}
 
 	/**
@@ -259,7 +259,7 @@ public class HttpClientTools {
 	public static RequestConfig buildRequestConfig(HttpHost httpHost) {
 		// 设置连接超时时间,从连接池中获取连接的最长时间,数据传输的最长时间
 		return RequestConfig.custom().setProxy(httpHost).setConnectTimeout(TIMEOUT_CONNECT)
-				.setConnectionRequestTimeout(TIMEOUT_CONNECT).setSocketTimeout(TIMEOUT_SOCKET).build();
+		        .setConnectionRequestTimeout(TIMEOUT_CONNECT).setSocketTimeout(TIMEOUT_SOCKET).build();
 	}
 
 	/**
@@ -271,10 +271,10 @@ public class HttpClientTools {
 	public static String poolGet(String url) {
 		HttpGet httpGet = new HttpGet(url);
 		try (CloseableHttpClient client = HttpClients.custom().setConnectionManager(manager).build();
-				CloseableHttpResponse response = client.execute(httpGet);) {
+		        CloseableHttpResponse response = client.execute(httpGet);) {
 			return Objects.nonNull(response.getEntity())
-					? EntityUtils.toString(response.getEntity(), CharsetTool.defaultCharset())
-					: null;
+			        ? EntityUtils.toString(response.getEntity(), CharsetTool.defaultCharset())
+			        : null;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -313,11 +313,11 @@ public class HttpClientTools {
 	public static String get(String url, Map<String, Object> params, Charset charset) {
 		HttpGet httpGet = buildGet(url, params, charset);
 		try (CloseableHttpClient httpclient = buildClient(true);
-				CloseableHttpResponse response = httpclient.execute(httpGet);) {
+		        CloseableHttpResponse response = httpclient.execute(httpGet);) {
 			// 直接可将返回的流转成字符串,但是转换一次后流就关闭了
 			return null != response.getEntity()
-					? EntityUtils.toString(response.getEntity(), CharsetTool.defaultCharset(charset))
-					: null;
+			        ? EntityUtils.toString(response.getEntity(), CharsetTool.defaultCharset(charset))
+			        : null;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -348,15 +348,15 @@ public class HttpClientTools {
 	 * @return JSON序列化后结果字符串
 	 */
 	public static String sendGet(String url, Map<String, Object> params, Map<String, Object> headers,
-			CookieStore cookieStore, HttpHost httpHost, Charset charset) {
+	        CookieStore cookieStore, HttpHost httpHost, Charset charset) {
 		HttpGet httpGet = buildGet(url, params, charset);
 		setHeader(httpGet, headers);
 		try (CloseableHttpClient httpClient = buildClient(true, cookieStore, httpHost);
-				CloseableHttpResponse response = httpClient.execute(httpGet);) {
+		        CloseableHttpResponse response = httpClient.execute(httpGet);) {
 			// 直接可将返回的流转成字符串,但是转换一次后流就关闭了
 			return null != response.getEntity()
-					? EntityUtils.toString(response.getEntity(), CharsetTool.defaultCharset(charset))
-					: null;
+			        ? EntityUtils.toString(response.getEntity(), CharsetTool.defaultCharset(charset))
+			        : null;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -430,11 +430,11 @@ public class HttpClientTools {
 	 * @return JSON字符串结果
 	 */
 	public static String postForm(String url, Map<String, Object> params, Map<String, Object> headers,
-			Charset charset) {
+	        Charset charset) {
 		HttpPost postMethod = buildPost(url, params, charset);
 		setHeader(postMethod, headers);
 		try (CloseableHttpClient client = buildClient(true);
-				CloseableHttpResponse response = client.execute(postMethod);) {
+		        CloseableHttpResponse response = client.execute(postMethod);) {
 			return null != response.getEntity() ? EntityUtils.toString(response.getEntity(), charset) : null;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -509,11 +509,11 @@ public class HttpClientTools {
 	 * @return 请求响应,但获取不到结果,只能获取头信息
 	 */
 	public static HttpResponse postFormResponse(String url, Map<String, Object> params, Map<String, Object> headers,
-			Charset charset) {
+	        Charset charset) {
 		HttpPost postMethod = buildPost(url, params, charset);
 		setHeader(postMethod, headers);
 		try (CloseableHttpClient client = buildClient(true);
-				CloseableHttpResponse response = client.execute(postMethod);) {
+		        CloseableHttpResponse response = client.execute(postMethod);) {
 			return response;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -566,14 +566,14 @@ public class HttpClientTools {
 	 * @return JSON字符串结果
 	 */
 	public static String postJson(String url, Map<String, Object> params, Map<String, Object> headers,
-			Charset charset) {
+	        Charset charset) {
 		HttpPost httpPost = buildPostJson(url, params, charset);
 		setHeader(httpPost, headers);
 		try (CloseableHttpClient httpClient = buildClient(true);
-				CloseableHttpResponse response = httpClient.execute(httpPost);) {
+		        CloseableHttpResponse response = httpClient.execute(httpPost);) {
 			return Optional.ofNullable(response).isPresent()
-					? EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8)
-					: null;
+			        ? EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8)
+			        : null;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -590,7 +590,7 @@ public class HttpClientTools {
 	 * @return JSON字符串结果
 	 */
 	public static String postJson(String url, Map<String, Object> params, Map<String, Object> headers,
-			String charsetName) {
+	        String charsetName) {
 		return postJson(url, params, headers, CharsetTool.defaultCharset(charsetName));
 	}
 

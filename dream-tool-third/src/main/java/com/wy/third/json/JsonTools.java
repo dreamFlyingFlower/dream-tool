@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONWriter;
-import com.alibaba.fastjson2.TypeReference;
-import com.alibaba.fastjson2.filter.SimplePropertyPreFilter;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.wy.io.file.FileTool;
 import com.wy.lang.AssertTool;
 
@@ -25,11 +25,11 @@ import com.wy.lang.AssertTool;
 public class JsonTools {
 
 	/** 格式化输出 */
-	private static final JSONWriter.Feature[] FORMAT_SERIALIZER_FEATURES = { JSONWriter.Feature.NotWriteRootClassName,
-			// 格式化输出
-			JSONWriter.Feature.PrettyFormat,
-			// 无默认值
-			JSONWriter.Feature.NotWriteDefaultValue };
+	private static final SerializerFeature[] FORMAT_SERIALIZER_FEATURES = { SerializerFeature.NotWriteRootClassName,
+	        // 格式化输出
+	        SerializerFeature.PrettyFormat,
+	        // 无默认值
+	        SerializerFeature.NotWriteDefaultValue };
 
 	/**
 	 * JSON将对象序列化为字符串
@@ -65,7 +65,7 @@ public class JsonTools {
 	public static String toJson(Object object, List<String> filterNames) {
 		AssertTool.notNull(object, "The data must not be null");
 		SimplePropertyPreFilter filter =
-				new SimplePropertyPreFilter(filterNames.toArray(new String[filterNames.size()]));
+		        new SimplePropertyPreFilter(filterNames.toArray(new String[filterNames.size()]));
 		return JSON.toJSONString(object, filter, FORMAT_SERIALIZER_FEATURES);
 	}
 
@@ -82,7 +82,7 @@ public class JsonTools {
 			return Collections.emptyList();
 		}
 		return String.class == json.getClass() ? JSON.parseArray((String) json, clazz)
-				: JSON.parseArray(JSON.toJSONString(json), clazz);
+		        : JSON.parseArray(JSON.toJSONString(json), clazz);
 	}
 
 	/**
@@ -96,8 +96,8 @@ public class JsonTools {
 			return Collections.emptyList();
 		}
 		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
-				new TypeReference<List<Map<String, Object>>>() {
-				});
+		        new TypeReference<List<Map<String, Object>>>() {
+		        });
 	}
 
 	/**
@@ -114,8 +114,8 @@ public class JsonTools {
 			return Collections.emptyList();
 		}
 		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
-				new TypeReference<List<Map<K, V>>>() {
-				});
+		        new TypeReference<List<Map<K, V>>>() {
+		        });
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class JsonTools {
 			return Collections.emptyList();
 		}
 		return String.class == json.getClass() ? JSON.parseArray((String) json, String.class)
-				: JSON.parseArray(JSON.toJSONString(json), String.class);
+		        : JSON.parseArray(JSON.toJSONString(json), String.class);
 	}
 
 	/**
@@ -144,8 +144,8 @@ public class JsonTools {
 			return Collections.emptyMap();
 		}
 		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
-				new TypeReference<Map<String, Object>>() {
-				});
+		        new TypeReference<Map<String, Object>>() {
+		        });
 	}
 
 	/**
@@ -162,8 +162,8 @@ public class JsonTools {
 			return Collections.emptyMap();
 		}
 		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
-				new TypeReference<Map<K, V>>() {
-				});
+		        new TypeReference<Map<K, V>>() {
+		        });
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class JsonTools {
 	 */
 	public static void write(OutputStream os, Object object) throws IOException {
 		AssertTool.notNull(object, "The data must not be null");
-		JSON.writeTo(os, object, FORMAT_SERIALIZER_FEATURES);
+		JSON.writeJSONString(os, object, FORMAT_SERIALIZER_FEATURES);
 	}
 
 	/**
