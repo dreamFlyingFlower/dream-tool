@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="${common.pathPackage}.mapper.MenuMapper">
-  <resultMap id="BaseResultMap" type="$common.pathPackageModel.Menu">
+<mapper namespace="${common.pathPackage}.mapper.ButtonMapper">
+  <resultMap id="BaseResultMap" type="$common.pathPackageModel.Button">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="button_name" jdbcType="VARCHAR" property="buttonName" />
     <result column="pid" jdbcType="BIGINT" property="pid" />
     <result column="url" jdbcType="VARCHAR" property="url" />
     <result column="icon" jdbcType="VARCHAR" property="icon" />
@@ -71,13 +71,13 @@
       </foreach>
     </where>
   </sql>
-  <select id="selectByExample" parameterType="$common.pathPackageModel.MenuExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="$common.pathPackageModel.ButtonExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from ts_menu
+    from ts_button
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -88,34 +88,34 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from ts_menu
+    from ts_button
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from ts_menu
+    delete from ts_button
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="$common.pathPackageModel.MenuExample">
-    delete from ts_menu
+  <delete id="deleteByExample" parameterType="$common.pathPackageModel.ButtonExample">
+    delete from ts_button
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="$common.pathPackageModel.Menu" useGeneratedKeys="true">
-    insert into ts_menu (menu_name, pid, url, 
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="$common.pathPackageModel.Button" useGeneratedKeys="true">
+    insert into ts_button (button_name, pid, url, 
       icon, sort, create_time, 
       create_user, update_time, update_user
       )
-    values (#{menuName,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, 
+    values (#{buttonName,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, #{url,jdbcType=VARCHAR}, 
       #{icon,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{createUser,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=BIGINT}
       )
   </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="$common.pathPackageModel.Menu" useGeneratedKeys="true">
-    insert into ts_menu
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="$common.pathPackageModel.Button" useGeneratedKeys="true">
+    insert into ts_button
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="menuName != null">
-        menu_name,
+      <if test="buttonName != null">
+        button_name,
       </if>
       <if test="pid != null">
         pid,
@@ -143,8 +143,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="menuName != null">
-        #{menuName,jdbcType=VARCHAR},
+      <if test="buttonName != null">
+        #{buttonName,jdbcType=VARCHAR},
       </if>
       <if test="pid != null">
         #{pid,jdbcType=BIGINT},
@@ -172,20 +172,20 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="$common.pathPackageModel.MenuExample" resultType="java.lang.Long">
-    select count(*) from ts_menu
+  <select id="countByExample" parameterType="$common.pathPackageModel.ButtonExample" resultType="java.lang.Long">
+    select count(*) from ts_button
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update ts_menu
+    update ts_button
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.menuName != null">
-        menu_name = #{record.menuName,jdbcType=VARCHAR},
+      <if test="record.buttonName != null">
+        button_name = #{record.buttonName,jdbcType=VARCHAR},
       </if>
       <if test="record.pid != null">
         pid = #{record.pid,jdbcType=BIGINT},
@@ -217,9 +217,9 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update ts_menu
+    update ts_button
     set id = #{record.id,jdbcType=BIGINT},
-      menu_name = #{record.menuName,jdbcType=VARCHAR},
+      button_name = #{record.buttonName,jdbcType=VARCHAR},
       pid = #{record.pid,jdbcType=BIGINT},
       url = #{record.url,jdbcType=VARCHAR},
       icon = #{record.icon,jdbcType=VARCHAR},
@@ -232,11 +232,11 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="$common.pathPackageModel.Menu">
-    update ts_menu
+  <update id="updateByPrimaryKeySelective" parameterType="$common.pathPackageModel.Button">
+    update ts_button
     <set>
-      <if test="menuName != null">
-        menu_name = #{menuName,jdbcType=VARCHAR},
+      <if test="buttonName != null">
+        button_name = #{buttonName,jdbcType=VARCHAR},
       </if>
       <if test="pid != null">
         pid = #{pid,jdbcType=BIGINT},
@@ -265,9 +265,9 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="$common.pathPackageModel.Menu">
-    update ts_menu
-    set menu_name = #{menuName,jdbcType=VARCHAR},
+  <update id="updateByPrimaryKey" parameterType="$common.pathPackageModel.Button">
+    update ts_button
+    set button_name = #{buttonName,jdbcType=VARCHAR},
       pid = #{pid,jdbcType=BIGINT},
       url = #{url,jdbcType=VARCHAR},
       icon = #{icon,jdbcType=VARCHAR},
@@ -279,31 +279,31 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <sql id="Base_Column_List">
-    m.id, m.menu_name, m.pid, m.url, m.icon, m.sort, m.create_time, m.create_user, 
+    m.id, m.button_name, m.pid, m.url, m.icon, m.sort, m.create_time, m.create_user, 
 	m.update_time, m.update_user
   </sql>
   <insert id="inserts" parameterType="list">
-    insert into ts_menu (id,menu_name,pid,url,icon,sort,create_time,create_user,update_time,update_user)  values <foreach collection="list" item="item" index="index" separator=",">(null,#{item.menuName,jdbcType=VARCHAR},#{item.pid,jdbcType=BIGINT},#{item.url,jdbcType=VARCHAR},#{item.icon,jdbcType=VARCHAR},#{item.sort,jdbcType=INTEGER},<choose><when test="item.createTime!= null">create_time = #{item.createTime,jdbcType=TIMESTAMP},</when><otherwise>CURRENT_TIMESTAMP,</otherwise></choose>#{item.createUser,jdbcType=BIGINT},#{item.updateTime,jdbcType=TIMESTAMP},#{item.updateUser,jdbcType=BIGINT})</foreach>
+    insert into ts_button (id,button_name,pid,url,icon,sort,create_time,create_user,update_time,update_user)  values <foreach collection="list" item="item" index="index" separator=",">(null,#{item.buttonName,jdbcType=VARCHAR},#{item.pid,jdbcType=BIGINT},#{item.url,jdbcType=VARCHAR},#{item.icon,jdbcType=VARCHAR},#{item.sort,jdbcType=INTEGER},<choose><when test="item.createTime!= null">create_time = #{item.createTime,jdbcType=TIMESTAMP},</when><otherwise>CURRENT_TIMESTAMP,</otherwise></choose>#{item.createUser,jdbcType=BIGINT},#{item.updateTime,jdbcType=TIMESTAMP},#{item.updateUser,jdbcType=BIGINT})</foreach>
   </insert>
   <delete id="deleteByPrimaryKeys" parameterType="list">
-    delete from  ts_menu where id in <foreach open="(" close=")" collection="list" item="id" separator=",">#{id,jdbcType=BIGINT}</foreach>
+    delete from  ts_button where id in <foreach open="(" close=")" collection="list" item="id" separator=",">#{id,jdbcType=BIGINT}</foreach>
   </delete>
   <delete id="deleteAll">
-    truncate table  ts_menu 
+    truncate table  ts_button 
   </delete>
   <select id="selectEntitys" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List" /> from ts_menu<where><if test = "id != null "> and id = #{id,jdbcType=BIGINT} </if><if test = "menuName != null "> and menu_name = #{menuName,jdbcType=VARCHAR} </if><if test = "pid != null "> and pid = #{pid,jdbcType=BIGINT} </if><if test = "url != null "> and url = #{url,jdbcType=VARCHAR} </if><if test = "icon != null "> and icon = #{icon,jdbcType=VARCHAR} </if><if test = "sort != null "> and sort = #{sort,jdbcType=INTEGER} </if><if test = "createTime != null "> and create_time = #{createTime,jdbcType=TIMESTAMP} </if><if test = "createUser != null "> and create_user = #{createUser,jdbcType=BIGINT} </if><if test = "updateTime != null "> and update_time = #{updateTime,jdbcType=TIMESTAMP} </if><if test = "updateUser != null "> and update_user = #{updateUser,jdbcType=BIGINT} </if></where>
+    select <include refid="Base_Column_List" /> from ts_button<where><if test = "id != null "> and id = #{id,jdbcType=BIGINT} </if><if test = "buttonName != null "> and button_name = #{buttonName,jdbcType=VARCHAR} </if><if test = "pid != null "> and pid = #{pid,jdbcType=BIGINT} </if><if test = "url != null "> and url = #{url,jdbcType=VARCHAR} </if><if test = "icon != null "> and icon = #{icon,jdbcType=VARCHAR} </if><if test = "sort != null "> and sort = #{sort,jdbcType=INTEGER} </if><if test = "createTime != null "> and create_time = #{createTime,jdbcType=TIMESTAMP} </if><if test = "createUser != null "> and create_user = #{createUser,jdbcType=BIGINT} </if><if test = "updateTime != null "> and update_time = #{updateTime,jdbcType=TIMESTAMP} </if><if test = "updateUser != null "> and update_user = #{updateUser,jdbcType=BIGINT} </if></where>
   </select>
   <select id="selectLists" resultType="map">
-    select <include refid="Base_Column_List" /> from ts_menu<where><if test = "id != null "> and id = #{id,jdbcType=BIGINT} </if><if test = "menuName != null "> and menu_name = #{menuName,jdbcType=VARCHAR} </if><if test = "pid != null "> and pid = #{pid,jdbcType=BIGINT} </if><if test = "url != null "> and url = #{url,jdbcType=VARCHAR} </if><if test = "icon != null "> and icon = #{icon,jdbcType=VARCHAR} </if><if test = "sort != null "> and sort = #{sort,jdbcType=INTEGER} </if><if test = "createTime != null "> and create_time = #{createTime,jdbcType=TIMESTAMP} </if><if test = "createUser != null "> and create_user = #{createUser,jdbcType=BIGINT} </if><if test = "updateTime != null "> and update_time = #{updateTime,jdbcType=TIMESTAMP} </if><if test = "updateUser != null "> and update_user = #{updateUser,jdbcType=BIGINT} </if></where>
+    select <include refid="Base_Column_List" /> from ts_button<where><if test = "id != null "> and id = #{id,jdbcType=BIGINT} </if><if test = "buttonName != null "> and button_name = #{buttonName,jdbcType=VARCHAR} </if><if test = "pid != null "> and pid = #{pid,jdbcType=BIGINT} </if><if test = "url != null "> and url = #{url,jdbcType=VARCHAR} </if><if test = "icon != null "> and icon = #{icon,jdbcType=VARCHAR} </if><if test = "sort != null "> and sort = #{sort,jdbcType=INTEGER} </if><if test = "createTime != null "> and create_time = #{createTime,jdbcType=TIMESTAMP} </if><if test = "createUser != null "> and create_user = #{createUser,jdbcType=BIGINT} </if><if test = "updateTime != null "> and update_time = #{updateTime,jdbcType=TIMESTAMP} </if><if test = "updateUser != null "> and update_user = #{updateUser,jdbcType=BIGINT} </if></where>
   </select>
   <select id="countByEntity" resultType="java.lang.Long">
-    select count(*) from ts_menu<where><if test = "id != null ">and id = #{id,jdbcType=BIGINT} </if><if test = "menuName != null ">and menu_name = #{menuName,jdbcType=VARCHAR} </if><if test = "pid != null ">and pid = #{pid,jdbcType=BIGINT} </if><if test = "url != null ">and url = #{url,jdbcType=VARCHAR} </if><if test = "icon != null ">and icon = #{icon,jdbcType=VARCHAR} </if><if test = "sort != null ">and sort = #{sort,jdbcType=INTEGER} </if><if test = "createTime != null ">and create_time = #{createTime,jdbcType=TIMESTAMP} </if><if test = "createUser != null ">and create_user = #{createUser,jdbcType=BIGINT} </if><if test = "updateTime != null ">and update_time = #{updateTime,jdbcType=TIMESTAMP} </if><if test = "updateUser != null ">and update_user = #{updateUser,jdbcType=BIGINT} </if></where>
+    select count(*) from ts_button<where><if test = "id != null ">and id = #{id,jdbcType=BIGINT} </if><if test = "buttonName != null ">and button_name = #{buttonName,jdbcType=VARCHAR} </if><if test = "pid != null ">and pid = #{pid,jdbcType=BIGINT} </if><if test = "url != null ">and url = #{url,jdbcType=VARCHAR} </if><if test = "icon != null ">and icon = #{icon,jdbcType=VARCHAR} </if><if test = "sort != null ">and sort = #{sort,jdbcType=INTEGER} </if><if test = "createTime != null ">and create_time = #{createTime,jdbcType=TIMESTAMP} </if><if test = "createUser != null ">and create_user = #{createUser,jdbcType=BIGINT} </if><if test = "updateTime != null ">and update_time = #{updateTime,jdbcType=TIMESTAMP} </if><if test = "updateUser != null ">and update_user = #{updateUser,jdbcType=BIGINT} </if></where>
   </select>
   <select id="selectMaxValue" resultType="java.lang.Long">
-    select <choose><when test="'id' == _parameter.column">max(id)</when><when test="'pid' == _parameter.column">max(pid)</when><when test="'sort' == _parameter.column">max(sort)</when><when test="'createUser' == _parameter.column">max(create_user)</when><when test="'updateUser' == _parameter.column">max(update_user)</when><otherwise>max(0)</otherwise>  </choose>  from ts_menu
+    select <choose><when test="'id' == _parameter.column">max(id)</when><when test="'pid' == _parameter.column">max(pid)</when><when test="'sort' == _parameter.column">max(sort)</when><when test="'createUser' == _parameter.column">max(create_user)</when><when test="'updateUser' == _parameter.column">max(update_user)</when><otherwise>max(0)</otherwise>  </choose>  from ts_button
   </select>
   <select id="selectMaxTime" resultType="java.util.Date">
-    select <choose><when test="createTime == ${column}">max(createTime)</when><when test="updateTime == ${column}">max(updateTime)</when><otherwise>1970-01-01 00:00:00</otherwise>  </choose>  from ts_menu
+    select <choose><when test="createTime == ${column}">max(createTime)</when><when test="updateTime == ${column}">max(updateTime)</when><otherwise>1970-01-01 00:00:00</otherwise>  </choose>  from ts_button
   </select>
 </mapper>

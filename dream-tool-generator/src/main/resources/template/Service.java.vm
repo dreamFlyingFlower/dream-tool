@@ -1,6 +1,6 @@
 package ${common.pathPackageService};
 
-import ${common.pathBasePackage}.BaseService;
+import ${common.pathPackageBase}.BaseService;
 import ${common.pathPackageEntity}.${tableinfo.className};
 
 /**
@@ -10,6 +10,6 @@ import ${common.pathPackageEntity}.${tableinfo.className};
  * @date ${datetime}
  * @git ${common.git}
  */
-public interface ${tableinfo.className}Service extends BaseService<${tableinfo.className}, Long> {
+public interface ${tableinfo.className}Service extends ${common.baseService}<${tableinfo.className}> {
 
 }

@@ -18,6 +18,6 @@ import io.swagger.annotations.Api;
 @Api(tags = "${tableinfo.comments}API")
 @RestController
 @RequestMapping("${tableinfo.objectName}")
-public class ${tableinfo.className}Crl extends AbstractCrl<${tableinfo.className}, Long> {
+public class ${tableinfo.className}Crl extends AbstractCrl<${tableinfo.className}> {
 
 }

@@ -28,7 +28,7 @@
 			<property name="nullCatalogMeansCurrent" value="true" />
 		</jdbcConnection>
 
-		<javaModelGenerator targetProject="$common.pathMain" targetPackage="$common.pathPackageModel">
+		<javaModelGenerator targetProject="$common.pathMain" targetPackage="$common.pathPackageEntity">
 			<property name="constructorBased" value="false" />
 			<property name="enableSubPackages" value="false" />
 			<property name="immutable" value="false" />
@@ -39,7 +39,7 @@
 		<sqlMapGenerator targetProject="$common.pathResources" targetPackage="$common.pathResourcesMapper" />
 		
 		<!-- 生成的Mapper文件地址 -->
-		<javaClientGenerator type="XMLMAPPER" targetProject="$common.pathMain" targetPackage="${common.pathPackage}.mapper" />
+		<javaClientGenerator type="XMLMAPPER" targetProject="$common.pathMain" targetPackage="${common.pathPackageMapper}" />
 
 #foreach ($tableinfo in $tableinfos)
 		<table tableName="$tableinfo.tableName" domainObjectName="$tableinfo.className">

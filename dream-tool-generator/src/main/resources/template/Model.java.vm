@@ -1,6 +1,8 @@
 package ${common.pathPackageEntity};
 
-import ${common.pathBasePackage}.AbstractModel;
+#if($common.baseEntity)
+import ${common.baseEntityPath};
+#end
 #if(${tableinfo.hasSort})
 import com.wy.database.annotation.Sort;
 #end
@@ -16,11 +18,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 #end
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 /**
  * ${tableinfo.comments} ${tableinfo.tableName}
@@ -32,11 +34,15 @@ import lombok.ToString;
 @ApiModel(description = "${tableinfo.comments} ${tableinfo.tableName}")
 @Getter
 @Setter
-@Builder
 @ToString
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+#if($common.baseEntity)
 public class ${tableinfo.className} extends AbstractModel {
+#else
+public class ${tableinfo.className} {
+#end
 
 	private static final long serialVersionUID = 1L;
 #foreach ($column in $columns)

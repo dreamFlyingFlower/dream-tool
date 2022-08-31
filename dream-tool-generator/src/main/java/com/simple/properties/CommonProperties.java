@@ -47,6 +47,35 @@ public class CommonProperties {
 
 	private String pathPackageController = pathPackageRoot + "." + "controller";
 
+	/** 基础类 */
+	private String baseEntity = "AbstractEntity";
+
+	private String baseEntityPath = pathPackageBase + "." + baseEntity;
+
+	private String baseDto = "AbstractDTO";
+
+	private String baseDtoPath = pathPackageBase + "." + baseDto;
+
+	private String baseQuery = "AbstractQuery";
+
+	private String baseQueryPath = pathPackageBase + "." + baseQuery;
+
+	private String baseMapper = "BaseMapper";
+
+	private String baseMapperPath = pathPackageBase + "." + baseMapper;
+
+	private String baseService = "BaseService";
+
+	private String baseServicePath = pathPackageBase + "." + baseService;
+
+	private String baseServiceImpl = "AbstractServiceImpl";
+
+	private String baseServiceImplPath = pathPackageBase + "." + baseServiceImpl;
+
+	private String baseController = "AbstractController";
+
+	private String baseControllerPath = pathPackageBase + "." + baseController;
+
 	/** mybatis xml文件在资源根目录下的目录 */
 	private String pathResourcesMapper = "mappers";
 

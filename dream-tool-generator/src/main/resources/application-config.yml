@@ -1,4 +1,10 @@
 #指定数据库,可选值有:mysql,oracle,sqlserver,postgresql
 config: 
-  database: 
+  database:
+    table-prefix: ts_ 
     database-type: mysql
+  common:
+    path-package-root: com.wy.user
+    path-package-base: com.wy.core.base
+    path-package-entity: com.wy.user.entity
+    generate-model-example: false

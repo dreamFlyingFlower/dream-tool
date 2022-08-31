@@ -13,6 +13,7 @@ import ${common.pathPackage}.po.${tableinfo.className}PO;
  * 
  * @author ${common.author}
  * @date ${datetime}
+ * @git ${common.git}
  */
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ${tableinfo.className}Convert extends BaseConvert<${tableinfo.className}PO, ${tableinfo.className}DTO> {

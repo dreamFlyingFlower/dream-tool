@@ -19,9 +19,9 @@ import lombok.Setter;
 public class TemplateProperties {
 
 	/** 默认需要生成的模板地址 */
-	private List<String> defaults = new ArrayList<String>(
-			Arrays.asList("template/Model.java.vm", "template/Mapper.java.vm", "template/Service.java.vm",
-					"template/ServiceImpl.java.vm", "template/Crl.java.vm"));
+	private List<String> defaults = new ArrayList<String>(Arrays.asList("template/Model.java.vm",
+	        "template/ModelDTO.java.vm", "template/ModelQuery.java.vm", "template/Mapper.java.vm",
+	        "template/Service.java.vm", "template/ServiceImpl.java.vm", "template/Controller.java.vm"));
 
 	/** mybaits生成generatorConfig.xml的模板 */
 	private String generatorConfig = "template/generatorConfig.xml.vm";
