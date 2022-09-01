@@ -17,7 +17,9 @@ import com.simple.properties.ConfigProperties;
 import com.wy.collection.ListTool;
 import com.wy.collection.MapTool;
 import com.wy.lang.StrTool;
+import com.wy.result.ResultException;
 import com.wy.third.json.JsonTools;
+import com.wy.util.ArrayTool;
 import com.wy.util.DateTool;
 
 /**
@@ -138,16 +140,61 @@ public class GenerateUtils {
 				tableinfo.setHasSort(true);
 			}
 
-			if (!tableinfo.isHasBigDecimal() && attrType.equals("BigDecimal")) {
-				tableinfo.setHasBigDecimal(true);
+			// 判断是否在Entity中出现
+			if (ArrayTool.contains(config.getDatabase().getExcludeEntityColumns(), column.get("columnName"))) {
+				columninfo.setExcludeEntity(true);
+			} else {
+				if (!tableinfo.isEntityHasBigDecimal() && attrType.equals("BigDecimal")) {
+					tableinfo.setEntityHasBigDecimal(true);
+				}
+				if (!tableinfo.isEntityHasDate() && (attrType.equalsIgnoreCase("Date"))) {
+					tableinfo.setEntityHasDate(true);
+				}
+				if (!tableinfo.isEntityHasLocalDate() && (attrType.equalsIgnoreCase("LocalDate"))) {
+					tableinfo.setEntityHasLocalDate(true);
+				}
+				if (!tableinfo.isEntityHasLocalDateTime() && (attrType.equalsIgnoreCase("LocalDateTime"))) {
+					tableinfo.setEntityHasLocalDateTime(true);
+				}
 			}
-			if (!tableinfo.isHasDate() && (attrType.equalsIgnoreCase("timestamp"))
-			        || attrType.equalsIgnoreCase("datetime") || attrType.equalsIgnoreCase("date")) {
-				tableinfo.setHasDate(true);
+
+			if (ArrayTool.contains(config.getDatabase().getExcludeEntityDtoColumns(), column.get("columnName"))) {
+				columninfo.setExcludeEntityDTO(true);
+			} else {
+				if (!tableinfo.isEntityDTOHasBigDecimal() && attrType.equals("BigDecimal")) {
+					tableinfo.setEntityDTOHasBigDecimal(true);
+				}
+				if (!tableinfo.isEntityDTOHasDate() && (attrType.equalsIgnoreCase("Date"))) {
+					tableinfo.setEntityDTOHasDate(true);
+				}
+				if (!tableinfo.isEntityDTOHasLocalDate() && (attrType.equalsIgnoreCase("LocalDate"))) {
+					tableinfo.setEntityDTOHasLocalDate(true);
+				}
+				if (!tableinfo.isEntityDTOHasLocalDateTime() && (attrType.equalsIgnoreCase("LocalDateTime"))) {
+					tableinfo.setEntityDTOHasLocalDateTime(true);
+				}
 			}
+			if (ArrayTool.contains(config.getDatabase().getExcludeQueryColumns(), column.get("columnName"))) {
+				columninfo.setExcludeQuery(true);
+			} else {
+				if (!tableinfo.isQueryHasBigDecimal() && attrType.equals("BigDecimal")) {
+					tableinfo.setQueryHasBigDecimal(true);
+				}
+				if (!tableinfo.isQueryHasDate() && (attrType.equalsIgnoreCase("Date"))) {
+					tableinfo.setQueryHasDate(true);
+				}
+				if (!tableinfo.isQueryHasLocalDate() && (attrType.equalsIgnoreCase("LocalDate"))) {
+					tableinfo.setQueryHasLocalDate(true);
+				}
+				if (!tableinfo.isQueryHasLocalDateTime() && (attrType.equalsIgnoreCase("LocalDateTime"))) {
+					tableinfo.setQueryHasLocalDateTime(true);
+				}
+			}
+
 			if (!tableinfo.isHasArray() && "array".equalsIgnoreCase(columninfo.getExtra())) {
 				tableinfo.setHasArray(true);
 			}
+
 			columsList.add(columninfo);
 		}
 		tableinfo.setColumns(columsList);
@@ -194,16 +241,16 @@ public class GenerateUtils {
 			return buildPath(config, config.getCommon().getPathPackageEntity()) + className + ".java";
 		}
 		if (template.contains("ModelDTO.java.vm")) {
-			return buildPath(config, config.getCommon().getPathPackageEntity()) + "dto" + File.separator + className
-			        + "DTO" + ".java";
+			return buildPath(config, config.getCommon().getPathPackageEntityDTO()) + File.separator + className
+			        + "DTO.java";
 		}
 		if (template.contains("ModelQuery.java.vm")) {
-			return buildPath(config, config.getCommon().getPathPackageEntity()) + "query" + File.separator + className
-			        + "Query" + ".java";
+			return buildPath(config, config.getCommon().getPathPackageQuery()) + File.separator + className
+			        + "Query.java";
 		}
 		if (template.contains("Convert.java.vm")) {
-			return buildPath(config, config.getCommon().getPathPackageEntity()) + "convert" + File.separator + className
-			        + "Convert" + ".java";
+			return buildPath(config, config.getCommon().getPathPackageConvert()) + File.separator + className
+			        + "Convert.java";
 		}
 		if (template.contains("Mapper.java.vm")) {
 			return buildPath(config, config.getCommon().getPathPackageMapper()) + className + "Mapper.java";
@@ -220,38 +267,29 @@ public class GenerateUtils {
 			return buildPath(config, config.getCommon().getPathPackageController()) + className + "Controller.java";
 		}
 		if (template.contains("Mapper.xml.vm")) {
-			return "main" + File.separator + "resources" + File.separator + "mapper" + File.separator
-			        + config.getCommon().getModuleName() + File.separator + className + "Mapper.xml";
+			return "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + className
+			        + "Mapper.xml";
 		}
 		if (template.contains("menu.sql.vm")) {
 			return className.toLowerCase() + "_menu.sql";
 		}
 		if (template.contains("index.vue.vm")) {
 			return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views"
-			        + File.separator + "modules" + File.separator + config.getCommon().getModuleName() + File.separator
-			        + className.toLowerCase() + ".vue";
+			        + File.separator + "modules" + File.separator + className.toLowerCase() + ".vue";
 		}
 		if (template.contains("add-or-update.vue.vm")) {
 			return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views"
-			        + File.separator + "modules" + File.separator + config.getCommon().getModuleName() + File.separator
-			        + className.toLowerCase() + "-add-or-update.vue";
+			        + File.separator + "modules" + File.separator + className.toLowerCase() + "-add-or-update.vue";
 		}
 		return null;
 	}
 
 	public static String buildPath(ConfigProperties config, String pathPackage) {
+		if (StrTool.isBlank(config.getCommon().getPathPackageRoot()) && StrTool.isBlank(pathPackage)) {
+			throw new ResultException("包名和根路径以及包名全路径不能同时为空");
+		}
 		String holePath = config.getCommon().getPathMain();
-		if (StrTool.isNotBlank(config.getCommon().getPathPackageRoot())) {
-			holePath +=
-			        config.getCommon().getPathPackageRoot().replaceAll("\\.", Matcher.quoteReplacement(File.separator))
-			                + File.separator;
-		}
-		if (StrTool.isNotBlank(config.getCommon().getModuleName())) {
-			holePath += config.getCommon().getModuleName() + File.separator;
-		}
-		if (StrTool.isNotBlank(pathPackage)) {
-			holePath += pathPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator)) + File.separator;
-		}
+		holePath += pathPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator)) + File.separator;
 		return holePath;
 	}
 

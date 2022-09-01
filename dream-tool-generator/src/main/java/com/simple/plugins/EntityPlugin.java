@@ -50,7 +50,8 @@ public class EntityPlugin extends PluginAdapter {
 		SIMPLE,
 		DATA,
 		ACCESSORS,
-		BUILDER
+		BUILDER,
+		SUPER_BUILDER
 	}
 
 	@Override
@@ -185,16 +186,18 @@ public class EntityPlugin extends PluginAdapter {
 		case SIMPLE:
 			topLevelClass.addImportedType("lombok.Getter");
 			topLevelClass.addImportedType("lombok.Setter");
-			topLevelClass.addImportedType("lombok.NoArgsConstructor");
 			topLevelClass.addAnnotation("@Getter");
 			topLevelClass.addAnnotation("@Setter");
-			topLevelClass.addAnnotation("@NoArgsConstructor");
 			break;
 		case DATA:
+			topLevelClass.addImportedType("lombok.AllArgsConstructor");
+			topLevelClass.addImportedType("lombok.Builder");
 			topLevelClass.addImportedType("lombok.Data");
-			topLevelClass.addImportedType("lombok.ToString;");
+			topLevelClass.addImportedType("lombok.NoArgsConstructor");
 			topLevelClass.addAnnotation("@Data");
-			topLevelClass.addAnnotation("@ToString");
+			topLevelClass.addAnnotation("@Builder");
+			topLevelClass.addAnnotation("@NoArgsConstructor");
+			topLevelClass.addAnnotation("@AllArgsConstructor");
 			break;
 		case ACCESSORS:
 			topLevelClass.addImportedType("lombok.Getter");
@@ -217,6 +220,20 @@ public class EntityPlugin extends PluginAdapter {
 			topLevelClass.addAnnotation("@Setter");
 			topLevelClass.addAnnotation("@Builder");
 			topLevelClass.addAnnotation("@ToString");
+			topLevelClass.addAnnotation("@NoArgsConstructor");
+			topLevelClass.addAnnotation("@AllArgsConstructor");
+			break;
+		case SUPER_BUILDER:
+			topLevelClass.addImportedType("lombok.AllArgsConstructor");
+			topLevelClass.addImportedType("lombok.Getter");
+			topLevelClass.addImportedType("lombok.NoArgsConstructor");
+			topLevelClass.addImportedType("lombok.Setter");
+			topLevelClass.addImportedType("lombok.ToString");
+			topLevelClass.addImportedType("import lombok.experimental.SuperBuilder");
+			topLevelClass.addAnnotation("@Getter");
+			topLevelClass.addAnnotation("@Setter");
+			topLevelClass.addAnnotation("@ToString");
+			topLevelClass.addAnnotation("@SuperBuilder");
 			topLevelClass.addAnnotation("@NoArgsConstructor");
 			topLevelClass.addAnnotation("@AllArgsConstructor");
 			break;

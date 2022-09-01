@@ -1,7 +1,11 @@
 package ${common.pathPackageService};
 
-import ${common.pathPackageBase}.BaseService;
+#if($common.baseService)
+import ${common.baseServicePath};
 import ${common.pathPackageEntity}.${tableinfo.className};
+import ${common.pathPackageEntityDTO}.${tableinfo.className}DTO;
+import ${common.pathPackageQuery}.${tableinfo.className}Query;
+#end
 
 /**
  * ${tableinfo.comments}
@@ -10,6 +14,10 @@ import ${common.pathPackageEntity}.${tableinfo.className};
  * @date ${datetime}
  * @git ${common.git}
  */
-public interface ${tableinfo.className}Service extends ${common.baseService}<${tableinfo.className}> {
+#if($common.baseService)
+public interface ${tableinfo.className}Service extends ${common.baseService}<${tableinfo.className}, ${tableinfo.className}DTO, ${tableinfo.className}Query> {
+#else
+public interface ${tableinfo.className}Service {
+#end
 
 }

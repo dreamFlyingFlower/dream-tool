@@ -3,9 +3,13 @@ package ${common.pathPackageCrl};
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ${common.pathBasePackage}.AbstractCrl;
+#if(${common.baseController})
+import ${common.baseControllerPath};
 import ${common.pathPackageEntity}.${tableinfo.className};
+import ${common.pathPackageEntityDTO}.${tableinfo.className}DTO;
+import ${common.pathPackageQuery}.${tableinfo.className}Query;
 
+#end
 import io.swagger.annotations.Api;
 
 /**
@@ -18,6 +22,10 @@ import io.swagger.annotations.Api;
 @Api(tags = "${tableinfo.comments}API")
 @RestController
 @RequestMapping("${tableinfo.objectName}")
-public class ${tableinfo.className}Crl extends AbstractCrl<${tableinfo.className}> {
+#if(${common.baseController})
+public class ${tableinfo.className}Crl extends ${common.baseController}<${tableinfo.className}, ${tableinfo.className}DTO, ${tableinfo.className}Query> {
+#else
+public class ${tableinfo.className}Crl {
+#end
 
 }

@@ -10,7 +10,7 @@ import lombok.Setter;
  * 
  * @author 飞花梦影
  * @date 2020-12-13 22:39:35
- * @git {@link https://github.com/mygodness100}
+ * @git {@link https://github.com/dreamFlyingFlower}
  */
 @Getter
 @Setter
@@ -29,23 +29,28 @@ public class CommonProperties {
 	private String pathResources = "src" + File.separator + "main" + File.separator + "resources" + File.separator;
 
 	/** Java文件根目录 */
-	private String pathPackageRoot = "com.wy";
+	private String pathPackageRoot = "com.wy.user";
 
-	/** 基础包根目录 */
-	private String pathPackageBase = pathPackageRoot + "." + "base";
+	private String pathPackageEntity = pathPackageRoot + ".entity";
 
-	/** 实体类在java文件根目录下的目录 */
-	private String pathPackageEntity = pathPackageRoot + "." + "entity";
+	private String pathPackageEntityDTO = pathPackageEntity + ".dto";
 
-	private String pathPackageMapper = pathPackageRoot + "." + "mapper";
+	private String pathPackageConvert = pathPackageRoot + ".convert";
 
-	private String pathPackageService = pathPackageRoot + "." + "service";
+	private String pathPackageQuery = pathPackageRoot + ".query";
 
-	private String pathPackageServiceImpl = pathPackageRoot + "." + "service.impl";
+	private String pathPackageMapper = pathPackageRoot + ".mapper";
 
-	private String pathPackageCrl = pathPackageRoot + "." + "crl";
+	private String pathPackageService = pathPackageRoot + ".service";
 
-	private String pathPackageController = pathPackageRoot + "." + "controller";
+	private String pathPackageServiceImpl = pathPackageRoot + ".service.impl";
+
+	private String pathPackageCrl = pathPackageRoot + ".crl";
+
+	private String pathPackageController = pathPackageRoot + ".controller";
+
+	/** 基础包根目录全路径 */
+	private String pathPackageBase = "com.wy.core.base";
 
 	/** 基础类 */
 	private String baseEntity = "AbstractEntity";
@@ -60,7 +65,11 @@ public class CommonProperties {
 
 	private String baseQueryPath = pathPackageBase + "." + baseQuery;
 
-	private String baseMapper = "BaseMapper";
+	private String baseConvert = "BaseConvert";
+
+	private String baseConvertPath = pathPackageBase + "." + baseConvert;
+
+	private String baseMapper = "BaseMappers";
 
 	private String baseMapperPath = pathPackageBase + "." + baseMapper;
 
@@ -72,15 +81,12 @@ public class CommonProperties {
 
 	private String baseServiceImplPath = pathPackageBase + "." + baseServiceImpl;
 
-	private String baseController = "AbstractController";
+	private String baseController = "AbstractCrl";
 
 	private String baseControllerPath = pathPackageBase + "." + baseController;
 
 	/** mybatis xml文件在资源根目录下的目录 */
 	private String pathResourcesMapper = "mappers";
-
-	/** 模块名 */
-	private String moduleName = "";
 
 	/** 是否执行生成mybatis生成model example和mapper.xml的方法 */
 	private boolean generateMybatisConfig = true;

@@ -17,6 +17,8 @@ import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.wy.lang.StrTool;
+
 /**
  * 生成mapper对应的xml文件
  * 
@@ -62,46 +64,43 @@ public class MapperPlugin extends PluginAdapter {
 		if (Objects.nonNull(baseColumnList)) {
 			document.getRootElement().addElement(baseColumnList);
 		}
+
+		// 生成list
+		XmlElement generateLists = generateLists(introspectedTable);
+		if (Objects.nonNull(generateLists)) {
+			document.getRootElement().addElement(generateLists);
+		}
 		// 生成批量新增inserts
-		XmlElement inserts = generateInserts(introspectedTable);
-		if (Objects.nonNull(inserts)) {
-			document.getRootElement().addElement(inserts);
-		}
+		// XmlElement inserts = generateInserts(introspectedTable);
+		// if (Objects.nonNull(inserts)) {
+		// document.getRootElement().addElement(inserts);
+		// }
 		// 生成主键批量删除deleteByPrimaryKeys
-		XmlElement deleteByPrimaryKeys = generateDeleteByPrimaryKeys(introspectedTable);
-		if (Objects.nonNull(deleteByPrimaryKeys)) {
-			document.getRootElement().addElement(deleteByPrimaryKeys);
-		}
+		// XmlElement deleteByPrimaryKeys =
+		// generateDeleteByPrimaryKeys(introspectedTable);
+		// if (Objects.nonNull(deleteByPrimaryKeys)) {
+		// document.getRootElement().addElement(deleteByPrimaryKeys);
+		// }
 		// 生成清空表数据deleteAll
-		XmlElement deleteAll = generateDeleteAll(introspectedTable);
-		if (Objects.nonNull(deleteAll)) {
-			document.getRootElement().addElement(deleteAll);
-		}
-		// 生成根据实体类非null字段分页查询selectEntitys
-		XmlElement selectEntitys = generateSelectEntitys(introspectedTable);
-		if (Objects.nonNull(selectEntitys)) {
-			document.getRootElement().addElement(selectEntitys);
-		}
-		// 生成根据任意非null字段分页查询selectLists
-		XmlElement selectLists = generateSelectLists(introspectedTable);
-		if (Objects.nonNull(selectLists)) {
-			document.getRootElement().addElement(selectLists);
-		}
+		// XmlElement deleteAll = generateDeleteAll(introspectedTable);
+		// if (Objects.nonNull(deleteAll)) {
+		// document.getRootElement().addElement(deleteAll);
+		// }
 		// 生成根据实体类非null参数为条件计数countByEntity
-		XmlElement countByEntity = generateCountByEntity(introspectedTable);
-		if (Objects.nonNull(countByEntity)) {
-			document.getRootElement().addElement(countByEntity);
-		}
+		// XmlElement countByEntity = generateCountByEntity(introspectedTable);
+		// if (Objects.nonNull(countByEntity)) {
+		// document.getRootElement().addElement(countByEntity);
+		// }
 		// 生成获得实体类中的数字类型获得最大值getMaxValue
-		XmlElement selectMaxValue = generateSelectMaxValue(introspectedTable);
-		if (Objects.nonNull(selectMaxValue)) {
-			document.getRootElement().addElement(selectMaxValue);
-		}
+		// XmlElement selectMaxValue = generateSelectMaxValue(introspectedTable);
+		// if (Objects.nonNull(selectMaxValue)) {
+		// document.getRootElement().addElement(selectMaxValue);
+		// }
 		// 生成获得实体类中的时间类型最大值getMaxTime
-		XmlElement selectMaxTime = generateSelectMaxTime(introspectedTable);
-		if (Objects.nonNull(selectMaxTime)) {
-			document.getRootElement().addElement(selectMaxTime);
-		}
+		// XmlElement selectMaxTime = generateSelectMaxTime(introspectedTable);
+		// if (Objects.nonNull(selectMaxTime)) {
+		// document.getRootElement().addElement(selectMaxTime);
+		// }
 		return generateMapperXml;
 	}
 
@@ -113,15 +112,16 @@ public class MapperPlugin extends PluginAdapter {
 	 */
 	public XmlElement generateBaseColumnList(IntrospectedTable introspectedTable) {
 		XmlElement xmlElement = new XmlElement("sql");
-		xmlElement.addAttribute(new Attribute("id", "Base_Column_List"));
+		xmlElement.addAttribute(new Attribute("id", "BaseColumnList"));
 		List<String> columns = new ArrayList<>();
 		int index = 0;
 		for (IntrospectedColumn column : introspectedTable.getAllColumns()) {
+			// 将is_开头的字段去掉is_
 			String actualColumnName = column.getActualColumnName();
 			if (actualColumnName.startsWith("is_")) {
 				actualColumnName = actualColumnName + " " + actualColumnName.replace("is_", "");
 			}
-			actualColumnName = "m." + actualColumnName;
+			actualColumnName = "a." + actualColumnName;
 			if (index != 0 && index % 8 == 0) {
 				actualColumnName = System.lineSeparator() + "\t" + actualColumnName;
 			}
@@ -130,6 +130,49 @@ public class MapperPlugin extends PluginAdapter {
 		}
 		xmlElement.addElement(new TextElement(String.join(", ", columns)));
 		return xmlElement;
+	}
+
+	/**
+	 * 生成list
+	 * 
+	 * @param introspectedTable
+	 * @return
+	 */
+	public XmlElement generateLists(IntrospectedTable introspectedTable) {
+		XmlElement listByEntity = new XmlElement("select");
+		listByEntity.addAttribute(new Attribute("id", "list"));
+		listByEntity.addAttribute(new Attribute("resultMap", "BaseResultMap"));
+		StringBuilder deleteBuilder = new StringBuilder();
+		StringBuilder whereBuilder = new StringBuilder();
+		List<IntrospectedColumn> columnList = introspectedTable.getAllColumns();
+		for (IntrospectedColumn column : columnList) {
+			// 跳过create_user,create_time,update_user,update_time
+			if ("create_user".equalsIgnoreCase(column.getActualColumnName())) {
+				continue;
+			}
+			if ("create_time".equalsIgnoreCase(column.getActualColumnName())) {
+				continue;
+			}
+			if ("update_user".equalsIgnoreCase(column.getActualColumnName())) {
+				continue;
+			}
+			if ("update_time".equalsIgnoreCase(column.getActualColumnName())) {
+				continue;
+			}
+			String javaColumn = column.getJavaProperty();
+			if (column.getActualColumnName().startsWith("is_")) {
+				javaColumn = StrTool.firstLower(javaColumn.replace("is", ""));
+			}
+			whereBuilder.append("<if test = \"query.").append(javaColumn).append(" != null and query.")
+			        .append(javaColumn).append(" != ''\"> ").append(System.lineSeparator()).append("AND a.")
+			        .append(column.getActualColumnName()).append(" = #{query.").append(javaColumn).append(", jdbcType=")
+			        .append(column.getJdbcTypeName()).append(" }").append(System.lineSeparator()).append(" </if>");
+		}
+		StringBuffer sqlString = new StringBuffer("SELECT <include refid=\"BaseColumnList\" /> FROM ")
+		        .append(introspectedTable.getTableConfiguration().getTableName()).append(" a ").append("<where>")
+		        .append(deleteBuilder).append(whereBuilder).append("</where>").append("ORDER BY a.id DESC");
+		listByEntity.addElement(new TextElement(sqlString.toString()));
+		return listByEntity;
 	}
 
 	/**
@@ -142,7 +185,7 @@ public class MapperPlugin extends PluginAdapter {
 	 * @param introspectedTable 表信息
 	 * @return 生成的xml信息
 	 */
-	private XmlElement generateInserts(IntrospectedTable introspectedTable) {
+	protected XmlElement generateInserts(IntrospectedTable introspectedTable) {
 		XmlElement insertSelectives = new XmlElement("insert");
 		insertSelectives.addAttribute(new Attribute("id", "inserts"));
 		insertSelectives.addAttribute(new Attribute("parameterType", "list"));
@@ -193,7 +236,7 @@ public class MapperPlugin extends PluginAdapter {
 		return insertSelectives;
 	}
 
-	private XmlElement generateDeleteByPrimaryKeys(IntrospectedTable introspectedTable) {
+	protected XmlElement generateDeleteByPrimaryKeys(IntrospectedTable introspectedTable) {
 		XmlElement deleteByPrimaryKeys = new XmlElement("delete");
 		deleteByPrimaryKeys.addAttribute(new Attribute("id", "deleteByPrimaryKeys"));
 		deleteByPrimaryKeys.addAttribute(new Attribute("parameterType", "list"));
@@ -212,7 +255,7 @@ public class MapperPlugin extends PluginAdapter {
 		return deleteByPrimaryKeys;
 	}
 
-	private XmlElement generateDeleteAll(IntrospectedTable introspectedTable) {
+	protected XmlElement generateDeleteAll(IntrospectedTable introspectedTable) {
 		XmlElement deleteAll = new XmlElement("delete");
 		deleteAll.addAttribute(new Attribute("id", "deleteAll"));
 		StringBuffer sqlString = new StringBuffer(
@@ -221,43 +264,7 @@ public class MapperPlugin extends PluginAdapter {
 		return deleteAll;
 	}
 
-	private XmlElement generateSelectEntitys(IntrospectedTable introspectedTable) {
-		XmlElement listByEntity = new XmlElement("select");
-		listByEntity.addAttribute(new Attribute("id", "selectEntitys"));
-		listByEntity.addAttribute(new Attribute("resultMap", "BaseResultMap"));
-		StringBuilder whereBuilder = new StringBuilder();
-		List<IntrospectedColumn> columnList = introspectedTable.getAllColumns();
-		for (IntrospectedColumn column : columnList) {
-			whereBuilder.append(String.format("<if test = \"%s != null \"> and %s = #{%s,jdbcType=%s} </if>",
-			        column.getJavaProperty(), column.getActualColumnName(), column.getJavaProperty(),
-			        column.getJdbcTypeName()));
-		}
-		StringBuffer sqlString = new StringBuffer("select <include refid=\"Base_Column_List\" /> from ")
-		        .append(introspectedTable.getTableConfiguration().getTableName()).append("<where>").append(whereBuilder)
-		        .append("</where>");
-		listByEntity.addElement(new TextElement(sqlString.toString()));
-		return listByEntity;
-	}
-
-	private XmlElement generateSelectLists(IntrospectedTable introspectedTable) {
-		XmlElement selectLists = new XmlElement("select");
-		selectLists.addAttribute(new Attribute("id", "selectLists"));
-		selectLists.addAttribute(new Attribute("resultType", "map"));
-		StringBuilder whereBuilder = new StringBuilder();
-		List<IntrospectedColumn> columnList = introspectedTable.getAllColumns();
-		for (IntrospectedColumn column : columnList) {
-			whereBuilder.append(String.format("<if test = \"%s != null \"> and %s = #{%s,jdbcType=%s} </if>",
-			        column.getJavaProperty(), column.getActualColumnName(), column.getJavaProperty(),
-			        column.getJdbcTypeName()));
-		}
-		StringBuffer sqlString = new StringBuffer("select <include refid=\"Base_Column_List\" /> from ")
-		        .append(introspectedTable.getTableConfiguration().getTableName()).append("<where>").append(whereBuilder)
-		        .append("</where>");
-		selectLists.addElement(new TextElement(sqlString.toString()));
-		return selectLists;
-	}
-
-	private XmlElement generateCountByEntity(IntrospectedTable introspectedTable) {
+	protected XmlElement generateCountByEntity(IntrospectedTable introspectedTable) {
 		XmlElement countByEntity = new XmlElement("select");
 		countByEntity.addAttribute(new Attribute("id", "countByEntity"));
 		countByEntity.addAttribute(new Attribute("resultType", "java.lang.Long"));
@@ -275,7 +282,7 @@ public class MapperPlugin extends PluginAdapter {
 		return countByEntity;
 	}
 
-	private XmlElement generateSelectMaxValue(IntrospectedTable introspectedTable) {
+	protected XmlElement generateSelectMaxValue(IntrospectedTable introspectedTable) {
 		XmlElement getMaxValue = new XmlElement("select");
 		getMaxValue.addAttribute(new Attribute("id", "selectMaxValue"));
 		getMaxValue.addAttribute(new Attribute("resultType", "java.lang.Long"));
@@ -299,7 +306,7 @@ public class MapperPlugin extends PluginAdapter {
 		return getMaxValue;
 	}
 
-	private XmlElement generateSelectMaxTime(IntrospectedTable introspectedTable) {
+	protected XmlElement generateSelectMaxTime(IntrospectedTable introspectedTable) {
 		XmlElement getMaxTime = new XmlElement("select");
 		getMaxTime.addAttribute(new Attribute("id", "selectMaxTime"));
 		getMaxTime.addAttribute(new Attribute("resultType", "java.util.Date"));
@@ -321,5 +328,96 @@ public class MapperPlugin extends PluginAdapter {
 		        .append(introspectedTable.getTableConfiguration().getTableName());
 		getMaxTime.addElement(new TextElement(sqlString.toString()));
 		return getMaxTime;
+	}
+
+	/**
+	 * 不生成where条件
+	 */
+	@Override
+	public boolean sqlMapExampleWhereClauseElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapDeleteByExampleElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapDeleteByPrimaryKeyElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapSelectAllElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapInsertElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapSelectByExampleWithoutBLOBsElementGenerated(XmlElement element,
+	        IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapSelectByExampleWithBLOBsElementGenerated(XmlElement element,
+	        IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapSelectByPrimaryKeyElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapUpdateByExampleSelectiveElementGenerated(XmlElement element,
+	        IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapUpdateByExampleWithBLOBsElementGenerated(XmlElement element,
+	        IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapUpdateByExampleWithoutBLOBsElementGenerated(XmlElement element,
+	        IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapUpdateByPrimaryKeySelectiveElementGenerated(XmlElement element,
+	        IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapInsertSelectiveElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapCountByExampleElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapUpdateByPrimaryKeyWithBLOBsElementGenerated(XmlElement element,
+	        IntrospectedTable introspectedTable) {
+		return false;
+	}
+
+	@Override
+	public boolean sqlMapUpdateByPrimaryKeyWithoutBLOBsElementGenerated(XmlElement element,
+	        IntrospectedTable introspectedTable) {
+		return false;
 	}
 }

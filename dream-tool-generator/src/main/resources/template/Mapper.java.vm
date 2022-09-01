@@ -1,11 +1,15 @@
-package ${common.pathPackageMappe};
+package ${common.pathPackageMapper};
 
-import ${common.pathBasePackage}.BaseMapper;
-import ${common.pathPackageEntity}.${tableinfo.className};
-import ${common.pathPackageEntity}.${tableinfo.className}Example;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+#if(${common.baseMapper})
+import ${common.baseMapperPath};
+#end
+import ${common.pathPackageEntity}.${tableinfo.className};
+import ${common.pathPackageQuery}.${tableinfo.className}Query;
 
 /**
  * ${tableinfo.comments}
@@ -15,28 +19,13 @@ import org.apache.ibatis.annotations.Param;
  * @git ${common.git}
  */
 @Mapper
-public interface ${tableinfo.className}Mapper extends BaseMapper<${tableinfo.className}, Long> {
+#if(${common.baseMapper})
+public interface ${tableinfo.className}Mapper extends ${common.baseMapper}<${tableinfo.className}> {
+#else
+public interface ${tableinfo.className}Mapper {
+#end
 
-	long countByExample(${tableinfo.className}Example example);
+	List<${tableinfo.className}> list(Page<${tableinfo.className}> page, @Param("query") ${tableinfo.className}Query query);
 
-	int deleteByExample(${tableinfo.className}Example example);
-
-	int deleteByPrimaryKey(Long id);
-
-	int insert(${tableinfo.className} record);
-
-	int insertSelective(${tableinfo.className} record);
-
-	List<${tableinfo.className}> selectByExample(${tableinfo.className}Example example);
-
-	${tableinfo.className} selectByPrimaryKey(Long id);
-
-	int updateByExampleSelective(@Param("record") ${tableinfo.className} record,
-			@Param("example") ${tableinfo.className}Example example);
-
-	int updateByExample(@Param("record") ${tableinfo.className} record, @Param("example") ${tableinfo.className}Example example);
-
-	int updateByPrimaryKeySelective(${tableinfo.className} record);
-
-	int updateByPrimaryKey(${tableinfo.className} record);
+	List<${tableinfo.className}> list(@Param("query") ${tableinfo.className}Query query);
 }

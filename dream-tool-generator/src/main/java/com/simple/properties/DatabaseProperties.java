@@ -29,6 +29,15 @@ public class DatabaseProperties {
 	/** 排序字段,当该字段存在时,会在实体类上添加相应排序注解 */
 	private String sortColumn = "sort_index";
 
+	/** 不从数据库映射到Entity的字段 */
+	private String[] excludeEntityColumns = new String[] { "create_time", "create_user", "update_time", "update_user" };
+
+	/** 不从数据库映射到EntityDTO的字段 */
+	private String[] excludeEntityDtoColumns = new String[] {};
+
+	/** 不从数据库映射到Qyert的字段 */
+	private String[] excludeQueryColumns = new String[] {};
+
 	/** 各种数据库与Java对照类型 */
 	private Map<String, String> Db2JavaType = new HashMap<String, String>() {
 

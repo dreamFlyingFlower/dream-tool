@@ -67,7 +67,7 @@ public class VelocityUtils {
 		try (StringWriter sw = new StringWriter();) {
 			// 渲染模板
 			Template tpl = Velocity.getTemplate(config.getTemplate().getGeneratorConfig(),
-					StandardCharsets.UTF_8.displayName());
+			        StandardCharsets.UTF_8.displayName());
 			File file = new File("src/main/resources/generator/generatorConfig.xml");
 			if (!file.getParentFile().exists()) {
 				file.getParentFile().mkdirs();
@@ -80,14 +80,14 @@ public class VelocityUtils {
 			IOTool.write(sw.toString(), bufferedWriter);
 			bufferedWriter.flush();
 			ShellRunner.main(new String[] { "-configfile", "src\\main\\resources\\generator\\generatorConfig.xml",
-					"-overwrite" });
+			        "-overwrite" });
 		} catch (IOException e) {
 			throw new ResultException("Mybatis GeneratorConfig.xml渲染模板失败", e);
 		}
 	}
 
 	public static <K, V> byte[] generateFiles(Map<K, V> data, Tableinfo tableinfo, List<String> templates,
-			boolean localOrRemote) {
+	        boolean localOrRemote) {
 		VelocityContext context = new VelocityContext(data);
 		for (String template : templates) {
 			// 渲染模板
@@ -112,12 +112,12 @@ public class VelocityUtils {
 				}
 			} else {
 				try (StringWriter sw = new StringWriter();
-						ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-						ZipOutputStream zip = new ZipOutputStream(outputStream);) {
+				        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				        ZipOutputStream zip = new ZipOutputStream(outputStream);) {
 					tpl.merge(context, sw);
 					// 添加到zip
 					zip.putNextEntry(
-							new ZipEntry(GenerateUtils.getFileName(config, template, tableinfo.getClassName())));
+					        new ZipEntry(GenerateUtils.getFileName(config, template, tableinfo.getClassName())));
 					IOTool.write(sw.toString(), zip, StandardCharsets.UTF_8.displayName());
 					zip.closeEntry();
 					return outputStream.toByteArray();

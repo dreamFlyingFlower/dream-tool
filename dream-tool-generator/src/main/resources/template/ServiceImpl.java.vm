@@ -2,8 +2,14 @@ package ${common.pathPackageServiceImpl};
 
 import org.springframework.stereotype.Service;
 
-import ${common.pathBasePackage}.AbstractService;
+#if(${common.baseServiceImpl})
+import ${common.baseServiceImplPath};
+import ${common.pathPackageConvert}.${tableinfo.className}Convert;
 import ${common.pathPackageEntity}.${tableinfo.className};
+import ${common.pathPackageEntityDTO}.${tableinfo.className}DTO;
+import ${common.pathPackageMapper}.${tableinfo.className}Mapper;
+import ${common.pathPackageQuery}.${tableinfo.className}Query;
+#end
 import ${common.pathPackageService}.${tableinfo.className}Service;
 
 /**
@@ -14,6 +20,10 @@ import ${common.pathPackageService}.${tableinfo.className}Service;
  * @git ${common.git}
  */
 @Service("${tableinfo.objectName}Service")
-public class ${tableinfo.className}ServiceImpl extends AbstractService<${tableinfo.className}, Long> implements ${tableinfo.className}Service {
+#if($common.baseServiceImpl)
+public class ${tableinfo.className}ServiceImpl extends ${common.baseServiceImpl}<${tableinfo.className}, ${tableinfo.className}DTO, ${tableinfo.className}Query, ${tableinfo.className}Convert, ${tableinfo.className}Mapper> implements ${tableinfo.className}Service {
+#else
+public class ${tableinfo.className}ServiceImpl implements ${tableinfo.className}Service {
+#end
 
 }

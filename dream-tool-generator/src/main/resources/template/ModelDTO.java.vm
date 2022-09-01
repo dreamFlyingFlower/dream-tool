@@ -1,15 +1,18 @@
-package ${common.pathPackageEntity}.dto;
+package ${common.pathPackageEntityDTO};
 
 import javax.validation.constraints.NotNull;
 
-import com.coconut.uim.vlidate.GroupUpdate;
+import com.wy.core.valid.ValidEdit;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-#if(${tableinfo.hasBigDecimal})
+#if(${tableinfo.entityDTOHasBigDecimal})
 import java.math.BigDecimal;
 #end
-#if(${tableinfo.hasDate})
+#if(${tableinfo.entityDTOHasLocalDate})
+import java.time.LocalDate;
+#end
+#if(${tableinfo.entityDTOHasLocalDateTime})
 import java.time.LocalDateTime;
 #end
 import lombok.AllArgsConstructor;
@@ -22,25 +25,25 @@ import lombok.NoArgsConstructor;
  * 
  * @author ${common.author}
  * @date ${datetime}
+ * @git ${common.git}
  */
 @ApiModel(description = "${tableinfo.comments}DTO")
-@Getter
-@Setter
-@ToString
-@SuperBuilder
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ${tableinfo.className}DTO {
-
 #foreach ($column in $columns)
+#if(!$column.excludeEntityDTO)
 
 	/**
 	 * $column.comments
 	 */
 	@ApiModelProperty("$column.comments")
 #if($column.columnName == 'id')
-	@NotNull(groups = GroupUpdate.class)
+	@NotNull(groups = ValidEdit.class)
 #end
 	private $column.attrType $column.attrNameLower;
+#end
 #end
 }

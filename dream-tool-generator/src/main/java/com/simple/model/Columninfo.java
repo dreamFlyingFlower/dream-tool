@@ -76,4 +76,19 @@ public class Columninfo {
 	 * auto_increment
 	 */
 	private String extra;
+
+	/**
+	 * 字段是否在Entity中出现
+	 */
+	private boolean excludeEntity;
+
+	/**
+	 * 字段是否在EntityDTO中出现
+	 */
+	private boolean excludeEntityDTO;
+
+	/**
+	 * 字段是否在Query中出现
+	 */
+	private boolean excludeQuery;
 }

@@ -90,15 +90,15 @@ public class GeneratorService {
 	}
 
 	private byte[] generateCode(List<Map<String, Object>> dbTables,
-			Map<String, List<Map<String, String>>> handlerColumns, boolean localOrRemote) {
+	        Map<String, List<Map<String, String>>> handlerColumns, boolean localOrRemote) {
 		generateMapperXml(dbTables, handlerColumns, localOrRemote);
 		dataSource.setUrl(dataSource.getUrl().replaceAll("&", "&amp;"));
 		// 所有表的信息,需要添加到mybatis自动生成xml的模板中
 		for (Map<String, Object> dbTable : dbTables) {
 			String tableName = dbTable.get("tableName").toString();
 			// 处理表信息
-			Tableinfo tableinfo = GenerateUtils.generateTableinfo(dbTable, handlerColumns.get(tableName), config,
-					dataSource);
+			Tableinfo tableinfo =
+			        GenerateUtils.generateTableinfo(dbTable, handlerColumns.get(tableName), config, dataSource);
 			// 生成代码
 			if (localOrRemote) {
 				GenerateUtils.generateCode(tableinfo, config, localOrRemote, dataSource);
@@ -114,7 +114,7 @@ public class GeneratorService {
 
 	@Async
 	public void generateMapperXml(List<Map<String, Object>> dbTables,
-			Map<String, List<Map<String, String>>> handlerColumns, boolean localOrRemote) {
+	        Map<String, List<Map<String, String>>> handlerColumns, boolean localOrRemote) {
 		dataSource.setUrl(dataSource.getUrl().replaceAll("&", "&amp;"));
 		for (Map<String, Object> dbTable : dbTables) {
 			String tableName = dbTable.get("tableName").toString();

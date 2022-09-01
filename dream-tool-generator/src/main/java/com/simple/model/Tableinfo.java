@@ -62,12 +62,53 @@ public class Tableinfo {
 	/**
 	 * 判断是否有BigDecimal类型
 	 */
-	private boolean hasBigDecimal;
+	private boolean entityHasBigDecimal;
 
 	/**
 	 * 判断是否有java.util.Date类型
 	 */
-	private boolean hasDate;
+	private boolean entityHasDate;
+
+	/**
+	 * 判断是否有java.time.LocalDate和java.time.LocalDateTime;
+	 */
+	private boolean entityHasLocalDate;
+
+	private boolean entityHasLocalDateTime;
+
+	/**
+	 * 判断是否有BigDecimal类型
+	 */
+	private boolean entityDTOHasBigDecimal;
+
+	/**
+	 * 判断是否有java.util.Date类型
+	 */
+	private boolean entityDTOHasDate;
+
+	/**
+	 * 判断是否有java.time.LocalDate和java.time.LocalDateTime;
+	 */
+	private boolean entityDTOHasLocalDate;
+
+	private boolean entityDTOHasLocalDateTime;
+
+	/**
+	 * 判断是否有BigDecimal类型
+	 */
+	private boolean queryHasBigDecimal;
+
+	/**
+	 * 判断是否有java.util.Date类型
+	 */
+	private boolean queryHasDate;
+
+	/**
+	 * 判断是否有java.time.LocalDate和java.time.LocalDateTime;
+	 */
+	private boolean queryHasLocalDate;
+
+	private boolean queryHasLocalDateTime;
 
 	/**
 	 * 判断是否有数组类型

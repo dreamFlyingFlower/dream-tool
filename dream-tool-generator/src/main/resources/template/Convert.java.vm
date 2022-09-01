@@ -1,22 +1,22 @@
-package ${common.pathPackage}.entity.convert;
+package ${common.pathPackageConvert};
 
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
-import ${common.basePathPackage}.BaseConvert;
-import ${common.pathPackage}.entity.dto.${tableinfo.className}DTO;
-import ${common.pathPackage}.po.${tableinfo.className}PO;
+import ${common.baseConvertPath};
+import ${common.pathPackageEntity}.${tableinfo.className};
+import ${common.pathPackageEntityDTO}.${tableinfo.className}DTO;
 
 /**
- * ${tableinfo.comments}
+ * ${tableinfo.comments}数据库实体与DTO互转
  * 
  * @author ${common.author}
  * @date ${datetime}
  * @git ${common.git}
  */
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface ${tableinfo.className}Convert extends BaseConvert<${tableinfo.className}PO, ${tableinfo.className}DTO> {
+public interface ${tableinfo.className}Convert extends BaseConvert<${tableinfo.className}, ${tableinfo.className}DTO> {
 
 	${tableinfo.className}Convert INSTANCE = Mappers.getMapper(${tableinfo.className}Convert.class);
 
