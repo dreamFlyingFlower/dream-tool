@@ -18,6 +18,7 @@ import com.simple.common.GeneratorMapper;
 import com.simple.model.Tableinfo;
 import com.simple.properties.ConfigProperties;
 import com.simple.utils.GenerateUtils;
+import com.wy.collection.MapTool;
 import com.wy.result.Result;
 import com.wy.third.json.JsonTools;
 
@@ -122,5 +123,24 @@ public class GeneratorService {
 			GenerateUtils.generateTableinfoMap(dbTable, handlerColumns.get(tableName), config);
 		}
 		GenerateUtils.generateMapperXml(dbTables, config, localOrRemote, dataSource);
+	}
+
+	/**
+	 * 生成字典表中所有字典
+	 * 
+	 * @param tableName 字典表名
+	 */
+	public void generateDict(String tableName) {
+		List<Map<String, Object>> dbTables =
+		        generatorMapper.selectLists(MapTool.builder("tableName", tableName).build());
+		// 所有字段信息
+		List<Map<String, String>> dbColumns = generatorMapper.selectColumninfos(null);
+		// 所有表与各自字段的对应关系
+		Map<String, List<Map<String, String>>> handlerColumns = GenerateUtils.handlerColumns(dbColumns);
+		generateCode(dbTables, handlerColumns, false);
+	}
+
+	public void generateDict(String tableName, String... dictCodes) {
+
 	}
 }

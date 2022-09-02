@@ -12,13 +12,35 @@ public class ApplicationTests {
 	@Autowired
 	private GeneratorService generatorService;
 
+	/**
+	 * 生成数据库中所有表的文件
+	 */
 	@Test
 	public void buildAllTable() {
 		generatorService.generateCode(true);
 	}
 
+	/**
+	 * 生成单表的文件
+	 */
 	@Test
 	public void buildSingleTable() {
 		generatorService.generateCode(true, "ts_menu");
+	}
+
+	/**
+	 * 构建字典中所有的项为枚举
+	 */
+	@Test
+	public void buildAllDict() {
+		generatorService.generateDict("ts_dict");
+	}
+
+	/**
+	 * 构建字典中单个项为枚举
+	 */
+	@Test
+	public void buildSingleDict() {
+		generatorService.generateDict("ts_dict", "user_status");
 	}
 }
