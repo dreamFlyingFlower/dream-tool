@@ -82,6 +82,8 @@ public enum TipEnum implements StatusMsg {
 	TIP_ROLE_NOT_OPERATE_ADMIN(1301, "msg_role_not_operate_admin"),
 	/** 角色权限不足 */
 	TIP_ROLE_PERMISSION_DENIED(1302, "msg_role_permission_denied"),
+	/** 角色未分配资源 */
+	TIP_ROLE_UNASSIGNED_RESOURCE(1303, "msg_role_unassigned_resource"),
 
 	/** 参数错误 */
 	TIP_PARAM(1400, "msg_param_error"),

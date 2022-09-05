@@ -17,4 +17,6 @@ public interface GeneratorMapper {
 	Map<String, String> selectTableinfo(String tableName);
 
 	List<Map<String, String>> selectColumninfos(String tableName);
+
+	List<Map<String, Object>> selectDatas(String tableName);
 }

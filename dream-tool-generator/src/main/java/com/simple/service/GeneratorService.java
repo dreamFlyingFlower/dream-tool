@@ -1,9 +1,11 @@
 package com.simple.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -18,9 +20,13 @@ import com.simple.common.GeneratorMapper;
 import com.simple.model.Tableinfo;
 import com.simple.properties.ConfigProperties;
 import com.simple.utils.GenerateUtils;
+import com.simple.utils.VelocityUtils;
 import com.wy.collection.MapTool;
+import com.wy.lang.StrTool;
 import com.wy.result.Result;
 import com.wy.third.json.JsonTools;
+import com.wy.util.ArrayTool;
+import com.wy.util.DateTool;
 
 /**
  * 代码生成器
@@ -126,21 +132,48 @@ public class GeneratorService {
 	}
 
 	/**
-	 * 生成字典表中所有字典
+	 * 将字典表中所有字典转换为枚举
 	 * 
 	 * @param tableName 字典表名
 	 */
-	public void generateDict(String tableName) {
+	public void generateDict(String tableName, String tableItemName) {
+		generateDict(tableName, tableItemName, new String[0]);
+	}
+
+	public void generateDict(String tableName, String tableItemName, String... dictCodes) {
+		// 表数据
 		List<Map<String, Object>> dbTables =
 		        generatorMapper.selectLists(MapTool.builder("tableName", tableName).build());
 		// 所有字段信息
-		List<Map<String, String>> dbColumns = generatorMapper.selectColumninfos(null);
-		// 所有表与各自字段的对应关系
-		Map<String, List<Map<String, String>>> handlerColumns = GenerateUtils.handlerColumns(dbColumns);
-		generateCode(dbTables, handlerColumns, false);
-	}
+		List<Map<String, String>> dbColumns = generatorMapper.selectColumninfos(tableName);
+		// 处理表信息
+		Tableinfo tableinfo = GenerateUtils.generateTableinfo(dbTables.get(0), dbColumns, config, dataSource);
+		List<Map<String, Object>> selectDatas = generatorMapper.selectDatas(tableName);
+		Map<Object, Map<String, Object>> mapDictCode2Dicts =
+		        selectDatas.stream().collect(Collectors.toMap(k -> k.get("dict_code"), v -> v));
+		// 查询字典项数据
+		List<Map<String, Object>> selectDataItems = generatorMapper.selectDatas(tableItemName);
+		Map<Object, List<Map<String, Object>>> mapDictCode2DictItems = selectDataItems.stream().filter(
+		        t -> ArrayTool.isNotEmpty(dictCodes) ? !ArrayTool.contains(dictCodes, t.get("dict_code")) : true)
+		        .collect(Collectors.groupingBy(k -> k.get("dict_code")));
 
-	public void generateDict(String tableName, String... dictCodes) {
-
+		// 封装模板数据
+		for (Map.Entry<Object, List<Map<String, Object>>> entry : mapDictCode2DictItems.entrySet()) {
+			String className = entry.getKey().toString();
+			className = className.endsWith("state") || className.endsWith("status") || className.endsWith("type")
+			        ? StrTool.snake2Hump(className)
+			        : StrTool.snake2Hump(className) + "Enum";
+			className = StrTool.firstUpper(className);
+			tableinfo.setClassName(className);
+			entry.getValue().stream().forEach(t -> {
+				t.put("dict_code", t.get("dict_code").toString().toUpperCase());
+			});
+			Map<String, Object> map = MapTool.builder("tableinfo", tableinfo).put("columns", tableinfo.getColumns())
+			        .put("className", className).put("comment", mapDictCode2Dicts.get(entry.getKey()).get("dict_name"))
+			        .put("dictItems", entry.getValue()).put("common", config.getCommon())
+			        .put("datetime", DateTool.formatDateTime()).build();
+			VelocityUtils.generateFiles(map, tableinfo,
+			        new ArrayList<String>(Arrays.asList("template/DictEnum.java.vm")), true);
+		}
 	}
 }

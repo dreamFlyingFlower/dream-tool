@@ -13,7 +13,7 @@ import ${common.pathPackageQuery}.${tableinfo.className}Query;
 import ${common.pathPackageService}.${tableinfo.className}Service;
 
 /**
- * ${tableinfo.comments}
+ * ${tableinfo.comments}业务层
  * 
  * @author ${common.author}
  * @date ${datetime}

@@ -33,7 +33,7 @@ public class ApplicationTests {
 	 */
 	@Test
 	public void buildAllDict() {
-		generatorService.generateDict("ts_dict");
+		generatorService.generateDict("ts_dict", "ts_dict_item");
 	}
 
 	/**
@@ -41,6 +41,6 @@ public class ApplicationTests {
 	 */
 	@Test
 	public void buildSingleDict() {
-		generatorService.generateDict("ts_dict", "user_status");
+		generatorService.generateDict("ts_dict", "ts_dict_item", "user_status");
 	}
 }

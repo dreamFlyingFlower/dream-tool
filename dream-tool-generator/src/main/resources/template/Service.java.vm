@@ -8,7 +8,7 @@ import ${common.pathPackageQuery}.${tableinfo.className}Query;
 #end
 
 /**
- * ${tableinfo.comments}
+ * ${tableinfo.comments}业务层
  * 
  * @author ${common.author}
  * @date ${datetime}

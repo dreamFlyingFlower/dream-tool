@@ -245,7 +245,7 @@ public final class IOTool {
 	 * @return 最终从输入流读取的字节长度
 	 */
 	public static long copy(final InputStream input, final OutputStream output, final int bufferSize)
-			throws IOException {
+	        throws IOException {
 		return copy(input, output, new byte[bufferSize]);
 	}
 
@@ -284,7 +284,7 @@ public final class IOTool {
 	 * @return 实际复制的字节长度
 	 */
 	public static long copy(final InputStream input, final OutputStream output, final long inputOffset,
-			final long length) throws IOException {
+	        final long length) throws IOException {
 		return copy(input, output, inputOffset, length, DEFAULT_BUFFER_BYTE);
 	}
 
@@ -299,7 +299,7 @@ public final class IOTool {
 	 * @return 实际复制的字节长度
 	 */
 	public static long copy(final InputStream input, final OutputStream output, final long inputOffset,
-			final long length, final byte[] buffer) throws IOException {
+	        final long length, final byte[] buffer) throws IOException {
 		Objects.requireNonNull(input, "inputstream can't by null");
 		Objects.requireNonNull(output, "outputstream can't by null");
 		if (inputOffset > 0) {
@@ -344,7 +344,7 @@ public final class IOTool {
 	 * @param inputCharset 将字节输入流包装成字符输入流时的字符集编码
 	 */
 	public static void copy(final InputStream input, final Writer output, final Charset inputCharset)
-			throws IOException {
+	        throws IOException {
 		Objects.requireNonNull(input, "inputstream can't by null");
 		final InputStreamReader in = new InputStreamReader(input, CharsetTool.defaultCharset(inputCharset));
 		copy(in, output);
@@ -358,7 +358,7 @@ public final class IOTool {
 	 * @param inputCharsetName 将字节输入流包装成字符输入流时的字符集编码字符串
 	 */
 	public static void copy(final InputStream input, final Writer output, final String inputCharsetName)
-			throws IOException {
+	        throws IOException {
 		copy(input, output, CharsetTool.defaultCharset(inputCharsetName));
 	}
 
@@ -380,7 +380,7 @@ public final class IOTool {
 	 * @param outputCharset 将输出流包装成字符流时的字符集,默认UTF8
 	 */
 	public static void copy(final Reader input, final OutputStream output, final Charset outputCharset)
-			throws IOException {
+	        throws IOException {
 		Objects.requireNonNull(output, "outputstream can't by null");
 		final OutputStreamWriter out = new OutputStreamWriter(output, CharsetTool.defaultCharset(outputCharset));
 		copy(input, out);
@@ -396,7 +396,7 @@ public final class IOTool {
 	 * @param outputCharset 将输出流包装成字符流时的字符集,默认UTF8
 	 */
 	public static void copy(final Reader input, final OutputStream output, final String outputCharsetName)
-			throws IOException {
+	        throws IOException {
 		copy(input, output, CharsetTool.defaultCharset(outputCharsetName));
 	}
 
@@ -441,7 +441,7 @@ public final class IOTool {
 	 * @return 实际复制的字符长度
 	 */
 	public static long copy(final Reader input, final Writer output, final long inputOffset, final long length)
-			throws IOException {
+	        throws IOException {
 		return copy(input, output, inputOffset, length, new char[DEFAULT_BUFFER_SIZE]);
 	}
 
@@ -456,7 +456,7 @@ public final class IOTool {
 	 * @return 实际复制的字符长度
 	 */
 	public static long copy(final Reader input, final Writer output, final long inputOffset, final long length,
-			final char[] buffer) throws IOException {
+	        final char[] buffer) throws IOException {
 		Objects.requireNonNull(input, "inputstream can't by null");
 		Objects.requireNonNull(output, "outputstream can't by null");
 		if (inputOffset > 0) {
@@ -511,7 +511,7 @@ public final class IOTool {
 	 * @return 字符行迭代器
 	 */
 	public static ReaderLineIterator lineIterator(final InputStream input, final String charsetName)
-			throws IOException {
+	        throws IOException {
 		return lineIterator(input, CharsetTool.defaultCharset(charsetName));
 	}
 
@@ -546,7 +546,7 @@ public final class IOTool {
 	 * @return 最终从字节输入流读取的字节长度,可能小于字节输入流的长度
 	 */
 	public static int read(final InputStream input, final byte[] buffer, final int offset, final int length)
-			throws IOException {
+	        throws IOException {
 		if (length < 0) {
 			throw new IllegalArgumentException("Length must not be negative: " + length);
 		}
@@ -601,7 +601,7 @@ public final class IOTool {
 	 * @return 最终从字符输入流读取的字符长度,可能小于字符输入流的长度
 	 */
 	public static int read(final Reader reader, final char[] buffer, final int offset, final int length)
-			throws IOException {
+	        throws IOException {
 		if (length < 0) {
 			throw new IllegalArgumentException("Length must not be negative: " + length);
 		}
@@ -708,7 +708,7 @@ public final class IOTool {
 	 * @return 资源字符串
 	 */
 	public static String resourceToString(final String name, final Charset charset, final ClassLoader classLoader)
-			throws IOException {
+	        throws IOException {
 		return toString(resourceToURL(name, classLoader), charset);
 	}
 
@@ -864,7 +864,7 @@ public final class IOTool {
 	public static BufferedInputStream toBufferedInputStream(final InputStream inputStream) {
 		Objects.requireNonNull(inputStream, "inputStream can't be null");
 		return inputStream instanceof BufferedInputStream ? (BufferedInputStream) inputStream
-				: new BufferedInputStream(inputStream);
+		        : new BufferedInputStream(inputStream);
 	}
 
 	/**
@@ -1261,7 +1261,7 @@ public final class IOTool {
 	 * @param charset 将字节流包装成字符流时的编码集字符串
 	 */
 	public static void write(final char[] data, final OutputStream output, final String charsetName)
-			throws IOException {
+	        throws IOException {
 		write(data, output, CharsetTool.defaultCharset(charsetName));
 	}
 
@@ -1295,10 +1295,8 @@ public final class IOTool {
 	 * @param charset 将字符序列转成字节数组时的编码集
 	 */
 	public static void write(final CharSequence data, final OutputStream output, final Charset charset)
-			throws IOException {
-		if (data != null) {
-			write(data.toString(), output, charset);
-		}
+	        throws IOException {
+		write(data, output, charset.name());
 	}
 
 	/**
@@ -1309,8 +1307,10 @@ public final class IOTool {
 	 * @param charset 将字符序列转成字节数组时的编码集字符串
 	 */
 	public static void write(final CharSequence data, final OutputStream output, final String charsetName)
-			throws IOException {
-		write(data, output, CharsetTool.defaultCharset(charsetName));
+	        throws IOException {
+		if (data != null) {
+			output.write(data.toString().getBytes(charsetName));
+		}
 	}
 
 	/**
@@ -1405,7 +1405,7 @@ public final class IOTool {
 	 * @param output 输出流
 	 */
 	public static void writeLines(final Collection<?> lines, final String lineEnding, final OutputStream output)
-			throws IOException {
+	        throws IOException {
 		writeLines(lines, lineEnding, output, ConstLang.DEFAULT_CHARSET);
 	}
 
@@ -1418,7 +1418,7 @@ public final class IOTool {
 	 * @param charset 将字符串转换为字节数组时的编码集
 	 */
 	public static void writeLines(final Collection<?> lines, String lineEnding, final OutputStream output,
-			final Charset charset) throws IOException {
+	        final Charset charset) throws IOException {
 		Objects.requireNonNull(output, "outputstream can't by null");
 		if (lines == null) {
 			return;
@@ -1442,7 +1442,7 @@ public final class IOTool {
 	 * @param charsetName 将字符串转换为字节数组时的编码集字符串
 	 */
 	public static void writeLines(final Collection<?> lines, final String lineEnding, final OutputStream output,
-			final String charsetName) throws IOException {
+	        final String charsetName) throws IOException {
 		writeLines(lines, lineEnding, output, CharsetTool.defaultCharset(charsetName));
 	}
 
@@ -1464,7 +1464,7 @@ public final class IOTool {
 	 * @param output 输出流
 	 */
 	public static void writeLines(final Collection<?> lines, String lineEnding, final Writer output)
-			throws IOException {
+	        throws IOException {
 		Objects.requireNonNull(output, "Writer can't by null");
 		if (lines == null) {
 			return;

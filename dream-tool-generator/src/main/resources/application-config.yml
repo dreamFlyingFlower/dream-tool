@@ -6,3 +6,6 @@ config:
   common:
     path-package-base: com.wy.core.base
     generate-model-example: false
+  template:
+    extras:
+    - template/DictEnum.java.vm

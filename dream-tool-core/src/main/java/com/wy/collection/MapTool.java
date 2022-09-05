@@ -668,13 +668,37 @@ public class MapTool {
 		return properties;
 	}
 
+	public static MapBuilder builder() {
+		return new MapBuilder();
+	}
+
 	public static MapBuilder builder(String key, Object val) {
 		return new MapBuilder(key, val);
+	}
+
+	public static <K, V> MapBuilderKV<K, V> builderKV() {
+		return new MapBuilderKV<K, V>();
+	}
+
+	public static <K, V> MapBuilderKV<K, V> builderKV(K key, V val) {
+		return new MapBuilderKV<K, V>();
+	}
+
+	public static MapConcurrentBuilder builderConcurrent() {
+		return new MapConcurrentBuilder();
+	}
+
+	public static MapConcurrentBuilder builderConcurrent(String key, Object val) {
+		return new MapConcurrentBuilder(key, val);
 	}
 
 	public static class MapBuilder {
 
 		private Map<String, Object> map = new HashMap<>();
+
+		public MapBuilder() {
+
+		}
 
 		public MapBuilder(String key, Object val) {
 			map.put(key, val);
@@ -690,13 +714,39 @@ public class MapTool {
 		}
 	}
 
-	public static MapConcurrentBuilder builderConcurrent(String key, Object val) {
-		return new MapConcurrentBuilder(key, val);
+	public static <K, V> MapBuilderKV<K, V> builder(K key, V val) {
+		return new MapBuilderKV<K, V>(key, val);
+	}
+
+	public static class MapBuilderKV<K, V> {
+
+		private Map<K, V> map = new HashMap<>();
+
+		public MapBuilderKV() {
+
+		}
+
+		public MapBuilderKV(K key, V val) {
+			map.put(key, val);
+		}
+
+		public MapBuilderKV<K, V> put(K key, V val) {
+			map.put(key, val);
+			return this;
+		}
+
+		public Map<K, V> build() {
+			return map;
+		}
 	}
 
 	public static class MapConcurrentBuilder {
 
 		private Map<String, Object> map = new ConcurrentHashMap<>();
+
+		public MapConcurrentBuilder() {
+
+		}
 
 		public MapConcurrentBuilder(String key, Object val) {
 			AssertTool.notBlank(key);

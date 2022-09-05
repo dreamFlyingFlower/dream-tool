@@ -85,6 +85,8 @@ public class CommonProperties {
 
 	private String baseControllerPath = pathPackageBase + "." + baseController;
 
+	private String baseEnumPath = "com.wy.core.enums";
+
 	/** mybatis xml文件在资源根目录下的目录 */
 	private String pathResourcesMapper = "mappers";
 

@@ -4,7 +4,8 @@
 	<select id="selectLists" resultType="map">
 		select table_name tableName, engine, table_comment tableComment, create_time createtime from
 		information_schema.tables
-		where table_schema = (select database())
+		where table_schema = (select
+		database())
 		<if test="tableName != null and tableName.trim() != ''">
 			and table_name like concat('%', #{tableName}, '%')
 		</if>
@@ -14,22 +15,28 @@
 	<select id="selectTableinfo" resultType="map">
 		select table_name tableName, engine, table_comment
 		tableComment,
-		create_time createtime from information_schema.tables
+		create_time createtime from
+		information_schema.tables
 		where table_schema = (select
 		database()) and table_name =
 		#{tableName}
 	</select>
 
 	<select id="selectColumninfos" resultType="map">
-		select column_name columnName, data_type dataType,
+		SELECT column_name columnName, data_type dataType,
 		column_comment columnComment,is_nullable
 		nullable,table_name tableName,
-		column_key columnKey, extra from information_schema.columns
-		where table_schema = (select
+		column_key columnKey, extra
+		FROM information_schema.columns
+		WHERE table_schema = (select
 		database())
 		<if test="tableName != null and tableName.trim() != ''">
-			and table_name = #{tableName}
+			AND table_name = #{tableName}
 		</if>
-		order by ordinal_position
+		ORDER BY ordinal_position
+	</select>
+
+	<select id="selectDatas" resultType="map">
+		SELECT * FROM ${tableName}
 	</select>
 </mapper>

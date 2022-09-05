@@ -1,0 +1,37 @@
+package ${common.baseEnumPath};
+
+import java.util.stream.Stream;
+
+import com.wy.common.CodeMsg;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * ${comment} 枚举
+ * 
+ * @author ${common.author}
+ * @date ${datetime}
+ * @git ${common.git}
+ */
+@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public enum ${className} implements CodeMsg<String> {
+
+#foreach( $info in $dictItems)
+#if($foreach.count == $dictItems.size())
+	${info.dict_code}_${info.dict_value}("${info.dict_value}", "${info.dict_name}");
+#else
+	${info.dict_code}_${info.dict_value}("${info.dict_value}", "${info.dict_name}"),
+#end
+#end
+
+	private String code;
+
+	private String msg;
+
+	public static ${className} getByCode(String code) {
+		return Stream.of(${className}.values()).filter(t -> t.code.equals(code)).findFirst().orElse(null);
+	}
+}

@@ -266,6 +266,9 @@ public class GenerateUtils {
 		} else if (template.contains("Controller.java.vm")) {
 			return buildPath(config, config.getCommon().getPathPackageController()) + className + "Controller.java";
 		}
+		if (template.contains("DictEnum.java.vm")) {
+			return buildPath(config, config.getCommon().getBaseEnumPath()) + className + ".java";
+		}
 		if (template.contains("Mapper.xml.vm")) {
 			return "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + className
 			        + "Mapper.xml";
