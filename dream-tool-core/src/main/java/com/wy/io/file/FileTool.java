@@ -1892,7 +1892,7 @@ public class FileTool {
 			}
 			return out.toByteArray();
 		} catch (IOException e) {
-			ResultException.throwResultException(e);
+			ResultException.throwException(e);
 		}
 		return null;
 	}
