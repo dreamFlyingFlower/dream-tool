@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wy.user.mapper.MenuMapper">
+  <resultMap id="BaseResultMap" type="com.wy.user.entity.Menu">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="pid" jdbcType="BIGINT" property="pid" />
+    <result column="level" jdbcType="VARCHAR" property="level" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+  </resultMap>
+  <sql id="BaseColumnList">
+    a.id, a.menu_name, a.pid, a.level, a.url, a.icon, a.sort, a.create_time, 
+	a.create_user, a.update_time, a.update_user
+  </sql>
+  <select id="list" resultMap="BaseResultMap">
+    SELECT <include refid="BaseColumnList" /> FROM ts_menu a <where><if test = "query.id != null and query.id != ''"> 
+AND a.id = #{query.id, jdbcType=BIGINT }
+ </if><if test = "query.menuName != null and query.menuName != ''"> 
+AND a.menu_name = #{query.menuName, jdbcType=VARCHAR }
+ </if><if test = "query.pid != null and query.pid != ''"> 
+AND a.pid = #{query.pid, jdbcType=BIGINT }
+ </if><if test = "query.level != null and query.level != ''"> 
+AND a.level = #{query.level, jdbcType=VARCHAR }
+ </if><if test = "query.url != null and query.url != ''"> 
+AND a.url = #{query.url, jdbcType=VARCHAR }
+ </if><if test = "query.icon != null and query.icon != ''"> 
+AND a.icon = #{query.icon, jdbcType=VARCHAR }
+ </if><if test = "query.sort != null and query.sort != ''"> 
+AND a.sort = #{query.sort, jdbcType=INTEGER }
+ </if></where>ORDER BY a.id DESC
+  </select>
+</mapper>

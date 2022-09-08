@@ -23,7 +23,7 @@
 		<plugin type="com.simple.plugins.CommonPlugin" />
 
 		<!-- 连接数据库配置 -->
-		<jdbcConnection driverClass="com.mysql.cj.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/dream_basic?useUnicode=true&amp;tinyInt1isBit=false&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=Asia/Shanghai"
+		<jdbcConnection driverClass="com.mysql.cj.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/dream_basic?useUnicode=true&amp;amp;amp;tinyInt1isBit=false&amp;amp;amp;characterEncoding=UTF-8&amp;amp;amp;useSSL=false&amp;amp;amp;serverTimezone=Asia/Shanghai"
 			userId="root" password="52LDforever">
 			<property name="nullCatalogMeansCurrent" value="true" />
 		</jdbcConnection>
@@ -41,7 +41,34 @@
 		<!-- 生成的Mapper文件地址 -->
 		<javaClientGenerator type="XMLMAPPER" targetProject="src\main\java\" targetPackage="com.wy.user.mapper" />
 
+		<table tableName="ts_button" domainObjectName="Button">
+			<generatedKey column="id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="ts_role" domainObjectName="Role">
+			<generatedKey column="id" sqlStatement="JDBC" />
+		</table>
 		<table tableName="ts_menu" domainObjectName="Menu">
+			<generatedKey column="id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="ts_dict_item" domainObjectName="DictItem">
+		</table>
+		<table tableName="ts_dict" domainObjectName="Dict">
+		</table>
+		<table tableName="ts_role_resource" domainObjectName="RoleResource">
+			<generatedKey column="id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="ts_user" domainObjectName="User">
+		</table>
+		<table tableName="ts_permission" domainObjectName="Permission">
+			<generatedKey column="id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="ts_org" domainObjectName="Org">
+			<generatedKey column="id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="ts_user_role" domainObjectName="UserRole">
+			<generatedKey column="id" sqlStatement="JDBC" />
+		</table>
+		<table tableName="ts_depart" domainObjectName="Depart">
 			<generatedKey column="id" sqlStatement="JDBC" />
 		</table>
 		<!-- 自动从数据库中生成uuid赋值给VARCHAR类型主键 -->

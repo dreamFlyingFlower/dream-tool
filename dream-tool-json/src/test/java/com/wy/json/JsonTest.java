@@ -1,10 +1,5 @@
 package com.wy.json;
 
-import org.junit.jupiter.api.Test;
+public class JsonTest {
 
-class JsonTest {
-
-	@Test
-	void contextLoads() {
-	}
 }
