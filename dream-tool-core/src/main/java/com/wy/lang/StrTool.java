@@ -1003,6 +1003,18 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
+	 * 将源字符串中待查找字符串全部替换,大小写敏感
+	 * 
+	 * @param str 源字符串
+	 * @param searchStr 待查找字符串
+	 * @param replacement 替换字符串
+	 * @return 替换后的新字符串
+	 */
+	public static String replace(final String str, final String searchStr, final String replacement) {
+		return replace(str, searchStr, replacement, -1);
+	}
+
+	/**
 	 * 将源字符串中待查找字符串替换,大小写敏感
 	 * 
 	 * @param str 源字符串
