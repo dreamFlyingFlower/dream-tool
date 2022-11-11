@@ -1,42 +1,44 @@
 package com.wy.enums;
 
+import com.wy.ConstDate;
+
 /**
  * 时间格式化枚举
  * 
- * @author ParadiseWY
+ * @author 飞花梦影
  * @date 2020-11-25 09:26:04
- * @git {@link https://github.com/mygodness100}
+ * @git {@link https://github.com/dreamFlyingFlower }
  */
 public enum DateEnum {
 
-	DATE("yyyy-MM-dd"),
-	DATE_SLASH("yyyy/MM/dd"),
-	DATE_NONE("yyyyMMdd"),
+	DATE(ConstDate.DATE),
+	DATE_SLASH(ConstDate.DATE_SLASH),
+	DATE_NONE(ConstDate.DATE_NONE),
 
-	DATEWEEK("yyyy-MM-dd EEE"),
-	DATEWEEK_SLASH("yyyy/MM/dd EEE"),
-	DATEWEEK_NONE("yyyyMMdd EEE"),
+	DATEWEEK(ConstDate.DATEWEEK),
+	DATEWEEK_SLASH(ConstDate.DATEWEEK_SLASH),
+	DATEWEEK_NONE(ConstDate.DATEWEEK_NONE),
 
-	DATETIME("yyyy-MM-dd HH:mm:ss"),
-	DATETIME_SLASH("yyyy/MM/dd HH:mm:ss"),
-	DATETIME_NONE("yyyyMMdd HH:mm:ss"),
+	DATETIME(ConstDate.DATETIME),
+	DATETIME_SLASH(ConstDate.DATETIME_SLASH),
+	DATETIME_NONE(ConstDate.DATETIME_NONE),
 
-	DATETIMEWEEK("yyyy-MM-dd HH:mm:ss EEE"),
-	DATETIMEWEEK_SLASH("yyyy/MM/dd HH:mm:ss EEE"),
-	DATETIMEWEEK_NONE("yyyyMMdd HH:mm:ss EEE"),
+	DATETIMEWEEK(ConstDate.DATETIMEWEEK),
+	DATETIMEWEEK_SLASH(ConstDate.DATETIMEWEEK_SLASH),
+	DATETIMEWEEK_NONE(ConstDate.DATETIMEWEEK_NONE),
 
-	DATEMILSEC("yyyy-MM-dd HH:mm:ss.SSS"),
-	DATEMILSEC_SLASH("yyyy/MM/dd HH:mm:ss.SSS"),
-	DATEMILSEC_NONE("yyyyMMddHHmmssSSS"),
+	DATEMILSEC(ConstDate.DATEMILSEC),
+	DATEMILSEC_SLASH(ConstDate.DATEMILSEC_SLASH),
+	DATEMILSEC_NONE(ConstDate.DATEMILSEC_NONE),
 
-	DATEMILSECWEEK("yyyy-MM-dd HH:mm:ss.SSS EEE"),
-	DATEMILSECWEEK_SLASH("yyyy/MM/dd HH:mm:ss.SSS EEE"),
-	DATEMILSECWEEK_NONE("yyyyMMdd HHmmssSSS EEE"),
+	DATEMILSECWEEK(ConstDate.DATEMILSECWEEK),
+	DATEMILSECWEEK_SLASH(ConstDate.DATEMILSECWEEK_SLASH),
+	DATEMILSECWEEK_NONE(ConstDate.DATEMILSECWEEK_NONE),
 
-	TIME("HH:mm:ss"),
-	TIMEWEEK("HH:mm:ss EEE"),
+	TIME(ConstDate.TIME),
+	TIMEWEEK(ConstDate.TIMEWEEK),
 
-	WEEK("EEE");
+	WEEK(ConstDate.WEEK);
 
 	private String pattern;
 
