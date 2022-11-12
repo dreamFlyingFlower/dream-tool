@@ -18,19 +18,19 @@ import com.wy.common.StatusMsg;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Log {
+public @interface Logger {
 
 	/**
-	 * 日志名称
+	 * 日志模块
 	 */
-	String value() default "日志记录";
+	String value() default "";
 
 	/**
 	 * 默认功能描述,当logOtherType不等于StatusMsg.class时,使用logOtherType方法的值
 	 * 
 	 * @return 默认功能描述
 	 */
-	LogType logType() default LogType.OTHER;
+	BusinessType businessType() default BusinessType.OTHER;
 
 	/**
 	 * 扩展功能描述,只有当该字节码不等于StatusMsg.class时才生效,此时忽略logType,实现类必须有无参构造
@@ -42,7 +42,7 @@ public @interface Log {
 	/**
 	 * 操作人类别
 	 */
-	OperatorType operatorType() default OperatorType.OTHER;
+	OperatorType operatorType() default OperatorType.MANAGE;
 
 	/**
 	 * 扩展操作人类别,只有当该字节码不等于StatusMsg.class时才生效,此时忽略operatorType,实现类必须有无参构造
@@ -52,5 +52,10 @@ public @interface Log {
 	/**
 	 * 是否保存请求的参数
 	 */
-	boolean isSaveRequest() default true;
+	boolean isSaveRequestParams() default true;
+
+	/**
+	 * 是否保存响应的参数
+	 */
+	boolean isSaveResponseResult() default true;
 }

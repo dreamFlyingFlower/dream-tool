@@ -1,5 +1,6 @@
 package com.wy.enums;
 
+import com.wy.common.PropConverter;
 import com.wy.common.StatusMsg;
 
 /**
@@ -9,7 +10,7 @@ import com.wy.common.StatusMsg;
  * @date 2022-04-26 09:45:05
  * @git {@link https://github.com/dreamFlyingFlower }
  */
-public enum ResponseEnum implements StatusMsg {
+public enum ResponseEnum implements StatusMsg, PropConverter {
 
 	SUCCESS(1, "成功"),
 	FAIL(0, "失败"),
@@ -19,7 +20,7 @@ public enum ResponseEnum implements StatusMsg {
 
 	private String msg;
 
-	private ResponseEnum(int code, String msg) {
+	private ResponseEnum(Integer code, String msg) {
 		this.code = code;
 		this.msg = msg;
 	}
@@ -32,5 +33,10 @@ public enum ResponseEnum implements StatusMsg {
 	@Override
 	public String getMsg() {
 		return msg;
+	}
+
+	@Override
+	public Object getValue() {
+		return this.code;
 	}
 }

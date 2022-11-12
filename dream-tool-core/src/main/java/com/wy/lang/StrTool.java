@@ -80,7 +80,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 新字符串
 	 */
 	private static String appendIfMissing(final String str, final CharSequence suffix, final boolean ignoreCase,
-			final CharSequence... suffixes) {
+	        final CharSequence... suffixes) {
 		if (str == null || isEmpty(suffix) || endsWith(str, suffix, ignoreCase)) {
 			return str;
 		}
@@ -115,7 +115,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 新字符串
 	 */
 	public static String appendIfMissingIgnoreCase(final String str, final CharSequence suffix,
-			final CharSequence... suffixes) {
+	        final CharSequence... suffixes) {
 		return appendIfMissing(str, suffix, true, suffixes);
 	}
 
@@ -335,7 +335,8 @@ public class StrTool extends CharSequenceTool {
 			if (delimIndex == -1) {
 				if (handledPosition == 0) {
 					return template;
-				} else { // 字符串模板剩余部分不再包含占位符，加入剩余部分后返回结果
+				} else {
+					// 字符串模板剩余部分不再包含占位符，加入剩余部分后返回结果
 					sbuf.append(template, handledPosition, strPatternLength);
 					return sbuf.toString();
 				}
@@ -746,7 +747,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 第N次出现的索引
 	 */
 	private static int ordinalIndexOf(final String str, final String searchStr, final int ordinal,
-			final boolean lastIndex) {
+	        final boolean lastIndex) {
 		if (ObjectTool.isNull(str, searchStr) || ordinal <= 0) {
 			return ConstLang.INDEX_NOT_FOUND;
 		}
@@ -820,7 +821,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 新字符串
 	 */
 	private static String prependIfMissing(final String str, final CharSequence prefix, final boolean ignoreCase,
-			final CharSequence... prefixes) {
+	        final CharSequence... prefixes) {
 		if (str == null || isEmpty(prefix) || startsWith(str, prefix, ignoreCase)) {
 			return str;
 		}
@@ -843,7 +844,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 新字符串
 	 */
 	public static String prependIfMissingIgnoreCase(final String str, final CharSequence prefix,
-			final CharSequence... prefixes) {
+	        final CharSequence... prefixes) {
 		return prependIfMissing(str, prefix, true, prefixes);
 	}
 
@@ -1038,7 +1039,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 替换后的新字符串
 	 */
 	private static String replace(final String str, String searchStr, final String replacement, int max,
-			final boolean ignoreCase) {
+	        final boolean ignoreCase) {
 		if (isEmpty(str) || isEmpty(searchStr) || replacement == null || max == 0) {
 			return str;
 		}
@@ -1088,7 +1089,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 替换后的新字符串
 	 */
 	public static String replaceIgnoreCase(final String str, final String searchStr, final String replacement,
-			final int max) {
+	        final int max) {
 		return replace(str, searchStr, replacement, max, true);
 	}
 

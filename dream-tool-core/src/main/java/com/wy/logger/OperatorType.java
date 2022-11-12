@@ -14,20 +14,18 @@ public enum OperatorType implements StatusMsg, PropConverter {
 
 	OTHER("其他"),
 	ADMIN("超级管理员"),
+	MANAGE("后台用户"),
 	GENERAL("普通用户");
-
-	private int code;
 
 	private String msg;
 
 	private OperatorType(String msg) {
-		this.code = this.ordinal();
 		this.msg = msg;
 	}
 
 	@Override
 	public Integer getCode() {
-		return this.code;
+		return this.ordinal();
 	}
 
 	@Override
@@ -37,6 +35,6 @@ public enum OperatorType implements StatusMsg, PropConverter {
 
 	@Override
 	public Object getValue() {
-		return this.msg;
+		return this.name();
 	}
 }

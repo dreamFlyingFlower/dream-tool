@@ -1,6 +1,7 @@
 package com.wy.util;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import com.wy.ConstLang;
 import com.wy.lang.StrTool;
@@ -79,5 +80,39 @@ public class CharsetTool {
 	 */
 	public static String systemCharsetName(final String charsetName) {
 		return StrTool.isBlank(charsetName) ? Charset.defaultCharset().name() : charsetName;
+	}
+
+	/**
+	 * 转换字符串的字符集编码
+	 * 
+	 * @param source 源字符串
+	 * @param srcCharset 源字符集,默认ISO-8859-1
+	 * @param destCharset 目标字符集,默认UTF-8
+	 * @return 转换后的字符
+	 */
+	public static String convert(String source, String srcCharset, String destCharset) {
+		return convert(source, Charset.forName(srcCharset), Charset.forName(destCharset));
+	}
+
+	/**
+	 * 转换字符串的字符集编码
+	 * 
+	 * @param source 源字符串
+	 * @param srcCharset 源字符集,默认ISO-8859-1
+	 * @param destCharset 目标字符集,默认UTF-8
+	 * @return 转换后的字符
+	 */
+	public static String convert(String source, Charset srcCharset, Charset destCharset) {
+		if (null == srcCharset) {
+			srcCharset = StandardCharsets.ISO_8859_1;
+		}
+
+		if (null == destCharset) {
+			destCharset = StandardCharsets.UTF_8;
+		}
+		if (StrTool.isBlank(source) || srcCharset.equals(destCharset)) {
+			return source;
+		}
+		return new String(source.getBytes(srcCharset), destCharset);
 	}
 }

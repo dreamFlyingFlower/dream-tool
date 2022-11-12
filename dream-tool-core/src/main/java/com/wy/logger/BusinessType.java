@@ -10,7 +10,7 @@ import com.wy.common.StatusMsg;
  * @date 2021-02-03 16:09:58
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public enum LogType implements StatusMsg, PropConverter {
+public enum BusinessType implements StatusMsg, PropConverter {
 
 	OTHER("其他"),
 	INSERT("新增"),
@@ -20,25 +20,18 @@ public enum LogType implements StatusMsg, PropConverter {
 	GRANT("授权"),
 	EXPORT("导出"),
 	IMPORT("导入"),
+	FORCE("强退"),
 	CLEAR("清空数据");
-
-	private int code;
 
 	private String msg;
 
-	private LogType(String msg) {
-		this.code = this.ordinal();
-		this.msg = msg;
-	}
-
-	private LogType(int code, String msg) {
-		this.code = code;
+	private BusinessType(String msg) {
 		this.msg = msg;
 	}
 
 	@Override
 	public Integer getCode() {
-		return this.code;
+		return this.ordinal();
 	}
 
 	@Override
