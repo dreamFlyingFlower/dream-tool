@@ -1514,6 +1514,46 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
+	 * 从指定字符串中截取部分字符串
+	 * 
+	 * @param str 待截取的字符串
+	 * @param start 截取的开始索引
+	 * @param end 截取的结束索引
+	 * @return 截取后的字符串
+	 */
+	public static String substring(final String str, int start, int end) {
+		if (str == null) {
+			return null;
+		}
+
+		// handle negatives
+		if (end < 0) {
+			end = str.length() + end; // remember end is negative
+		}
+		if (start < 0) {
+			start = str.length() + start; // remember start is negative
+		}
+
+		// check length next
+		if (end > str.length()) {
+			end = str.length();
+		}
+
+		// if start is greater than end, return ""
+		if (start > end) {
+			return ConstLang.STR_EMPTY;
+		}
+
+		if (start < 0) {
+			start = 0;
+		}
+		if (end < 0) {
+			end = 0;
+		}
+		return str.substring(start, end);
+	}
+
+	/**
 	 * 将字节数组转换默认编码集(utf8)的字符串
 	 *
 	 * @param bytes 待转换的字节数组
