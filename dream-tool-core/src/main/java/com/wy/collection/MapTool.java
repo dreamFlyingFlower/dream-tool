@@ -582,6 +582,27 @@ public class MapTool {
 	}
 
 	/**
+	 * 给Map排序,一般用于对value进行排序,若对key排序,可直接使用TreeMap
+	 * 
+	 * @param <K> 泛型
+	 * @param <V> 泛型
+	 * @param map 需要排序的Map
+	 * @param comparator 排序算法
+	 * @return LinkedHashMap
+	 */
+	public static <K, V> LinkedHashMap<K, V> sort(Map<K, V> map, Comparator<Map.Entry<K, V>> comparator) {
+		AssertTool.notEmpty(map);
+		AssertTool.notNull(comparator);
+		List<Map.Entry<K, V>> entrys = new ArrayList<>(map.entrySet());
+		Collections.sort(entrys, comparator);
+		LinkedHashMap<K, V> linkedHashMap = newLinkedHashMap();
+		for (Entry<K, V> entry : entrys) {
+			linkedHashMap.put(entry.getKey(), entry.getValue());
+		}
+		return linkedHashMap;
+	}
+
+	/**
 	 * 将{@link Properties}转化为Map
 	 * 
 	 * @param properties properties
