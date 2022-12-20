@@ -26,23 +26,6 @@ public class NumberTool {
 	private final static int DEFAULT_SCALE = 2;
 
 	/**
-	 * float类型避免精度缺失的加法运算,但仍会有精度丢失
-	 * 
-	 * @param array 数组
-	 * @return 加法运算的结果
-	 */
-	public static BigDecimal add(float... array) {
-		if (ArrayTool.isEmpty(array)) {
-			return BigDecimal.ZERO;
-		}
-		BigDecimal result = new BigDecimal(array[0]);
-		for (int i = 1; i < array.length; i++) {
-			result = result.add(new BigDecimal(array[i]));
-		}
-		return result;
-	}
-
-	/**
 	 * 数字类型避免精度缺失的加法运算,但仍会有精度丢失
 	 * 
 	 * @param array 数组
@@ -52,8 +35,7 @@ public class NumberTool {
 		if (ArrayTool.isEmpty(numbers)) {
 			return BigDecimal.ZERO;
 		}
-		Number value = numbers[0];
-		BigDecimal result = null == value ? BigDecimal.ZERO : new BigDecimal(value.toString());
+		BigDecimal result = new BigDecimal((null == numbers[0] ? BigDecimal.ZERO : numbers[0]).toString());
 		for (int i = 1; i < numbers.length; i++) {
 			result = null == numbers[i] ? result : result.add(new BigDecimal(numbers[i].toString()));
 		}
@@ -69,42 +51,6 @@ public class NumberTool {
 	 */
 	public static int compare(BigDecimal number1, BigDecimal number2) {
 		return number1.compareTo(number2);
-	}
-
-	/**
-	 * 精确的除法运算.当发生除不尽的情况时,默认精确到小数点以后2位,并且四舍五入
-	 *
-	 * @param arg1 被除数
-	 * @param arg2 除数
-	 * @return arg1除以arg2的商
-	 */
-	public static BigDecimal div(float arg1, float arg2) {
-		return div(new BigDecimal(arg1), new BigDecimal(arg2), DEFAULT_SCALE);
-	}
-
-	/**
-	 * 精确的除法运算.当发生除不尽的情况时,scale指定精度,并且四舍五入
-	 *
-	 * @param arg1 被除数
-	 * @param arg2 除数
-	 * @param scale 表示表示需要精确到小数点以后几位
-	 * @return arg1除以arg2的商
-	 */
-	public static BigDecimal div(float arg1, float arg2, int scale) {
-		return div(new BigDecimal(arg1), new BigDecimal(arg2), scale);
-	}
-
-	/**
-	 * 精确的除法运算.当发生除不尽的情况时,scale指定精度,并且四舍五入
-	 *
-	 * @param arg1 被除数
-	 * @param arg2 除数
-	 * @param scale 表示表示需要精确到小数点以后几位
-	 * @param roundingMode 小数处理方式
-	 * @return arg1除以arg2的商
-	 */
-	public static BigDecimal div(float arg1, float arg2, int scale, RoundingMode roundingMode) {
-		return div(new BigDecimal(arg1), new BigDecimal(arg2), scale, roundingMode);
 	}
 
 	/**
@@ -367,7 +313,7 @@ public class NumberTool {
 		// 判断结尾是否有f,F,d,D
 		if (str.length() > 1) {
 			if (str.charAt(str.length() - 1) == 'f' || str.charAt(str.length() - 1) == 'F'
-					|| str.charAt(str.length() - 1) == 'd' || str.charAt(str.length() - 1) == 'D') {
+			        || str.charAt(str.length() - 1) == 'd' || str.charAt(str.length() - 1) == 'D') {
 				str = str.substring(0, str.length() - 1);
 			}
 		}
@@ -429,7 +375,7 @@ public class NumberTool {
 				// 16进制只含有0-9,a-f,A-F
 				for (; i < chars.length; i++) {
 					if ((chars[i] < '0' || chars[i] > '9') && (chars[i] < 'a' || chars[i] > 'f')
-							&& (chars[i] < 'A' || chars[i] > 'F')) {
+					        && (chars[i] < 'A' || chars[i] > 'F')) {
 						return false;
 					}
 				}
@@ -797,17 +743,6 @@ public class NumberTool {
 	 * @param arg2 乘数
 	 * @return 两个参数的积
 	 */
-	public static BigDecimal multiply(float arg1, float arg2) {
-		return new BigDecimal(arg1).multiply(new BigDecimal(arg2));
-	}
-
-	/**
-	 * 精准的乘法运算
-	 * 
-	 * @param arg1 被乘数
-	 * @param arg2 乘数
-	 * @return 两个参数的积
-	 */
 	public static BigDecimal multiply(double arg1, double arg2) {
 		return new BigDecimal(arg1).multiply(new BigDecimal(arg2));
 	}
@@ -983,17 +918,6 @@ public class NumberTool {
 				}
 			}
 		}
-	}
-
-	/**
-	 * 精确的减法运算
-	 * 
-	 * @param arg1 被减数
-	 * @param arg2 减数
-	 * @return arg1减去arg2的差
-	 */
-	public static BigDecimal subtract(float arg1, float arg2) {
-		return new BigDecimal(arg1).subtract(new BigDecimal(arg2));
 	}
 
 	/**
