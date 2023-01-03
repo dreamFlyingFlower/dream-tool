@@ -2,6 +2,7 @@ package com.wy.enums;
 
 import java.text.MessageFormat;
 
+import com.wy.ConstI18nFormat;
 import com.wy.common.StatusMsg;
 
 /**
@@ -13,16 +14,28 @@ import com.wy.common.StatusMsg;
  */
 public enum TipFormatEnum implements StatusMsg {
 
-	TIP_LOGIN_USERNAME(0, "用户{0}不存在"),
-	TIP_PARAM_EMPTY(0, "参数{0}不能为空"),
 	TIP_LOG_ERROR(0, "@@@:{0}"),
-	TIP_LOG_INFO(0, "###:{0}");
+	TIP_LOG_INFO(0, "###:{0}"),
 
-	private int code;
+	/** 必传参数为空 */
+	TIP_FORMAT_PARAM_REQUIRED_IS_NULL(TipEnum.TIP_PARAM_REQUIRED_IS_NULL
+			.getCode(), ConstI18nFormat.MSG_FORMAT_PARAM_REQUIRED_IS_NULL),
+
+	/** 请求URL不存在 */
+	TIP_REQUEST_URL_NOT_EXIST(TipEnum.TIP_REQUEST_URL_NOT_EXIST
+			.getCode(), ConstI18nFormat.MSG_FORMAT_REQUEST_URL_NOT_EXIST),
+	/** 请求方式不支持 */
+	TIP_REQUEST_HTTP_METHOD_NOT_SUPPORTED(TipEnum.TIP_REQUEST_HTTP_METHOD_NOT_SUPPORTED
+			.getCode(), ConstI18nFormat.MSG_FORMAT_REQUEST_HTTP_METHOD_NOT_SUPPORTED),
+	/** 请求媒体类型不支持 */
+	TIP_REQUEST_MEDIA_TYPE_NOT_SUPPORTED(TipEnum.TIP_REQUEST_MEDIA_TYPE_NOT_SUPPORTED
+			.getCode(), ConstI18nFormat.MSG_FORMAT_REQUEST_MEDIA_TYPE_NOT_SUPPORTED);
+
+	private Integer code;
 
 	private String msg;
 
-	private TipFormatEnum(int code, String msg) {
+	private TipFormatEnum(Integer code, String msg) {
 		this.code = code;
 		this.msg = msg;
 	}
@@ -37,7 +50,17 @@ public enum TipFormatEnum implements StatusMsg {
 		return code;
 	}
 
-	public String getMsg(String msg) {
-		return MessageFormat.format(this.msg, msg);
+	@Override
+	public String getMsg() {
+		return msg;
+	}
+
+	public String getMsg(Object... msgs) {
+		return MessageFormat.format(this.msg, msgs);
+	}
+
+	@Override
+	public String getMsg(String format, Object... msgs) {
+		return MessageFormat.format(this.msg, msgs);
 	}
 }
