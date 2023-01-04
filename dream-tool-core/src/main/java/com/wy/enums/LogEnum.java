@@ -3,11 +3,14 @@ package com.wy.enums;
 import java.text.MessageFormat;
 
 /**
- * @apiNote 日志格式化
- * @author ParadiseWY
- * @date 2020年3月23日 下午4:04:06
+ * 日志格式化
+ *
+ * @author 飞花梦影
+ * @date 2020-03-23 16:04:06
+ * @git {@link https://github.com/dreamFlyingFlower }
  */
 public enum LogEnum {
+
 	ERROR("###::{0}::###"),
 	INFO("@@@::{0}::@@@");
 

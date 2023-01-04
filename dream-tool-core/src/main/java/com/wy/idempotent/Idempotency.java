@@ -2,6 +2,7 @@ package com.wy.idempotent;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -14,9 +15,10 @@ import java.lang.annotation.Target;
  * @git {@link https://github.com/dreamFlyingFlower}
  */
 @Documented
+@Inherited
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Idempotency {
 
-	Class<? extends Idempotent> idempotency() default Idempotent.class;
+	Class<? extends Idempotence> idempotence() default Idempotence.class;
 }
