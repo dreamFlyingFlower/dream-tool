@@ -7,10 +7,10 @@ import com.wy.common.StatusMsg;
 
 /**
  * 提示或信息类,传入的信息不要带有双引号或单引号
- * 
- * @description 信息提示
- * @author paradiseWy
- * @date 2019年4月1日 下午2:33:37
+ *
+ * @author 飞花梦影
+ * @date 2023-02-01 14:03:39
+ * @git {@link https://github.com/dreamFlyingFlower }
  */
 public enum TipFormatEnum implements StatusMsg {
 
@@ -18,7 +18,7 @@ public enum TipFormatEnum implements StatusMsg {
 	TIP_LOG_INFO(0, "###:{0}"),
 
 	/** 必传参数为空 */
-	TIP_FORMAT_PARAM_REQUIRED_IS_NULL(TipEnum.TIP_PARAM_REQUIRED_IS_NULL
+	TIP_PARAM_REQUIRED_IS_NULL(TipEnum.TIP_PARAM_REQUIRED_IS_NULL
 			.getCode(), ConstI18nFormat.MSG_FORMAT_PARAM_REQUIRED_IS_NULL),
 
 	/** 请求URL不存在 */
