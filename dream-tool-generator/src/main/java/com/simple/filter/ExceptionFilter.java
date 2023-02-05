@@ -43,13 +43,13 @@ public class ExceptionFilter {
 	 */
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	public Result<?> missingServletRequestParameterException(MissingServletRequestParameterException e) {
-		return Result.error(-500, TipFormatEnum.TIP_PARAM_EMPTY.getMsg(e.getParameterName()));
+		return Result.error(-500, TipFormatEnum.TIP_PARAM_REQUIRED_IS_NULL.getMsg(e.getParameterName()));
 	}
 
 	@ExceptionHandler(value = BindException.class)
 	public Result<?> bindException(BindException e) {
 		StringBuilder sb = new StringBuilder();
-		// 解析原错误信息，封装后返回，此处返回非法的字段名称，原始值，错误信息
+		// 解析原错误信息,封装后返回,此处返回非法的字段名称,原始值,错误信息
 		for (FieldError error : e.getFieldErrors()) {
 			sb.append(error.getDefaultMessage() + ";");
 		}
@@ -62,7 +62,7 @@ public class ExceptionFilter {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public Result<?> methodArgumentNotValidHandler(MethodArgumentNotValidException e) {
 		StringBuilder sb = new StringBuilder();
-		// 解析原错误信息,封装后返回,此处返回非法的字段名称，原始值，错误信息
+		// 解析原错误信息,封装后返回,此处返回非法的字段名称,原始值,错误信息
 		for (FieldError error : e.getBindingResult().getFieldErrors()) {
 			sb.append("字段：" + error.getField() + "-" + error.getRejectedValue() + ";");
 		}
