@@ -32,31 +32,33 @@ import com.wy.lang.StrTool;
 /**
  * {@link LocalDateTime}等工具类,jdk1.8的时间类工具类,和DateTool差不多
  * 
- * @author ParadiseWY
+ * @apiNote 当直接输出LocalTime.toString()时,类似XX:00:00将不会输出秒,只会输出XX:00,不要直接输出或使用toString()
+ * 
+ * @author 飞花梦影
  * @date 2019-03-20 16:56:06
  * @git {@link https://github.com/mygodness100}
  */
-public class DateTimeTool {
+public interface DateTimeTool {
 
 	/**
 	 * 默认格式化时间字符串HH:mm:ss,系统自带的{@link DateTimeFormatter#ISO_LOCAL_TIME}默认字符串带毫秒
 	 */
-	private static final DateTimeFormatter DEFAULT_TIME_FORMATTER = new DateTimeFormatterBuilder()
-			.appendValue(HOUR_OF_DAY, 2).appendLiteral(':').appendValue(MINUTE_OF_HOUR, 2).optionalStart()
-			.appendLiteral(':').appendValue(SECOND_OF_MINUTE, 2).optionalStart().parseStrict().toFormatter();
+	DateTimeFormatter DEFAULT_TIME_FORMATTER = new DateTimeFormatterBuilder().appendValue(HOUR_OF_DAY, 2)
+			.appendLiteral(':').appendValue(MINUTE_OF_HOUR, 2).optionalStart().appendLiteral(':')
+			.appendValue(SECOND_OF_MINUTE, 2).optionalStart().parseStrict().toFormatter();
 
 	/**
 	 * 默认格式化年月日时分秒字符串yyyy-MM-dd HH:mm:ss,系统自带的默认格式化字符串中间带T
 	 */
-	private static final DateTimeFormatter DEFAULT_FORMATTER =
+	DateTimeFormatter DEFAULT_FORMATTER =
 			new DateTimeFormatterBuilder().parseCaseInsensitive().append(DateTimeFormatter.ISO_LOCAL_DATE)
 					.appendLiteral(' ').append(DEFAULT_TIME_FORMATTER).optionalStart().parseStrict().toFormatter();
 
 	/**
 	 * 定时时间格式化字符串:yyyy-MM-dd HH:mm:ss,等同于DEFAULT_FORMATTER
 	 */
-	public static final DateTimeFormatter FORMATTER_DATETIME = new DateTimeFormatterBuilder()
-			.appendValue(ChronoField.YEAR).appendLiteral("-").appendValue(ChronoField.MONTH_OF_YEAR).appendLiteral("-")
+	DateTimeFormatter FORMATTER_DATETIME = new DateTimeFormatterBuilder().appendValue(ChronoField.YEAR)
+			.appendLiteral("-").appendValue(ChronoField.MONTH_OF_YEAR).appendLiteral("-")
 			.appendValue(ChronoField.DAY_OF_MONTH).appendLiteral(" ").appendValue(ChronoField.HOUR_OF_DAY)
 			.appendLiteral(":").appendValue(ChronoField.MINUTE_OF_HOUR).appendLiteral(":")
 			.appendValue(ChronoField.SECOND_OF_MINUTE).toFormatter();
@@ -1137,7 +1139,7 @@ public class DateTimeTool {
 	 * @return 指定时间所属周的周一的开始时间
 	 */
 	public static LocalDateTime getWeekBeginLocal(LocalDateTime localDateTime) {
-		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 1);
+		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, DayOfWeek.MONDAY.getValue());
 		return getDayBeginLocal(with);
 	}
 
@@ -1167,14 +1169,8 @@ public class DateTimeTool {
 	 * @return 指定时间所属周的周天结束时间
 	 */
 	public static LocalDateTime getWeekEndLocal(LocalDateTime localDateTime) {
-		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 7);
+		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, DayOfWeek.SUNDAY.getValue());
 		return getDayEndLocal(with);
-	}
-
-	public static void main(String[] args) {
-		// localtime默认不输出秒,差劲
-		System.out.println(getWeekBeginLocal(LocalDateTime.now()));
-		System.out.println(LocalTime.of(0, 0, 0));
 	}
 
 	/**
@@ -1582,6 +1578,26 @@ public class DateTimeTool {
 		AssertTool.notNull(date1);
 		AssertTool.notNull(date2);
 		return date2Local(date1).isBefore(date2Local(date2)) || date2Local(date1).isEqual(date2Local(date2));
+	}
+
+	/**
+	 * 根据出生日期判断今天是否为生日
+	 * 
+	 * @param birthday 出生日期
+	 * @return true->是;false->否
+	 */
+	public static boolean isBirthday(Date birthday) {
+		return isBirthday(date2Local(birthday).toLocalDate());
+	}
+
+	/**
+	 * 根据出生日期判断今天是否为生日
+	 * 
+	 * @param birthday 出生日期
+	 * @return true->是;false->否
+	 */
+	public static boolean isBirthday(LocalDate birthday) {
+		return MonthDay.from(LocalDate.now()).equals(MonthDay.of(birthday.getMonth(), birthday.getDayOfMonth()));
 	}
 
 	/**
