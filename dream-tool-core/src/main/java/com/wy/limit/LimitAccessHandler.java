@@ -9,8 +9,13 @@ import com.wy.limit.annotation.LimitAccess;
  * @date 2021-02-16 11:30:10
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-@FunctionalInterface
 public interface LimitAccessHandler {
 
+	/**
+	 * 自定义限流处理
+	 * 
+	 * @param limitAccess 限流注解
+	 * @return 是否限流.true->限流;false->不限流
+	 */
 	boolean handler(LimitAccess limitAccess);
 }

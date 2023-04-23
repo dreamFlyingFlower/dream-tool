@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import com.wy.limit.LimitAccessHandler;
 
 /**
- * 访问限制
+ * 访问限制,可查看dream-study-java-common/com.wy.access/AccessLimitInterceptor
  * 
  * @author 飞花梦影
  * @date 2021-02-16 11:01:13
