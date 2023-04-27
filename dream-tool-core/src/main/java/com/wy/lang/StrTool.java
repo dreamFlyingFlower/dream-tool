@@ -80,7 +80,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 新字符串
 	 */
 	private static String appendIfMissing(final String str, final CharSequence suffix, final boolean ignoreCase,
-	        final CharSequence... suffixes) {
+			final CharSequence... suffixes) {
 		if (str == null || isEmpty(suffix) || endsWith(str, suffix, ignoreCase)) {
 			return str;
 		}
@@ -115,7 +115,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 新字符串
 	 */
 	public static String appendIfMissingIgnoreCase(final String str, final CharSequence suffix,
-	        final CharSequence... suffixes) {
+			final CharSequence... suffixes) {
 		return appendIfMissing(str, suffix, true, suffixes);
 	}
 
@@ -747,7 +747,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 第N次出现的索引
 	 */
 	private static int ordinalIndexOf(final String str, final String searchStr, final int ordinal,
-	        final boolean lastIndex) {
+			final boolean lastIndex) {
 		if (ObjectTool.isNull(str, searchStr) || ordinal <= 0) {
 			return ConstLang.INDEX_NOT_FOUND;
 		}
@@ -821,7 +821,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 新字符串
 	 */
 	private static String prependIfMissing(final String str, final CharSequence prefix, final boolean ignoreCase,
-	        final CharSequence... prefixes) {
+			final CharSequence... prefixes) {
 		if (str == null || isEmpty(prefix) || startsWith(str, prefix, ignoreCase)) {
 			return str;
 		}
@@ -844,7 +844,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 新字符串
 	 */
 	public static String prependIfMissingIgnoreCase(final String str, final CharSequence prefix,
-	        final CharSequence... prefixes) {
+			final CharSequence... prefixes) {
 		return prependIfMissing(str, prefix, true, prefixes);
 	}
 
@@ -1039,7 +1039,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 替换后的新字符串
 	 */
 	private static String replace(final String str, String searchStr, final String replacement, int max,
-	        final boolean ignoreCase) {
+			final boolean ignoreCase) {
 		if (isEmpty(str) || isEmpty(searchStr) || replacement == null || max == 0) {
 			return str;
 		}
@@ -1089,7 +1089,7 @@ public class StrTool extends CharSequenceTool {
 	 * @return 替换后的新字符串
 	 */
 	public static String replaceIgnoreCase(final String str, final String searchStr, final String replacement,
-	        final int max) {
+			final int max) {
 		return replace(str, searchStr, replacement, max, true);
 	}
 
@@ -1640,6 +1640,80 @@ public class StrTool extends CharSequenceTool {
 			return str;
 		}
 		return new String(chs, 0, count);
+	}
+
+	/**
+	 * 删除源字符串头部所有空白,null,制表符,换行符,包括字符串中间
+	 * 
+	 * @param str 源字符串
+	 * @return 删除空白后的新字符串
+	 */
+	public static String trimLeading(String str) {
+		if (!hasLength(str)) {
+			return str;
+		}
+
+		int beginIdx = 0;
+		while (beginIdx < str.length() && Character.isWhitespace(str.charAt(beginIdx))) {
+			beginIdx++;
+		}
+		return str.substring(beginIdx);
+	}
+
+	/**
+	 * 删除源字符串头部指定字符串
+	 * 
+	 * @param str 源字符串
+	 * @param leadingCharacter 待删除字符串
+	 * @return 删除指定字符串后的新字符串
+	 */
+	public static String trimLeading(String str, char leadingCharacter) {
+		if (!hasLength(str)) {
+			return str;
+		}
+
+		int beginIdx = 0;
+		while (beginIdx < str.length() && leadingCharacter == str.charAt(beginIdx)) {
+			beginIdx++;
+		}
+		return str.substring(beginIdx);
+	}
+
+	/**
+	 * 删除源字符串末尾所有空白,null,制表符,换行符,包括字符串中间
+	 * 
+	 * @param str 源字符串
+	 * @return 删除空白后的新字符串
+	 */
+	public static String trimTrailing(String str) {
+		if (!hasLength(str)) {
+			return str;
+		}
+
+		int endIdx = str.length() - 1;
+		while (endIdx >= 0 && Character.isWhitespace(str.charAt(endIdx))) {
+			endIdx--;
+		}
+		return str.substring(0, endIdx + 1);
+	}
+
+	/**
+	 * 删除源字符串末尾指定字符串
+	 * 
+	 * @param str 源字符串
+	 * @param trailingCharacter 待删除字符串
+	 * @return 删除指定字符串后的新字符串
+	 */
+	public static String trimTrailing(String str, char trailingCharacter) {
+		if (!hasLength(str)) {
+			return str;
+		}
+
+		int endIdx = str.length() - 1;
+		while (endIdx >= 0 && trailingCharacter == str.charAt(endIdx)) {
+			endIdx--;
+		}
+		return str.substring(0, endIdx + 1);
 	}
 
 	/**

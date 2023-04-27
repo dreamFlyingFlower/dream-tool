@@ -181,7 +181,7 @@ public class CollectionTool {
 	 * @param collections 集合的集合
 	 * @return 新集合
 	 */
-	public static <T> Collection<T> merge(Collection<Collection<T>> collections) {
+	public static <T> Collection<T> merge(Collection<? extends Collection<T>> collections) {
 		if (isEmpty(collections)) {
 			return null;
 		}

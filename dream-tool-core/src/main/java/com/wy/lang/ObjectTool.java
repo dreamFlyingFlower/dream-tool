@@ -44,7 +44,7 @@ public class ObjectTool {
 					result = clone.invoke(obj);
 					return (T) result;
 				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-				        | InvocationTargetException e) {
+						| InvocationTargetException e) {
 					e.printStackTrace();
 				}
 			}
@@ -103,10 +103,9 @@ public class ObjectTool {
 	 * @return 返回的值或异常
 	 * @throws NullPointerException
 	 */
-	public static <T> T getNullDefault(T t, T defaultValue) {
-		return Optional.ofNullable(t).orElseGet(() -> {
-			return Optional.ofNullable(defaultValue).orElseThrow(() -> new NullPointerException());
-		});
+	public static <T> T getNullDefaultException(T t, T defaultValue) {
+		return Optional.ofNullable(t)
+				.orElseGet(() -> Optional.ofNullable(defaultValue).orElseThrow(() -> new NullPointerException()));
 	}
 
 	/**

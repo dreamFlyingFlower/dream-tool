@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.wy.ConstLang;
 import com.wy.reflect.ReflectTool;
@@ -138,7 +139,7 @@ public class ListTool extends CollectionTool {
 	}
 
 	/**
-	 * 将List转换为Map.
+	 * 将List转换为Map,若key相同,后面的覆盖前面的
 	 * 
 	 * 本方法返回的Map中的key是Object,可参照该方法修改
 	 * 
@@ -149,8 +150,43 @@ public class ListTool extends CollectionTool {
 	 * @throws SecurityException
 	 * @throws NoSuchFieldException
 	 */
-	public static <T> Map<Object, List<T>> toMapList(List<T> lists, String key)
+	public static <T> Map<Object, List<T>> toMapListCover(List<T> lists, String key)
 			throws NoSuchFieldException, SecurityException {
+		if (isEmpty(lists)) {
+			return Collections.emptyMap();
+		}
+		HashMap<Object, List<T>> newHashMap = MapTool.newHashMap();
+		Class<?> clazz = lists.get(0).getClass();
+		Field declaredField = clazz.getDeclaredField(key);
+		ReflectTool.fixAccessible(declaredField);
+		lists.stream().collect(Collectors.toMap(k -> {
+			try {
+				return declaredField.get(k);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+				return k;
+			}
+		}, v -> v, (m, n) -> n));
+		return newHashMap;
+	}
+
+	/**
+	 * 将List转换为Map,若key相同,则合并
+	 * 
+	 * 本方法返回的Map中的key是Object,可参照该方法修改
+	 * 
+	 * @param <T>
+	 * @param lists 需要转换的List
+	 * @param key T中的字段,值用来作为Map的key
+	 * @return Map
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 */
+	public static <T> Map<Object, List<T>> toMapListMerge(List<T> lists, String key)
+			throws NoSuchFieldException, SecurityException {
+		if (isEmpty(lists)) {
+			return Collections.emptyMap();
+		}
 		HashMap<Object, List<T>> newHashMap = MapTool.newHashMap();
 		Class<?> clazz = lists.get(0).getClass();
 		Field declaredField = clazz.getDeclaredField(key);
