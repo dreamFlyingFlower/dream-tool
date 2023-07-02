@@ -11,11 +11,14 @@ import java.util.Objects;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.filter.SimplePropertyPreFilter;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wy.io.file.FileTool;
 import com.wy.lang.AssertTool;
 
+import lombok.SneakyThrows;
+
 /**
- * 
+ * Jackson工具类
  *
  * @author 飞花梦影
  * @date 2023-07-01 22:41:27
@@ -23,7 +26,7 @@ import com.wy.lang.AssertTool;
  */
 public class JsonTools {
 
-	private static final ObjectMapper objectMapper;
+	private static final ObjectMapper objectMapper = new ObjectMapper();
 
 	/**
 	 * JSON将对象序列化为字符串
@@ -31,15 +34,16 @@ public class JsonTools {
 	 * @param object 需要转化的对象
 	 * @return json字符串
 	 */
+	@SneakyThrows
 	public static String toJson(Object object) {
 		AssertTool.notNull(object, "The data must not be null");
-		return JSON.toJSONString(object, FORMAT_SERIALIZER_FEATURES);
+		return objectMapper.writeValueAsString(object);
 	}
 
 	/**
 	 * JSON将对象序列化为字符串
 	 * 
-	 * @param object 需要转化的对象
+	 * @param object      需要转化的对象
 	 * @param filterNames 不进行序列化的字段
 	 * @return json字符串
 	 */
@@ -52,22 +56,22 @@ public class JsonTools {
 	/**
 	 * JSON将对象序列化为字符串
 	 * 
-	 * @param object 需要转化的对象
+	 * @param object      需要转化的对象
 	 * @param filterNames 不进行序列化的字段
 	 * @return json字符串
 	 */
 	public static String toJson(Object object, List<String> filterNames) {
 		AssertTool.notNull(object, "The data must not be null");
-		SimplePropertyPreFilter filter =
-		        new SimplePropertyPreFilter(filterNames.toArray(new String[filterNames.size()]));
+		SimplePropertyPreFilter filter = new SimplePropertyPreFilter(
+				filterNames.toArray(new String[filterNames.size()]));
 		return JSON.toJSONString(object, filter, FORMAT_SERIALIZER_FEATURES);
 	}
 
 	/**
 	 * 将json对象转换为List<T>
 	 * 
-	 * @param <T> 类泛型
-	 * @param json json对象
+	 * @param <T>   类泛型
+	 * @param json  json对象
 	 * @param clazz 需要转换的类
 	 * @return List<T>
 	 */
@@ -76,7 +80,7 @@ public class JsonTools {
 			return Collections.emptyList();
 		}
 		return String.class == json.getClass() ? JSON.parseArray((String) json, clazz)
-		        : JSON.parseArray(JSON.toJSONString(json), clazz);
+				: JSON.parseArray(JSON.toJSONString(json), clazz);
 	}
 
 	/**
@@ -90,16 +94,16 @@ public class JsonTools {
 			return Collections.emptyList();
 		}
 		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
-		        new TypeReference<List<Map<String, Object>>>() {
-		        });
+				new TypeReference<List<Map<String, Object>>>() {
+				});
 	}
 
 	/**
 	 * 将json对象转换为List<Map<K, V>>
 	 * 
-	 * @param <K> key泛型
-	 * @param <V> value泛型
-	 * @param json json对象
+	 * @param <K>   key泛型
+	 * @param <V>   value泛型
+	 * @param json  json对象
 	 * @param empty 一个空的Map<K,V>,为了确定转出的泛型正确
 	 * @return List<Map<K, V>>
 	 */
@@ -108,14 +112,14 @@ public class JsonTools {
 			return Collections.emptyList();
 		}
 		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
-		        new TypeReference<List<Map<K, V>>>() {
-		        });
+				new TypeReference<List<Map<K, V>>>() {
+				});
 	}
 
 	/**
 	 * 将json对象转换为List<String>
 	 * 
-	 * @param json json对象
+	 * @param json  json对象
 	 * @param clazz 需要转换的类
 	 * @return List<String>
 	 */
@@ -124,7 +128,7 @@ public class JsonTools {
 			return Collections.emptyList();
 		}
 		return String.class == json.getClass() ? JSON.parseArray((String) json, String.class)
-		        : JSON.parseArray(JSON.toJSONString(json), String.class);
+				: JSON.parseArray(JSON.toJSONString(json), String.class);
 	}
 
 	/**
@@ -138,16 +142,16 @@ public class JsonTools {
 			return Collections.emptyMap();
 		}
 		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
-		        new TypeReference<Map<String, Object>>() {
-		        });
+				new TypeReference<Map<String, Object>>() {
+				});
 	}
 
 	/**
 	 * JSON将序列化字符串转换为Map<K,V>
 	 * 
-	 * @param <K> key泛型
-	 * @param <V> value泛型
-	 * @param json json字符串
+	 * @param <K>   key泛型
+	 * @param <V>   value泛型
+	 * @param json  json字符串
 	 * @param empty 一个空的Map<K,V>,为了确定转出的泛型正确
 	 * @return Map<K, V>
 	 */
@@ -156,14 +160,14 @@ public class JsonTools {
 			return Collections.emptyMap();
 		}
 		return JSON.parseObject(String.class == json.getClass() ? (String) json : JSON.toJSONString(json),
-		        new TypeReference<Map<K, V>>() {
-		        });
+				new TypeReference<Map<K, V>>() {
+				});
 	}
 
 	/**
 	 * 将json数据写入到输出流中,流自动关闭
 	 * 
-	 * @param file 文件
+	 * @param file   文件
 	 * @param object json数据
 	 * @throws IOException
 	 */
@@ -176,7 +180,7 @@ public class JsonTools {
 	/**
 	 * 将json数据写入到输出流中,需要调用者关闭流
 	 * 
-	 * @param os 字节输出流
+	 * @param os     字节输出流
 	 * @param object json数据
 	 * @throws IOException
 	 */
@@ -189,7 +193,7 @@ public class JsonTools {
 	 * 将json数据写入到输出流中,流自动关闭
 	 * 
 	 * @param fullPath 文件地址绝对路径
-	 * @param object json数据
+	 * @param object   json数据
 	 * @throws IOException
 	 */
 	public static void write(String fullPath, Object object) throws IOException {
