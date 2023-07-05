@@ -6,7 +6,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
-import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.model.StylesTable;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -27,7 +27,7 @@ public class ExcelReadTools {
 			// 创建XSSFReader对象
 			XSSFReader reader = new XSSFReader(pkg);
 			// 获取SharedStringsTable对象
-			SharedStringsTable sst = reader.getSharedStringsTable();
+			SharedStrings sst = reader.getSharedStringsTable();
 			// 获取StylesTable对象
 			StylesTable styles = reader.getStylesTable();
 			// 创建Sax的XmlReader对象

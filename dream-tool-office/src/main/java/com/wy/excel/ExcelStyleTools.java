@@ -3,22 +3,30 @@ package com.wy.excel;
 import java.text.NumberFormat;
 import java.util.regex.Pattern;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFDataValidationHelper;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.PaneType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import com.wy.lang.StrTool;
 
@@ -40,15 +48,13 @@ public class ExcelStyleTools {
 	/**
 	 * 画线
 	 * 
-	 * @param wb
 	 * @param patriarch
 	 * @param iRowStart
 	 * @param iColStart
 	 * @param iRowStop
 	 * @param iColStop
 	 */
-	public static void addLine(HSSFWorkbook wb, HSSFPatriarch patriarch, int iRowStart, int iColStart, int iRowStop,
-			int iColStop) {
+	public static void addLine(HSSFPatriarch patriarch, int iRowStart, int iColStart, int iRowStop, int iColStop) {
 		HSSFClientAnchor anchor =
 				new HSSFClientAnchor(0, 0, 350, 0, (short) (iColStart), iRowStart, (short) (iColStop), iRowStop);
 		HSSFSimpleShape lineShape = patriarch.createSimpleShape(anchor);
@@ -85,11 +91,11 @@ public class ExcelStyleTools {
 	 * @param ySplitPos 上侧窗格的高度,垂直拆分的位置,在点的1/20处
 	 * @param leftmostColumn 右侧窗格开始显示的列的索引
 	 * @param topRow 下侧窗格开始显示的行的索引
-	 * @param activePane 激活的哪个面板区.见 Sheet#PANE_LOWER_RIGHT等4种方式
+	 * @param paneType 激活的哪个面板区
 	 */
 	public static void splitPane(Sheet sheet, int xSplitPos, int ySplitPos, int leftmostColumn, int topRow,
-			int activePane) {
-		sheet.createSplitPane(xSplitPos, ySplitPos, leftmostColumn, topRow, activePane);
+			PaneType paneType) {
+		sheet.createSplitPane(xSplitPos, ySplitPos, leftmostColumn, topRow, paneType);
 	}
 
 	/**
@@ -163,16 +169,16 @@ public class ExcelStyleTools {
 		return 0.5f;
 	}
 
-	public static HSSFFont font10(HSSFWorkbook wb) {
-		HSSFFont curFont = wb.createFont(); // 设置字体
+	public static Font font10(Workbook workbook) {
+		Font curFont = workbook.createFont(); // 设置字体
 		curFont.setFontName(DEFAULT_ENFONT);
 		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET); // 设置中文字体,那必须还要再对单元格进行编码设置
 		curFont.setFontHeightInPoints((short) 10);
 		return curFont;
 	}
 
-	public static HSSFFont font10Blod(HSSFWorkbook wb) {
-		HSSFFont curFont = wb.createFont(); // 设置字体
+	public static Font font10Blod(Workbook workbook) {
+		Font curFont = workbook.createFont(); // 设置字体
 		curFont.setFontName(DEFAULT_ENFONT);
 		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET); // 设置中文字体,那必须还要再对单元格进行编码设置
 		curFont.setBold(true);// 加粗
@@ -183,11 +189,11 @@ public class ExcelStyleTools {
 	/**
 	 * 设置12号字体
 	 * 
-	 * @param wb
+	 * @param workbook
 	 * @return
 	 */
-	public static HSSFFont font12(HSSFWorkbook wb) {
-		HSSFFont curFont = wb.createFont();
+	public static Font font12(Workbook workbook) {
+		Font curFont = workbook.createFont();
 		curFont.setFontName(DEFAULT_ENFONT);
 		// 设置中文字体,那必须还要再对单元格进行编码设置
 		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET);
@@ -198,11 +204,11 @@ public class ExcelStyleTools {
 	/**
 	 * 设置12号黑色字体
 	 * 
-	 * @param wb
+	 * @param workbook
 	 * @return
 	 */
-	public static HSSFFont font12Black(HSSFWorkbook wb) {
-		HSSFFont theFont = wb.createFont();
+	public static Font font12Black(Workbook workbook) {
+		Font theFont = workbook.createFont();
 		theFont.setFontName("黑体");
 		theFont.setCharSet(HSSFFont.DEFAULT_CHARSET);
 		theFont.setFontHeightInPoints((short) 12);
@@ -212,11 +218,11 @@ public class ExcelStyleTools {
 	/**
 	 * 设置16号加粗宋体字体
 	 * 
-	 * @param wb
+	 * @param workbook
 	 * @return
 	 */
-	public static HSSFFont font16BoldSong(HSSFWorkbook wb) {
-		HSSFFont curFont = wb.createFont();
+	public static Font font16BoldSong(Workbook workbook) {
+		Font curFont = workbook.createFont();
 		curFont.setFontName("宋体");
 		// 设置中文字体,那必须还要再对单元格进行编码设置
 		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET);
@@ -349,12 +355,12 @@ public class ExcelStyleTools {
 	/**
 	 * 数据格式化,如数字,时间等
 	 * 
-	 * @param wb {@link Workbook}对象
+	 * @param workbook {@link Workbook}对象
 	 * @param format 若为数字格式化,规则同{@link NumberFormat};时间格式,同Java格式
 	 */
-	public static void formatDate(Workbook wb, String format) {
-		DataFormat dataFormat = wb.createDataFormat();
-		CellStyle cellStyle = wb.createCellStyle();
+	public static void formatDate(Workbook workbook, String format) {
+		DataFormat dataFormat = workbook.createDataFormat();
+		CellStyle cellStyle = workbook.createCellStyle();
 		cellStyle.setDataFormat(dataFormat.getFormat(format));
 	}
 
@@ -363,211 +369,326 @@ public class ExcelStyleTools {
 	 * 
 	 * @param cellStyle 单元格样式对象
 	 */
-	public static void newLine(CellStyle cellStyle) {
+	public static void wrapText(CellStyle cellStyle) {
 		cellStyle.setWrapText(true);
 	}
 
-	public static HSSFCellStyle titlev12(HSSFWorkbook wb, HSSFFont blackFont) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setFont(blackFont);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);// 单元格垂直居中
-		return curStyle;
+	public static CellStyle titlev12(Workbook workbook, Font blackFont) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setFont(blackFont);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);// 单元格垂直居中
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle nobox(HSSFWorkbook wb) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setBorderTop(BorderStyle.NONE); // 实线右边框
-		curStyle.setBorderRight(BorderStyle.NONE); // 实线右边框
-		curStyle.setBorderBottom(BorderStyle.NONE); // 实线右边框
-		curStyle.setBorderLeft(BorderStyle.NONE); // 实线右边框
-		curStyle.setTopBorderColor((short) 0);
-		return curStyle;
+	public static CellStyle nobox(Workbook workbook) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setTopBorderColor((short) 0);
+		borderNoneAll(cellStyle);
+		return cellStyle;
 	}
 
 	/**
-	 * 实现打印时为白框,目的就是实现涂去上行的下边框线 by tony 20110709
+	 * 实现打印时为白框,目的就是实现涂去上行的下边框线
 	 * 
-	 * @param wb
+	 * @param workbook
 	 * @return
 	 */
-	public static HSSFCellStyle whiteBox(HSSFWorkbook wb) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setTopBorderColor(HSSFColorPredefined.WHITE.getIndex());
-		curStyle.setRightBorderColor(HSSFColorPredefined.WHITE.getIndex());
-		curStyle.setBottomBorderColor(HSSFColorPredefined.WHITE.getIndex());
-		curStyle.setLeftBorderColor(HSSFColorPredefined.WHITE.getIndex());
-		curStyle.setBorderTop(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderRight(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderBottom(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderLeft(BorderStyle.THIN); // 实线右边框
-		return curStyle;
+	public static CellStyle whiteBox(Workbook workbook) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setTopBorderColor(HSSFColorPredefined.WHITE.getIndex());
+		cellStyle.setRightBorderColor(HSSFColorPredefined.WHITE.getIndex());
+		cellStyle.setBottomBorderColor(HSSFColorPredefined.WHITE.getIndex());
+		cellStyle.setLeftBorderColor(HSSFColorPredefined.WHITE.getIndex());
+		borderThinAll(cellStyle);
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle normalv12(HSSFWorkbook wb, HSSFFont defaultFont12) {
-		return bnormalv12(wb, defaultFont12);
+	public static CellStyle normalv12(Workbook workbook, Font font12) {
+		return bnormalv12(workbook, font12);
 	}
 
-	public static HSSFCellStyle normalv10(HSSFWorkbook wb, HSSFFont defaultFont10) {
-		return bnormalv12(wb, defaultFont10);
+	public static CellStyle normalv10(Workbook workbook, Font font12) {
+		return bnormalv12(workbook, font12);
 	}
 
-	public static HSSFCellStyle bnormalv12(HSSFWorkbook wb, HSSFFont defaultFont12) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setFont(defaultFont12);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		return curStyle;
+	public static CellStyle bnormalv12(Workbook workbook, Font font12) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setFont(font12);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle numberrv10_BorderThin(HSSFWorkbook wb, HSSFFont defaultFont10) {
-		return moneyrv10_BorderThin(wb, defaultFont10, (short) -1);
+	public static CellStyle numberrv10_BorderThin(Workbook workbook, Font font10) {
+		return moneyrv10_BorderThin(workbook, font10, (short) -1);
 	}
 
-	public static HSSFCellStyle moneyrv10_BorderThin(HSSFWorkbook wb, HSSFFont defaultFont10, short rmb4Format) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setFont(defaultFont10);
+	public static CellStyle moneyrv10_BorderThin(Workbook workbook, Font font10, short rmb4Format) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setFont(font10);
 		if (rmb4Format >= 0) {
-			curStyle.setDataFormat(rmb4Format);
+			cellStyle.setDataFormat(rmb4Format);
 		}
-		curStyle.setAlignment(HorizontalAlignment.RIGHT);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		curStyle.setBorderTop(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderRight(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderBottom(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderLeft(BorderStyle.THIN); // 实线右边框
-		return curStyle;
+		cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		borderThinAll(cellStyle);
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle moneyrv12_BorderThin(HSSFWorkbook wb, HSSFFont defaultFont12, short rmb2Format) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setFont(defaultFont12);
-		curStyle.setDataFormat(rmb2Format);
-		curStyle.setAlignment(HorizontalAlignment.RIGHT);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		curStyle.setBorderTop(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderRight(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderBottom(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderLeft(BorderStyle.THIN); // 实线右边框
-		return curStyle;
+	public static CellStyle moneyrv12_BorderThin(Workbook workbook, Font font12, short rmb2Format) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setFont(font12);
+		cellStyle.setDataFormat(rmb2Format);
+		cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		borderThinAll(cellStyle);
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle money1(HSSFWorkbook wb, HSSFFont defaultFont10, short money1Format) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setFont(defaultFont10);
-		curStyle.setDataFormat(money1Format);
-		curStyle.setAlignment(HorizontalAlignment.RIGHT);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		return curStyle;
+	public static CellStyle money1(Workbook workbook, Font font10, short money1Format) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setFont(font10);
+		cellStyle.setDataFormat(money1Format);
+		cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle money2(HSSFWorkbook wb, HSSFFont defaultFont10, short money2Format) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setFont(defaultFont10);
-		curStyle.setDataFormat(money2Format);
-		curStyle.setAlignment(HorizontalAlignment.RIGHT);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		return curStyle;
+	public static CellStyle money2(Workbook workbook, Font font10, short money2Format) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setFont(font10);
+		cellStyle.setDataFormat(money2Format);
+		cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle datevEN(HSSFWorkbook wb, HSSFFont defaultFont10, short datevENFormat) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setFont(defaultFont10);
-		curStyle.setDataFormat(datevENFormat);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		return curStyle;
+	public static CellStyle datevEN(Workbook workbook, Font font10, short datevENFormat) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setFont(font10);
+		cellStyle.setDataFormat(datevENFormat);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle notet10(HSSFWorkbook wb) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setWrapText(true); // 换行
-		curStyle.setBorderTop(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderRight(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderBottom(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderLeft(BorderStyle.THIN); // 实线右边框
-		curStyle.setVerticalAlignment(VerticalAlignment.TOP); // 单元格垂直居中
-		return curStyle;
+	public static CellStyle notet10(Workbook workbook) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setWrapText(true); // 换行
+		cellStyle.setVerticalAlignment(VerticalAlignment.TOP); // 单元格垂直居中
+		borderThinAll(cellStyle);
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle notevt10(HSSFWorkbook wb, HSSFFont defaultFont10) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setWrapText(true); // 换行
-		curStyle.setFont(defaultFont10);
-		curStyle.setVerticalAlignment(VerticalAlignment.TOP); // 单元格垂直居中
-		return curStyle;
+	public static CellStyle notevt10(Workbook workbook, Font font10) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setWrapText(true); // 换行
+		cellStyle.setFont(font10);
+		cellStyle.setVerticalAlignment(VerticalAlignment.TOP); // 单元格垂直居中
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle noterv10(HSSFWorkbook wb, HSSFFont defaultFont10) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setWrapText(true); // 换行
-		curStyle.setFont(defaultFont10);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		return curStyle;
+	public static CellStyle noterv10(Workbook workbook, Font font10) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setWrapText(true); // 换行
+		cellStyle.setFont(font10);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle noterv10NoWrap(HSSFWorkbook wb, HSSFFont defaultFont10) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setWrapText(false); // 换行
-		curStyle.setFont(defaultFont10);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		return curStyle;
+	public static CellStyle noterv10NoWrap(Workbook workbook, Font font10) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setWrapText(false); // 换行
+		cellStyle.setFont(font10);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle notehv10(HSSFWorkbook wb, HSSFFont defaultFont10) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setWrapText(true); // 换行
-		curStyle.setFont(defaultFont10);
-		curStyle.setAlignment(HorizontalAlignment.CENTER);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		return curStyle;
+	public static CellStyle notehv10(Workbook workbook, Font font10) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setWrapText(true); // 换行
+		cellStyle.setFont(font10);
+		cellStyle.setAlignment(HorizontalAlignment.CENTER);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		return cellStyle;
 	}
 
 	/**
 	 * 横向居左,垂直居中
 	 * 
-	 * @param wb
-	 * @param defaultFont10
+	 * @param workbook
+	 * @param font10
 	 * @return
 	 */
-	public static HSSFCellStyle notehlv10(HSSFWorkbook wb, HSSFFont defaultFont10) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setWrapText(true); // 换行
-		curStyle.setFont(defaultFont10);
-		curStyle.setAlignment(HorizontalAlignment.LEFT);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		return curStyle;
+	public static CellStyle notehlv10(Workbook workbook, Font font10) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setWrapText(true);
+		cellStyle.setFont(font10);
+		cellStyle.setAlignment(HorizontalAlignment.LEFT);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
+		return cellStyle;
 	}
 
-	// 横向居右,垂直居中
-	public static HSSFCellStyle notehrv10(HSSFWorkbook wb, HSSFFont defaultFont10) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setWrapText(true); // 换行
-		curStyle.setFont(defaultFont10);
-		curStyle.setAlignment(HorizontalAlignment.RIGHT);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		return curStyle;
+	/**
+	 * 横向居右,垂直居中
+	 * 
+	 * @param workbook
+	 * @param font10
+	 * @return
+	 */
+	public static CellStyle notehrv10(Workbook workbook, Font font10) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setWrapText(true);
+		cellStyle.setFont(font10);
+		cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
+		return cellStyle;
 	}
 
-	public static HSSFCellStyle notehv10_BorderThin(HSSFWorkbook wb, HSSFFont defaultFont10) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setWrapText(true); // 换行
-		curStyle.setFont(defaultFont10);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		curStyle.setBorderTop(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderRight(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderBottom(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderLeft(BorderStyle.THIN); // 实线右边框
-		return curStyle;
+	/**
+	 * 水平垂直居中
+	 * 
+	 * @param cellStyle CellStyle
+	 */
+	public static void centerAll(CellStyle cellStyle) {
+		// 水平居中
+		cellStyle.setAlignment(HorizontalAlignment.CENTER);
+		// 垂直居中
+		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 	}
 
-	public static HSSFCellStyle notecv10_BorderThin(HSSFWorkbook wb, HSSFFont defaultFont10) {
-		HSSFCellStyle curStyle = wb.createCellStyle();
-		curStyle.setWrapText(true); // 换行
-		curStyle.setFont(defaultFont10);
-		curStyle.setAlignment(HorizontalAlignment.CENTER);
-		curStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
-		curStyle.setBorderTop(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderRight(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderBottom(BorderStyle.THIN); // 实线右边框
-		curStyle.setBorderLeft(BorderStyle.THIN); // 实线右边框
-		return curStyle;
+	/**
+	 * 单元格无任何边框
+	 * 
+	 * @param cellStyle CellStyle
+	 */
+	public static void borderNoneAll(CellStyle cellStyle) {
+		cellStyle.setBorderTop(BorderStyle.NONE);
+		cellStyle.setBorderRight(BorderStyle.NONE);
+		cellStyle.setBorderBottom(BorderStyle.NONE);
+		cellStyle.setBorderLeft(BorderStyle.NONE);
+	}
+
+	/**
+	 * 单元格实线边框
+	 * 
+	 * @param cellStyle CellStyle
+	 */
+	public static void borderThinAll(CellStyle cellStyle) {
+		cellStyle.setBorderTop(BorderStyle.THIN);
+		cellStyle.setBorderRight(BorderStyle.THIN);
+		cellStyle.setBorderBottom(BorderStyle.THIN);
+		cellStyle.setBorderLeft(BorderStyle.THIN);
+	}
+
+	/**
+	 * 设置单元格为10号字体,通用
+	 * 
+	 * @param workbook
+	 * @param font10
+	 * @return
+	 */
+	public static CellStyle borderThin(Workbook workbook) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		centerBorderThin(cellStyle);
+		return cellStyle;
+	}
+
+	/**
+	 * 设置单元格为10号字体,通用
+	 * 
+	 * @param cellStyle
+	 * @param font10
+	 * @return
+	 */
+	public static void centerBorderThin(CellStyle cellStyle) {
+		centerAll(cellStyle);
+		borderThinAll(cellStyle);
+	}
+
+	/**
+	 * 限制默认Sheet中指定列所有单元格的文本最大长度
+	 * 
+	 * @param workbook Workbook
+	 * @param maxLength 最大长度
+	 * @param col 限制列,从0开始
+	 */
+	public static void setMaxlength(Workbook workbook, int maxLength, int col) {
+		Sheet sheet = workbook.createSheet();
+		setMaxlength(sheet, maxLength, col);
+	}
+
+	/**
+	 * 限制指定Sheet中指定列所有单元格的文本最大长度
+	 * 
+	 * @param workbook Workbook
+	 * @param sheetName sheet页名称
+	 * @param maxLength 最大长度
+	 * @param col 限制列,从0开始
+	 */
+	public static void setMaxlength(Workbook workbook, String sheetName, int maxLength, int col) {
+		Sheet sheet = workbook.createSheet(sheetName);
+		setMaxlength(sheet, maxLength, col);
+	}
+
+	/**
+	 * 限制指定Sheet中指定列所有单元格的文本最大长度
+	 * 
+	 * @param sheet Sheet
+	 * @param maxLength 最大长度
+	 * @param col 限制列,从0开始
+	 */
+	public static void setMaxlength(Sheet sheet, int maxLength, int col) {
+		DataValidationHelper dataValidationHelper = null;
+		if (sheet instanceof HSSFSheet) {
+			dataValidationHelper = new HSSFDataValidationHelper((HSSFSheet) sheet);
+		} else if (sheet instanceof XSSFSheet) {
+			dataValidationHelper = new XSSFDataValidationHelper((XSSFSheet) sheet);
+		}
+		if (null != dataValidationHelper) {
+			setMaxlength(sheet, dataValidationHelper, maxLength, col);
+		}
+	}
+
+	/**
+	 * 限制指定Sheet中指定列所有单元格的文本最大长度,只支持2007版本之前
+	 * 
+	 * @param sheet HSSFSheet
+	 * @param maxLength 最大长度
+	 * @param col 限制列,从0开始
+	 */
+	public static void setMaxlength(HSSFSheet sheet, int maxLength, int col) {
+		DataValidationHelper dataValidationHelper = new HSSFDataValidationHelper(sheet);
+		setMaxlength(sheet, dataValidationHelper, maxLength, col);
+	}
+
+	/**
+	 * 限制指定Sheet中指定列所有单元格的文本最大长度,支持2007版本之后
+	 * 
+	 * @param sheet XSSFSheet
+	 * @param maxLength 最大长度
+	 * @param col 限制列,从0开始
+	 */
+	public static void setMaxlength(XSSFSheet sheet, int maxLength, int col) {
+		DataValidationHelper dataValidationHelper = new XSSFDataValidationHelper(sheet);
+		setMaxlength(sheet, dataValidationHelper, maxLength, col);
+	}
+
+	/**
+	 * 限制指定Sheet中指定列所有单元格的文本最大长度
+	 * 
+	 * @param sheet Sheet
+	 * @param dataValidationHelper 数据验证
+	 * @param maxLength 最大长度
+	 * @param col 限制列,从0开始
+	 */
+	public static void setMaxlength(Sheet sheet, DataValidationHelper dataValidationHelper, int maxLength, int col) {
+		// 设置类型为文本
+		DataValidationConstraint dvConstraint =
+				dataValidationHelper.createNumericConstraint(DataValidationConstraint.ValidationType.TEXT_LENGTH,
+						DataValidationConstraint.OperatorType.LESS_OR_EQUAL, maxLength + "", maxLength + "");
+		CellRangeAddressList addressList = new CellRangeAddressList(1, 65535, col, col);
+		DataValidation validation = dataValidationHelper.createValidation(dvConstraint, addressList);
+		validation.createErrorBox("错误提示", "长度不能超过" + maxLength);
+		validation.setShowErrorBox(true);
+		sheet.addValidationData(validation);
 	}
 }

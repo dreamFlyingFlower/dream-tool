@@ -26,11 +26,16 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -84,7 +89,7 @@ public interface ExcelTools {
 	 * @param beginCol 从第几列开始绘制图片
 	 */
 	public static void addPicture(Workbook wb, Drawing<?> patriarch, String targetFilePath, String picPath,
-	        int beginRow, int beginCol) {
+			int beginRow, int beginCol) {
 		AssertTool.isPositiveInteger(beginRow);
 		AssertTool.isPositiveInteger(beginCol);
 		FileTool.checkFile(picPath);
@@ -153,14 +158,14 @@ public interface ExcelTools {
 	 * @param endCol 到第几列结束绘制图片
 	 */
 	public static void addPicture(Workbook wb, Drawing<?> patriarch, String picPath, int beginRow, int beginCol,
-	        int endRow, int endCol) {
+			int endRow, int endCol) {
 		File imgFile = FileTool.checkFile(picPath);
 		try (ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();) {
 			BufferedImage bufferImg = ImageIO.read(imgFile);
 			ImageIO.write(bufferImg, "jpg", byteArrayOut);
 			// 左,上(0-255),右(0-1023),下
 			HSSFClientAnchor anchor =
-			        new HSSFClientAnchor(20, 1, 1018, 0, (short) (beginCol), beginRow, (short) (endCol), endRow);
+					new HSSFClientAnchor(20, 1, 1018, 0, (short) (beginCol), beginRow, (short) (endCol), endRow);
 			patriarch.createPicture(anchor, wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -192,17 +197,17 @@ public interface ExcelTools {
 	}
 
 	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, Charset encode,
-	        Charset decode) {
+			Charset decode) {
 		exportExcel(datas, resp, excelName, encode.displayName(), decode.displayName());
 	}
 
 	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
-	        String decode) {
+			String decode) {
 		exportExcel(datas, resp, excelName, encode, decode, ConstOffice.EXCEL_SHEET_MAX_ROW);
 	}
 
 	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
-	        String decode, int sheetMax) {
+			String decode, int sheetMax) {
 		exportExcel(datas, resp, excelName, encode, decode, sheetMax, true);
 	}
 
@@ -219,7 +224,7 @@ public interface ExcelTools {
 	 * @param subject 是否添加标题,默认true添加false不添加,真实数据从第2行开始写入
 	 */
 	default <T> void exportExcel(List<T> datas, HttpServletResponse resp, String excelName, String encode,
-	        String decode, int sheetMax, boolean subject) {
+			String decode, int sheetMax, boolean subject) {
 		resp.setContentType("application/download");
 		try (OutputStream os = resp.getOutputStream();) {
 			// 处理文件名后缀
@@ -229,7 +234,7 @@ public interface ExcelTools {
 			}
 			// 处理文件编码
 			resp.setHeader("Content-Disposition",
-			        "attchament;filename=" + new String(excelName.getBytes(encode), Charset.forName(decode)));
+					"attchament;filename=" + new String(excelName.getBytes(encode), Charset.forName(decode)));
 			// 处理每个sheet页最大行数据
 			sheetMax = sheetMax >= ConstOffice.EXCEL_SHEET_MAX_ROW ? ConstOffice.EXCEL_SHEET_MAX_ROW : sheetMax;
 			long sheetNum = Math.round(NumberTool.div(datas.size(), sheetMax).floatValue());
@@ -335,7 +340,8 @@ public interface ExcelTools {
 	 * @param t 需要写入到单元格的数据
 	 * @param field 当前字段
 	 */
-	default <T> void handleCell(Cell cell, T t, Field field) {}
+	default <T> void handleCell(Cell cell, T t, Field field) {
+	}
 
 	/**
 	 * 读取excel表格数据,默认表格中第一行是key值,且可以使用,不计入数据,从第2行第1列读取数据
@@ -369,7 +375,7 @@ public interface ExcelTools {
 	 * @return list集合
 	 */
 	public static List<Map<String, Object>> readExcel(String path, boolean firstUse, List<String> titles,
-	        int beginRow) {
+			int beginRow) {
 		return readExcel(path, firstUse, titles, beginRow, 0);
 	}
 
@@ -384,7 +390,7 @@ public interface ExcelTools {
 	 * @return 结果集
 	 */
 	public static List<Map<String, Object>> readExcel(String path, boolean firstUse, List<String> titles, int beginRow,
-	        int beginCol) {
+			int beginCol) {
 		return null;
 	}
 
@@ -434,7 +440,7 @@ public interface ExcelTools {
 	 * @return 结果集
 	 */
 	default List<Map<String, Object>> readExcel(InputStream is, boolean firstUse, List<String> titles, int beginRow,
-	        int beginCol) {
+			int beginCol) {
 		return null;
 	}
 
@@ -682,5 +688,35 @@ public interface ExcelTools {
 	 */
 	default boolean writeXLSX(List<List<List<Object>>> excel, String path) {
 		return writeExcel(new XSSFWorkbook(), excel, path);
+	}
+
+	/**
+	 * 指定某列为下拉框
+	 * 
+	 * @param sheet sheet页
+	 * @param datas 下拉框数据
+	 * @param col 第col列下拉框,从0开始
+	 */
+	default void writeSelect(Sheet sheet, String[] datas, int col) {
+		writeSelect(sheet, datas, 0, 65535, col, col);
+	}
+
+	/**
+	 * 指定某列为下拉框
+	 * 
+	 * @param sheet sheet页
+	 * @param datas 下拉框数据
+	 * @param beginRow 开始行,从0开始
+	 * @param endRow 结束行,从0开始.若不确定结束行,可写65535
+	 * @param beginCol 开始列,从0开始
+	 * @param endCol 结束列,从0开始.若只有一列下拉框,开始和结束列相同
+	 */
+	default void writeSelect(Sheet sheet, String[] datas, int beginRow, int endRow, int beginCol, int endCol) {
+		// 开始行,结束行,开始列,结束列,都是从0开始
+		CellRangeAddressList addressList = new CellRangeAddressList(beginRow, endRow, beginCol, endCol);
+		DataValidationHelper helper = sheet.getDataValidationHelper();
+		DataValidationConstraint constraint = helper.createExplicitListConstraint(datas);
+		DataValidation dataValidation = helper.createValidation(constraint, addressList);
+		sheet.addValidationData(dataValidation);
 	}
 }

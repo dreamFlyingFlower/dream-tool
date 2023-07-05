@@ -11,11 +11,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -30,14 +33,10 @@ import com.wy.bean.BeanTool;
  */
 public class PdfTools {
 
-	/**
-	 * 标准A4的宽
-	 */
+	/** 标准A4的宽 */
 	private static final Integer A4_WEIGHT = 595 - 60;
 
-	/**
-	 * 标准A4的高
-	 */
+	/** 标准A4的高 */
 	private static final Integer A4_HEIGHT = 842 - 60;
 
 	public <T> String exportPdf(T t, HttpServletResponse response) throws IOException, DocumentException {
@@ -112,8 +111,8 @@ public class PdfTools {
 				if (images[i].toLowerCase().endsWith(".bmp") || images[i].toLowerCase().endsWith(".jpg")
 						|| images[i].toLowerCase().endsWith(".jpeg") || images[i].toLowerCase().endsWith(".gif")
 						|| images[i].toLowerCase().endsWith(".png")) {
-					com.itextpdf.text.Image img = com.itextpdf.text.Image
-							.getInstance(filePath + File.separator + images[i]);
+					com.itextpdf.text.Image img =
+							com.itextpdf.text.Image.getInstance(filePath + File.separator + images[i]);
 					img.setAlignment(com.itextpdf.text.Image.ALIGN_CENTER);
 					// 根据图片大小设置页面,一定要先设置页面,再newPage(),否则无效
 					if (img.getWidth() > 1440) {
@@ -129,6 +128,36 @@ public class PdfTools {
 			if (document != null) {
 				document.close();
 			}
+		}
+	}
+
+	/**
+	 * 给PDF文件添加水印
+	 * 
+	 * @param originalFilePath 原始PDF文件地址
+	 * @param targetFilePath 目标PDF文件地址
+	 * @param watermark 水印文字
+	 */
+	public static void addWatermark(String originalFilePath, String targetFilePath, String watermark) {
+		try {
+			PdfReader reader = new PdfReader(originalFilePath);
+			PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(targetFilePath));
+			// 获取 PDF 中的页数
+			int pageCount = reader.getNumberOfPages();
+			// 添加水印
+			for (int i = 1; i <= pageCount; i++) {
+				// 或者 getOverContent()
+				PdfContentByte contentByte = stamper.getUnderContent(i);
+				contentByte.beginText();
+				contentByte.setFontAndSize(BaseFont.createFont(), 36f);
+				contentByte.setColorFill(BaseColor.LIGHT_GRAY);
+				contentByte.showTextAligned(Element.ALIGN_CENTER, watermark, 300, 400, 45);
+				contentByte.endText();
+			}
+			stamper.close();
+			reader.close();
+		} catch (IOException | DocumentException e) {
+			e.printStackTrace();
 		}
 	}
 }

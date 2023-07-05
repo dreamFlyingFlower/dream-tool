@@ -23,7 +23,7 @@ public class NumberTool {
 	/**
 	 * 小数默认保留的小数位
 	 */
-	private final static int DEFAULT_SCALE = 2;
+	private static final int DEFAULT_SCALE = 2;
 
 	/**
 	 * 数字类型避免精度缺失的加法运算,但仍会有精度丢失
@@ -51,6 +51,28 @@ public class NumberTool {
 	 */
 	public static int compare(BigDecimal number1, BigDecimal number2) {
 		return number1.compareTo(number2);
+	}
+
+	/**
+	 * 判断指定值是否为null,若为null,则赋值0
+	 * 
+	 * @param number 待判断的值
+	 * @return 返回值
+	 */
+	public static BigDecimal defaultIfNull(BigDecimal number) {
+		return defaultIfNull(number, BigDecimal.ZERO);
+	}
+
+	/**
+	 * 判断指定值是否为null,若为null,返回默认值
+	 * 
+	 * @param number 待判断的值
+	 * @param defaultValue 默认值
+	 * @return 返回值
+	 */
+	public static BigDecimal defaultIfNull(BigDecimal number, BigDecimal defaultValue) {
+		AssertTool.notNull(defaultValue);
+		return null == number ? defaultValue : number;
 	}
 
 	/**
@@ -313,7 +335,7 @@ public class NumberTool {
 		// 判断结尾是否有f,F,d,D
 		if (str.length() > 1) {
 			if (str.charAt(str.length() - 1) == 'f' || str.charAt(str.length() - 1) == 'F'
-			        || str.charAt(str.length() - 1) == 'd' || str.charAt(str.length() - 1) == 'D') {
+					|| str.charAt(str.length() - 1) == 'd' || str.charAt(str.length() - 1) == 'D') {
 				str = str.substring(0, str.length() - 1);
 			}
 		}
@@ -375,7 +397,7 @@ public class NumberTool {
 				// 16进制只含有0-9,a-f,A-F
 				for (; i < chars.length; i++) {
 					if ((chars[i] < '0' || chars[i] > '9') && (chars[i] < 'a' || chars[i] > 'f')
-					        && (chars[i] < 'A' || chars[i] > 'F')) {
+							&& (chars[i] < 'A' || chars[i] > 'F')) {
 						return false;
 					}
 				}
