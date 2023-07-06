@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.wy.excel.enums.ExcelAction;
+
 /**
  * excel导入导出,只能在类上使用,默认情况final和static属性忽略 FIXME 类上注解暂时不可用
  * 

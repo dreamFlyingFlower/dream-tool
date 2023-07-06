@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFDataValidationHelper;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
@@ -31,7 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import com.wy.lang.StrTool;
 
 /**
- * Excel格式化工具
+ * Excel单元格样式工具
  * 
  * @author 飞花梦影
  * @date 2021-03-31 10:50:51
@@ -40,7 +39,10 @@ import com.wy.lang.StrTool;
 public class ExcelStyleTools {
 
 	/** 默认字体 */
-	public static final String DEFAULT_ENFONT = "Times New Roman";
+	public static final String DEFAULT_FONT_ENFONT = "Times New Roman";
+
+	/** 默认字体大小 */
+	public static final short DEFAULT_FONT_SIZE = 12;
 
 	/** 默认格式化无符号金钱格式 */
 	public static final String DEFAULT_FORMAT_MONEY = "#,###,##0.00";
@@ -169,66 +171,104 @@ public class ExcelStyleTools {
 		return 0.5f;
 	}
 
+	/**
+	 * 设置10号正常大小的Times New Roman
+	 * 
+	 * @param workbook Workbook
+	 * @return Font
+	 */
 	public static Font font10(Workbook workbook) {
-		Font curFont = workbook.createFont(); // 设置字体
-		curFont.setFontName(DEFAULT_ENFONT);
-		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET); // 设置中文字体,那必须还要再对单元格进行编码设置
-		curFont.setFontHeightInPoints((short) 10);
-		return curFont;
-	}
-
-	public static Font font10Blod(Workbook workbook) {
-		Font curFont = workbook.createFont(); // 设置字体
-		curFont.setFontName(DEFAULT_ENFONT);
-		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET); // 设置中文字体,那必须还要再对单元格进行编码设置
-		curFont.setBold(true);// 加粗
-		curFont.setFontHeightInPoints((short) 10);
-		return curFont;
+		return font(workbook, DEFAULT_FONT_ENFONT, (short) 10, false);
 	}
 
 	/**
-	 * 设置12号字体
+	 * 设置为10号加粗的Times New Roman
 	 * 
-	 * @param workbook
-	 * @return
+	 * @param workbook Workbook
+	 * @return Font
+	 */
+	public static Font font10Blod(Workbook workbook) {
+		return font(workbook, DEFAULT_FONT_ENFONT, (short) 10, true);
+	}
+
+	/**
+	 * 设置12号正常大小的Times New Roman
+	 * 
+	 * @param workbook Workbook
+	 * @return Font
 	 */
 	public static Font font12(Workbook workbook) {
-		Font curFont = workbook.createFont();
-		curFont.setFontName(DEFAULT_ENFONT);
-		// 设置中文字体,那必须还要再对单元格进行编码设置
-		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET);
-		curFont.setFontHeightInPoints((short) 12);
-		return curFont;
+		return font(workbook, DEFAULT_FONT_ENFONT, DEFAULT_FONT_SIZE, false);
 	}
 
 	/**
-	 * 设置12号黑色字体
+	 * 设置12号加粗的Times New Roman
 	 * 
-	 * @param workbook
-	 * @return
+	 * @param workbook Workbook
+	 * @return Font
+	 */
+	public static Font font12Bold(Workbook workbook) {
+		return font(workbook, DEFAULT_FONT_ENFONT, DEFAULT_FONT_SIZE, true);
+	}
+
+	/**
+	 * 设置12号正常大小的黑色字体
+	 * 
+	 * @param workbook Workbook
+	 * @return Font
 	 */
 	public static Font font12Black(Workbook workbook) {
-		Font theFont = workbook.createFont();
-		theFont.setFontName("黑体");
-		theFont.setCharSet(HSSFFont.DEFAULT_CHARSET);
-		theFont.setFontHeightInPoints((short) 12);
-		return theFont;
+		return font(workbook, "黑体", DEFAULT_FONT_SIZE, false);
 	}
 
 	/**
-	 * 设置16号加粗宋体字体
+	 * 设置16号正常大小的Times New Roman
 	 * 
-	 * @param workbook
-	 * @return
+	 * @param workbook Workbook
+	 * @param fontName 字体
+	 * @return Font
 	 */
-	public static Font font16BoldSong(Workbook workbook) {
-		Font curFont = workbook.createFont();
-		curFont.setFontName("宋体");
+	public static Font font16(Workbook workbook) {
+		return font(workbook, DEFAULT_FONT_ENFONT, (short) 16, false);
+	}
+
+	/**
+	 * 设置16号加粗的Times New Roman
+	 * 
+	 * @param workbook Workbook
+	 * @return Font
+	 */
+	public static Font font16Bold(Workbook workbook) {
+		return font(workbook, DEFAULT_FONT_ENFONT, (short) 16, true);
+	}
+
+	/**
+	 * 设置16号正常大小的黑色字体
+	 * 
+	 * @param workbook Workbook
+	 * @return Font
+	 */
+	public static Font font16Black(Workbook workbook) {
+		return font(workbook, "黑体", (short) 16, false);
+	}
+
+	/**
+	 * 设置指定字体
+	 * 
+	 * @param workbook Workbook
+	 * @param fontName 字体
+	 * @param fontSize 字体大小
+	 * @param bold 是否加粗
+	 * @return Font
+	 */
+	public static Font font(Workbook workbook, String fontName, short fontSize, boolean bold) {
+		Font font = workbook.createFont();
+		font.setFontName(fontName);
 		// 设置中文字体,那必须还要再对单元格进行编码设置
-		curFont.setCharSet(HSSFFont.DEFAULT_CHARSET);
-		curFont.setBold(true);
-		curFont.setFontHeightInPoints((short) 16);
-		return curFont;
+		font.setCharSet(Font.DEFAULT_CHARSET);
+		font.setFontHeightInPoints(fontSize);
+		font.setBold(bold);
+		return font;
 	}
 
 	/**
@@ -357,11 +397,13 @@ public class ExcelStyleTools {
 	 * 
 	 * @param workbook {@link Workbook}对象
 	 * @param format 若为数字格式化,规则同{@link NumberFormat};时间格式,同Java格式
+	 * @return CellStyle
 	 */
-	public static void formatDate(Workbook workbook, String format) {
+	public static CellStyle formatDate(Workbook workbook, String format) {
 		DataFormat dataFormat = workbook.createDataFormat();
 		CellStyle cellStyle = workbook.createCellStyle();
 		cellStyle.setDataFormat(dataFormat.getFormat(format));
+		return cellStyle;
 	}
 
 	/**
@@ -373,16 +415,27 @@ public class ExcelStyleTools {
 		cellStyle.setWrapText(true);
 	}
 
-	public static CellStyle titlev12(Workbook workbook, Font blackFont) {
+	/**
+	 * 设置居中的12号Times New Roman字体,并加粗
+	 * 
+	 * @param workbook Workbook
+	 * @return CellStyle
+	 */
+	public static CellStyle center12(Workbook workbook) {
 		CellStyle cellStyle = workbook.createCellStyle();
-		cellStyle.setFont(blackFont);
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);// 单元格垂直居中
+		cellStyle.setFont(font12Bold(workbook));
+		centerAll(cellStyle);
 		return cellStyle;
 	}
 
+	/**
+	 * 设置单元格无边框
+	 * 
+	 * @param workbook Workbook
+	 * @return CellStyle
+	 */
 	public static CellStyle nobox(Workbook workbook) {
 		CellStyle cellStyle = workbook.createCellStyle();
-		cellStyle.setTopBorderColor((short) 0);
 		borderNoneAll(cellStyle);
 		return cellStyle;
 	}
@@ -390,7 +443,7 @@ public class ExcelStyleTools {
 	/**
 	 * 实现打印时为白框,目的就是实现涂去上行的下边框线
 	 * 
-	 * @param workbook
+	 * @param workbook Workbook
 	 * @return
 	 */
 	public static CellStyle whiteBox(Workbook workbook) {
@@ -400,21 +453,6 @@ public class ExcelStyleTools {
 		cellStyle.setBottomBorderColor(HSSFColorPredefined.WHITE.getIndex());
 		cellStyle.setLeftBorderColor(HSSFColorPredefined.WHITE.getIndex());
 		borderThinAll(cellStyle);
-		return cellStyle;
-	}
-
-	public static CellStyle normalv12(Workbook workbook, Font font12) {
-		return bnormalv12(workbook, font12);
-	}
-
-	public static CellStyle normalv10(Workbook workbook, Font font12) {
-		return bnormalv12(workbook, font12);
-	}
-
-	public static CellStyle bnormalv12(Workbook workbook, Font font12) {
-		CellStyle cellStyle = workbook.createCellStyle();
-		cellStyle.setFont(font12);
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
 		return cellStyle;
 	}
 
@@ -429,7 +467,7 @@ public class ExcelStyleTools {
 			cellStyle.setDataFormat(rmb4Format);
 		}
 		cellStyle.setAlignment(HorizontalAlignment.RIGHT);
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
 		borderThinAll(cellStyle);
 		return cellStyle;
 	}
@@ -439,7 +477,7 @@ public class ExcelStyleTools {
 		cellStyle.setFont(font12);
 		cellStyle.setDataFormat(rmb2Format);
 		cellStyle.setAlignment(HorizontalAlignment.RIGHT);
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
 		borderThinAll(cellStyle);
 		return cellStyle;
 	}
@@ -449,7 +487,7 @@ public class ExcelStyleTools {
 		cellStyle.setFont(font10);
 		cellStyle.setDataFormat(money1Format);
 		cellStyle.setAlignment(HorizontalAlignment.RIGHT);
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
 		return cellStyle;
 	}
 
@@ -458,7 +496,7 @@ public class ExcelStyleTools {
 		cellStyle.setFont(font10);
 		cellStyle.setDataFormat(money2Format);
 		cellStyle.setAlignment(HorizontalAlignment.RIGHT);
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
 		return cellStyle;
 	}
 
@@ -466,48 +504,48 @@ public class ExcelStyleTools {
 		CellStyle cellStyle = workbook.createCellStyle();
 		cellStyle.setFont(font10);
 		cellStyle.setDataFormat(datevENFormat);
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
 		return cellStyle;
 	}
 
 	public static CellStyle notet10(Workbook workbook) {
 		CellStyle cellStyle = workbook.createCellStyle();
-		cellStyle.setWrapText(true); // 换行
-		cellStyle.setVerticalAlignment(VerticalAlignment.TOP); // 单元格垂直居中
+		cellStyle.setWrapText(true);
+		cellStyle.setVerticalAlignment(VerticalAlignment.TOP);
 		borderThinAll(cellStyle);
 		return cellStyle;
 	}
 
 	public static CellStyle notevt10(Workbook workbook, Font font10) {
 		CellStyle cellStyle = workbook.createCellStyle();
-		cellStyle.setWrapText(true); // 换行
+		cellStyle.setWrapText(true);
 		cellStyle.setFont(font10);
-		cellStyle.setVerticalAlignment(VerticalAlignment.TOP); // 单元格垂直居中
+		cellStyle.setVerticalAlignment(VerticalAlignment.TOP);
 		return cellStyle;
 	}
 
 	public static CellStyle noterv10(Workbook workbook, Font font10) {
 		CellStyle cellStyle = workbook.createCellStyle();
-		cellStyle.setWrapText(true); // 换行
+		cellStyle.setWrapText(true);
 		cellStyle.setFont(font10);
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
 		return cellStyle;
 	}
 
 	public static CellStyle noterv10NoWrap(Workbook workbook, Font font10) {
 		CellStyle cellStyle = workbook.createCellStyle();
-		cellStyle.setWrapText(false); // 换行
+		cellStyle.setWrapText(false);
 		cellStyle.setFont(font10);
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
 		return cellStyle;
 	}
 
 	public static CellStyle notehv10(Workbook workbook, Font font10) {
 		CellStyle cellStyle = workbook.createCellStyle();
-		cellStyle.setWrapText(true); // 换行
+		cellStyle.setWrapText(true);
 		cellStyle.setFont(font10);
 		cellStyle.setAlignment(HorizontalAlignment.CENTER);
-		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY); // 单元格垂直居中
+		cellStyle.setVerticalAlignment(VerticalAlignment.JUSTIFY);
 		return cellStyle;
 	}
 
@@ -561,6 +599,7 @@ public class ExcelStyleTools {
 	 * @param cellStyle CellStyle
 	 */
 	public static void borderNoneAll(CellStyle cellStyle) {
+		cellStyle.setTopBorderColor((short) 0);
 		cellStyle.setBorderTop(BorderStyle.NONE);
 		cellStyle.setBorderRight(BorderStyle.NONE);
 		cellStyle.setBorderBottom(BorderStyle.NONE);
@@ -690,5 +729,32 @@ public class ExcelStyleTools {
 		validation.createErrorBox("错误提示", "长度不能超过" + maxLength);
 		validation.setShowErrorBox(true);
 		sheet.addValidationData(validation);
+	}
+
+	public static FontBuilder fontBuilder(Workbook workbook) {
+		return new FontBuilder(workbook);
+	}
+
+	public static class FontBuilder {
+
+		private Font font;
+
+		public FontBuilder(Workbook workbook) {
+			font = workbook.createFont();
+		}
+
+		public FontBuilder fontName(String fontName) {
+			font.setFontName(fontName);
+			return this;
+		}
+
+		public FontBuilder bold(boolean bold) {
+			font.setBold(bold);
+			return this;
+		}
+
+		public Font build() {
+			return font;
+		}
 	}
 }

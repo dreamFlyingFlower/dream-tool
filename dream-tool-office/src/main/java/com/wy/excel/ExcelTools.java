@@ -51,8 +51,7 @@ import com.wy.result.ResultException;
 import com.wy.util.DateTool;
 
 /**
- * Apache操作excel,需要导入包:poi-3.17,commons-codec-1.10,commons-collections4-4.1,commons-logging-1.2,log4j-1.2.17
- * xmlbeans-2.6.0,curvesapi-1.04,poi-ooxml-schemas-3.17,poi-ooxml-3.17
+ * Apache操作excel,需要导入包:poi,xmlbeans,curvesapi,poi-ooxml-schemas,poi-ooxml
  * 
  * {@link HSSFWorkbook}:处理Excel2003以前,包括2003的版本,文件扩展名是.xls
  * {@link XSSFWorkbook}:处理Excel2007的版本,文件扩展名是.xlsx
