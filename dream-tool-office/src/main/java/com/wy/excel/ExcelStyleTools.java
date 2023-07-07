@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
@@ -729,6 +730,23 @@ public class ExcelStyleTools {
 		validation.createErrorBox("错误提示", "长度不能超过" + maxLength);
 		validation.setShowErrorBox(true);
 		sheet.addValidationData(validation);
+	}
+
+	/**
+	 * 设置列宽,对中文有效
+	 * 
+	 * @param sheet Sheet
+	 * @param col 第N列
+	 */
+	public static void setColumnWidth(Sheet sheet, int col) {
+		// 如果有合并列,最后一个参数设置为true
+		double width = SheetUtil.getColumnWidth(sheet, col, false);
+		if (width != -1.0D) {
+			width *= 256.0D;
+			// 此处可以适当调整,调整列空白处宽度
+			width += 220D;
+			sheet.setColumnWidth(col, Math.toIntExact(Math.round(width / 256D)));
+		}
 	}
 
 	public static FontBuilder fontBuilder(Workbook workbook) {

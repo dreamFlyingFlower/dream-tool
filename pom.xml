@@ -27,7 +27,7 @@
 		<jsoup.version>1.14.2</jsoup.version>
 		<lombok.version>1.18.20</lombok.version>
 		<metadata-extractor.version>2.16.0</metadata-extractor.version>
-		<okhttp.version>4.9.3</okhttp.version>
+		<okhttp3.version>4.11.0</okhttp3.version>
 		<olap4j.version>1.2.0</olap4j.version>
 		<opencsv.version>5.4</opencsv.version>
 		<pinyin4j.version>2.5.1</pinyin4j.version>
@@ -133,7 +133,7 @@
 			<dependency>
 				<groupId>com.squareup.okhttp3</groupId>
 				<artifactId>okhttp</artifactId>
-				<version>${okhttp.version}</version>
+				<version>${okhttp3.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.olap4j</groupId>
