@@ -57,7 +57,7 @@ public class ReflectTool {
 	}
 
 	/**
-	 * 修改访问类中的成员权限
+	 * 修改访问类中的成员权限 TODO JDK9以后使用canAccess
 	 * 
 	 * @param member 需要访问的成员
 	 * @param force 是否强制修改,true强制
@@ -1076,7 +1076,7 @@ public class ReflectTool {
 	}
 
 	/**
-	 * 判断成员是否可访问
+	 * 判断成员是否可访问 TODO JDK9以后使用canAccess
 	 * 
 	 * @param member 需要访问的成员
 	 * @return true当可访问

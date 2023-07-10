@@ -1,6 +1,8 @@
 package com.wy.http;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,7 +26,7 @@ import com.wy.util.ArrayTool;
 public class HttpTools {
 
 	private static final Pattern PATTERN_CIDR =
-	        Pattern.compile("^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})/(\\d{1,2})$");
+			Pattern.compile("^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})/(\\d{1,2})$");
 
 	/**
 	 * 简单转换httpservletrequest请求中的参数为hashmap,数组会转成list
@@ -71,6 +73,9 @@ public class HttpTools {
 		// 某些代理可能会有该值
 		if (checkIp(ip)) {
 			ip = request.getHeader("HTTP_CLIENT_IP");
+		}
+		if (checkIp(ip)) {
+			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
 		}
 		// nginx可能会该值
 		if (checkIp(ip)) {
@@ -306,5 +311,29 @@ public class HttpTools {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * 获取mac地址
+	 * 
+	 * @return Mac地址
+	 */
+	public static String getMacAddress() {
+		StringBuilder sb = new StringBuilder();
+		try {
+			// 取mac地址
+			byte[] macAddressBytes = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
+			for (int i = 0; i < macAddressBytes.length; i++) {
+				if (i != 0) {
+					sb.append("-");
+				}
+				// mac[i] & 0xFF 是为了把byte转化为正整数
+				String s = Integer.toHexString(macAddressBytes[i] & 0xFF);
+				sb.append(s.length() == 1 ? 0 + s : s);
+			}
+		} catch (SocketException | UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return sb.toString().trim().toUpperCase();
 	}
 }

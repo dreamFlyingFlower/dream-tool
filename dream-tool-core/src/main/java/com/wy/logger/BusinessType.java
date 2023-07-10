@@ -13,6 +13,7 @@ import com.wy.common.StatusMsg;
 public enum BusinessType implements StatusMsg, PropConverter {
 
 	OTHER("其他"),
+	LOGIN("登录"),
 	INSERT("新增"),
 	DELETE("删除"),
 	UPDATE("修改"),
