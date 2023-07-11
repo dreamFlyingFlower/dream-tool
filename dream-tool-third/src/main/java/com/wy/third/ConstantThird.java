@@ -1,10 +1,10 @@
-package com.wy;
+package com.wy.third;
 
 /**
  * 第三方常量接口
  * 
  * <pre>
- * 1.fastjson
+ * 1.fastjson2
  * 2.dom4j-2.1.3
  * 3.javax.mail
  * 4.Jsoup:只是测试,需要放到crawler中,之后剔除

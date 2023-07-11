@@ -1,4 +1,4 @@
-package com.wy.mail;
+package com.wy.third.mail;
 
 import java.io.File;
 import java.io.IOException;

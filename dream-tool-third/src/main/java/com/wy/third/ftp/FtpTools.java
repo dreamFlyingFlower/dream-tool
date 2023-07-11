@@ -1,4 +1,4 @@
-package com.wy.ftp;
+package com.wy.third.ftp;
 
 import java.io.IOException;
 import java.io.OutputStream;

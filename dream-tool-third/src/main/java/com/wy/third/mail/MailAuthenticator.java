@@ -1,4 +1,4 @@
-package com.wy.mail;
+package com.wy.third.mail;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;

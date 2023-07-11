@@ -1,4 +1,4 @@
-package com.wy.mail;
+package com.wy.third.mail;
 
 import java.io.IOException;
 import java.io.Serializable;

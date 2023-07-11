@@ -1,4 +1,4 @@
-package com.wy.qrcode;
+package com.wy.third.qrcode;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics;
