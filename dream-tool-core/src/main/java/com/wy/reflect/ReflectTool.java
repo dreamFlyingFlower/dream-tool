@@ -306,7 +306,7 @@ public class ReflectTool {
 		AssertTool.notNull(clazz, "Class must not be null");
 		ListBuilder<Field> builder = ListTool.builder();
 		Class<?> searchType = clazz;
-		while (Object.class != searchType && searchType != null) {
+		while (null != searchType && Object.class != searchType) {
 			Field[] fields = getDeclaredFields(searchType);
 			for (Field field : fields) {
 				if (ignoreStatic && Modifier.isStatic(field.getModifiers())) {

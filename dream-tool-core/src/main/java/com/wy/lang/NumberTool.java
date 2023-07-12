@@ -821,6 +821,7 @@ public class NumberTool {
 	 * 保留2位小数,默认四舍五入
 	 * 
 	 * @param num 数字
+	 * @return 四舍五入后的值
 	 */
 	public static float round(float num) {
 		return round(num, DEFAULT_SCALE);
@@ -830,6 +831,7 @@ public class NumberTool {
 	 * 保留2位小数,默认四舍五入
 	 * 
 	 * @param num 数字
+	 * @return 四舍五入后的值
 	 */
 	public static double round(double num) {
 		return round(num, DEFAULT_SCALE);
@@ -840,6 +842,7 @@ public class NumberTool {
 	 * 
 	 * @param num 要保留小数的原始值
 	 * @param scale 需要保留几位小数
+	 * @return 四舍五入后的值
 	 */
 	public static double round(Number num) {
 		return round(num, DEFAULT_SCALE);
@@ -850,6 +853,7 @@ public class NumberTool {
 	 * 
 	 * @param num 要保留小数的原始值
 	 * @param scale 需要保留几位小数
+	 * @return 四舍五入后的值
 	 */
 	public static float round(float num, int scale) {
 		scale = scale < 0 ? 0 : scale;
@@ -862,6 +866,7 @@ public class NumberTool {
 	 * 
 	 * @param num 要保留小数的原始值
 	 * @param scale 需要保留几位小数
+	 * @return 四舍五入后的值
 	 */
 	public static double round(double num, int scale) {
 		scale = scale < 0 ? 0 : scale;
@@ -874,6 +879,7 @@ public class NumberTool {
 	 * 
 	 * @param num 要保留小数的原始值
 	 * @param scale 需要保留几位小数
+	 * @return 四舍五入后的值
 	 */
 	public static double round(Number num, int scale) {
 		scale = scale < 0 ? 0 : scale;
