@@ -30,7 +30,6 @@
 		<module>dream-tool-annotation</module>
 		<module>dream-tool-core</module>
 		<module>dream-tool-generator</module>
-		<module>dream-tool-http</module>
 		<module>dream-tool-office</module>
 		<module>dream-tool-third</module>
 	</modules>

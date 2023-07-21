@@ -1,4 +1,4 @@
-package com.wy.http;
+package com.wy.third.http;
 
 import java.io.IOException;
 import java.net.URI;

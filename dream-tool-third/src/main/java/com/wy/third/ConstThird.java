@@ -14,5 +14,5 @@ package com.wy.third;
  * @date 2021-03-11 22:45:57
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public interface ConstantThird {
+public interface ConstThird {
 }

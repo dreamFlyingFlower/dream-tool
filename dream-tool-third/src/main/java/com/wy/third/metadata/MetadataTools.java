@@ -10,7 +10,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
-import com.wy.http.HttpClientTools;
+import com.wy.third.http.HttpClientTools;
 
 /**
  * 照片,视频等文件元数据(定位,大小等)信息提取

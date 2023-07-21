@@ -1,4 +1,4 @@
-package com.wy.http;
+package com.wy.third.http;
 
 import java.io.File;
 import java.io.InputStream;
@@ -9,14 +9,18 @@ import java.net.URL;
 import com.wy.io.file.FileTool;
 
 /**
- * 下载文件类
- * FIXME
- * @author wanyang
+ * 下载文件类 FIXME
+ *
+ * @author 飞花梦影
+ * @date 2023-07-21 17:30:24
+ * @git {@link https://gitee.com/dreamFlyingFlower}
  */
 public class HttpDownloads {
+
 	// private static ExecutorService EXE = null;
 	// 默认最多5个线程
 	public static final int DEFAULT_THREADCOUNT = 5;
+
 	// 默认请求方式
 	public static final String DEFAULT_METHOD = "GET";
 
@@ -58,7 +62,7 @@ public class HttpDownloads {
 					int end = start + (threadSize - 1);
 					new DownloadThread(url, desFile, start, end, method.toString()).start();
 				}
-			}else {
+			} else {
 				System.out.println(code);
 			}
 			conn.disconnect();
@@ -72,10 +76,15 @@ public class HttpDownloads {
  * 所有线程要知 道url地址 写哪一个文件 从哪儿开始写 一共多少字节,数据
  */
 class DownloadThread extends Thread {
+
 	private URL url;
+
 	private File fileName;
+
 	private int start;
+
 	private int end;
+
 	private String method;
 
 	public DownloadThread(URL url, File fileName, int start, int end, String method) {

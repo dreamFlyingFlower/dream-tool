@@ -1,4 +1,4 @@
-package com.wy.http;
+package com.wy.third.http;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;

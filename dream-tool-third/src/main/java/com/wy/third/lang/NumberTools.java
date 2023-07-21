@@ -1,4 +1,4 @@
-package com.wy.lang;
+package com.wy.third.lang;
 
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Floats;

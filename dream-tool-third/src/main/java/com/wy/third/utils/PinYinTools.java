@@ -1,4 +1,4 @@
-package com.wy.third;
+package com.wy.third.utils;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
@@ -16,11 +16,11 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
  */
 public class PinYinTools {
 
-	private final static HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
+	private final static HanyuPinyinOutputFormat DEFAULT_FORMAT = new HanyuPinyinOutputFormat();
 	static {
-		format.setCaseType(HanyuPinyinCaseType.LOWERCASE);
-		format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-		format.setVCharType(HanyuPinyinVCharType.WITH_V);
+		DEFAULT_FORMAT.setCaseType(HanyuPinyinCaseType.LOWERCASE);
+		DEFAULT_FORMAT.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+		DEFAULT_FORMAT.setVCharType(HanyuPinyinVCharType.WITH_V);
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class PinYinTools {
 				// 判断是否为中文
 				if (c >= '\u4e00' && c <= '\u9fa5') {
 					isCn = true;
-					sb.append(PinyinHelper.toHanyuPinyinStringArray(c, format)[0]);
+					sb.append(PinyinHelper.toHanyuPinyinStringArray(c, DEFAULT_FORMAT)[0]);
 				} else {
 					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
 						sb.append(c);
@@ -86,7 +86,7 @@ public class PinYinTools {
 			for (int i = 0; i < str.length(); i++) {
 				char c = str.charAt(i);
 				if (c >= '\u4e00' && c <= '\u9fa5') {
-					sb.append(PinyinHelper.toHanyuPinyinStringArray(c, format)[0].charAt(0));
+					sb.append(PinyinHelper.toHanyuPinyinStringArray(c, DEFAULT_FORMAT)[0].charAt(0));
 				}
 			}
 			return sb.toString();

@@ -1,5 +1,6 @@
 package com.wy.third.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +12,11 @@ import org.dom4j.Namespace;
 import org.dom4j.Node;
 import org.dom4j.Text;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * Xml文件扫描,大量使用同一个Xml文件中的信息时使用,容易内存溢出,慎用
  * 
@@ -18,26 +24,36 @@ import org.dom4j.Text;
  * @date 2021-03-18 10:06:34
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public class XmlScan {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class XmlScan implements Serializable {
+
+	private static final long serialVersionUID = 554826552987103736L;
 
 	/**
 	 * Xml中所有Attribute
 	 */
+	@Builder.Default
 	private List<Attribute> attributes = new ArrayList<>();
 
 	/**
 	 * Xml中所有Element节点
 	 */
+	@Builder.Default
 	private List<Element> elements = new ArrayList<>();
 
 	/**
 	 * Xml中所有Namespace
 	 */
+	@Builder.Default
 	private Set<Namespace> namespaces = new HashSet<>();
 
 	/**
 	 * Xml中所有节点,包括Element,Text,Namespace
 	 */
+	@Builder.Default
 	private List<Node> nodes = new ArrayList<>();
 
 	/**
@@ -48,53 +64,6 @@ public class XmlScan {
 	/**
 	 * Xml中所有Text节点
 	 */
+	@Builder.Default
 	private List<Text> texts = new ArrayList<>();
-
-	public List<Attribute> getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(List<Attribute> attributes) {
-		this.attributes = attributes;
-	}
-
-	public List<Element> getElements() {
-		return elements;
-	}
-
-	public void setElements(List<Element> elements) {
-		this.elements = elements;
-	}
-
-	public Set<Namespace> getNamespaces() {
-		return namespaces;
-	}
-
-	public void setNamespaces(Set<Namespace> namespaces) {
-		this.namespaces = namespaces;
-	}
-
-	public List<Node> getNodes() {
-		return nodes;
-	}
-
-	public void setNodes(List<Node> nodes) {
-		this.nodes = nodes;
-	}
-
-	public Element getRootElement() {
-		return rootElement;
-	}
-
-	public void setRootElement(Element rootElement) {
-		this.rootElement = rootElement;
-	}
-
-	public List<Text> getTexts() {
-		return texts;
-	}
-
-	public void setTexts(List<Text> texts) {
-		this.texts = texts;
-	}
 }
