@@ -37,29 +37,29 @@ public class ResultException extends RuntimeException {
 		this(null, code, format, args);
 	}
 
-	public ResultException(Throwable ex) {
-		this(ex, 0);
+	public ResultException(Throwable throwable) {
+		this(throwable, 0);
 	}
 
-	public ResultException(Throwable ex, int code) {
-		this(ex, code, ex.getMessage());
+	public ResultException(Throwable throwable, int code) {
+		this(throwable, code, throwable.getMessage());
 	}
 
-	public ResultException(Throwable ex, CharSequence message) {
-		this(ex, 0, message);
+	public ResultException(Throwable throwable, CharSequence message) {
+		this(throwable, 0, message);
 	}
 
-	public ResultException(Throwable ex, String format, Object... args) {
-		this(ex, 0, format, args);
+	public ResultException(Throwable throwable, String format, Object... args) {
+		this(throwable, 0, format, args);
 	}
 
-	public ResultException(Throwable ex, int code, CharSequence message) {
-		super(message.toString(), ex);
+	public ResultException(Throwable throwable, int code, CharSequence message) {
+		super(message.toString(), throwable);
 		this.code = code;
 	}
 
-	public ResultException(Throwable ex, int code, String format, Object... args) {
-		super(String.format(format, args), ex);
+	public ResultException(Throwable throwable, int code, String format, Object... args) {
+		super(String.format(format, args), throwable);
 		this.code = code;
 	}
 

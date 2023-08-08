@@ -121,6 +121,15 @@ public final class DateTool {
 	}
 
 	/**
+	 * 获取当前时间的指定格式字符串
+	 * 
+	 * @return 当前时间的指定格式字符串
+	 */
+	public static String format(DateEnum pattern) {
+		return format(new Date(), pattern);
+	}
+
+	/**
 	 * 返回指定时间转换为年月日时分秒字符串
 	 */
 	public static String format(long date, DateEnum pattern) {
@@ -310,57 +319,57 @@ public final class DateTool {
 		AssertTool.notNull(end);
 		DateEnum dateFormat = null;
 		switch (compModel) {
-			case COMP_MODEL_DATE: {
-				dateFormat = DateEnum.DATE;
-				break;
-			}
-			case COMP_MODEL_TIME: {
-				dateFormat = DateEnum.TIME;
-				break;
-			}
-			case COMP_MODEL_DATETIME: {
-				dateFormat = DateEnum.DATETIME;
-				break;
-			}
-			default: {
-				throw new IllegalArgumentException(String.format("日期的比较模式[%d]有误", compModel));
-			}
+		case COMP_MODEL_DATE: {
+			dateFormat = DateEnum.DATE;
+			break;
+		}
+		case COMP_MODEL_TIME: {
+			dateFormat = DateEnum.TIME;
+			break;
+		}
+		case COMP_MODEL_DATETIME: {
+			dateFormat = DateEnum.DATETIME;
+			break;
+		}
+		default: {
+			throw new IllegalArgumentException(String.format("日期的比较模式[%d]有误", compModel));
+		}
 		}
 		long dateNumber = DateTimeTool.parseDate(DateTimeTool.format(date, dateFormat)).getTime();
 		long startNumber = DateTimeTool.parseDate(DateTimeTool.format(start, dateFormat)).getTime();
 		long endNumber = DateTimeTool.parseDate(DateTimeTool.format(end, dateFormat)).getTime();
 		switch (interModel) {
-			case LEFT_OPEN_RIGHT_OPEN: {
-				if (dateNumber <= startNumber || dateNumber >= endNumber) {
-					return false;
-				} else {
-					return true;
-				}
+		case LEFT_OPEN_RIGHT_OPEN: {
+			if (dateNumber <= startNumber || dateNumber >= endNumber) {
+				return false;
+			} else {
+				return true;
 			}
-			case LEFT_CLOSE_RIGHT_OPEN: {
-				if (dateNumber < startNumber || dateNumber >= endNumber) {
-					return false;
-				} else {
-					return true;
-				}
+		}
+		case LEFT_CLOSE_RIGHT_OPEN: {
+			if (dateNumber < startNumber || dateNumber >= endNumber) {
+				return false;
+			} else {
+				return true;
 			}
-			case LEFT_OPEN_RIGHT_CLOSE: {
-				if (dateNumber <= startNumber || dateNumber > endNumber) {
-					return false;
-				} else {
-					return true;
-				}
+		}
+		case LEFT_OPEN_RIGHT_CLOSE: {
+			if (dateNumber <= startNumber || dateNumber > endNumber) {
+				return false;
+			} else {
+				return true;
 			}
-			case LEFT_CLOSE_RIGHT_CLOSE: {
-				if (dateNumber < startNumber || dateNumber > endNumber) {
-					return false;
-				} else {
-					return true;
-				}
+		}
+		case LEFT_CLOSE_RIGHT_CLOSE: {
+			if (dateNumber < startNumber || dateNumber > endNumber) {
+				return false;
+			} else {
+				return true;
 			}
-			default: {
-				throw new IllegalArgumentException(String.format("日期的区间模式[%d]有误", interModel));
-			}
+		}
+		default: {
+			throw new IllegalArgumentException(String.format("日期的区间模式[%d]有误", interModel));
+		}
 		}
 	}
 

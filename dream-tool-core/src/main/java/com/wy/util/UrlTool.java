@@ -90,7 +90,7 @@ public class UrlTool {
 	 * @return 编码后字符串
 	 * @throws UnsupportedEncodingException
 	 */
-	public String urlEncoder(String url) throws UnsupportedEncodingException {
+	public static String encode(String url) throws UnsupportedEncodingException {
 		return StrTool.isBlank(url) ? "" : URLEncoder.encode(url, StandardCharsets.UTF_8.displayName());
 	}
 
@@ -101,7 +101,7 @@ public class UrlTool {
 	 * @return 解码后字符串
 	 * @throws UnsupportedEncodingException
 	 */
-	public String UrlDecoder(String url) throws UnsupportedEncodingException {
+	public static String UrlDecoder(String url) throws UnsupportedEncodingException {
 		return StrTool.isBlank(url) ? "" : URLDecoder.decode(url, StandardCharsets.UTF_8.displayName());
 	}
 }
