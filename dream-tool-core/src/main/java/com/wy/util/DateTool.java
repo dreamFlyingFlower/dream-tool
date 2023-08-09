@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import com.wy.enums.DateEnum;
 import com.wy.enums.RegexEnum;
@@ -212,6 +213,42 @@ public final class DateTool {
 				return null;
 			}
 			return get(pattern).parse(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 将yyyy-MM-dd'T'HH:mm:ss.SSS'Z'格式的时间转换为UTC
+	 * 
+	 * @param text 时间字符串,格式支持两种:不包含毫秒值,如"2019-01-03T08:26:15Z";
+	 *        支持任意位数的毫秒值:2019-01-03T08:26:15.503162206Z; 转换出来的Date精度到毫秒
+	 * @return Date
+	 */
+	public static Date parseUtc(String text) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+		if (text.contains(".")) {
+			String prefix = text.substring(0, text.indexOf("."));
+			String suffix = text.substring(text.indexOf("."));
+			if (suffix.length() >= 5) {
+				suffix = suffix.substring(0, 4) + "Z";
+			} else {
+				int len = 5 - suffix.length();
+				StringBuilder temp = new StringBuilder();
+				temp.append(suffix, 0, suffix.length() - 1);
+				for (int i = 0; i < len; i++) {
+					temp.append("0");
+				}
+				suffix = temp + "Z";
+			}
+			text = prefix + suffix;
+		} else {
+			text = text.substring(0, text.length() - 1) + ".000Z";
+		}
+		try {
+			return sdf.parse(text);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
