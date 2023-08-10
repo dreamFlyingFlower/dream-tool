@@ -23,9 +23,7 @@ public interface CodeMsg<ID extends Serializable> {
 	 * 
 	 * @return 状态信息
 	 */
-	default String getMsg() {
-		return Internation.getStr("msg_success");
-	}
+	String getMsg();
 
 	/**
 	 * 格式化状态信息,{@link String#format(String, Object...)}

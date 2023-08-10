@@ -70,7 +70,7 @@ public class BeanTool {
 					continue;
 				}
 				if (isToUnderlineCase) {
-					map.put(StrTool.hump2Snake(key), object);
+					map.put(StrTool.hump2Underline(key), object);
 				} else {
 					map.put(key, object);
 				}

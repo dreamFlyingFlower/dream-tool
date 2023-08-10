@@ -38,18 +38,6 @@ public interface ConstArray {
 	/** 空Character数组 */
 	Character[] EMPTY_CHAR_BOXED = new Character[0];
 
-	/** 空float数组 */
-	float[] EMPYT_FLOAT = new float[0];
-
-	/** 空Float数组 */
-	Float[] EMPTY_FLOAT_BOXED = new Float[0];
-
-	/** 空short数组 */
-	short[] EMPTY_SHORT = new short[0];
-
-	/** 空Short数组 */
-	Short[] EMPTY_SHORT_BOXED = new Short[0];
-
 	/** 空Class数组 */
 	Class<?>[] EMPTY_CLASS = new Class[0];
 
@@ -59,11 +47,26 @@ public interface ConstArray {
 	/** 空文件数组 */
 	File[] EMPTY_FILE = new File[0];
 
+	/** 空float数组 */
+	float[] EMPTY_FLOAT = new float[0];
+
+	/** 空Float数组 */
+	Float[] EMPTY_FLOAT_BOXED = new Float[0];
+
 	/** 空Method数组 */
 	Method[] EMPTY_METHOD = new Method[0];
 
 	/** 空对象数组 */
 	Object[] EMPTY_OBJECT = new Object[0];
+
+	/** 空short数组 */
+	short[] EMPTY_SHORT = new short[0];
+
+	/** 空Short数组 */
+	Short[] EMPTY_SHORT_BOXED = new Short[0];
+
+	/** 空String数组 */
+	String[] EMPTY_STRING = new String[0];
 
 	/** Throwable数组 */
 	Throwable[] EMPTY_THROWABLE = new Throwable[0];

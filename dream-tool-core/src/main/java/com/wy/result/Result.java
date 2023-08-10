@@ -138,10 +138,10 @@ public class Result<T> implements Serializable {
 
 	public static <T> Result<T> result(int code, String msg, T t) {
 		return Result.<T>builder().code(code)
-		        .msg(StrTool.isBlank(msg)
-		                ? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
-		                : msg)
-		        .data(t).page(false).build();
+				.msg(StrTool.isBlank(msg)
+						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
+						: msg)
+				.data(t).page(false).build();
 	}
 
 	public static <T> Result<T> page(T t, long pageIndex, long pageSize, long total) {
@@ -154,11 +154,11 @@ public class Result<T> implements Serializable {
 
 	public static <T> Result<T> page(int code, String msg, T t, long pageIndex, long pageSize, long total) {
 		return Result.<T>builder().code(code)
-		        .msg(StrTool.isBlank(msg)
-		                ? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
-		                : msg)
-		        .data(t).page(true).pageIndex(pageIndex).pageSize(pageSize).total(total)
-		        .totalPage(pageSize == 0 ? 0 : (long) (Math.ceil((double) total / pageSize))).build();
+				.msg(StrTool.isBlank(msg)
+						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
+						: msg)
+				.data(t).page(true).pageIndex(pageIndex).pageSize(pageSize).total(total)
+				.totalPage(pageSize == 0 ? 0 : (long) (Math.ceil((double) total / pageSize))).build();
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class Result<T> implements Serializable {
 		}
 		Map<String, Object> result = new HashMap<>();
 		for (Map.Entry<String, Object> entry : data.entrySet()) {
-			result.put(StrTool.snake2Hump(entry.getKey()), entry.getValue());
+			result.put(StrTool.underline2Hump(entry.getKey()), entry.getValue());
 		}
 		data = null;
 		return result;

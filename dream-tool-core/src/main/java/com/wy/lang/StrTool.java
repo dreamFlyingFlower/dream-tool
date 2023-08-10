@@ -8,6 +8,7 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.wy.ConstArray;
 import com.wy.ConstLang;
 import com.wy.annotation.Example;
 import com.wy.enums.RegexEnum;
@@ -368,28 +369,6 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
-	 * 判断源字符串中是否只包含unicode表示的数字或纯数字,不包括小数点,非数字将删除;
-	 * 若是unicode表示的数字,直接返回unicode形式的字符串;数字直接返回
-	 *
-	 * @param str 源字符串
-	 * @return 只包含unicode表示的数字或纯数字字符串
-	 */
-	public static String getDigits(final String str) {
-		if (isEmpty(str)) {
-			return str;
-		}
-		final int sz = str.length();
-		final StringBuilder strDigits = new StringBuilder(sz);
-		for (int i = 0; i < sz; i++) {
-			final char tempChar = str.charAt(i);
-			if (Character.isDigit(tempChar)) {
-				strDigits.append(tempChar);
-			}
-		}
-		return strDigits.toString();
-	}
-
-	/**
 	 * 返回数组中所有字符串相同的前缀字符串,必须索引和字符都相同.若没有,返回""
 	 *
 	 * @param strs 字符串数组
@@ -413,13 +392,35 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
+	 * 判断源字符串中是否只包含unicode表示的数字或纯数字,不包括小数点,非数字将删除;
+	 * 若是unicode表示的数字,直接返回unicode形式的字符串;数字直接返回
+	 *
+	 * @param str 源字符串
+	 * @return 只包含unicode表示的数字或纯数字字符串
+	 */
+	public static String getDigits(final String str) {
+		if (isEmpty(str)) {
+			return str;
+		}
+		final int sz = str.length();
+		final StringBuilder strDigits = new StringBuilder(sz);
+		for (int i = 0; i < sz; i++) {
+			final char tempChar = str.charAt(i);
+			if (Character.isDigit(tempChar)) {
+				strDigits.append(tempChar);
+			}
+		}
+		return strDigits.toString();
+	}
+
+	/**
 	 * 将驼峰转成蛇底式
 	 * 
 	 * @param str 需要进行转换的字符串
 	 * @return 转换后的字符串
 	 */
-	public static String hump2Snake(String str) {
-		return hump2Snake(str, true);
+	public static String hump2Underline(String str) {
+		return hump2Underline(str, true);
 	}
 
 	/**
@@ -429,7 +430,7 @@ public class StrTool extends CharSequenceTool {
 	 * @param lowerFirst 第一个字符串是否小写,true小写,false不管
 	 * @return 转换后的字符串
 	 */
-	public static String hump2Snake(String str, boolean lowerFirst) {
+	public static String hump2Underline(String str, boolean lowerFirst) {
 		str = lowerFirst ? firstLower(str) : str;
 		Matcher matcher = PATTERN_HUMP.matcher(str);
 		StringBuffer sb = new StringBuffer();
@@ -800,18 +801,6 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
-	 * 判断源字符串是否有指定前缀或其他前缀.若有,返回源字符串;没有则添加指定前缀,大小写敏感
-	 *
-	 * @param str 源字符串
-	 * @param prefix 指定前缀
-	 * @param prefixes 其他前缀
-	 * @return 新字符串
-	 */
-	public static String prependIfMissing(final String str, final CharSequence prefix, final CharSequence... prefixes) {
-		return prependIfMissing(str, prefix, false, prefixes);
-	}
-
-	/**
 	 * 判断源字符串是否有指定前缀或其他前缀.若有,返回源字符串;没有则添加指定前缀
 	 *
 	 * @param str 源字符串
@@ -833,6 +822,18 @@ public class StrTool extends CharSequenceTool {
 			}
 		}
 		return prefix.toString() + str;
+	}
+
+	/**
+	 * 判断源字符串是否有指定前缀或其他前缀.若有,返回源字符串;没有则添加指定前缀,大小写敏感
+	 *
+	 * @param str 源字符串
+	 * @param prefix 指定前缀
+	 * @param prefixes 其他前缀
+	 * @return 新字符串
+	 */
+	public static String prependIfMissing(final String str, final CharSequence prefix, final CharSequence... prefixes) {
+		return prependIfMissing(str, prefix, false, prefixes);
 	}
 
 	/**
@@ -1191,31 +1192,157 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
-	 * 将带下划线的字段名(蛇底式)变成小驼峰
-	 * 
-	 * @param str 需要进行转换的字符串
-	 * @return 转换后的字符串
+	 * 将指定字符串根据指定分割符进行拆分,null或空字符串都将转换为空字符串进行拆分.多个分割符相邻时当作单个分割符
+	 *
+	 * @param str 待分割字符串,可能为null
+	 * @param separatorChar 分割符
+	 * @return 分割后的数组,可能为null
 	 */
-	public static String snake2Hump(String str) {
-		return snake2Hump(str, false);
+	public static String[] split(String str, char separatorChar) {
+		return splitWorker(str, separatorChar, false);
 	}
 
 	/**
-	 * 将带下划线的字段名(蛇底式)变成驼峰
-	 * 
-	 * @param str 需要进行转换的字符串
-	 * @param flag true大驼峰,false小驼峰
-	 * @return 转换后的字符串
+	 * 将指定字符串根据指定分割符进行拆分,null或空字符串都将转换为空字符串进行拆分.多个分割符相邻时当作单个分割符
+	 *
+	 * @param str 待分割字符串,可能为null
+	 * @param separatorChar 分割符
+	 * @return 分割后的数组,可能为null
 	 */
-	public static String snake2Hump(String str, boolean flag) {
-		str = str.toLowerCase();
-		Matcher matcher = PATTERN_LINE.matcher(str);
-		StringBuffer sb = new StringBuffer();
-		while (matcher.find()) {
-			matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
+	public static String[] split(String str, String separatorChars) {
+		return splitWorker(str, separatorChars, -1, false);
+	}
+
+	/**
+	 * 将指定字符串根据指定分割符进行拆分,null或空字符串都将转换为空字符串进行拆分.多个分割符相邻时当作单个分割符
+	 *
+	 * @param str 待分割字符串,可能为null
+	 * @param separatorChar 分割符
+	 * @param preserveAllTokens true->相邻的分割符拆分为空字符串;false->相邻的分割符当作单个分割符
+	 * @return 分割后的数组,可能为null
+	 */
+	private static String[] splitWorker(String str, char separatorChar, boolean preserveAllTokens) {
+		if (str == null) {
+			return null;
 		}
-		matcher.appendTail(sb);
-		return firstChange(sb.toString(), flag);
+		int len = str.length();
+		if (len == 0) {
+			return ConstArray.EMPTY_STRING;
+		}
+		List<String> list = new ArrayList<String>();
+		int i = 0, start = 0;
+		boolean match = false;
+		boolean lastMatch = false;
+		while (i < len) {
+			if (str.charAt(i) == separatorChar) {
+				if (match || preserveAllTokens) {
+					list.add(str.substring(start, i));
+					match = false;
+					lastMatch = true;
+				}
+				start = ++i;
+				continue;
+			}
+			lastMatch = false;
+			match = true;
+			i++;
+		}
+		if (match || (preserveAllTokens && lastMatch)) {
+			list.add(str.substring(start, i));
+		}
+		return (String[]) list.toArray(new String[list.size()]);
+	}
+
+	/**
+	 * Performs the logic for the <code>split</code> and
+	 * <code>splitPreserveAllTokens</code> methods that return a maximum array
+	 * length.
+	 *
+	 * @param str 待分割字符串,可能为null
+	 * @param separatorChar 分割符
+	 * @param max 分割后数组的最大容量,可为任意整数
+	 * @param preserveAllTokens true->相邻的分割符拆分为空字符串;false->相邻的分割符当作单个分割符
+	 * @return 分割后的数组,可能为null
+	 */
+	private static String[] splitWorker(String str, String separatorChars, int max, boolean preserveAllTokens) {
+		if (str == null) {
+			return null;
+		}
+		int len = str.length();
+		if (len == 0) {
+			return ConstArray.EMPTY_STRING;
+		}
+		List<String> list = new ArrayList<String>();
+		int sizePlus1 = 1;
+		int i = 0, start = 0;
+		boolean match = false;
+		boolean lastMatch = false;
+		if (separatorChars == null) {
+			// Null separator means use whitespace
+			while (i < len) {
+				if (Character.isWhitespace(str.charAt(i))) {
+					if (match || preserveAllTokens) {
+						lastMatch = true;
+						if (sizePlus1++ == max) {
+							i = len;
+							lastMatch = false;
+						}
+						list.add(str.substring(start, i));
+						match = false;
+					}
+					start = ++i;
+					continue;
+				}
+				lastMatch = false;
+				match = true;
+				i++;
+			}
+		} else if (separatorChars.length() == 1) {
+			// Optimise 1 character case
+			char sep = separatorChars.charAt(0);
+			while (i < len) {
+				if (str.charAt(i) == sep) {
+					if (match || preserveAllTokens) {
+						lastMatch = true;
+						if (sizePlus1++ == max) {
+							i = len;
+							lastMatch = false;
+						}
+						list.add(str.substring(start, i));
+						match = false;
+					}
+					start = ++i;
+					continue;
+				}
+				lastMatch = false;
+				match = true;
+				i++;
+			}
+		} else {
+			// standard case
+			while (i < len) {
+				if (separatorChars.indexOf(str.charAt(i)) >= 0) {
+					if (match || preserveAllTokens) {
+						lastMatch = true;
+						if (sizePlus1++ == max) {
+							i = len;
+							lastMatch = false;
+						}
+						list.add(str.substring(start, i));
+						match = false;
+					}
+					start = ++i;
+					continue;
+				}
+				lastMatch = false;
+				match = true;
+				i++;
+			}
+		}
+		if (match || (preserveAllTokens && lastMatch)) {
+			list.add(str.substring(start, i));
+		}
+		return (String[]) list.toArray(new String[list.size()]);
 	}
 
 	/**
@@ -1485,35 +1612,6 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
-	 * 将源字符串中的大小写逆转,大写转小写,小写转大写
-	 *
-	 * @param str 源字符串
-	 * @return 逆转后的字符串
-	 */
-	public static String swapCase(final String str) {
-		if (isEmpty(str)) {
-			return str;
-		}
-		final int strLen = str.length();
-		final int[] newCodePoints = new int[strLen];
-		int outOffset = 0;
-		for (int i = 0; i < strLen;) {
-			final int oldCodepoint = str.codePointAt(i);
-			final int newCodePoint;
-			if (Character.isUpperCase(oldCodepoint) || Character.isTitleCase(oldCodepoint)) {
-				newCodePoint = Character.toLowerCase(oldCodepoint);
-			} else if (Character.isLowerCase(oldCodepoint)) {
-				newCodePoint = Character.toUpperCase(oldCodepoint);
-			} else {
-				newCodePoint = oldCodepoint;
-			}
-			newCodePoints[outOffset++] = newCodePoint;
-			i += Character.charCount(newCodePoint);
-		}
-		return new String(newCodePoints, 0, outOffset);
-	}
-
-	/**
 	 * 从指定字符串中截取部分字符串
 	 * 
 	 * @param str 待截取的字符串
@@ -1551,6 +1649,35 @@ public class StrTool extends CharSequenceTool {
 			end = 0;
 		}
 		return str.substring(start, end);
+	}
+
+	/**
+	 * 将源字符串中的大小写逆转,大写转小写,小写转大写
+	 *
+	 * @param str 源字符串
+	 * @return 逆转后的字符串
+	 */
+	public static String swapCase(final String str) {
+		if (isEmpty(str)) {
+			return str;
+		}
+		final int strLen = str.length();
+		final int[] newCodePoints = new int[strLen];
+		int outOffset = 0;
+		for (int i = 0; i < strLen;) {
+			final int oldCodepoint = str.codePointAt(i);
+			final int newCodePoint;
+			if (Character.isUpperCase(oldCodepoint) || Character.isTitleCase(oldCodepoint)) {
+				newCodePoint = Character.toLowerCase(oldCodepoint);
+			} else if (Character.isLowerCase(oldCodepoint)) {
+				newCodePoint = Character.toUpperCase(oldCodepoint);
+			} else {
+				newCodePoint = oldCodepoint;
+			}
+			newCodePoints[outOffset++] = newCodePoint;
+			i += Character.charCount(newCodePoint);
+		}
+		return new String(newCodePoints, 0, outOffset);
 	}
 
 	/**
@@ -1714,6 +1841,34 @@ public class StrTool extends CharSequenceTool {
 			endIdx--;
 		}
 		return str.substring(0, endIdx + 1);
+	}
+
+	/**
+	 * 将带下划线的字段名(蛇底式)变成小驼峰
+	 * 
+	 * @param str 需要进行转换的字符串
+	 * @return 转换后的字符串
+	 */
+	public static String underline2Hump(String str) {
+		return underline2Hump(str, false);
+	}
+
+	/**
+	 * 将带下划线的字段名(蛇底式)变成驼峰
+	 * 
+	 * @param str 需要进行转换的字符串
+	 * @param flag true大驼峰,false小驼峰
+	 * @return 转换后的字符串
+	 */
+	public static String underline2Hump(String str, boolean flag) {
+		str = str.toLowerCase();
+		Matcher matcher = PATTERN_LINE.matcher(str);
+		StringBuffer sb = new StringBuffer();
+		while (matcher.find()) {
+			matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
+		}
+		matcher.appendTail(sb);
+		return firstChange(sb.toString(), flag);
 	}
 
 	/**

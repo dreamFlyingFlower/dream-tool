@@ -3326,7 +3326,7 @@ public class ArrayTool {
 		if (array == null) {
 			return null;
 		} else if (array.length == 0) {
-			return ConstArray.EMPYT_FLOAT;
+			return ConstArray.EMPTY_FLOAT;
 		}
 		final float[] result = new float[array.length];
 		for (int i = 0; i < array.length; i++) {

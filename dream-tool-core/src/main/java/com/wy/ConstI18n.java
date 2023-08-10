@@ -15,6 +15,12 @@ public interface ConstI18n {
 
 	String MSG_UNKNOWN = "msg_unknown";
 
+	String MSG_INTERNAL_UNAUTHORIZED = "msg_internal_unauthorized";
+
+	String MSG_INTERNAL_FORBIDDEN = "msg_internal_forbidden";
+
+	String MSG_INTERNAL_SERVER_ERROR = "msg_internal_server_error";
+
 	String MSG_LOGIN_SUCCESS_LOGIN = "msg_login_success_login";
 
 	String MSG_LOGIN_SUCCESS_LOGOUT = "msg_login_success_logout";

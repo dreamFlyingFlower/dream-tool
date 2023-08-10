@@ -222,8 +222,8 @@ public final class DateTool {
 	/**
 	 * 将yyyy-MM-dd'T'HH:mm:ss.SSS'Z'格式的时间转换为UTC
 	 * 
-	 * @param text 时间字符串,格式支持两种:不包含毫秒值,如"2019-01-03T08:26:15Z";
-	 *        支持任意位数的毫秒值:2019-01-03T08:26:15.503162206Z; 转换出来的Date精度到毫秒
+	 * @param text 时间字符串,格式支持两种:不包含毫秒值,如"2023-03-03T08:26:15Z";
+	 *        支持任意位数的毫秒值:2023-03-03T08:26:15.503162206Z; 转换出来的Date精度到毫秒
 	 * @return Date
 	 */
 	public static Date parseUtc(String text) {

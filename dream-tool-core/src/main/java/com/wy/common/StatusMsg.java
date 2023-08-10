@@ -10,34 +10,10 @@ package com.wy.common;
 public interface StatusMsg extends CodeMsg<Integer> {
 
 	/**
-	 * 状态码,默认为成功状态码1
+	 * 状态码
 	 * 
 	 * @return 数字状态码
 	 */
 	@Override
-	default Integer getCode() {
-		return 1;
-	}
-
-	/**
-	 * 状态信息,默认为响应成功提示信息
-	 * 
-	 * @return 状态信息
-	 */
-	@Override
-	default String getMsg() {
-		return Internation.getStr("msg_success");
-	}
-
-	/**
-	 * 格式化状态信息,{@link String#format(String, Object...)}
-	 * 
-	 * @param format 格式化字符串
-	 * @param args 格式化参数
-	 * @return 状态信息
-	 */
-	@Override
-	default String getMsg(String format, Object... args) {
-		return String.format(format, args);
-	}
+	Integer getCode();
 }
