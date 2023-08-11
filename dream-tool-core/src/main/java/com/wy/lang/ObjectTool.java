@@ -90,8 +90,8 @@ public class ObjectTool {
 	 * @param defaultValue 默认值
 	 * @return 结果
 	 */
-	public static <T> T getNull(T t, T defaultValue) {
-		return Optional.ofNullable(t).isPresent() ? Optional.ofNullable(t).get() : defaultValue;
+	public static <T> T getNullDefault(T t, T defaultValue) {
+		return Optional.ofNullable(t).orElse(defaultValue);
 	}
 
 	/**
