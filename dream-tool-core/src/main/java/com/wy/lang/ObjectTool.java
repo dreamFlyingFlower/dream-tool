@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -60,16 +61,7 @@ public class ObjectTool {
 	 * @return true当2个对象==或equals
 	 */
 	public static boolean equals(Object o1, Object o2) {
-		if (o1 == o2) {
-			return true;
-		}
-		if (o1 == null || o2 == null) {
-			return false;
-		}
-		if (o1.equals(o2)) {
-			return true;
-		}
-		return false;
+		return Objects.equals(o1, o2);
 	}
 
 	/**
@@ -90,7 +82,7 @@ public class ObjectTool {
 	 * @param defaultValue 默认值
 	 * @return 结果
 	 */
-	public static <T> T getNullDefault(T t, T defaultValue) {
+	public static <T> T defaultIfNull(T t, T defaultValue) {
 		return Optional.ofNullable(t).orElse(defaultValue);
 	}
 
@@ -103,21 +95,37 @@ public class ObjectTool {
 	 * @return 返回的值或异常
 	 * @throws NullPointerException
 	 */
-	public static <T> T getNullDefaultException(T t, T defaultValue) {
+	public static <T> T defaultIfNullException(T t, T defaultValue) {
 		return Optional.ofNullable(t)
 				.orElseGet(() -> Optional.ofNullable(defaultValue).orElseThrow(() -> new NullPointerException()));
 	}
 
 	/**
-	 * 获得参数值,若参数不为null,直接返回;若为null,抛异常
+	 * 若参数为null,抛出异常,否则直接返回
 	 * 
 	 * @param <T> 泛型
 	 * @param t 参数
 	 * @return 有值返回,若为null,抛空指针异常
 	 * @throws NullPointerException
 	 */
-	public static <T> T getNullException(T t) {
-		return Optional.ofNullable(t).orElseThrow(() -> new NullPointerException());
+	public static <T> T requireNonNull(T t) {
+		return Objects.requireNonNull(t);
+	}
+
+	/**
+	 * 若参数为null,抛出自定义异常消息,否则直接返回
+	 * 
+	 * @param <T> 泛型
+	 * @param t 参数
+	 * @param message 异常消息
+	 * @return 有值返回,若为null,抛空指针异常
+	 * @throws NullPointerException
+	 */
+	public static <T> T requireNonNull(T t, String message) {
+		if (t == null) {
+			throw new NullPointerException(message);
+		}
+		return t;
 	}
 
 	/**
@@ -210,5 +218,60 @@ public class ObjectTool {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * <p>
+	 * Null safe comparison of Comparables.
+	 * </p>
+	 *
+	 * @param <T> type of the values processed by this method
+	 * @param values the set of comparable values, may be null
+	 * @return
+	 *         <ul>
+	 *         <li>If any objects are non-null and unequal, the greater object.
+	 *         <li>If all objects are non-null and equal, the first.
+	 *         <li>If any of the comparables are null, the greater of the non-null
+	 *         objects.
+	 *         <li>If all the comparables are null, null is returned.
+	 *         </ul>
+	 */
+	@SafeVarargs
+	public static <T extends Comparable<? super T>> T max(final T... values) {
+		T result = null;
+		if (values != null) {
+			for (final T value : values) {
+				if (compare(value, result, false) > 0) {
+					result = value;
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * <p>
+	 * Null safe comparison of Comparables.
+	 * </p>
+	 *
+	 * @param <T> type of the values processed by this method
+	 * @param c1 the first comparable, may be null
+	 * @param c2 the second comparable, may be null
+	 * @param nullGreater if true {@code null} is considered greater than a
+	 *        non-{@code null} value or if false {@code null} is considered less
+	 *        than a Non-{@code null} value
+	 * @return a negative value if c1 &lt; c2, zero if c1 = c2 and a positive value
+	 *         if c1 &gt; c2
+	 * @see java.util.Comparator#compare(Object, Object)
+	 */
+	public static <T extends Comparable<? super T>> int compare(final T c1, final T c2, final boolean nullGreater) {
+		if (c1 == c2) {
+			return 0;
+		} else if (c1 == null) {
+			return nullGreater ? 1 : -1;
+		} else if (c2 == null) {
+			return nullGreater ? -1 : 1;
+		}
+		return c1.compareTo(c2);
 	}
 }
