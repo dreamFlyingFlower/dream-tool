@@ -200,8 +200,8 @@ public class TypeTool {
 		 * @param lowerBounds of this type
 		 */
 		private WildcardTypeImpl(final Type[] upperBounds, final Type[] lowerBounds) {
-			this.upperBounds = ObjectTool.getNullDefault(upperBounds, ConstArray.EMPTY_TYPE);
-			this.lowerBounds = ObjectTool.getNullDefault(lowerBounds, ConstArray.EMPTY_TYPE);
+			this.upperBounds = ObjectTool.defaultIfNull(upperBounds, ConstArray.EMPTY_TYPE);
+			this.lowerBounds = ObjectTool.defaultIfNull(lowerBounds, ConstArray.EMPTY_TYPE);
 		}
 
 		@Override

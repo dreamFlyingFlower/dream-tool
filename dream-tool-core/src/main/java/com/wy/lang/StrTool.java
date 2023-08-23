@@ -267,6 +267,18 @@ public class StrTool extends CharSequenceTool {
 	}
 
 	/**
+	 * 判断指定字符串是否以指定后缀结尾,忽略大小写
+	 * 
+	 * @param str 待检查字符串
+	 * @param suffix 指定后缀
+	 * @return true->是;false->否
+	 */
+	public static boolean endsWithIgnoreCase(String str, String suffix) {
+		return (str != null && suffix != null && str.length() >= suffix.length()
+				&& str.regionMatches(true, str.length() - suffix.length(), suffix, 0, suffix.length()));
+	}
+
+	/**
 	 * 将字符串的首字母变成大写或小写
 	 * 
 	 * @param src 需要进行转换的字符串
@@ -1343,6 +1355,18 @@ public class StrTool extends CharSequenceTool {
 			list.add(str.substring(start, i));
 		}
 		return (String[]) list.toArray(new String[list.size()]);
+	}
+
+	/**
+	 * 判断字符串是否以指定前缀开头,忽略大小写
+	 * 
+	 * @param str 待检查字符串
+	 * @param prefix 前缀
+	 * @return true->是;false->否
+	 */
+	public static boolean startsWithIgnoreCase(String str, String prefix) {
+		return (str != null && prefix != null && str.length() >= prefix.length()
+				&& str.regionMatches(true, 0, prefix, 0, prefix.length()));
 	}
 
 	/**

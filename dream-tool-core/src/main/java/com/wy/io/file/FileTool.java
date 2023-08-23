@@ -46,11 +46,13 @@ import java.time.ZoneId;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.chrono.ChronoZonedDateTime;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -63,6 +65,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.wy.ConstArray;
+import com.wy.ConstFile;
 import com.wy.ConstIO;
 import com.wy.ConstLang;
 import com.wy.binary.HexTool;
@@ -313,6 +316,88 @@ public class FileTool {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 解析路径字符串,优化其中的..,.
+	 * 
+	 * @param path 原始路径
+	 * @return 格式化后的路径
+	 */
+	public static String cleanPath(String path) {
+		if (StrTool.isBlank(path)) {
+			return path;
+		}
+
+		String normalizedPath = StrTool.replace(path, ConstFile.WINDOWS_FOLDER_SEPARATOR, ConstFile.FOLDER_SEPARATOR);
+		String pathToUse = normalizedPath;
+
+		// Shortcut if there is no work to do
+		if (pathToUse.indexOf('.') == -1) {
+			return pathToUse;
+		}
+
+		// Strip prefix from path to analyze, to not treat it as part of the
+		// first path element. This is necessary to correctly parse paths like
+		// "file:core/../core/io/Resource.class", where the ".." should just
+		// strip the first "core" directory while keeping the "file:" prefix.
+		int prefixIndex = pathToUse.indexOf(':');
+		String prefix = "";
+		if (prefixIndex != -1) {
+			prefix = pathToUse.substring(0, prefixIndex + 1);
+			if (prefix.contains(ConstFile.FOLDER_SEPARATOR)) {
+				prefix = "";
+			} else {
+				pathToUse = pathToUse.substring(prefixIndex + 1);
+			}
+		}
+		if (pathToUse.startsWith(ConstFile.FOLDER_SEPARATOR)) {
+			prefix = prefix + ConstFile.FOLDER_SEPARATOR;
+			pathToUse = pathToUse.substring(1);
+		}
+
+		String[] pathArray = StrTool.split(pathToUse, ConstFile.FOLDER_SEPARATOR);
+		// we never require more elements than pathArray and in the common case the same
+		// number
+		Deque<String> pathElements = new ArrayDeque<>(pathArray.length);
+		int tops = 0;
+
+		for (int i = pathArray.length - 1; i >= 0; i--) {
+			String element = pathArray[i];
+			if (ConstFile.CURRENT_PATH.equals(element)) {
+				// Points to current directory - drop it.
+			} else if (ConstFile.TOP_PATH.equals(element)) {
+				// Registering top path found.
+				tops++;
+			} else {
+				if (tops > 0) {
+					// Merging path element with element corresponding to top path.
+					tops--;
+				} else {
+					// Normal path element found.
+					pathElements.addFirst(element);
+				}
+			}
+		}
+
+		// All path elements stayed the same - shortcut
+		if (pathArray.length == pathElements.size()) {
+			return normalizedPath;
+		}
+		// Remaining top paths need to be retained.
+		for (int i = 0; i < tops; i++) {
+			pathElements.addFirst(ConstFile.TOP_PATH);
+		}
+		// If nothing else left, at least explicitly point to current path.
+		if (pathElements.size() == 1 && pathElements.getLast().isEmpty()
+				&& !prefix.endsWith(ConstFile.FOLDER_SEPARATOR)) {
+			pathElements.addFirst(ConstFile.CURRENT_PATH);
+		}
+
+		final String joined =
+				String.join(ConstFile.FOLDER_SEPARATOR, pathElements.toArray(new String[pathElements.size()]));
+		// avoid string concatenation with empty prefix
+		return prefix.isEmpty() ? joined : prefix + joined;
 	}
 
 	/**

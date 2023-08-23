@@ -22,4 +22,12 @@ public interface ConstFile {
 	String FILE_EXTENSION_EXCEL2003 = "xls";
 
 	String FILE_EXTENSION_EXCEL2007 = "xlsx";
+
+	String WINDOWS_FOLDER_SEPARATOR = "\\";
+
+	String FOLDER_SEPARATOR = "/";
+
+	String TOP_PATH = "..";
+
+	String CURRENT_PATH = ".";
 }
