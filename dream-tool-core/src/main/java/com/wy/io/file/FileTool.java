@@ -175,19 +175,17 @@ public class FileTool {
 	 * @param file 需要进行校验的文件
 	 * @param checksum 校验方式
 	 * @return 校验对象,可使用getValue()获得该值
-	 * @throws NullPointerException if the file or checksum is {@code null}
+	 * @throws FileNotFoundException
 	 * @throws IllegalArgumentException if the file is a directory
 	 * @throws IOException if an IO error occurs reading the file
 	 */
-	public static Checksum checksum(final File file, final Checksum checksum) {
+	public static Checksum checksum(final File file, final Checksum checksum)
+			throws FileNotFoundException, IOException {
 		if (file.isDirectory()) {
 			throw new IllegalArgumentException("Checksums can't be computed on directories");
 		}
 		try (InputStream in = new CheckedInputStream(new FileInputStream(file), checksum)) {
 			IOTool.consume(in);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new ResultException(e);
 		}
 		return checksum;
 	}
@@ -238,8 +236,9 @@ public class FileTool {
 	 * 
 	 * @param fileSrc 需要分块的文件地址
 	 * @param chunkFolder 分块之后的文件存放目录
+	 * @throws IOException
 	 */
-	public void testChunk(String fileSrc, String chunkFolder) {
+	public void testChunk(String fileSrc, String chunkFolder) throws IOException {
 		File sourceFile = new File(fileSrc);
 		if (sourceFile == null || !sourceFile.exists()) {
 			throw new ResultException("文件不存在");
@@ -248,26 +247,22 @@ public class FileTool {
 		long chunkFileSize = 1 * 1024 * 1024;
 		// 块数
 		long chunkFileNum = (long) Math.ceil(sourceFile.length() * 1.0 / chunkFileSize);
-		try {
-			RandomAccessFile raf_read = new RandomAccessFile(sourceFile, "r");
+		try (RandomAccessFile rafRead = new RandomAccessFile(sourceFile, "r");) {
 			byte[] b = new byte[1024];
 			for (int i = 0; i < chunkFileNum; i++) {
 				File chunkFile = new File(chunkFolder + i);
 				// 创建向块文件的写对象
-				RandomAccessFile raf_write = new RandomAccessFile(chunkFile, "rw");
+				RandomAccessFile rafWrite = new RandomAccessFile(chunkFile, "rw");
 				int len = -1;
-				while ((len = raf_read.read(b)) != -1) {
-					raf_write.write(b, 0, len);
+				while ((len = rafRead.read(b)) != -1) {
+					rafWrite.write(b, 0, len);
 					// 如果块文件的大小达到1M开始写下一块儿
 					if (chunkFile.length() >= chunkFileSize) {
 						break;
 					}
 				}
-				raf_write.close();
+				rafWrite.close();
 			}
-			raf_read.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -278,8 +273,9 @@ public class FileTool {
 	 * 
 	 * @param chunkFolder 块文件目录 FIXME
 	 * @param desFile 合成后的文件地址,是一个文件
+	 * @throws IOException
 	 */
-	public void testMergeFile(String chunkFolder, String desFile) {
+	public void testMergeFile(String chunkFolder, String desFile) throws IOException {
 		File chunkFile = new File(chunkFolder);
 		if (chunkFile == null || !chunkFile.exists() || !chunkFile.isDirectory()) {
 			throw new ResultException("文件不存在或文件不是一个目录");
@@ -300,21 +296,19 @@ public class FileTool {
 			return -1;
 		});
 		File mergeFile = new File(desFile);
-		try (RandomAccessFile raf_write = new RandomAccessFile(mergeFile, "rw");) {
+		try (RandomAccessFile rafWrite = new RandomAccessFile(mergeFile, "rw");) {
 			byte[] b = new byte[1024];
-			RandomAccessFile raf_read = null;
+			RandomAccessFile rafRead = null;
 			for (File file : fileList) {
-				raf_read = new RandomAccessFile(file, "r");
+				rafRead = new RandomAccessFile(file, "r");
 				int len = -1;
-				while ((len = raf_read.read(b)) != -1) {
-					raf_write.write(b, 0, len);
+				while ((len = rafRead.read(b)) != -1) {
+					rafWrite.write(b, 0, len);
 				}
-				if (raf_read != null) {
-					raf_read.close();
+				if (rafRead != null) {
+					rafRead.close();
 				}
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -481,6 +475,19 @@ public class FileTool {
 	}
 
 	/**
+	 * 拷贝字节数组内容到指定文件中
+	 * 
+	 * @param in 字节数组
+	 * @param out 目标文件
+	 * @throws IOException in the case of I/O errors
+	 */
+	public static void copy(byte[] in, File out) throws IOException {
+		AssertTool.notNull(in, "No input byte array specified");
+		AssertTool.notNull(out, "No output File specified");
+		IOTool.copy(new ByteArrayInputStream(in), Files.newOutputStream(out.toPath()));
+	}
+
+	/**
 	 * 递归复制文件或目录
 	 * 
 	 * @param src 源目录
@@ -488,7 +495,7 @@ public class FileTool {
 	 * @throws IOException in the case of I/O errors
 	 * @see PathTool#copyRecursive(Path, Path)
 	 */
-	public static void copy(File src, File dest) throws IOException {
+	public static void copy(final File src, final File dest) throws IOException {
 		AssertTool.notNull(src, "Source File must not be null");
 		AssertTool.notNull(dest, "Destination File must not be null");
 		PathTool.copy(src.toPath(), dest.toPath());
@@ -954,15 +961,12 @@ public class FileTool {
 	 * 
 	 * @param file 文件
 	 * @return 文件MD5值
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
 	 */
-	public static String getFileMd5(File file) {
+	public static String getFileMd5(File file) throws NoSuchAlgorithmException, IOException {
 		AssertTool.notNull(file);
-		try {
-			return getFileMd5(new FileInputStream(file));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return getFileMd5(new FileInputStream(file));
 	}
 
 	/**
@@ -970,20 +974,17 @@ public class FileTool {
 	 * 
 	 * @param inputStream 输入流
 	 * @return MD5值
+	 * @throws NoSuchAlgorithmException
+	 * @throws IOException
 	 */
-	public static String getFileMd5(InputStream inputStream) {
-		try {
-			MessageDigest md5 = MessageDigest.getInstance("MD5");
-			byte[] buffer = new byte[8192];
-			int length;
-			while ((length = inputStream.read(buffer)) != -1) {
-				md5.update(buffer, 0, length);
-			}
-			return new String(HexTool.encodeHex(md5.digest()));
-		} catch (IOException | NoSuchAlgorithmException e) {
-			e.printStackTrace();
+	public static String getFileMd5(InputStream inputStream) throws NoSuchAlgorithmException, IOException {
+		MessageDigest md5 = MessageDigest.getInstance("MD5");
+		byte[] buffer = new byte[8192];
+		int length;
+		while ((length = inputStream.read(buffer)) != -1) {
+			md5.update(buffer, 0, length);
 		}
-		return null;
+		return new String(HexTool.encodeHex(md5.digest()));
 	}
 
 	/**
@@ -1785,7 +1786,7 @@ public class FileTool {
 	 */
 	public static String read(final File file, final Charset charset) throws IOException {
 		try (InputStream in = newInputStream(file)) {
-			return IOTool.toString(in, CharsetTool.defaultCharset(charset));
+			return IOTool.copyToString(in, CharsetTool.defaultCharset(charset));
 		}
 	}
 
@@ -1965,8 +1966,9 @@ public class FileTool {
 	 * 
 	 * @param source 源数据,需要解压的数据
 	 * @return 解压后的数据,恢复的数据
+	 * @throws IOException
 	 */
-	public static byte[] unzip(byte[] source) {
+	public static byte[] unzip(byte[] source) throws IOException {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
 				ByteArrayInputStream in = new ByteArrayInputStream(source);
 				GZIPInputStream zipIn = new GZIPInputStream(in);) {
@@ -1976,10 +1978,7 @@ public class FileTool {
 				out.write(temp, 0, length);
 			}
 			return out.toByteArray();
-		} catch (IOException e) {
-			ResultException.throwException(e);
 		}
-		return null;
 	}
 
 	/**
@@ -2046,8 +2045,9 @@ public class FileTool {
 	 * 
 	 * @param file 文件
 	 * @param content 写入的字符串
+	 * @throws IOException
 	 */
-	public static void write(File file, String content) {
+	public static void write(File file, String content) throws IOException {
 		write(file, content, true);
 	}
 
@@ -2057,14 +2057,13 @@ public class FileTool {
 	 * @param file 文件
 	 * @param content 写入的字符串
 	 * @param append true->追加写入,false->覆盖写入
+	 * @throws IOException
 	 */
-	public static void write(File file, String content, boolean append) {
+	public static void write(File file, String content, boolean append) throws IOException {
 		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		byte[] bytes = content.getBytes(ConstLang.DEFAULT_CHARSET);
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file, append));) {
 			bos.write(bytes);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -2075,14 +2074,13 @@ public class FileTool {
 	 * @param content 写入的字符串
 	 * @param charsetName 字符编码名称
 	 * @param append true->追加写入,false->覆盖写入
+	 * @throws IOException
 	 */
-	public static void write(File file, String content, String charsetName, boolean append) {
+	public static void write(File file, String content, String charsetName, boolean append) throws IOException {
 		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		byte[] bytes = content.getBytes(CharsetTool.defaultCharset(charsetName));
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file, append));) {
 			bos.write(bytes);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -2093,14 +2091,13 @@ public class FileTool {
 	 * @param content 写入的字符串
 	 * @param charset 字符编码
 	 * @param append true->追加写入,false->覆盖写入
+	 * @throws IOException
 	 */
-	public static void write(File file, String content, Charset charset, boolean append) {
+	public static void write(File file, String content, Charset charset, boolean append) throws IOException {
 		AssertTool.notNull(file, ConstIO.TOAST_FILE_NULL);
 		byte[] bytes = content.getBytes(CharsetTool.defaultCharset(charset));
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file, append));) {
 			bos.write(bytes);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -2167,8 +2164,9 @@ public class FileTool {
 	 * 
 	 * @param fullPath 文件地址绝对路径
 	 * @param content 写入的字符串
+	 * @throws IOException
 	 */
-	public static void write(String fullPath, String content) {
+	public static void write(String fullPath, String content) throws IOException {
 		write(new File(fullPath), content);
 	}
 
@@ -2309,17 +2307,15 @@ public class FileTool {
 	 * 
 	 * @param source 源数据,需要压缩的数据
 	 * @return 压缩后的数据
+	 * @throws IOException
 	 */
-	public static byte[] zip(byte[] source) {
+	public static byte[] zip(byte[] source) throws IOException {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
 				GZIPOutputStream zipOut = new GZIPOutputStream(out);) {
 			// 将压缩信息写入到内存, 写入的过程会实现解压
 			zipOut.write(source);
 			zipOut.finish();
 			return out.toByteArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new ResultException(e);
 		}
 	}
 
@@ -2328,8 +2324,9 @@ public class FileTool {
 	 * 
 	 * @param srcPath
 	 * @param desPath
+	 * @throws IOException
 	 */
-	public static void zipFile(String srcPath, String desPath) {
+	public static void zipFile(String srcPath, String desPath) throws IOException {
 		checkFile(srcPath);
 		checkFile(desPath);
 		File file = new File(desPath);
@@ -2342,9 +2339,6 @@ public class FileTool {
 			while ((size = is.read()) != -1) {
 				zos.write(size);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new ResultException(e);
 		}
 	}
 
@@ -2352,8 +2346,9 @@ public class FileTool {
 	 * 使用文件channel压缩文件 FIXME
 	 * 
 	 * @param path 需要进行压缩的文件地址
+	 * @throws IOException
 	 */
-	public static void zipChannel(String srcPath, String desPath) {
+	public static void zipChannel(String srcPath, String desPath) throws IOException {
 		checkFile(srcPath);
 		checkFile(desPath);
 		File file = new File(srcPath);
@@ -2364,16 +2359,15 @@ public class FileTool {
 				FileChannel fileChannel = fis.getChannel();) {
 			zipOutputStream.putNextEntry(new ZipEntry("test"));
 			fileChannel.transferTo(0, file.getTotalSpace(), channel);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new ResultException(e);
 		}
 	}
 
 	/**
 	 * 使用Map映射文件压缩文件 FIXME
+	 * 
+	 * @throws IOException
 	 */
-	public static void zipMap(String srcPath, String desPath) {
+	public static void zipMap(String srcPath, String desPath) throws IOException {
 		File zipFile = new File(desPath);
 		File file = new File(srcPath);
 		try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));
@@ -2384,9 +2378,6 @@ public class FileTool {
 			MappedByteBuffer mappedByteBuffer =
 					randomAccessFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 1024);
 			writableByteChannel.write(mappedByteBuffer);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new ResultException(e);
 		}
 	}
 
@@ -2395,8 +2386,9 @@ public class FileTool {
 	 * 
 	 * @param srcPath
 	 * @param desPath
+	 * @throws IOException
 	 */
-	public static void zipPip(String srcPath, String desPath) {
+	public static void zipPip(String srcPath, String desPath) throws IOException {
 		try (WritableByteChannel out = Channels.newChannel(new FileOutputStream(desPath))) {
 			Pipe pipe = Pipe.open();
 			// 异步任务
@@ -2420,9 +2412,6 @@ public class FileTool {
 				out.write(buffer);
 				buffer.clear();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new ResultException(e);
 		}
 	}
 }
@@ -2443,8 +2432,9 @@ class Example {
 	 * 
 	 * @param files 文件列表
 	 * @return 文件合并后的流
+	 * @throws IOException
 	 */
-	public static byte[] combine(List<File> files) {
+	public static byte[] combine(List<File> files) throws IOException {
 		if (null == files || files.size() == 0) {
 			return ConstArray.EMPTY_BYTE;
 		}
@@ -2461,8 +2451,6 @@ class Example {
 				sis = new SequenceInputStream(sis, new FileInputStream(files.get(i)));
 			}
 			sis.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return null;
 	}
