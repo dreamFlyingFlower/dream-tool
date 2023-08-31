@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import com.wy.lang.AssertTool;
-import com.wy.lang.StrTool;
+import com.wy.lang.AssertHelper;
+import com.wy.lang.StrHelper;
 
 /**
  * 该国际化配置类只能在本项目中使用,不可作为工具类对外使用
@@ -33,19 +33,19 @@ public class Internation {
 	}
 
 	public static Object get(String key) {
-		AssertTool.notBlank(key, "key");
+		AssertHelper.notBlank(key, "key");
 		return resource.getObject(key);
 	}
 
 	public static String getStr(String key) {
-		AssertTool.notBlank(key, "key");
+		AssertHelper.notBlank(key, "key");
 		return resource.getString(key);
 	}
 
 	public static String getStr(String key, String defaultVal) {
-		AssertTool.notBlank(key, "key");
+		AssertHelper.notBlank(key, "key");
 		String val = resource.getString(key);
-		return StrTool.isBlank(val) ? defaultVal : val;
+		return StrHelper.isBlank(val) ? defaultVal : val;
 	}
 
 	public static Set<String> getKeys() {
@@ -53,12 +53,12 @@ public class Internation {
 	}
 
 	public static String[] getStrs(String key) {
-		AssertTool.notBlank(key, "key");
+		AssertHelper.notBlank(key, "key");
 		return resource.getStringArray(key);
 	}
 
 	public static boolean hasKey(String key) {
-		AssertTool.notBlank(key, "key");
+		AssertHelper.notBlank(key, "key");
 		return resource.containsKey(key);
 	}
 

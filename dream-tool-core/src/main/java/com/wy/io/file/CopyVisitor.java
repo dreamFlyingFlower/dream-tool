@@ -21,7 +21,7 @@ public class CopyVisitor extends SimpleFileVisitor<Path> {
 	private final Path target;
 
 	public CopyVisitor(Path source, Path target) {
-		if (PathTool.exists(target, false) && !PathTool.isDir(target)) {
+		if (PathHelper.exists(target, false) && !PathHelper.isDir(target)) {
 			throw new IllegalArgumentException("Target must be a directory");
 		}
 		this.source = source;

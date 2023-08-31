@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.wy.collection.MapTool;
+import com.wy.collection.MapHelper;
 import com.wy.common.Internation;
 import com.wy.common.StatusMsg;
 import com.wy.enums.TipEnum;
-import com.wy.lang.StrTool;
+import com.wy.lang.StrHelper;
 
 /**
  * result工具类,code为1时成功,其他全部失败
@@ -138,7 +138,7 @@ public class Result<T> implements Serializable {
 
 	public static <T> Result<T> result(int code, String msg, T t) {
 		return Result.<T>builder().code(code)
-				.msg(StrTool.isBlank(msg)
+				.msg(StrHelper.isBlank(msg)
 						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
 						: msg)
 				.data(t).page(false).build();
@@ -154,7 +154,7 @@ public class Result<T> implements Serializable {
 
 	public static <T> Result<T> page(int code, String msg, T t, long pageIndex, long pageSize, long total) {
 		return Result.<T>builder().code(code)
-				.msg(StrTool.isBlank(msg)
+				.msg(StrHelper.isBlank(msg)
 						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
 						: msg)
 				.data(t).page(true).pageIndex(pageIndex).pageSize(pageSize).total(total)
@@ -168,12 +168,12 @@ public class Result<T> implements Serializable {
 	 * @return 驼峰形式的结果集
 	 */
 	public static Map<String, Object> snake2Hump(Map<String, Object> data) {
-		if (MapTool.isEmpty(data)) {
+		if (MapHelper.isEmpty(data)) {
 			return null;
 		}
 		Map<String, Object> result = new HashMap<>();
 		for (Map.Entry<String, Object> entry : data.entrySet()) {
-			result.put(StrTool.underline2Hump(entry.getKey()), entry.getValue());
+			result.put(StrHelper.underline2Hump(entry.getKey()), entry.getValue());
 		}
 		data = null;
 		return result;

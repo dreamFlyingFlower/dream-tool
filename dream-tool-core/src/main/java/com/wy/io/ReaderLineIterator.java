@@ -53,7 +53,7 @@ public class ReaderLineIterator implements Iterator<String>, Closeable {
 	public void close() throws IOException {
 		finished = true;
 		cachedLine = null;
-		IOTool.close(bufferedReader);
+		IOHelper.close(bufferedReader);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class ReaderLineIterator implements Iterator<String>, Closeable {
 					}
 				}
 			} catch (final IOException ioe) {
-				IOTool.closeQuietly(this, e -> ioe.addSuppressed(e));
+				IOHelper.closeQuietly(this, e -> ioe.addSuppressed(e));
 				throw new IllegalStateException(ioe);
 			}
 		}

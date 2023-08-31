@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.wy.common.PropConverter;
 import com.wy.common.StatusMsg;
-import com.wy.util.EnumStatusMsgTool;
+import com.wy.util.EnumStatusMsgHelper;
 
 /**
  * 是否枚举
@@ -41,6 +41,6 @@ public enum YesNoEnum implements StatusMsg, PropConverter {
 	}
 
 	public static List<Map<String, Object>> toList() {
-		return EnumStatusMsgTool.toListMap(YesNoEnum.class);
+		return EnumStatusMsgHelper.toListMap(YesNoEnum.class);
 	}
 }

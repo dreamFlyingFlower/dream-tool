@@ -107,7 +107,7 @@ public class LinkedCaseInsensitiveMap<V> implements Map<String, V>, Serializable
 				return doRemove;
 			}
 		};
-		this.caseInsensitiveKeys = MapTool.newHashMap(expectedSize);
+		this.caseInsensitiveKeys = MapHelper.newHashMap(expectedSize);
 		this.locale = (locale != null ? locale : Locale.getDefault());
 	}
 

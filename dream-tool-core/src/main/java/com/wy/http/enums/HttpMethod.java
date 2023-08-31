@@ -3,7 +3,7 @@ package com.wy.http.enums;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.wy.lang.StrTool;
+import com.wy.lang.StrHelper;
 
 /**
  * Http请求方式
@@ -34,7 +34,7 @@ public enum HttpMethod {
 	}
 
 	public static HttpMethod resolve(String method) {
-		return (StrTool.isNotBlank(method) ? MAPPINGS.get(method) : null);
+		return (StrHelper.isNotBlank(method) ? MAPPINGS.get(method) : null);
 	}
 
 	public boolean matches(String method) {

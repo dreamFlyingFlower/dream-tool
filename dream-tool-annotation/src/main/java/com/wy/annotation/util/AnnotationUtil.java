@@ -28,7 +28,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
 import com.wy.annotation.enums.AnnotationEnum;
-import com.wy.collection.MapTool;
+import com.wy.collection.MapHelper;
 
 /**
  * 注解工具类
@@ -250,7 +250,7 @@ public class AnnotationUtil {
 	public static void addAnnotation(TreeMaker treeMaker, Names names, JCClassDecl jcClassDecl, String annotationName,
 			Map<String, Object> args) {
 		List<JCExpression> jcExpressions = List.nil();
-		if (MapTool.isNotEmpty(args)) {
+		if (MapHelper.isNotEmpty(args)) {
 			for (Map.Entry<String, Object> entry : args.entrySet()) {
 				jcExpressions.add(makeArg(treeMaker, names, entry.getKey(), entry.getValue()));
 			}

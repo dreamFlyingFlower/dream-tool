@@ -2,7 +2,7 @@ package com.wy.io;
 
 import java.util.Objects;
 
-import com.wy.lang.SystemTool;
+import com.wy.lang.SystemHelper;
 
 
 /**
@@ -47,7 +47,7 @@ public enum IOCase {
      * If you serialize this constant on Windows, and deserialize on Unix, or vice
      * versa, then the value of the case-sensitivity flag will change.
      */
-    SYSTEM ("System", !SystemTool.isWindows());
+    SYSTEM ("System", !SystemHelper.isWindows());
 
     /** Serialization version. */
     private static final long serialVersionUID = -6343169151696340687L;

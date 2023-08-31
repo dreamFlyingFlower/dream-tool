@@ -3,7 +3,7 @@ package com.wy.annotation.enums;
 import java.util.Arrays;
 import java.util.List;
 
-import com.wy.lang.StrTool;
+import com.wy.lang.StrHelper;
 
 /**
  * Spring请求方式枚举类型
@@ -30,7 +30,7 @@ public enum SpringRequestMethod implements AnnotationEnum {
 
 	@Override
 	public String packageName() {
-		if (StrTool.isBlank(className)) {
+		if (StrHelper.isBlank(className)) {
 			return null;
 		}
 		return this.className.substring(0, this.className.lastIndexOf("."));

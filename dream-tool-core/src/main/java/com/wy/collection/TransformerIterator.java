@@ -3,7 +3,7 @@ package com.wy.collection;
 import java.util.Iterator;
 import java.util.function.Function;
 
-import com.wy.lang.AssertTool;
+import com.wy.lang.AssertHelper;
 
 /**
  * 使用给定的转换函数,转换源{@link Iterator}为新类型的{@link Iterator}
@@ -21,8 +21,8 @@ public class TransformerIterator<K, V> implements Iterator<V> {
 	private final Function<? super K, ? extends V> function;
 
 	public TransformerIterator(Iterator<? extends K> backingIterator, Function<? super K, ? extends V> function) {
-		this.backingIterator = AssertTool.notNull(backingIterator);
-		this.function = AssertTool.notNull(function);
+		this.backingIterator = AssertHelper.notNull(backingIterator);
+		this.function = AssertHelper.notNull(function);
 	}
 
 	@Override

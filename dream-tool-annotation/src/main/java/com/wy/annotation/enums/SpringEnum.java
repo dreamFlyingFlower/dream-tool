@@ -3,7 +3,7 @@ package com.wy.annotation.enums;
 import java.util.Arrays;
 import java.util.List;
 
-import com.wy.lang.StrTool;
+import com.wy.lang.StrHelper;
 
 /**
  * Spring相关注解.注意,需要在使用的项目中存在指定的注解类,否则编译无法通过
@@ -29,7 +29,7 @@ public enum SpringEnum implements AnnotationEnum {
 
 	@Override
 	public String packageName() {
-		if (StrTool.isBlank(className)) {
+		if (StrHelper.isBlank(className)) {
 			return null;
 		}
 		return this.className.substring(0, this.className.lastIndexOf("."));

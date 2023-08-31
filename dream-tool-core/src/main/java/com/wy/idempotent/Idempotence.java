@@ -1,6 +1,6 @@
 package com.wy.idempotent;
 
-import com.wy.digest.DigestTool;
+import com.wy.digest.DigestHelper;
 
 /**
  * 判断是否幂等的方法
@@ -17,7 +17,7 @@ public interface Idempotence {
 	 * @return 32位UUID
 	 */
 	default String generateCode() {
-		return DigestTool.uuid();
+		return DigestHelper.uuid();
 	}
 
 	/**
