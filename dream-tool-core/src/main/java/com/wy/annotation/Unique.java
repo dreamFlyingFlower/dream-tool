@@ -8,10 +8,10 @@ import java.lang.annotation.Target;
 
 /**
  * 当字段上有该注解时,表示字段的值在数据库中唯一
- * 
+ *
  * @author 飞花梦影
  * @date 2019-07-30 17:21:07
- * @git {@link https://github.com/dreamFlyingFlower}
+ * @git {@link <a href="https://github.com/dreamFlyingFlower">...</a>}
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

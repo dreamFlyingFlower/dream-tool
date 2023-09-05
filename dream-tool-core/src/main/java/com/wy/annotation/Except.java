@@ -8,10 +8,10 @@ import java.lang.annotation.Target;
 
 /**
  * 有此注解标识该方法或字段在某个事件中除外,比如说写入某个excel文件时不写入字段
- * 
+ *
  * @author 飞花梦影
  * @date 2021-04-06 15:10:23
- * @git {@link https://github.com/dreamFlyingFlower}
+ * @git {@link <a href="https://github.com/dreamFlyingFlower">...</a>}
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
