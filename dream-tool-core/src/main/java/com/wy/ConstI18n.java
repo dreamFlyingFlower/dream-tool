@@ -99,6 +99,10 @@ public interface ConstI18n {
 
 	String MSG_DB_DUPLICATE_KEY_ERROR = "msg_db_duplicate_key_error";
 
+	String MSG_DB_DATA_EXIST = "msg_db_data_exist";
+
+	String MSG_DB_DATA_NONE = "msg_db_data_none";
+
 	String MSG_FILE_NOT_EXIST = "msg_file_not_exist";
 
 	String MSG_FILE_DIRECTORY_NOT_EXIST = "msg_file_directory_not_exist";

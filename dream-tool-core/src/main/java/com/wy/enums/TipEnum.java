@@ -110,6 +110,10 @@ public enum TipEnum implements StatusMsg {
 	TIP_DB_QUERY(1504, ConstI18n.MSG_DB_QUERY_FAIL),
 	/** 数据库主键重复 */
 	TIP_DB_DUPLICATE_KEY_ERROR(1505, ConstI18n.MSG_DB_DUPLICATE_KEY_ERROR),
+	/** 数据已经存在 */
+	TIP_DB_DATA_EXIST(1506, ConstI18n.MSG_DB_DATA_EXIST),
+	/** 数据不存在 */
+	TIP_DB_DATA_NONE(1507, ConstI18n.MSG_DB_DATA_NONE),
 
 	/** 文件不存在 */
 	TIP_FILE_NOT_EXIST(1600, ConstI18n.MSG_FILE_NOT_EXIST),
@@ -151,9 +155,9 @@ public enum TipEnum implements StatusMsg {
 	/** 请求超时 */
 	TIP_REQUEST_TIME_OUT(11003, ConstI18n.MSG_REQUEST_TIME_OUT);
 
-	private Integer code;
+	private final Integer code;
 
-	private String key;
+	private final String key;
 
 	TipEnum(Integer code, String key) {
 		this.code = code;
