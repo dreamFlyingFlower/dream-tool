@@ -2,6 +2,8 @@ package com.wy.example;
 
 import java.util.List;
 
+import com.wy.enums.RegexEnum;
+
 /**
  * 作为一些样例的实体类
  *
@@ -10,6 +12,11 @@ import java.util.List;
  * @git {@link https://github.com/dreamFlyingFlower }
  */
 public class HeavenSong {
+	
+	public static void main(String[] args) {
+		String sss = "12734256456";
+		System.out.println(sss.matches(RegexEnum.REGEX_PHONE.toString()));
+	}
 
 	private Long userId;
 
