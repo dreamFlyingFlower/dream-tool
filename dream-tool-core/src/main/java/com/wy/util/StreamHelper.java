@@ -231,6 +231,35 @@ public class StreamHelper {
 	}
 
 	/**
+	 * 将集合中的元素根据某个值转换为Map,其中key需要指定,value为原始元素,若同key,后面的元素覆盖前面的元素
+	 * 
+	 * @param <T> 待转换泛型
+	 * @param <K> 转换后Map的key类型
+	 * @param collection 原始集合
+	 * @param functionKey Map中key的转换方法
+	 * @return Map<K, T>
+	 */
+	public static <T, K> Map<K, T> toMapDefault(Collection<T> collection, Function<T, K> functionKey) {
+		return collection.stream().collect(Collectors.toMap(functionKey, t -> t, (p, n) -> n));
+	}
+
+	/**
+	 * 将集合中的元素根据某个值转换为Map,其中key和value的转换方式都需要指定
+	 * 
+	 * @param <T> 待转换泛型
+	 * @param <K> 转换后Map的K类型
+	 * @param <V> 转换后Map的value类型
+	 * @param collection 原始集合
+	 * @param functionKey Map中key的转换方法
+	 * @param functionValue Map中的value的转换方法
+	 * @return Map<K, V>
+	 */
+	public static <T, K, V> Map<K, V> toMapDefault(Collection<T> collection, Function<T, K> functionKey,
+			Function<T, V> functionValue) {
+		return collection.stream().collect(Collectors.toMap(functionKey, functionValue, (p, n) -> n));
+	}
+
+	/**
 	 * 将集合中的元素经过function转换成一个新的集合
 	 * 
 	 * @param <T> 待转换泛型

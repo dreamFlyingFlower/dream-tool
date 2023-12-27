@@ -501,6 +501,21 @@ public class StrHelper extends CharSequenceHelper {
 	}
 
 	/**
+	 * 用同一个分隔符将参数连接起来
+	 * 
+	 * @param delimiter 分隔符
+	 * @param msgs 参数
+	 * @return 最终的字符串
+	 */
+	public static String join(String delimiter, String... args) {
+		StringJoiner stringJoiner = new StringJoiner(delimiter);
+		for (String string : args) {
+			stringJoiner.add(string);
+		}
+		return stringJoiner.toString();
+	}
+
+	/**
 	 * 将多个参数连接起来
 	 * 
 	 * @param msgs 参数
@@ -570,21 +585,6 @@ public class StrHelper extends CharSequenceHelper {
 			builder.append(delimiter).append(msgs[i]);
 		}
 		return builder.toString();
-	}
-
-	/**
-	 * 用同一个分隔符将参数连接起来
-	 * 
-	 * @param delimiter 分隔符
-	 * @param msgs 参数
-	 * @return 最终的字符串
-	 */
-	public static String joinString(String delimiter, String... args) {
-		StringJoiner stringJoiner = new StringJoiner(delimiter);
-		for (String string : args) {
-			stringJoiner.add(string);
-		}
-		return stringJoiner.toString();
 	}
 
 	/**
