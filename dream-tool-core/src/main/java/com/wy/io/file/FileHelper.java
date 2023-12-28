@@ -467,7 +467,8 @@ public class FileHelper {
 			// same file
 			return true;
 		}
-		try (Reader input1 = new InputStreamReader(new FileInputStream(file1), CharsetHelper.defaultCharset(charsetName));
+		try (Reader input1 =
+				new InputStreamReader(new FileInputStream(file1), CharsetHelper.defaultCharset(charsetName));
 				Reader input2 =
 						new InputStreamReader(new FileInputStream(file2), CharsetHelper.defaultCharset(charsetName))) {
 			return IOHelper.contentEqualsIgnoreEOL(input1, input2);
@@ -1755,7 +1756,7 @@ public class FileHelper {
 	}
 
 	/**
-	 * 读取文件中的内容输出为一行字符串,流会关闭
+	 * 读取文件中的内容,以行输出,流会关闭
 	 * 
 	 * @param fullPath 文件地址的绝对路径
 	 * @throws IOException
@@ -1765,7 +1766,7 @@ public class FileHelper {
 	}
 
 	/**
-	 * 读取文件中的内容输出为一行字符串,流会关闭
+	 * 读取文件中的内容,以行输出,流会关闭
 	 * 
 	 * @param file 文件
 	 * @return 文件内容
@@ -1777,7 +1778,7 @@ public class FileHelper {
 	}
 
 	/**
-	 * 读取文件中的内容输出为一行字符串,流会关闭
+	 * 读取文件中的内容,以行输出,流会关闭
 	 *
 	 * @param file 文件
 	 * @param charset 字符编码集
@@ -1791,7 +1792,7 @@ public class FileHelper {
 	}
 
 	/**
-	 * 读取文件中的内容输出为一行字符串,流会关闭
+	 * 读取文件中的内容,以行输出,流会关闭
 	 *
 	 * @param file 文件
 	 * @param charsetName 字符编码名称
@@ -1803,16 +1804,26 @@ public class FileHelper {
 	}
 
 	/**
-	 * 读取文件中的内容输出为一行字符串,流已关闭
+	 * 以行读取文件中的内容并拼接为一行.流会关闭
+	 * 
+	 * @param fullPath 文件路径
+	 * @return 文件中的字符串
+	 * @throws IOException
+	 */
+	public static String readOne(String fullPath) throws IOException {
+		AssertHelper.notBlank(fullPath);
+		return readOne(new File(fullPath));
+	}
+
+	/**
+	 * 以行读取文件中的内容并拼接为一行.流会关闭
 	 * 
 	 * @param file 文件
 	 * @return 文件中的字符串
 	 * @throws IOException
 	 */
-	public static String readBuffer(File file) throws IOException {
-		if (null == file) {
-			return ConstLang.STR_EMPTY;
-		}
+	public static String readOne(File file) throws IOException {
+		AssertHelper.notNull(file);
 		StringBuffer sb = new StringBuffer();
 		try (BufferedReader br = new BufferedReader(new FileReader(file));) {
 			String line = null;
@@ -1846,7 +1857,8 @@ public class FileHelper {
 		if (null == file) {
 			return Collections.emptyList();
 		}
-		try (InputStreamReader in = new InputStreamReader(newInputStream(file), CharsetHelper.defaultCharset(charset))) {
+		try (InputStreamReader in =
+				new InputStreamReader(newInputStream(file), CharsetHelper.defaultCharset(charset))) {
 			return IOHelper.readLines(in);
 		}
 	}
