@@ -13,6 +13,7 @@
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<tools-systemPath>e:/software/JDK1.8/lib/tools.jar</tools-systemPath>
 	</properties>
 
 	<dependencies>
@@ -25,9 +26,9 @@
 		<dependency>
 			<groupId>com.sun</groupId>
 			<artifactId>tools</artifactId>
-			<version>1.8</version>
+			<version>1.8.0</version>
 			<scope>system</scope>
-			<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
+			<systemPath>${tools-systemPath}</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>dream.flying.flower</groupId>
@@ -170,11 +171,13 @@
 			<distributionManagement>
 				<snapshotRepository>
 					<id>nexus-snapshots</id>
-					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+					<url>
+						https://oss.sonatype.org/content/repositories/snapshots/</url>
 				</snapshotRepository>
 				<repository>
 					<id>nexus-release</id>
-					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+					<url>
+						https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 				</repository>
 			</distributionManagement>
 		</profile>
