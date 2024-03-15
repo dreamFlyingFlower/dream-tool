@@ -2407,10 +2407,10 @@ public class FileHelper {
 			CompletableFuture.runAsync(() -> {
 				try (ZipOutputStream zos = new ZipOutputStream(Channels.newOutputStream(pipe.sink()));
 						WritableByteChannel innerOut = Channels.newChannel(zos);
-						FileChannel jpgChannel = new FileInputStream(new File(srcPath)).getChannel();) {
+						FileInputStream fis = new FileInputStream(new File(srcPath));
+						FileChannel fileChannel = fis.getChannel();) {
 					zos.putNextEntry(new ZipEntry(".zip"));
-					jpgChannel.transferTo(0, new File(srcPath).getTotalSpace(), innerOut);
-					jpgChannel.close();
+					fileChannel.transferTo(0, new File(srcPath).getTotalSpace(), innerOut);
 				} catch (Exception e) {
 					e.printStackTrace();
 					throw new ResultException(e);
@@ -2454,15 +2454,18 @@ class Example {
 			if (files.size() == 1) {
 				return IOHelper.toByteArray(fis);
 			}
-			FileInputStream inputStream = new FileInputStream(files.get(1));
-			SequenceInputStream sis = new SequenceInputStream(fis, inputStream);
-			if (files.size() == 2) {
-				return IOHelper.toByteArray(sis);
+			try (FileInputStream inputStream = new FileInputStream(files.get(1));) {
+				SequenceInputStream sis = new SequenceInputStream(fis, inputStream);
+				if (files.size() == 2) {
+					return IOHelper.toByteArray(sis);
+				}
+				for (int i = 2; i < files.size(); i++) {
+					try (FileInputStream temp = new FileInputStream(files.get(i));) {
+						sis = new SequenceInputStream(sis, temp);
+					}
+				}
+				sis.close();
 			}
-			for (int i = 2; i < files.size(); i++) {
-				sis = new SequenceInputStream(sis, new FileInputStream(files.get(i)));
-			}
-			sis.close();
 		}
 		return null;
 	}
