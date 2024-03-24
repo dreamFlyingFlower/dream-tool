@@ -30,20 +30,20 @@ import com.wy.lang.AssertHelper;
 import com.wy.lang.StrHelper;
 
 /**
- * {@link LocalDateTime}等工具类,jdk1.8的时间类工具类,和DateTool差不多
+ * {@link LocalDateTime}等工具类,jdk1.8的时间类工具类,和DateHelper差不多
  * 
- * @apiNote 当直接输出LocalTime.toString()时,类似XX:00:00将不会输出秒,只会输出XX:00,不要直接输出或使用toString()
+ * 当直接输出LocalTime.toString()时,类似XX:00:00将不会输出秒,只会输出XX:00,不要直接输出或使用toString()
  * 
  * @author 飞花梦影
  * @date 2019-03-20 16:56:06
- * @git {@link https://github.com/mygodness100}
+ * @git {@link https://github.com/dreamFlyingFlower}
  */
 public interface DateTimeHelper {
 
 	/**
 	 * 默认格式化时间字符串HH:mm:ss,系统自带的{@link DateTimeFormatter#ISO_LOCAL_TIME}默认字符串带毫秒
 	 */
-	DateTimeFormatter DEFAULT_TIME_FORMATTER = new DateTimeFormatterBuilder().appendValue(HOUR_OF_DAY, 2)
+	DateTimeFormatter DEFAULT_FORMATTER_TIME = new DateTimeFormatterBuilder().appendValue(HOUR_OF_DAY, 2)
 			.appendLiteral(':').appendValue(MINUTE_OF_HOUR, 2).optionalStart().appendLiteral(':')
 			.appendValue(SECOND_OF_MINUTE, 2).optionalStart().parseStrict().toFormatter();
 
@@ -52,12 +52,12 @@ public interface DateTimeHelper {
 	 */
 	DateTimeFormatter DEFAULT_FORMATTER =
 			new DateTimeFormatterBuilder().parseCaseInsensitive().append(DateTimeFormatter.ISO_LOCAL_DATE)
-					.appendLiteral(' ').append(DEFAULT_TIME_FORMATTER).optionalStart().parseStrict().toFormatter();
+					.appendLiteral(' ').append(DEFAULT_FORMATTER_TIME).optionalStart().parseStrict().toFormatter();
 
 	/**
 	 * 定时时间格式化字符串:yyyy-MM-dd HH:mm:ss,等同于DEFAULT_FORMATTER
 	 */
-	DateTimeFormatter FORMATTER_DATETIME = new DateTimeFormatterBuilder().appendValue(ChronoField.YEAR)
+	DateTimeFormatter DEFAULT_FORMATTER_DATETIME = new DateTimeFormatterBuilder().appendValue(ChronoField.YEAR)
 			.appendLiteral("-").appendValue(ChronoField.MONTH_OF_YEAR).appendLiteral("-")
 			.appendValue(ChronoField.DAY_OF_MONTH).appendLiteral(" ").appendValue(ChronoField.HOUR_OF_DAY)
 			.appendLiteral(":").appendValue(ChronoField.MINUTE_OF_HOUR).appendLiteral(":")
@@ -81,7 +81,7 @@ public interface DateTimeHelper {
 	 * @return 时间字符串
 	 */
 	public static String formatTime() {
-		return DEFAULT_TIME_FORMATTER.format(LocalDateTime.now());
+		return DEFAULT_FORMATTER_TIME.format(LocalDateTime.now());
 	}
 
 	/**
@@ -91,7 +91,7 @@ public interface DateTimeHelper {
 	 * @return 时间字符串
 	 */
 	public static String formatTime(Date date) {
-		return DEFAULT_TIME_FORMATTER.format(date2Local(date));
+		return DEFAULT_FORMATTER_TIME.format(date2Local(date));
 	}
 
 	/**
@@ -101,7 +101,7 @@ public interface DateTimeHelper {
 	 * @return 时间字符串
 	 */
 	public static String formatTime(LocalTime localTime) {
-		return DEFAULT_TIME_FORMATTER.format(localTime);
+		return DEFAULT_FORMATTER_TIME.format(localTime);
 	}
 
 	/**
@@ -111,7 +111,7 @@ public interface DateTimeHelper {
 	 * @return 时间字符串
 	 */
 	public static String formatTime(LocalDateTime localDateTime) {
-		return DEFAULT_TIME_FORMATTER.format(localDateTime);
+		return DEFAULT_FORMATTER_TIME.format(localDateTime);
 	}
 
 	/**
@@ -2029,6 +2029,28 @@ public interface DateTimeHelper {
 	public static boolean sameYearMonthDay(TemporalAccessor temporalAccessor1, TemporalAccessor temporalAccessor2) {
 		return sameYearMonth(temporalAccessor1, temporalAccessor2)
 				&& temporalAccessor1.get(ChronoField.DAY_OF_MONTH) == temporalAccessor2.get(ChronoField.DAY_OF_MONTH);
+	}
+
+	/**
+	 * 设置年份
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param year 指定年份
+	 * @return 新的时间
+	 */
+	static LocalDateTime setYear(LocalDateTime localDateTime, int year) {
+		return localDateTime.withYear(year);
+	}
+
+	/**
+	 * 设置月份
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param month 指定月份,只能是1到12,否则报错
+	 * @return 新的时间
+	 */
+	static LocalDateTime setMonth(LocalDateTime localDateTime, int month) {
+		return localDateTime.withMonth(month);
 	}
 
 	/**
