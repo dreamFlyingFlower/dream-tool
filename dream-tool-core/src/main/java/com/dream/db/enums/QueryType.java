@@ -33,5 +33,9 @@ public enum QueryType {
 	/** data% */
 	LIKERIGHT,
 	/** in */
-	IN
+	IN,
+	/** not in */
+	NOTIN,
+	/** group by */
+	GROUPBY,
 }
