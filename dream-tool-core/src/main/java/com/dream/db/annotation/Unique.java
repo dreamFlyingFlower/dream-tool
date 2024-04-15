@@ -19,9 +19,9 @@ import java.lang.annotation.Target;
 public @interface Unique {
 
 	/**
-	 * 数据库字段的名称,若为空,默认为Java属性名
+	 * 重复时的提示信息
 	 * 
-	 * @return 数据库字段名
+	 * @return 提示信息
 	 */
 	String value() default "";
 
@@ -30,26 +30,33 @@ public @interface Unique {
 	 * 
 	 * @return true->单独校验;false->所有false的字段同时检验
 	 */
-	boolean validSingle() default false;
+	boolean single() default false;
 
 	/**
-	 * 实体类是否需要转换为下划线模式,当value为""时,取实体类Java属性名
+	 * 待校验的字段名,若为空,默认为Java属性名
 	 * 
-	 * @return 默认true->转下划线,false->不转下划线
+	 * @return 待校验的字段名
 	 */
-	boolean transfer() default true;
+	String columnName() default "";
+
+	/**
+	 * 待校验的字段名是否需要转换为下划线
+	 * 
+	 * @return 默认true->转下划线,false->不变
+	 */
+	boolean columnUnderLine() default true;
 
 	/**
 	 * 检查唯一字段时用来判断值是否重复的字段
 	 * 
 	 * @return 判断是否重复的字段
 	 */
-	String[] identifys() default { "id" };
+	String[] identifyName() default { "id" };
 
 	/**
-	 * 是否将驼峰转为下划线,默认转,identifys()不为空时有效
+	 * identifyName是否转为下划线,默认全部转,identifyName()不为空时有效
 	 * 
-	 * @return true->驼峰转下划线;false->不变
+	 * @return true->下划线;false->不变
 	 */
-	boolean transferIdentity() default true;
+	boolean identifyUnderLine() default true;
 }
