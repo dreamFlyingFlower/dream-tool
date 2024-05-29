@@ -14,9 +14,9 @@ import com.dream.common.StatusMsg;
 public enum TipEnum implements StatusMsg {
 
 	/** 请求失败 */
-	TIP_REQUEST_FAIL(0, ConstI18n.MSG_FAIL),
+	TIP_FAIL(0, ConstI18n.MSG_FAIL),
 	/** 请求成功 */
-	TIP_REQUEST_SUCCESS(1, ConstI18n.MSG_SUCCESS),
+	TIP_SUCCESS(1, ConstI18n.MSG_SUCCESS),
 
 	/** Web通用错误 */
 	TIP_INTERNAL_UNAUTHORIZED(401, ConstI18n.MSG_INTERNAL_UNAUTHORIZED),
