@@ -387,7 +387,7 @@ public class MapHelper {
 	 * @return true当map为null或size为0
 	 */
 	public static <K, V> boolean isEmpty(Map<K, V> map) {
-		return map == null || map.isEmpty();
+		return null == map || map.isEmpty();
 	}
 
 	/**
