@@ -23,6 +23,8 @@ import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import dream.flying.flower.annotation.Example;
 import dream.flying.flower.enums.DateEnum;
@@ -2227,5 +2229,59 @@ public interface DateTimeHelper {
 	 */
 	public static long spanYears(Temporal date1, Temporal date2) {
 		return ChronoUnit.YEARS.between(date1, date2);
+	}
+
+	/**
+	 * 将TimeUnit单位转换为ChronoUnit单位,JDK9自带该方法
+	 * 
+	 * @param timeUnit TimeUnit
+	 * @return ChronoUnit
+	 */
+	public static ChronoUnit toChronoUnit(TimeUnit timeUnit) {
+		switch (timeUnit) {
+		case NANOSECONDS:
+			return ChronoUnit.NANOS;
+		case MICROSECONDS:
+			return ChronoUnit.MICROS;
+		case MILLISECONDS:
+			return ChronoUnit.MILLIS;
+		case SECONDS:
+			return ChronoUnit.SECONDS;
+		case MINUTES:
+			return ChronoUnit.MINUTES;
+		case HOURS:
+			return ChronoUnit.HOURS;
+		case DAYS:
+			return ChronoUnit.DAYS;
+		default:
+			throw new AssertionError();
+		}
+	}
+
+	/**
+	 * 将ChronoUnit单位转换为TimeUnit单位,JDK9自带该方法
+	 * 
+	 * @param chronoUnit ChronoUnit
+	 * @return TimeUnit
+	 */
+	public static TimeUnit toTimeUnit(ChronoUnit chronoUnit) {
+		switch (Objects.requireNonNull(chronoUnit, "chronoUnit")) {
+		case NANOS:
+			return TimeUnit.NANOSECONDS;
+		case MICROS:
+			return TimeUnit.MICROSECONDS;
+		case MILLIS:
+			return TimeUnit.MILLISECONDS;
+		case SECONDS:
+			return TimeUnit.SECONDS;
+		case MINUTES:
+			return TimeUnit.MINUTES;
+		case HOURS:
+			return TimeUnit.HOURS;
+		case DAYS:
+			return TimeUnit.DAYS;
+		default:
+			throw new IllegalArgumentException("No TimeUnit equivalent for " + chronoUnit);
+		}
 	}
 }
