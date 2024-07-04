@@ -205,8 +205,12 @@ public class DigestHelper {
 		try {
 			// 构造密钥生成器,指定为AES算法,不区分大小写
 			KeyGenerator keygen = KeyGenerator.getInstance(CryptType.AES.getType());
+
 			// 根据secret规则初始化密钥生成器,生成一个128位的随机源
-			keygen.init(128, new SecureRandom(secret));
+			SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+			secureRandom.setSeed(secret);
+			keygen.init(128, secureRandom);
+
 			// 产生原始对称密钥
 			SecretKey originalKey = keygen.generateKey();
 			// 获得原始对称密钥的字节数组
