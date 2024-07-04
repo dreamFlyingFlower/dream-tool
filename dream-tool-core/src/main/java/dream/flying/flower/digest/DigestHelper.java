@@ -64,6 +64,46 @@ public class DigestHelper {
 	/**
 	 * AES解密
 	 * 
+	 * @param secret 密钥
+	 * @param content 需解密16进制字符串
+	 * @return 解密后的字符串
+	 */
+	public static String aesDecrypt(byte[] secret, String content) {
+		AssertHelper.notNull(secret, "密钥不能为空!");
+		AssertHelper.notBlank(content, "加密内容不能为空!");
+		// 若是将此解密方法放到linux机器报错,则使用以下方法生成随机源
+		// SecretKeySpec key2 = null;
+		// SecureRandom random =
+		// SecureRandom.getInstance("SHA1PRNG");
+		// random.setSeed(secret.getBytes());
+		// keygen.init(128, random);
+		byte[] decodeBytes = aesSimpleCrypt(secret, HexHelper.decode(content), Cipher.DECRYPT_MODE);
+		return new String(decodeBytes, CharsetHelper.defaultCharset());
+	}
+
+	/**
+	 * AES解密
+	 * 
+	 * @param secret 密钥
+	 * @param content 16进制解码后的字节数组
+	 * @return 解密后的字符串
+	 */
+	public static String aesDecrypt(byte[] secret, byte[] content) {
+		AssertHelper.notNull(secret, "密钥不能为空!");
+		AssertHelper.notNull(content, "加密内容不能为空!");
+		// 若是将此解密方法放到linux机器报错,则使用以下方法生成随机源
+		// SecretKeySpec key2 = null;
+		// SecureRandom random =
+		// SecureRandom.getInstance("SHA1PRNG");
+		// random.setSeed(secret.getBytes());
+		// keygen.init(128, random);
+		byte[] decodeBytes = aesSimpleCrypt(secret, content, Cipher.DECRYPT_MODE);
+		return new String(decodeBytes, CharsetHelper.defaultCharset());
+	}
+
+	/**
+	 * AES解密
+	 * 
 	 * @param secret 密钥,必须是16的倍数
 	 * @param content 需解密16进制字符串
 	 * @return 解密后的字符串
@@ -76,9 +116,9 @@ public class DigestHelper {
 		// SecureRandom.getInstance("SHA1PRNG");
 		// random.setSeed(secret.getBytes());
 		// keygen.init(128, random);
-		byte[] byte_decode = aesSimpleCrypt(secret.getBytes(CharsetHelper.defaultCharset()), HexHelper.decode(content),
+		byte[] decodeBytes = aesSimpleCrypt(secret.getBytes(CharsetHelper.defaultCharset()), HexHelper.decode(content),
 				Cipher.DECRYPT_MODE);
-		return new String(byte_decode, CharsetHelper.defaultCharset());
+		return new String(decodeBytes, CharsetHelper.defaultCharset());
 	}
 
 	/**
@@ -93,6 +133,19 @@ public class DigestHelper {
 		AssertHelper.notBlank(content, "加密内容不能为空!");
 		return HexHelper.encodeHexString(
 				aesSimpleCrypt(secret, content.getBytes(CharsetHelper.defaultCharset()), Cipher.ENCRYPT_MODE));
+	}
+
+	/**
+	 * AES加密,若使用des加密,可将密钥生成器的随机源改为56
+	 * 
+	 * @param secret 密钥
+	 * @param content 加密内容
+	 * @return 加密转换为16进制之后的大写字符串
+	 */
+	public static String aesEncrypt(byte[] secret, byte[] content) {
+		AssertHelper.notNull(secret, "密钥不能为空!");
+		AssertHelper.notNull(content, "加密内容不能为空!");
+		return HexHelper.encodeHexString(aesSimpleCrypt(secret, content, Cipher.ENCRYPT_MODE));
 	}
 
 	/**
@@ -170,11 +223,11 @@ public class DigestHelper {
 		SecretKey key = new SecretKeySpec(raw, CryptType.AES.getType());
 		try {
 			// 根据指定算法AES生成密码器
-			Cipher cip = Cipher.getInstance("AES/ECB/PKCS5Padding");
+			Cipher cipher = Cipher.getInstance(CryptType.AES_CIPHER.getType());
 			// 初始化密码器,第一个参数为加密(Encrypt_mode)或解密(Decrypt_mode),第二个参数为使用的KEY
-			cip.init(mode, key);
+			cipher.init(mode, key);
 			// 根据密码器的初始化方式--加密/解密
-			return cip.doFinal(content);
+			return cipher.doFinal(content);
 		} catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | NoSuchAlgorithmException
 				| NoSuchPaddingException e) {
 			e.printStackTrace();
@@ -192,7 +245,7 @@ public class DigestHelper {
 	public static String desEncrypt(String encryptString, String encryptKey) {
 		SecretKeySpec key = new SecretKeySpec(encryptKey.getBytes(), CryptType.DES.getType());
 		try {
-			Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+			Cipher cipher = Cipher.getInstance(CryptType.DES_CIPHER.getType());
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			return Base64.getEncoder().encodeToString(cipher.doFinal(encryptString.getBytes()));
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException
@@ -213,7 +266,7 @@ public class DigestHelper {
 		byte[] byteMi = Base64.getDecoder().decode(decryptString);
 		SecretKeySpec key = new SecretKeySpec(decryptKey.getBytes(), CryptType.DES.getType());
 		try {
-			Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+			Cipher cipher = Cipher.getInstance(CryptType.DES_CIPHER.getType());
 			cipher.init(Cipher.DECRYPT_MODE, key);
 			return new String(cipher.doFinal(byteMi));
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException
@@ -390,8 +443,20 @@ public class DigestHelper {
 	 * RSA私钥解密
 	 * 
 	 * @param privateKeyStr 私钥字符串
-	 * @param encryptedContent 加密数据,若是分段加密,则需要分段解密
-	 * @return 加密后字符串
+	 * @param encryptedContent 未经Base64解码的加密数据
+	 * @return 解密后字符串
+	 */
+	public static String rsaDecrypt(String privateKeyStr, byte[] encryptedContent) {
+		RSAPrivateKey rsaPrivateKey = rsaPrivateKey(privateKeyStr);
+		return rsaDecrypt(rsaPrivateKey, encryptedContent);
+	}
+
+	/**
+	 * RSA私钥解密
+	 * 
+	 * @param privateKeyStr 私钥字符串
+	 * @param encryptedContent 未经Base64解码的加密数据
+	 * @return 解密后字符串
 	 */
 	public static String rsaDecrypt(String privateKeyStr, String encryptedContent) {
 		RSAPrivateKey rsaPrivateKey = rsaPrivateKey(privateKeyStr);
@@ -402,25 +467,23 @@ public class DigestHelper {
 	 * RSA私钥解密
 	 * 
 	 * @param privateKey 私钥
-	 * @param encryptedContent 加密数据,若是分段加密,则需要分段解密
-	 * @return 加密后字符串
+	 * @param encryptedContent 未经Base64解码的加密数据
+	 * @return 解密后字符串
 	 */
-	public static String rsaDecrypt(PrivateKey privateKey, String encryptedContent) {
-		// base64编码规定一行字符串不能超过76个,超过换行,换行符会导致编码失败
-		byte[] encryptedData = Base64.getDecoder().decode(encryptedContent.replaceAll("\r|\n", ""));
+	public static String rsaDecrypt(PrivateKey privateKey, byte[] encryptedContent) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
 			Cipher cipher = Cipher.getInstance(CryptType.RSA.getType());
 			cipher.init(Cipher.DECRYPT_MODE, privateKey);
-			int length = encryptedData.length;
+			int length = encryptedContent.length;
 			int offset = 0;
 			int i = 0;
 			byte[] cache;
 			// 对数据分段解密
 			for (; length - offset > 0; offset = i * MAX_DECRYPT_BLOCK) {
 				if (length - offset > MAX_DECRYPT_BLOCK) {
-					cache = cipher.doFinal(encryptedData, offset, MAX_DECRYPT_BLOCK);
+					cache = cipher.doFinal(encryptedContent, offset, MAX_DECRYPT_BLOCK);
 				} else {
-					cache = cipher.doFinal(encryptedData, offset, length - offset);
+					cache = cipher.doFinal(encryptedContent, offset, length - offset);
 				}
 				out.write(cache, 0, cache.length);
 				i++;
@@ -434,36 +497,38 @@ public class DigestHelper {
 	}
 
 	/**
-	 * RSA公钥加密
+	 * RSA私钥解密
 	 * 
-	 * @param publicKeyStr 公钥字符串
-	 * @param content 加密内容长度受秘钥长度限制,若加密内容长度大于(秘钥长度(1024)/8-11=117), 则需要分段加密
+	 * @param privateKey 私钥
+	 * @param encryptedContent 未经Base64解码的加密数据
+	 * @return 解密后字符串
 	 */
-	public static String rsaEncrypt(String publicKeyStr, String content) {
-		RSAPublicKey rsaPublicKey = rsaPublicKey(publicKeyStr);
-		return rsaEncrypt(rsaPublicKey, content);
+	public static String rsaDecrypt(PrivateKey privateKey, String encryptedContent) {
+		// base64编码规定一行字符串不能超过76个,超过换行,换行符会导致编码失败
+		byte[] encryptedData = Base64.getDecoder().decode(encryptedContent.replaceAll("\r|\n", ""));
+		return rsaDecrypt(privateKey, encryptedData);
 	}
 
 	/**
-	 * RSA公钥加密
+	 * RSA公钥加密,私钥解密
 	 * 
-	 * @param publicKey
+	 * @param publicKey 公钥
 	 * @param content 加密内容长度受秘钥长度限制,若加密内容长度大于(秘钥长度(1024)/8-11=117), 则需要分段加密
+	 * @return Base64编码后的的加密字符串
 	 */
-	public static String rsaEncrypt(PublicKey publicKey, String content) {
-		byte[] plainText = content.getBytes(CharsetHelper.defaultCharset());
+	public static String rsaEncrypt(PublicKey publicKey, byte[] content) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
 			Cipher cipher = Cipher.getInstance(CryptType.RSA.getType());
 			cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-			int inputLen = plainText.length;
+			int length = content.length;
 			int offset = 0;
 			byte[] cache;
 			int i = 0;
-			for (; inputLen - offset > 0; offset = i * MAX_ENCRYPT_BLOCK) {
-				if (inputLen - offset > MAX_ENCRYPT_BLOCK) {
-					cache = cipher.doFinal(plainText, offset, MAX_ENCRYPT_BLOCK);
+			for (; length - offset > 0; offset = i * MAX_ENCRYPT_BLOCK) {
+				if (length - offset > MAX_ENCRYPT_BLOCK) {
+					cache = cipher.doFinal(content, offset, MAX_ENCRYPT_BLOCK);
 				} else {
-					cache = cipher.doFinal(plainText, offset, inputLen - offset);
+					cache = cipher.doFinal(content, offset, length - offset);
 				}
 				out.write(cache, 0, cache.length);
 				i++;
@@ -474,6 +539,68 @@ public class DigestHelper {
 			e.printStackTrace();
 			throw new ResultException(e.getMessage());
 		}
+	}
+
+	/**
+	 * RSA公钥加密,私钥解密
+	 * 
+	 * @param publicKey 公钥
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容长度大于(秘钥长度(1024)/8-11=117), 则需要分段加密
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String rsaEncrypt(PublicKey publicKey, String content) {
+		byte[] plainText = content.getBytes(CharsetHelper.defaultCharset());
+		return rsaEncrypt(publicKey, plainText);
+	}
+
+	/**
+	 * RSA公钥加密,私钥解密
+	 * 
+	 * @param publicKey 公钥
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容长度大于(秘钥长度(1024)/8-11=117), 则需要分段加密
+	 * @param charset 字符集
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String rsaEncrypt(PublicKey publicKey, String content, Charset charset) {
+		byte[] plainText = content.getBytes(CharsetHelper.defaultCharset(charset));
+		return rsaEncrypt(publicKey, plainText);
+	}
+
+	/**
+	 * RSA公钥加密,私钥解密
+	 * 
+	 * @param publicKey 公钥
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容长度大于(秘钥长度(1024)/8-11=117), 则需要分段加密
+	 * @param charset 字符集
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String rsaEncrypt(PublicKey publicKey, String content, String charset) {
+		byte[] plainText = content.getBytes(CharsetHelper.defaultCharset(charset));
+		return rsaEncrypt(publicKey, plainText);
+	}
+
+	/**
+	 * RSA公钥加密,私钥解密
+	 * 
+	 * @param publicKeyStr 公钥字符串
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容长度大于(秘钥长度(1024)/8-11=117), 则需要分段加密
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String rsaEncrypt(String publicKeyStr, byte[] content) {
+		RSAPublicKey rsaPublicKey = rsaPublicKey(publicKeyStr);
+		return rsaEncrypt(rsaPublicKey, content);
+	}
+
+	/**
+	 * RSA公钥加密,私钥解密
+	 * 
+	 * @param publicKeyStr 公钥字符串
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容长度大于(秘钥长度(1024)/8-11=117), 则需要分段加密
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String rsaEncrypt(String publicKeyStr, String content) {
+		RSAPublicKey rsaPublicKey = rsaPublicKey(publicKeyStr);
+		return rsaEncrypt(rsaPublicKey, content);
 	}
 
 	/**
@@ -544,18 +671,52 @@ public class DigestHelper {
 	}
 
 	/**
-	 * RSA私钥签名,和加密正好相反
+	 * RSA私钥签名,公钥验签
 	 * 
-	 * @param data 签名数据
+	 * @param content 签名数据
 	 * @param privateKeyStr 私钥字符串
 	 * @return 签名后的字节数组
 	 */
-	public static byte[] rsaSign(byte[] data, String privateKeyStr) {
+	public static byte[] rsaSign(String content, String privateKeyStr) {
+		return rsaSign(content.getBytes(), privateKeyStr);
+	}
+
+	/**
+	 * RSA私钥签名,公钥验签
+	 * 
+	 * @param content 签名数据
+	 * @param privateKeyStr 私钥字符串
+	 * @return 签名后的字节数组
+	 */
+	public static byte[] rsaSign(byte[] content, String privateKeyStr) {
+		PrivateKey privateKey = rsaPrivateKey(privateKeyStr);
+		return rsaSign(content, privateKey);
+	}
+
+	/**
+	 * RSA私钥签名,公钥验签
+	 * 
+	 * @param content 签名数据
+	 * @param privateKeyStr 私钥字符串
+	 * @param charset 字符集
+	 * @return 签名后的字节数组
+	 */
+	public static byte[] rsaSign(String content, String privateKeyStr, Charset charset) {
+		return rsaSign(content.getBytes(CharsetHelper.defaultCharset(charset)), privateKeyStr);
+	}
+
+	/**
+	 * RSA私钥签名,公钥验签
+	 * 
+	 * @param content 签名数据
+	 * @param privateKey 私钥
+	 * @return 签名后的字节数组
+	 */
+	public static byte[] rsaSign(byte[] content, PrivateKey privateKey) {
 		try {
-			PrivateKey privateKey = rsaPrivateKey(privateKeyStr);
 			Signature signature = Signature.getInstance(CryptType.SHA1_WITH_RSA.getType());
 			signature.initSign(privateKey);
-			signature.update(data);
+			signature.update(content);
 			return signature.sign();
 		} catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
 			e.printStackTrace();
@@ -564,55 +725,90 @@ public class DigestHelper {
 	}
 
 	/**
-	 * RSA私钥签名,和加密正好相反
+	 * RSA私钥签名,公钥验签
 	 * 
-	 * @param data 签名数据
+	 * @param content 签名数据
 	 * @param privateKeyStr 私钥字符串
-	 * @return 签名后的Base64字符串
+	 * @return Base64编码后的签名字符串
 	 */
-	public static String rsaSignString(byte[] data, String privateKeyStr) {
-		byte[] byteSign = rsaSign(data, privateKeyStr);
+	public static String rsaSignString(String content, String privateKeyStr) {
+		return rsaSignString(content.getBytes(), privateKeyStr);
+	}
+
+	/**
+	 * RSA私钥签名,公钥验签
+	 * 
+	 * @param content 签名数据
+	 * @param privateKeyStr 私钥字符串
+	 * @return Base64编码后的签名字符串
+	 */
+	public static String rsaSignString(byte[] content, String privateKeyStr) {
+		byte[] byteSign = rsaSign(content, privateKeyStr);
 		return Base64.getEncoder().encodeToString(byteSign);
 	}
 
 	/**
-	 * RSA公钥验证
+	 * RSA私钥签名,公钥验签
 	 * 
-	 * @param data 原数据
+	 * @param content 签名数据
+	 * @param privateKeyStr 私钥字符串
+	 * @param charset 字符集
+	 * @return Base64编码后的签名字符串
+	 */
+	public static String rsaSignString(String content, String privateKeyStr, Charset charset) {
+		return rsaSignString(content.getBytes(CharsetHelper.defaultCharset(charset)), privateKeyStr);
+	}
+
+	/**
+	 * RSA公钥验签
+	 * 
+	 * @param content 原数据
 	 * @param sign 签名后的字符串
 	 * @param publicKeyStr 公钥字符串
 	 * @return 验证是否正确.true->正确,false->错误
 	 */
-	public static boolean rsaVerify(String data, String sign, String publicKeyStr) {
-		return rsaVerify(data.getBytes(), Base64.getDecoder().decode(sign), publicKeyStr);
+	public static boolean rsaVerifySign(String content, String sign, String publicKeyStr) {
+		return rsaVerifySign(content.getBytes(), Base64.getDecoder().decode(sign), publicKeyStr);
 	}
 
 	/**
-	 * RSA公钥验证
+	 * RSA公钥验签
 	 * 
-	 * @param data 原数据字节数组
-	 * @param sign 签名后的字符串
+	 * @param content 原数据
+	 * @param sign 未经Base64解码的签名数据
 	 * @param publicKeyStr 公钥字符串
 	 * @return 验证是否正确.true->正确,false->错误
 	 */
-	public static boolean rsaVerify(byte[] data, String sign, String publicKeyStr) {
-		return rsaVerify(data, Base64.getDecoder().decode(sign), publicKeyStr);
+	public static boolean rsaVerifySign(byte[] content, String sign, String publicKeyStr) {
+		return rsaVerifySign(content, Base64.getDecoder().decode(sign), publicKeyStr);
 	}
 
 	/**
-	 * RSA公钥验证
+	 * RSA公钥验签
+	 * 
+	 * @param content 原数据
+	 * @param sign 签名数据
+	 * @param publicKeyStr 公钥字符串
+	 * @return 验证是否正确.true->正确,false->错误
+	 */
+	public static boolean rsaVerifySign(byte[] content, byte[] sign, String publicKeyStr) {
+		PublicKey publicKey = rsaPublicKey(publicKeyStr);
+		return rsaVerifySign(content, sign, publicKey);
+	}
+
+	/**
+	 * RSA公钥验签
 	 * 
 	 * @param data 原数据字节数组
 	 * @param sign 签名后经过Base64解码的字节数组
-	 * @param publicKeyStr 公钥字符串
+	 * @param publicKey 公钥
 	 * @return 验证是否正确.true->正确,false->错误
 	 */
-	public static boolean rsaVerify(byte[] data, byte[] sign, String publicKeyStr) {
-		PublicKey publicKey = rsaPublicKey(publicKeyStr);
+	public static boolean rsaVerifySign(byte[] content, byte[] sign, PublicKey publicKey) {
 		try {
 			Signature signature = Signature.getInstance(CryptType.SHA1_WITH_RSA.getType());
 			signature.initVerify(publicKey);
-			signature.update(data);
+			signature.update(content);
 			return signature.verify(sign);
 		} catch (NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
 			e.printStackTrace();
