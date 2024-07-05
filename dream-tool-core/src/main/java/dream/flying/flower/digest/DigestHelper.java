@@ -242,33 +242,44 @@ public class DigestHelper {
 	/**
 	 * des加密
 	 * 
-	 * @param encryptString 待加密字符串
-	 * @param encryptKey 加密key
+	 * @param secretKey 加密key
+	 * @param content 待加密字符串
 	 * @return 加密后的base64字符串
 	 */
-	public static String desEncrypt(String encryptString, String encryptKey) {
-		SecretKeySpec key = new SecretKeySpec(encryptKey.getBytes(), CryptType.DES.getType());
+	public static String desEncrypt(byte[] secretKey, String content) {
+		SecretKeySpec key = new SecretKeySpec(secretKey, CryptType.DES.getType());
 		try {
 			Cipher cipher = Cipher.getInstance(CryptType.DES_CIPHER.getType());
 			cipher.init(Cipher.ENCRYPT_MODE, key);
-			return Base64.getEncoder().encodeToString(cipher.doFinal(encryptString.getBytes()));
+			return Base64.getEncoder().encodeToString(cipher.doFinal(content.getBytes()));
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException
 				| BadPaddingException e) {
 			e.printStackTrace();
+			throw new ResultException(e.getMessage());
 		}
-		return null;
+	}
+
+	/**
+	 * des加密
+	 * 
+	 * @param secretKey 加密key
+	 * @param content 待加密字符串
+	 * @return 加密后的base64字符串
+	 */
+	public static String desEncrypt(String secretKey, String content) {
+		return desEncrypt(secretKey.getBytes(), content);
 	}
 
 	/**
 	 * des解密
 	 * 
-	 * @param decryptString 待解密base64字符串
-	 * @param decryptKey 解密key
+	 * @param secretKey 解密key
+	 * @param content 待解密base64字符串
 	 * @return 加密后的字符串
 	 */
-	public static String desDecrypt(String decryptString, String decryptKey) {
-		byte[] byteMi = Base64.getDecoder().decode(decryptString);
-		SecretKeySpec key = new SecretKeySpec(decryptKey.getBytes(), CryptType.DES.getType());
+	public static String desDecrypt(byte[] secretKey, String content) {
+		byte[] byteMi = Base64.getDecoder().decode(content);
+		SecretKeySpec key = new SecretKeySpec(secretKey, CryptType.DES.getType());
 		try {
 			Cipher cipher = Cipher.getInstance(CryptType.DES_CIPHER.getType());
 			cipher.init(Cipher.DECRYPT_MODE, key);
@@ -278,6 +289,17 @@ public class DigestHelper {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	/**
+	 * des解密
+	 * 
+	 * @param secretKey 解密key
+	 * @param content 待解密base64字符串
+	 * @return 加密后的字符串
+	 */
+	public static String desDecrypt(String secretKey, String content) {
+		return desDecrypt(secretKey.getBytes(), content);
 	}
 
 	/**
