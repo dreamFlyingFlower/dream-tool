@@ -33,6 +33,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import dream.flying.flower.binary.HexHelper;
 import dream.flying.flower.collection.MapHelper;
+import dream.flying.flower.digest.enums.CryptKeyType;
 import dream.flying.flower.digest.enums.CryptType;
 import dream.flying.flower.digest.enums.MessageDigestType;
 import dream.flying.flower.helper.CharsetHelper;
@@ -48,12 +49,6 @@ import dream.flying.flower.result.ResultException;
  * @git {@link https://github.com/dreamFlyingFlower}
  */
 public class DigestHelper {
-
-	/** 加解密生成公私钥Map的公钥key */
-	public final static String PUBLIC_KEY = "publicKey";
-
-	/** 加解密生成公私钥Map的私钥key */
-	public final static String PRIVATE_KEY = "privateKey";
 
 	/** RSA最大加密明文大小 */
 	private final static int MAX_ENCRYPT_BLOCK = 117;
@@ -634,7 +629,7 @@ public class DigestHelper {
 	 * 
 	 * @return 公私钥键值对,公私钥都已经经过base64编码
 	 */
-	public static Map<String, String> rsaGenerateKey() {
+	public static Map<CryptKeyType, String> rsaGenerateKey() {
 		return rsaGenerateKey(1024);
 	}
 
@@ -643,7 +638,7 @@ public class DigestHelper {
 	 * 
 	 * @return 公私钥键值对,公私钥都已经经过base64编码
 	 */
-	public static Map<String, String> rsaGenerateKey(int length) {
+	public static Map<CryptKeyType, String> rsaGenerateKey(int length) {
 		if (length % 512 != 0) {
 			throw new ResultException("密钥长度错误,必须是512的倍数");
 		}
@@ -652,8 +647,11 @@ public class DigestHelper {
 			key.initialize(length);
 			KeyPair keyPair = key.generateKeyPair();
 			return MapHelper
-					.builderGeneric(PUBLIC_KEY, Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()))
-					.put(PRIVATE_KEY, Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded())).build();
+					.builderGeneric(CryptKeyType.PUBLIC_KEY,
+							Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()))
+					.put(CryptKeyType.PRIVATE_KEY,
+							Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded()))
+					.build();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			throw new ResultException(e.getMessage());

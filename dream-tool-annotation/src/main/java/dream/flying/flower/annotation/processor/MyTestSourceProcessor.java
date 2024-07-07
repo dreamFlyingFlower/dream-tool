@@ -1,4 +1,4 @@
-package com.wy.annotation.processor;
+package dream.flying.flower.annotation.processor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,8 +52,9 @@ import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
-import com.wy.annotation.TestSource;
-import com.wy.annotation.util.AnnotationUtil;
+
+import dream.flying.flower.annotation.TestSource;
+import dream.flying.flower.annotation.util.AnnotationUtil;
 
 /**
  * 处理编译时注解{@link TestSource}.注意,编译时注解还没有字节码文件,所以用底层反射会抛异常

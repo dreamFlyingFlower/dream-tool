@@ -1,4 +1,4 @@
-package com.wy.annotation.util;
+package dream.flying.flower.annotation.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +23,9 @@ import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
-import com.wy.annotation.enums.SpringEnum;
-import com.wy.annotation.enums.SpringRequestMethod;
+
+import dream.flying.flower.annotation.enums.SpringEnum;
+import dream.flying.flower.annotation.enums.SpringRequestMethod;
 
 /**
  * 构建内部类

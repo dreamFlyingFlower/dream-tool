@@ -1,4 +1,4 @@
-package com.wy.annotation.util;
+package dream.flying.flower.annotation.util;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -27,8 +27,9 @@ import com.sun.tools.javac.tree.JCTree.JCVariableDecl;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
-import com.wy.annotation.enums.AnnotationEnum;
-import com.wy.collection.MapHelper;
+
+import dream.flying.flower.annotation.enums.AnnotationEnum;
+import dream.flying.flower.collection.MapHelper;
 
 /**
  * 注解工具类

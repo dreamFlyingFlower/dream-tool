@@ -1,4 +1,4 @@
-package com.wy.annotation.processor;
+package dream.flying.flower.annotation.processor;
 
 import java.util.Set;
 
@@ -28,9 +28,10 @@ import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
-import com.wy.annotation.ControllerMapping;
-import com.wy.annotation.enums.SpringEnum;
-import com.wy.annotation.util.AnnotationUtil;
+
+import dream.flying.flower.annotation.ControllerMapping;
+import dream.flying.flower.annotation.enums.SpringEnum;
+import dream.flying.flower.annotation.util.AnnotationUtil;
 
 /**
  * 处理{@link ControllerMapping}

@@ -1,9 +1,9 @@
-package com.wy.annotation.enums;
+package dream.flying.flower.annotation.enums;
 
 import java.util.Arrays;
 import java.util.List;
 
-import com.wy.lang.StrHelper;
+import dream.flying.flower.lang.StrHelper;
 
 /**
  * Spring请求方式枚举类型
