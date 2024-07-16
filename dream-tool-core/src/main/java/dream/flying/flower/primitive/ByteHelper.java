@@ -37,4 +37,18 @@ public class ByteHelper {
 		int b3 = (bytes[3] & 0xFF) << (3 * 8);
 		return b0 | b1 | b2 | b3;
 	}
+
+	/**
+	 * 将字节数组转换为String
+	 * 
+	 * @param bytes 字节数组
+	 * @return String
+	 */
+	public static String toString(byte[] bytes) {
+		String result = "";
+		for (Byte b : bytes) {
+			result += (char) b.intValue();
+		}
+		return result;
+	}
 }

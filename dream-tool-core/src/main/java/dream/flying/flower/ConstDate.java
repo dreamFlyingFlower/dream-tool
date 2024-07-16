@@ -45,6 +45,12 @@ public interface ConstDate {
 
 	String DATEMILSECWEEK_NONE = "yyyyMMdd HHmmssSSS EEE";
 
+	String DATETIME_ISO = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+
+	String DATETIME_ISO_SLASH = "yyyy/MM/dd'T'HH:mm:ss.SSS'Z'";
+
+	String DATETIME_ISO_NONE = "yyyyMMdd'T'HH:mm:ss.SSS'Z'";
+
 	String TIME = "HH:mm:ss";
 
 	String TIMEWEEK = "HH:mm:ss EEE";

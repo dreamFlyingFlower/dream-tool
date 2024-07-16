@@ -69,6 +69,7 @@ import dream.flying.flower.ConstFile;
 import dream.flying.flower.ConstIO;
 import dream.flying.flower.ConstLang;
 import dream.flying.flower.binary.HexHelper;
+import dream.flying.flower.digest.DigestHelper;
 import dream.flying.flower.helper.CharsetHelper;
 import dream.flying.flower.helper.UrlHelper;
 import dream.flying.flower.io.IOHelper;
@@ -77,8 +78,7 @@ import dream.flying.flower.lang.StrHelper;
 import dream.flying.flower.result.ResultException;
 
 /**
- * File工具类,所有需要用到字符串编码的地方,都使用UTF-8 FIXME
- * ,{@link org.springframework.util.FastByteArrayOutputStream}
+ * File工具类,所有需要用到字符串编码的地方,都使用UTF-8 FIXME ,{@link org.springframework.util.FastByteArrayOutputStream}
  * 
  * @author 飞花梦影
  * @date 2021-02-28 20:10:31
@@ -170,6 +170,33 @@ public class FileHelper {
 	}
 
 	/**
+	 * 使用MD5方式校验文件
+	 * 
+	 * @param file 需要进行校验的文件
+	 * @param md5 文件MD5值
+	 * @return 校验结果:true->同文件;false->不同文件
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	public static boolean checksumMd5(File file, String md5) throws FileNotFoundException, IOException {
+		String md5value = FileHelper.generateChecksumMd5(file);
+		return md5value.equals(md5);
+	}
+
+	/**
+	 * 使用MD5方式校验文件
+	 * 
+	 * @param is 需要进行校验的文件流
+	 * @param md5 文件MD5值
+	 * @return 校验结果:true->同文件;false->不同文件
+	 * @throws IOException
+	 */
+	public static boolean checksumMd5(InputStream is, String md5) throws IOException {
+		String md5value = generateChecksumMd5(is);
+		return md5value.equals(md5);
+	}
+
+	/**
 	 * 使用指定的校验和对象计算文件的校验和
 	 *
 	 * @param file 需要进行校验的文件
@@ -179,7 +206,7 @@ public class FileHelper {
 	 * @throws IllegalArgumentException if the file is a directory
 	 * @throws IOException if an IO error occurs reading the file
 	 */
-	public static Checksum checksum(final File file, final Checksum checksum)
+	public static Checksum generateChecksum(final File file, final Checksum checksum)
 			throws FileNotFoundException, IOException {
 		if (file.isDirectory()) {
 			throw new IllegalArgumentException("Checksums can't be computed on directories");
@@ -199,8 +226,34 @@ public class FileHelper {
 	 * @throws IllegalArgumentException if the file is a directory
 	 * @throws IOException if an IO error occurs reading the file
 	 */
-	public static long checksumCRC32(final File file) throws IOException {
-		return checksum(file, new CRC32()).getValue();
+	public static long generateChecksumCrc32(final File file) throws IOException {
+		return generateChecksum(file, new CRC32()).getValue();
+	}
+
+	/**
+	 * 使用MD5方式校验文件,生成MD5值
+	 * 
+	 * @param file 需要进行校验的文件
+	 * @return 校验值
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	public static String generateChecksumMd5(File file) throws IOException {
+		try (FileInputStream in = new FileInputStream(file);) {
+			MappedByteBuffer byteBuffer = in.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+			return DigestHelper.md5Hex(byteBuffer);
+		}
+	}
+
+	/**
+	 * 使用MD5方式校验文件,生成MD5值,需自行关闭流
+	 * 
+	 * @param is 需要进行校验的文件流
+	 * @return 校验值
+	 * @throws IOException
+	 */
+	public static String generateChecksumMd5(InputStream is) throws IOException {
+		return DigestHelper.md5Hex(IOHelper.toByteArray(is));
 	}
 
 	/**
@@ -1365,8 +1418,7 @@ public class FileHelper {
 	 * @param from 需要移动的目录
 	 * @param to 目标目录
 	 * @param create true->当目标目录不存在时,创建,false->当目标目录不存在时,不创建
-	 * @throws FileExistsException if the directory exists in the destination
-	 *         directory
+	 * @throws FileExistsException if the directory exists in the destination directory
 	 * @throws IOException if source or destination is invalid
 	 */
 	public static void moveDirectory(final File from, final File to, final boolean create) throws IOException {
@@ -1482,8 +1534,7 @@ public class FileHelper {
 	 * @param from 需要移动的文件或目录
 	 * @param to 目标目录
 	 * @param create true->当目标目录不存在时,创建,false->当目标目录不存在时,不创建
-	 * @throws FileExistsException if the directory or file exists in the
-	 *         destination directory
+	 * @throws FileExistsException if the directory or file exists in the destination directory
 	 * @throws IOException if source or destination is invalid
 	 */
 	public static void moveToDirectory(final File from, final File to, final boolean create) throws IOException {
@@ -2239,8 +2290,7 @@ public class FileHelper {
 	 * @param charset 字符编码
 	 * @param lines 写入的数据
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
-	 *         by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines)
 			throws IOException {
@@ -2255,8 +2305,7 @@ public class FileHelper {
 	 * @param lines 写入的数据
 	 * @param append 文件操作模式,true->追加写入,false->覆盖写入
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
-	 *         by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
 			final boolean append) throws IOException {
@@ -2271,8 +2320,7 @@ public class FileHelper {
 	 * @param lines 写入的数据
 	 * @param lineEnding 文件换行符
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
-	 *         by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
 	 */
 	public static void writeLines(final File file, final String charsetName, final Collection<?> lines,
 			final String lineEnding) throws IOException {
@@ -2287,8 +2335,7 @@ public class FileHelper {
 	 * @param lines 写入的数据
 	 * @param lineEnding 文件换行符
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
-	 *         by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
 			final String lineEnding) throws IOException {
@@ -2304,8 +2351,7 @@ public class FileHelper {
 	 * @param lineEnding 文件换行符
 	 * @param append 文件操作模式,true->追加写入,false->覆盖写入
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
-	 *         by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
 			final String lineEnding, final boolean append) throws IOException {

@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.CropImageFilter;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,6 +23,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import dream.flying.flower.binary.Base64Helper;
 import dream.flying.flower.io.file.FileNameHelper;
 import dream.flying.flower.result.ResultException;
 
@@ -84,10 +86,30 @@ public class ImageHelper {
 		}
 	}
 
+	public static String encodeImage(BufferedImage bufferedImage) {
+		try {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			ImageIO.write(bufferedImage, "png", stream);
+			String b64Image = "data:image/png;base64," + Base64.getEncoder().encodeToString(stream.toByteArray());
+			stream.close();
+			return b64Image;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	public static String encodeImage(byte[] byteImage) {
+		return "data:image/png;base64," + Base64.getEncoder().encodeToString(byteImage);
+	}
+
 	/**
 	 * 将图片文件转成base64
+	 * 
+	 * @param path 文件路径
+	 * @return Base64字符串
 	 */
-	public static String getBase64Image(String path) {
+	public static String fileToBase64(String path) {
 		try (InputStream is = new FileInputStream(path);) {
 			byte[] b = new byte[is.available()];
 			is.read(b);
@@ -96,6 +118,34 @@ public class ImageHelper {
 			e.printStackTrace();
 			throw new ResultException("生成Base64图片失败:" + e.getMessage());
 		}
+	}
+
+	/**
+	 * base64 Code decode String save to targetPath.
+	 * 
+	 * @param base64Code String
+	 * @param targetPath String
+	 * @throws Exception e
+	 */
+	public static void decodeBase64ToFile(String base64Code, String targetPath) throws Exception {
+		byte[] buffer = Base64Helper.decode(base64Code);
+		FileOutputStream out = new FileOutputStream(targetPath);
+		out.write(buffer);
+		out.close();
+	}
+
+	/**
+	 * base64 code save to file.
+	 * 
+	 * @param base64Code String
+	 * @param targetPath String
+	 * @throws Exception e
+	 */
+	public static void base64ToFile(String base64Code, String targetPath) throws Exception {
+		byte[] buffer = base64Code.getBytes();
+		FileOutputStream out = new FileOutputStream(targetPath);
+		out.write(buffer);
+		out.close();
 	}
 
 	/**

@@ -24,7 +24,7 @@ public class HexHelper {
 	 * @param data 需要转换的16进制字节数组
 	 * @return 转换编码后解码的字节数组
 	 */
-	public byte[] decode(final byte[] data) {
+	public static byte[] decode(final byte[] data) {
 		return decode(new String(data, ConstLang.DEFAULT_CHARSET).toCharArray());
 	}
 
@@ -35,7 +35,7 @@ public class HexHelper {
 	 * @param charset data需要转换的字符串编码集
 	 * @return 转换编码后解码的字节数组
 	 */
-	public byte[] decode(final byte[] data, Charset charset) {
+	public static byte[] decode(final byte[] data, Charset charset) {
 		return decode(new String(data, CharsetHelper.defaultCharset(charset)).toCharArray());
 	}
 
@@ -46,7 +46,7 @@ public class HexHelper {
 	 * @param encoding data需要转换的字符串编码集字符串
 	 * @return 转换编码后解码的字节数组
 	 */
-	public byte[] decode(final byte[] data, String encoding) {
+	public static byte[] decode(final byte[] data, String encoding) {
 		return decode(new String(data, CharsetHelper.defaultCharset(encoding)).toCharArray());
 	}
 
@@ -56,7 +56,7 @@ public class HexHelper {
 	 * @param buffer 字节缓冲对象
 	 * @return 转换编码后解码的字节数组
 	 */
-	public byte[] decode(final ByteBuffer buffer) {
+	public static byte[] decode(final ByteBuffer buffer) {
 		return decode(new String(toByteArray(buffer), ConstLang.DEFAULT_CHARSET).toCharArray());
 	}
 
@@ -106,7 +106,7 @@ public class HexHelper {
 	 * @param object 需要转换的只含有16进制字符的对象
 	 * @return 16进制解码的源字节数组
 	 */
-	public byte[] decode(final Object object) {
+	public static byte[] decode(final Object object) {
 		if (object instanceof String) {
 			return decode(((String) object).toCharArray());
 		} else if (object instanceof byte[]) {
@@ -124,10 +124,10 @@ public class HexHelper {
 	}
 
 	/**
-	 * 将16进制字符串转换为字节数组,返回字节数组长度
+	 * 将16进制字符串转换为字节数组
 	 *
 	 * @param data 需要转换的只含有16进制字符串
-	 * @return 字符串长度的1/2
+	 * @return 字节数组
 	 */
 	public static byte[] decode(final String data) {
 		return decode(data.toCharArray());
@@ -144,12 +144,33 @@ public class HexHelper {
 	}
 
 	/**
+	 * 将16进制字符串转换为字符串
+	 *
+	 * @param data 需要转换的只含有16进制字符串
+	 * @return 转换后的字符串
+	 */
+	public static String decodeString(final String data) {
+		return new String(decode(data.toCharArray()));
+	}
+
+	/**
+	 * 将16进制字符串转换为字符串
+	 *
+	 * @param data 需要转换的只含有16进制字符串
+	 * @param charset 字符集
+	 * @return 转换后的字符串
+	 */
+	public static String decodeString(final String data, Charset charset) {
+		return new String(decode(data.toCharArray()), charset);
+	}
+
+	/**
 	 * 将字节数组转换为16进制字符串之后再转换为UTF8字节数组
 	 *
 	 * @param data 源字节数组
 	 * @return 转换为16进制字符串之后再转换为UTF8编码的字节数组
 	 */
-	public byte[] encode(final byte[] array) {
+	public static byte[] encode(final byte[] array) {
 		return encodeHexString(array).getBytes(ConstLang.DEFAULT_CHARSET);
 	}
 
@@ -159,7 +180,7 @@ public class HexHelper {
 	 * @param data 源字节缓冲对象
 	 * @return 转换为16进制字符串之后再进行UTF8编码的字节数组,长度是源字节数组的2倍
 	 */
-	public byte[] encode(final ByteBuffer data) {
+	public static byte[] encode(final ByteBuffer data) {
 		return encodeHexString(data).getBytes(ConstLang.DEFAULT_CHARSET);
 	}
 
@@ -169,7 +190,7 @@ public class HexHelper {
 	 * @param object 对象
 	 * @return 结果字符数组,长度是原字节数组的2倍
 	 */
-	public char[] encode(final Object object) {
+	public static char[] encode(final Object object) {
 		byte[] byteArray;
 		if (object instanceof String) {
 			byteArray = ((String) object).getBytes(ConstLang.DEFAULT_CHARSET);
@@ -251,7 +272,7 @@ public class HexHelper {
 	 * @param toDigits 16进制中的字符,必须包含16个字符
 	 * @return 结果字符数组,长度是原字节数组的2倍
 	 */
-	protected static char[] encodeHex(final byte[] data, final char[] toDigits) {
+	public static char[] encodeHex(final byte[] data, final char[] toDigits) {
 		final int l = data.length;
 		final char[] out = new char[l << 1];
 		encodeHex(data, 0, data.length, toDigits, out, 0);
@@ -270,8 +291,7 @@ public class HexHelper {
 	public static char[] encodeHex(final byte[] data, final int byteStart, final int dataLen,
 			final boolean toLowerCase) {
 		final char[] out = new char[dataLen << 1];
-		encodeHex(data, byteStart, dataLen, toLowerCase ? ConstArray.DIGITS_LOWER : ConstArray.DIGITS_UPPER,
-				out, 0);
+		encodeHex(data, byteStart, dataLen, toLowerCase ? ConstArray.DIGITS_LOWER : ConstArray.DIGITS_UPPER, out, 0);
 		return out;
 	}
 
@@ -287,8 +307,8 @@ public class HexHelper {
 	 */
 	public static void encodeHex(final byte[] data, final int byteStart, final int dataLen, final boolean toLowerCase,
 			final char[] charOut, final int charStart) {
-		encodeHex(data, byteStart, dataLen, toLowerCase ? ConstArray.DIGITS_LOWER : ConstArray.DIGITS_UPPER,
-				charOut, charStart);
+		encodeHex(data, byteStart, dataLen, toLowerCase ? ConstArray.DIGITS_LOWER : ConstArray.DIGITS_UPPER, charOut,
+				charStart);
 	}
 
 	/**
@@ -340,7 +360,7 @@ public class HexHelper {
 	 * @param toDigits 16进制中的字符,必须包含16个字符
 	 * @return 转换为16进制之后的字符数组,长度是源字节数组的2倍
 	 */
-	protected static char[] encodeHex(final ByteBuffer byteBuffer, final char[] toDigits) {
+	public static char[] encodeHex(final ByteBuffer byteBuffer, final char[] toDigits) {
 		return encodeHex(toByteArray(byteBuffer), toDigits);
 	}
 
@@ -392,7 +412,7 @@ public class HexHelper {
 	 * @param byteBuffer 源字节缓冲对象
 	 * @return 字节缓冲对象中的字节数组
 	 */
-	private static byte[] toByteArray(final ByteBuffer byteBuffer) {
+	public static byte[] toByteArray(final ByteBuffer byteBuffer) {
 		final int remaining = byteBuffer.remaining();
 		// 若存在字节数组,直接返回,并将position移动到字节数组的位置
 		if (byteBuffer.hasArray()) {
@@ -415,7 +435,7 @@ public class HexHelper {
 	 * @param index 字符索引
 	 * @return int
 	 */
-	protected static int toDigit(final char ch, final int index) {
+	public static int toDigit(final char ch, final int index) {
 		final int digit = Character.digit(ch, 16);
 		if (digit == -1) {
 			throw new ResultException("Illegal hexadecimal character " + ch + " at index " + index);

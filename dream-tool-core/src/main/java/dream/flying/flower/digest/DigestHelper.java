@@ -2,6 +2,7 @@ package dream.flying.flower.digest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -31,6 +32,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import dream.flying.flower.ConstDigest;
 import dream.flying.flower.binary.HexHelper;
 import dream.flying.flower.collection.MapHelper;
 import dream.flying.flower.digest.enums.CryptKeyType;
@@ -49,12 +51,6 @@ import dream.flying.flower.result.ResultException;
  * @git {@link https://github.com/dreamFlyingFlower}
  */
 public class DigestHelper {
-
-	/** RSA最大加密明文大小 */
-	private final static int MAX_ENCRYPT_BLOCK = 117;
-
-	/** RSA最大解密密文大小 */
-	private final static int MAX_DECRYPT_BLOCK = 128;
 
 	/**
 	 * AES解密
@@ -318,6 +314,24 @@ public class DigestHelper {
 	 * 字符串加密
 	 * 
 	 * @param messageDigestType 加密算法
+	 * @param byteBuffer 需要加密的字节数组缓存
+	 * @return 加密后的原始字节数组
+	 */
+	public static byte[] digest(MessageDigestType messageDigestType, ByteBuffer byteBuffer) {
+		try {
+			MessageDigest messageDigest = MessageDigest.getInstance(messageDigestType.getType());
+			messageDigest.update(byteBuffer);
+			return messageDigest.digest();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			throw new ResultException(e.getMessage());
+		}
+	}
+
+	/**
+	 * 字符串加密
+	 * 
+	 * @param messageDigestType 加密算法
 	 * @param content 需要加密的字符串
 	 * @return 加密后的原始字节数组
 	 */
@@ -358,6 +372,17 @@ public class DigestHelper {
 	 */
 	public static String digestHex(MessageDigestType messageDigestType, byte[] bytes) {
 		return HexHelper.encodeHexString(digest(messageDigestType, bytes));
+	}
+
+	/**
+	 * 字符串加密,再进行16进制编码
+	 * 
+	 * @param messageDigestType 加密算法
+	 * @param byteBuffer 需要加密的字节数组缓存
+	 * @return 加密后的16进制大写字符串
+	 */
+	public static String digestHex(MessageDigestType messageDigestType, ByteBuffer byteBuffer) {
+		return HexHelper.encodeHexString(digest(messageDigestType, byteBuffer));
 	}
 
 	/**
@@ -426,6 +451,16 @@ public class DigestHelper {
 	 */
 	public static String md5Hex(byte[] bytes) {
 		return digestHex(MessageDigestType.MD5, bytes);
+	}
+
+	/**
+	 * MD5加密,进行16进制编码,不可逆,无解密,任意长度变等长
+	 * 
+	 * @param byteBuffer 需要进行加密的字节数组缓存
+	 * @return 加密后的16进制大写字符串
+	 */
+	public static String md5Hex(ByteBuffer byteBuffer) {
+		return digestHex(MessageDigestType.MD5, byteBuffer);
 	}
 
 	/**
@@ -500,9 +535,9 @@ public class DigestHelper {
 			int i = 0;
 			byte[] cache;
 			// 对数据分段解密
-			for (; length - offset > 0; offset = i * MAX_DECRYPT_BLOCK) {
-				if (length - offset > MAX_DECRYPT_BLOCK) {
-					cache = cipher.doFinal(encryptedContent, offset, MAX_DECRYPT_BLOCK);
+			for (; length - offset > 0; offset = i * ConstDigest.MAX_DECRYPT_BLOCK) {
+				if (length - offset > ConstDigest.MAX_DECRYPT_BLOCK) {
+					cache = cipher.doFinal(encryptedContent, offset, ConstDigest.MAX_DECRYPT_BLOCK);
 				} else {
 					cache = cipher.doFinal(encryptedContent, offset, length - offset);
 				}
@@ -545,9 +580,9 @@ public class DigestHelper {
 			int offset = 0;
 			byte[] cache;
 			int i = 0;
-			for (; length - offset > 0; offset = i * MAX_ENCRYPT_BLOCK) {
-				if (length - offset > MAX_ENCRYPT_BLOCK) {
-					cache = cipher.doFinal(content, offset, MAX_ENCRYPT_BLOCK);
+			for (; length - offset > 0; offset = i * ConstDigest.MAX_ENCRYPT_BLOCK) {
+				if (length - offset > ConstDigest.MAX_ENCRYPT_BLOCK) {
+					cache = cipher.doFinal(content, offset, ConstDigest.MAX_ENCRYPT_BLOCK);
 				} else {
 					cache = cipher.doFinal(content, offset, length - offset);
 				}
@@ -630,12 +665,13 @@ public class DigestHelper {
 	 * @return 公私钥键值对,公私钥都已经经过base64编码
 	 */
 	public static Map<CryptKeyType, String> rsaGenerateKey() {
-		return rsaGenerateKey(1024);
+		return rsaGenerateKey(ConstDigest.KEY_SIZE_1024);
 	}
 
 	/**
 	 * RSA生成公私钥
 	 * 
+	 * @param length 密钥长度
 	 * @return 公私钥键值对,公私钥都已经经过base64编码
 	 */
 	public static Map<CryptKeyType, String> rsaGenerateKey(int length) {
