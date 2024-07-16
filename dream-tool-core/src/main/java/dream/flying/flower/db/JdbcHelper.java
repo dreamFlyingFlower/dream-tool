@@ -40,78 +40,51 @@ public class JdbcHelper {
 		}
 	}
 
-	public static void release(Connection conn, Statement stmt, ResultSet rs) {
-		if (rs != null)
-			try {
-				rs.close();
-				rs = null;
-			} catch (SQLException e) {
-				System.out.println("SQLException");
-			}
-		if (stmt != null)
-			try {
-				stmt.close();
-				stmt = null;
-			} catch (SQLException e) {
-				System.out.println("SQLException");
-			}
+	public static void release(Connection conn, Statement stmt, ResultSet rs) throws SQLException {
+		if (rs != null) {
+			rs.close();
+			rs = null;
+		}
+		if (stmt != null) {
+			stmt.close();
+			stmt = null;
+		}
 		if (conn != null) {
-			try {
-				conn.close();
-				conn = null;
-			} catch (SQLException e) {
-				System.out.println("SQLException");
-			}
+			conn.close();
+			conn = null;
 		}
 	}
 
-	public static void release(Connection conn, Statement stmt, PreparedStatement pstmt, ResultSet rs) {
-		if (rs != null)
-			try {
-				rs.close();
-				rs = null;
-			} catch (SQLException e) {
-				System.out.println("ResultSet Close Exception");
-			}
-		if (stmt != null)
-			try {
-				stmt.close();
-				stmt = null;
-			} catch (SQLException e) {
-				System.out.println("Statement Close Exception");
-			}
-		if (pstmt != null)
-			try {
-				pstmt.close();
-				pstmt = null;
-			} catch (SQLException e) {
-				System.out.println("PreparedStatement Close Exception");
-			}
+	public static void release(Connection conn, Statement stmt, PreparedStatement pstmt, ResultSet rs)
+			throws SQLException {
+		if (rs != null) {
+			rs.close();
+			rs = null;
+		}
+		if (stmt != null) {
+			stmt.close();
+			stmt = null;
+		}
+		if (pstmt != null) {
+			pstmt.close();
+			pstmt = null;
+		}
 		if (conn != null) {
-			try {
-				conn.close();
-				conn = null;
-			} catch (SQLException e) {
-				System.out.println("Connection Close Exception");
-			}
+			conn.close();
+			conn = null;
 		}
 	}
 
-	public static TableMetaData getMetaData(ResultSet rs) {
-		try {
-			ResultSetMetaData metaData = rs.getMetaData();
-			TableMetaData meta = new TableMetaData(metaData.getTableName(1));
-			int count = metaData.getColumnCount();
-			for (int i = 1; i <= count; i++) {
-				TableColumn column = new TableColumn(metaData.getColumnName(i).toLowerCase(),
-						metaData.getColumnTypeName(i), metaData.getPrecision(i), metaData.getScale(i));
-				meta.getColumns().add(column);
-				meta.getColumnDetail().put(column.getColumn(), column);
-			}
-			return meta;
-		} catch (SQLException e) {
-			e.printStackTrace();
+	public static TableMetaData getMetaData(ResultSet rs) throws SQLException {
+		ResultSetMetaData metaData = rs.getMetaData();
+		TableMetaData meta = new TableMetaData(metaData.getTableName(1));
+		int count = metaData.getColumnCount();
+		for (int i = 1; i <= count; i++) {
+			TableColumn column = new TableColumn(metaData.getColumnName(i).toLowerCase(), metaData.getColumnTypeName(i),
+					metaData.getPrecision(i), metaData.getScale(i));
+			meta.getColumns().add(column);
+			meta.getColumnDetail().put(column.getColumn(), column);
 		}
-		return null;
+		return meta;
 	}
 }
