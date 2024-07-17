@@ -1,6 +1,9 @@
 package dream.flying.flower.lang;
 
+import java.util.Collection;
 import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.regex.Pattern;
 
 import dream.flying.flower.ConstLang;
 import dream.flying.flower.helper.ArrayHelper;
@@ -33,20 +36,6 @@ public class CharSequenceHelper {
 			}
 		}
 		return count;
-	}
-
-	/**
-	 * 判断源字符序列中是否含有指定字符序列中至少一个字符,大小写敏感
-	 *
-	 * @param cs 字符序列
-	 * @param searchChars 指定字符序列
-	 * @return true当源字符序列中含有至少一个指定字符序列中的字符
-	 */
-	public static boolean containsAny(final CharSequence cs, final CharSequence searchChars) {
-		if (cs == null || searchChars == null) {
-			return false;
-		}
-		return containsAny(cs, searchChars.toString().toCharArray());
 	}
 
 	/**
@@ -84,6 +73,41 @@ public class CharSequenceHelper {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 判断源字符序列中是否含有指定字符序列中至少一个字符,大小写敏感
+	 *
+	 * @param cs 字符序列
+	 * @param searchChars 指定字符序列
+	 * @return true当源字符序列中含有至少一个指定字符序列中的字符
+	 */
+	public static boolean containsAny(final CharSequence cs, final CharSequence searchChars) {
+		if (cs == null || searchChars == null) {
+			return false;
+		}
+		return containsAny(cs, searchChars.toString().toCharArray());
+	}
+
+	/**
+	 * 是否包含中文
+	 * 
+	 * @param cs 字符序列
+	 * @return true->是;false->否
+	 */
+	public static Boolean containsChinese(final CharSequence cs) {
+		String regEx = "[\u2E80-\u9FFF]+$";
+		return Pattern.compile(regEx).matcher(cs).find();
+	}
+
+	/**
+	 * 检查字符串是否包含小写
+	 * 
+	 * @param str 待检查字符串
+	 * @return true->是;false->否
+	 */
+	public static Boolean containsLower(CharSequence str) {
+		return Pattern.compile("[a-z]").matcher(str).find();
 	}
 
 	/**
@@ -173,6 +197,16 @@ public class CharSequenceHelper {
 	}
 
 	/**
+	 * 字符串是否包含特殊字
+	 * 
+	 * @param cs 源字符序列
+	 * @return true->包含;false->不包含
+	 */
+	public static Boolean containsSpecial(CharSequence cs) {
+		return Pattern.compile(ConstLang.STR_SPECIAL).matcher(cs).find();
+	}
+
+	/**
 	 * 判断源字符序列是否只包含待查找字符数组中的字符
 	 *
 	 * @param cs 源字符序列
@@ -187,6 +221,16 @@ public class CharSequenceHelper {
 			return false;
 		}
 		return indexOfAnyBut(cs, valid) == ConstLang.INDEX_NOT_FOUND;
+	}
+
+	/**
+	 * 检查字符串是否包含大写
+	 * 
+	 * @param str 待检查字符串
+	 * @return true->是;false->否
+	 */
+	public static Boolean containsUpper(CharSequence str) {
+		return Pattern.compile("[A-Z]").matcher(str).find();
 	}
 
 	/**
@@ -801,7 +845,7 @@ public class CharSequenceHelper {
 	}
 
 	/**
-	 * 判断字符序列中是否全是中文,包括中文标点符号等
+	 * 判断字符序列是否全是中文,包括中文标点符号等
 	 * 
 	 * @param cs 需要检查的字符串
 	 * @return true:是,false:不是
@@ -929,6 +973,62 @@ public class CharSequenceHelper {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * 用同一个分隔符将参数连接起来
+	 * 
+	 * @param delimiter 分隔符
+	 * @param css 参数
+	 * @return 最终的字符串
+	 */
+	public static String join(CharSequence delimiter, CharSequence... css) {
+		return String.join(delimiter, css);
+	}
+
+	/**
+	 * 用同一个分隔符将参数连接起来
+	 * 
+	 * @param delimiter 分隔符
+	 * @param css 参数
+	 * @return 最终的字符串
+	 */
+	public static String join(CharSequence delimiter, Collection<CharSequence> css) {
+		return String.join(delimiter, css);
+	}
+
+	/**
+	 * 用同一个分隔符将参数连接起来
+	 * 
+	 * @param delimiter 分隔符
+	 * @param css 参数
+	 * @return 最终的字符串
+	 */
+	public static String joinWithoutBlank(CharSequence delimiter, CharSequence... css) {
+		StringJoiner stringJoiner = new StringJoiner(delimiter);
+		for (CharSequence charSequence : css) {
+			if (isNotBlank(charSequence)) {
+				stringJoiner.add(charSequence);
+			}
+		}
+		return stringJoiner.toString();
+	}
+
+	/**
+	 * 用同一个分隔符将参数连接起来,去除null和空白字符串
+	 * 
+	 * @param delimiter 分隔符
+	 * @param css 参数
+	 * @return 最终的字符串
+	 */
+	public static String joinWithoutBlank(CharSequence delimiter, Collection<CharSequence> css) {
+		StringJoiner stringJoiner = new StringJoiner(delimiter);
+		for (CharSequence charSequence : css) {
+			if (isNotBlank(charSequence)) {
+				stringJoiner.add(charSequence);
+			}
+		}
+		return stringJoiner.toString();
 	}
 
 	/**
@@ -1083,5 +1183,35 @@ public class CharSequenceHelper {
 	 */
 	public static boolean startsWithIgnoreCase(final CharSequence cs, final CharSequence prefix) {
 		return startsWith(cs, prefix, true);
+	}
+
+	/**
+	 * 检查字符串是否以小写开头
+	 * 
+	 * @param str 待检查字符串
+	 * @return true->是;false->否
+	 */
+	public static Boolean startWithLower(CharSequence str) {
+		return Pattern.compile("^[a-z]").matcher(str).find();
+	}
+
+	/**
+	 * 检查字符串是否以数字开头
+	 * 
+	 * @param str 待检查字符串
+	 * @return true->是;false->否
+	 */
+	public static Boolean startWithNumber(CharSequence str) {
+		return Pattern.compile("^[0-9]").matcher(str).find();
+	}
+
+	/**
+	 * 检查字符串是否以大写开头
+	 * 
+	 * @param str 待检查字符串
+	 * @return true->是;false->否
+	 */
+	public static Boolean startWithUpper(CharSequence str) {
+		return Pattern.compile("^[A-Z]").matcher(str).find();
 	}
 }

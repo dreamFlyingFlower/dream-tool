@@ -93,6 +93,9 @@ public interface ConstLang {
 	/** 一个空白字符串 */
 	String STR_SPACE = " ";
 
+	/** 特殊字符串 */
+	String STR_SPECIAL = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#�?…�?&*（）—�?+|{}【�?‘；：�?“�?。，、？]";
+
 	/** 成功 */
 	String STR_SUCCESS = "SUCCESS";
 

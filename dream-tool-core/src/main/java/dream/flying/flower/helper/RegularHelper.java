@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dream.flying.flower.ConstLang;
+import dream.flying.flower.enums.RegexEnum;
 import dream.flying.flower.lang.AssertHelper;
 import dream.flying.flower.lang.StrHelper;
 
@@ -17,6 +18,47 @@ import dream.flying.flower.lang.StrHelper;
  * @git {@link https://github.com/dreamFlyingFlower}
  */
 public class RegularHelper {
+
+	/**
+	 * 是否包含中文
+	 * 
+	 * @param cs 字符序列
+	 * @return true->是;false->否
+	 */
+	public static Boolean containsChinese(final CharSequence cs) {
+		String regEx = "[\u2E80-\u9FFF]+$";
+		return Pattern.compile(regEx).matcher(cs).find();
+	}
+
+	/**
+	 * 检查字符串是否包含小写
+	 * 
+	 * @param str 待检查字符串
+	 * @return true->是;false->否
+	 */
+	public static Boolean containsLower(String str) {
+		return Pattern.compile("[a-z]").matcher(str).find();
+	}
+
+	/**
+	 * 字符串是否包含特殊字
+	 * 
+	 * @param cs 源字符序列
+	 * @return true->包含;false->不包含
+	 */
+	public static Boolean containSpecial(CharSequence cs) {
+		return Pattern.compile(ConstLang.STR_SPECIAL).matcher(cs).find();
+	}
+
+	/**
+	 * 检查字符串是否包含大写
+	 * 
+	 * @param str 待检查字符串
+	 * @return true->是;false->否
+	 */
+	public static Boolean containsUpper(String str) {
+		return Pattern.compile("[A-Z]").matcher(str).find();
+	}
 
 	/**
 	 * 从待查找字符串中查找所有符合条件的字符串
@@ -86,6 +128,39 @@ public class RegularHelper {
 			return matcher.find() ? matcher.group() : null;
 		}
 		return null;
+	}
+
+	/**
+	 * 验证是否为正确的邮箱号
+	 *
+	 * @param email email地址
+	 * @return true->是;false->否
+	 */
+	public static boolean isEmail(String email) {
+		return isMatch(RegexEnum.REGEX_EMAIL, email);
+	}
+
+	/**
+	 * 验证字符串是否符合指定的正则
+	 * 
+	 * @param regexEnum 正则
+	 * @param str 待检查字符串
+	 * @return true->是;false->否
+	 */
+	public static boolean isMatch(RegexEnum regexEnum, String str) {
+		Pattern pattern = Pattern.compile(regexEnum.toString());
+		Matcher matcher = pattern.matcher(str);
+		return matcher.matches();
+	}
+
+	/**
+	 * 验证是否为手机号
+	 *
+	 * @param phoneNo 手机号
+	 * @return true->是;false->否
+	 */
+	public static boolean isPhoneNo(String phoneNo) {
+		return isMatch(RegexEnum.REGEX_PHONE, phoneNo);
 	}
 
 	/**
@@ -216,5 +291,35 @@ public class RegularHelper {
 			return text;
 		}
 		return Pattern.compile(regex, Pattern.DOTALL).matcher(text).replaceAll(replacement);
+	}
+
+	/**
+	 * 检查字符串是否以大写开头
+	 * 
+	 * @param str 待检查字符串
+	 * @return true->是;false->否
+	 */
+	public static Boolean startWithUpper(String str) {
+		return Pattern.compile("^[A-Z]").matcher(str).find();
+	}
+
+	/**
+	 * 检查字符串是否以小写开头
+	 * 
+	 * @param str 待检查字符串
+	 * @return true->是;false->否
+	 */
+	public static Boolean startWithLower(String str) {
+		return Pattern.compile("^[a-z]").matcher(str).find();
+	}
+
+	/**
+	 * 检查字符串是否以数字开头
+	 * 
+	 * @param str 待检查字符串
+	 * @return true->是;false->否
+	 */
+	public static Boolean startWithNumber(String str) {
+		return Pattern.compile("^[0-9]").matcher(str).find();
 	}
 }

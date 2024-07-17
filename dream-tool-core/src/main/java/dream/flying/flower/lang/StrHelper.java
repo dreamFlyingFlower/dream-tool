@@ -4,7 +4,6 @@ import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -226,6 +225,23 @@ public class StrHelper extends CharSequenceHelper {
 	}
 
 	/**
+	 * 计算指定字符串中的小写字母数量
+	 * 
+	 * @param str 源字符串
+	 * @return 字母数量
+	 */
+	public static int countLower(String str) {
+		int count = 0;
+		char[] charArray = str.toCharArray();
+		for (char ch : charArray) {
+			if (containsLower(String.valueOf(ch))) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/**
 	 * 计算源字符串中出现待查找字符串的次数
 	 *
 	 * @param str 源字符串
@@ -241,6 +257,56 @@ public class StrHelper extends CharSequenceHelper {
 		while ((idx = str.indexOf(sub, idx)) != ConstLang.INDEX_NOT_FOUND) {
 			count++;
 			idx += sub.length();
+		}
+		return count;
+	}
+
+	/**
+	 * 计算指定字符串中的数字数量
+	 * 
+	 * @param str 源字符串
+	 * @return 字母数量
+	 */
+	public static int countNumber(String str) {
+		int count = 0;
+		char[] charArray = str.toCharArray();
+		for (char ch : charArray) {
+			if (NumberHelper.isSimpleNumber(String.valueOf(ch))) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * 计算指定字符串中的特殊字符串数量
+	 * 
+	 * @param str 源字符串
+	 * @return 特殊字符串数量
+	 */
+	public static int countSpecial(String str) {
+		int count = 0;
+		for (int i = 0; i < str.toCharArray().length; i++) {
+			if (containsSpecial(String.valueOf(str.charAt(i)))) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * 返回字符串中包含的大写字母数量
+	 * 
+	 * @param str 源字符串
+	 * @return 大写字母数量
+	 */
+	public static int countUpper(String str) {
+		int count = 0;
+		char[] charArray = str.toCharArray();
+		for (char ch : charArray) {
+			if (containsUpper(String.valueOf(ch))) {
+				count++;
+			}
 		}
 		return count;
 	}
@@ -498,21 +564,6 @@ public class StrHelper extends CharSequenceHelper {
 			}
 		}
 		return ConstLang.INDEX_NOT_FOUND;
-	}
-
-	/**
-	 * 用同一个分隔符将参数连接起来
-	 * 
-	 * @param delimiter 分隔符
-	 * @param msgs 参数
-	 * @return 最终的字符串
-	 */
-	public static String join(String delimiter, String... args) {
-		StringJoiner stringJoiner = new StringJoiner(delimiter);
-		for (String string : args) {
-			stringJoiner.add(string);
-		}
-		return stringJoiner.toString();
 	}
 
 	/**

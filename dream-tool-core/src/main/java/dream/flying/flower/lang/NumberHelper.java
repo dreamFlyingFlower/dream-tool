@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import dream.flying.flower.helper.ArrayHelper;
 
@@ -492,6 +493,16 @@ public class NumberHelper {
 		}
 		// 最后一个不能是+,-,且必须是数字
 		return !allowSigns && foundDigit;
+	}
+
+	/**
+	 * 判断字符串是否包含数字
+	 * 
+	 * @param str 待检查字符串
+	 * @return true->包含;false->不包含
+	 */
+	public static boolean isSimpleNumber(String str) {
+		return Pattern.compile("[0-9]").matcher(str).find();
 	}
 
 	/**
