@@ -34,6 +34,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import dream.flying.flower.ConstDigest;
 import dream.flying.flower.binary.HexHelper;
+import dream.flying.flower.binary.enums.EncodeType;
 import dream.flying.flower.collection.MapHelper;
 import dream.flying.flower.digest.enums.CryptKeyType;
 import dream.flying.flower.digest.enums.CryptType;
@@ -364,6 +365,67 @@ public class DigestHelper {
 	}
 
 	/**
+	 * 字符串加密,再进行Base64编码
+	 * 
+	 * @param messageDigestType 加密算法
+	 * @param bytes 需要加密的字节数组
+	 * @return 加密后的Base64编码大写字符串
+	 */
+	public static String digestBase64(MessageDigestType messageDigestType, byte[] bytes) {
+		return Base64.getEncoder().encodeToString(digest(messageDigestType, bytes));
+	}
+
+	/**
+	 * 字符串加密,再进行Base64编码
+	 * 
+	 * @param messageDigestType 加密算法
+	 * @param byteBuffer 需要加密的字节数组缓存
+	 * @return 加密后的Base64编码大写字符串
+	 */
+	public static String digestBase64(MessageDigestType messageDigestType, ByteBuffer byteBuffer) {
+		return Base64.getEncoder().encodeToString(digest(messageDigestType, byteBuffer));
+	}
+
+	/**
+	 * 字符串加密,再进行Base64编码
+	 * 
+	 * @param messageDigestType 加密算法
+	 * @param content 需要加密的字符串
+	 * @param bytes 需要加密的字节数组
+	 * @return 加密后的Base64编码大写字符串
+	 */
+	public static String digestBase64(MessageDigestType messageDigestType, String content) {
+		return Base64.getEncoder()
+				.encodeToString(digest(messageDigestType, content.getBytes(CharsetHelper.defaultCharset())));
+	}
+
+	/**
+	 * 字符串加密,再进行Base64编码
+	 * 
+	 * @param messageDigestType 加密算法
+	 * @param content 需要加密的字符串
+	 * @param charset 字符编码
+	 * @return 加密后的Base64编码大写字符串
+	 */
+	public static String digestBase64(MessageDigestType messageDigestType, String content, Charset charset) {
+		return Base64.getEncoder()
+				.encodeToString(digest(messageDigestType, content.getBytes(CharsetHelper.defaultCharset(charset))));
+	}
+
+	/**
+	 * 字符串加密,再进行Base64编码
+	 * 
+	 * @param messageDigestType 加密算法
+	 * @param content 需要加密的字符串
+	 * @param charset 字符编码字符串
+	 * @return 加密后的Base64编码大写字符串
+	 */
+	public static String digestBase64(MessageDigestType messageDigestType, String content, String charset) {
+		return Base64.getEncoder()
+				.encodeToString(digest(messageDigestType, content.getBytes(CharsetHelper.defaultCharset(charset))));
+	}
+
+	/**
 	 * 字符串加密,再进行16进制编码
 	 * 
 	 * @param messageDigestType 加密算法
@@ -671,23 +733,71 @@ public class DigestHelper {
 	/**
 	 * RSA生成公私钥
 	 * 
+	 * @param encodeType 编码类型
+	 * @return 公私钥键值对
+	 */
+	public static Map<CryptKeyType, String> rsaGenerateKey(EncodeType encodeType) {
+		return rsaGenerateKey(ConstDigest.KEY_SIZE_1024, encodeType);
+	}
+
+	/**
+	 * RSA生成公私钥
+	 * 
 	 * @param length 密钥长度
 	 * @return 公私钥键值对,公私钥都已经经过base64编码
 	 */
 	public static Map<CryptKeyType, String> rsaGenerateKey(int length) {
+		return rsaGenerateKey(length, EncodeType.BASE64);
+	}
+
+	/**
+	 * RSA生成公私钥
+	 * 
+	 * @param length 密钥长度
+	 * @param encodeType 编码类型
+	 * @return 公私钥键值对,公私钥都已经经过HEX编码
+	 */
+	public static Map<CryptKeyType, String> rsaGenerateKey(int length, EncodeType encodeType) {
+		KeyPair keyPair = rsaGenerateKeyPair(length);
+		switch (encodeType) {
+		case HEX:
+			return MapHelper
+					.builderGeneric(CryptKeyType.PUBLIC_KEY,
+							HexHelper.encodeHexString(keyPair.getPublic().getEncoded()))
+					.put(CryptKeyType.PRIVATE_KEY, HexHelper.encodeHexString(keyPair.getPrivate().getEncoded()))
+					.build();
+		default:
+			return MapHelper
+					.builderGeneric(CryptKeyType.PUBLIC_KEY,
+							HexHelper.encodeHexString(keyPair.getPublic().getEncoded()))
+					.put(CryptKeyType.PRIVATE_KEY, HexHelper.encodeHexString(keyPair.getPrivate().getEncoded()))
+					.build();
+		}
+	}
+
+	/**
+	 * RSA生成公私钥,默认密钥长度1024
+	 * 
+	 * @return 密钥对
+	 */
+	public static KeyPair rsaGenerateKeyPair() {
+		return rsaGenerateKeyPair(ConstDigest.KEY_SIZE_1024);
+	}
+
+	/**
+	 * RSA生成公私钥
+	 * 
+	 * @param length 密钥长度
+	 * @return 密钥对
+	 */
+	public static KeyPair rsaGenerateKeyPair(int length) {
 		if (length % 512 != 0) {
 			throw new ResultException("密钥长度错误,必须是512的倍数");
 		}
 		try {
-			KeyPairGenerator key = KeyPairGenerator.getInstance(CryptType.RSA.getType());
-			key.initialize(length);
-			KeyPair keyPair = key.generateKeyPair();
-			return MapHelper
-					.builderGeneric(CryptKeyType.PUBLIC_KEY,
-							Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()))
-					.put(CryptKeyType.PRIVATE_KEY,
-							Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded()))
-					.build();
+			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(CryptType.RSA.getType());
+			keyPairGenerator.initialize(length);
+			return keyPairGenerator.generateKeyPair();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			throw new ResultException(e.getMessage());
@@ -893,5 +1003,58 @@ public class DigestHelper {
 	 */
 	public static String uuid(boolean flag) {
 		return flag ? UUID.randomUUID().toString().replaceAll("-", "") : UUID.randomUUID().toString();
+	}
+
+	/**
+	 * 获得密钥的pem格式
+	 * 
+	 * @param bytes 原始密钥,未经过base64或其他算法编码
+	 * @return base64编码后的pem格式密钥
+	 */
+	public static String getPemBase64(byte[] bytes) {
+		return Base64.getMimeEncoder(ConstDigest.PEM_LINE_SIZE, System.lineSeparator().getBytes())
+				.encodeToString(bytes);
+	}
+
+	/**
+	 * 获取Certificate的PEM格式
+	 * 
+	 * @param encoded 字节数据
+	 * @return PEM格式公钥
+	 */
+	public static String getPemCertificate(byte[] encoded) {
+		StringBuffer base64String = new StringBuffer("");
+		base64String.append("-----BEGIN CERTIFICATE-----").append(System.lineSeparator());
+		base64String.append(getPemBase64(encoded)).append(System.lineSeparator());
+		base64String.append("-----END CERTIFICATE-----").append(System.lineSeparator());
+		return base64String.toString();
+	}
+
+	/**
+	 * 获取私钥的PEM格式
+	 * 
+	 * @param encoded 私钥
+	 * @return PEM格式私钥
+	 */
+	public static String getPemPrivateKey(byte[] encoded) {
+		StringBuffer base64String = new StringBuffer("");
+		base64String.append("-----BEGIN RSA PRIVATE KEY-----").append(System.lineSeparator());
+		base64String.append(getPemBase64(encoded)).append(System.lineSeparator());
+		base64String.append("-----END RSA PRIVATE KEY-----").append(System.lineSeparator());
+		return base64String.toString();
+	}
+
+	/**
+	 * 获取公钥的PEM格式
+	 *
+	 * @param encoded 公钥
+	 * @return PEM格式公钥
+	 */
+	public static String getPemPublicKey(byte[] encoded) {
+		StringBuffer base64String = new StringBuffer("");
+		base64String.append("-----BEGIN PUBLIC KEY-----").append(System.lineSeparator());
+		base64String.append(getPemBase64(encoded)).append(System.lineSeparator());
+		base64String.append("-----END PUBLIC KEY-----").append(System.lineSeparator());
+		return base64String.toString();
 	}
 }

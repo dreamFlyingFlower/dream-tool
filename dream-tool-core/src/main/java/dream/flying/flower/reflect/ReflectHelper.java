@@ -701,6 +701,91 @@ public class ReflectHelper {
 	}
 
 	/**
+	 * 反射创建无参构造对象
+	 * 
+	 * @param className 类的全限定类名
+	 * @return 对象
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws ClassNotFoundException
+	 */
+	public static Object newInstance(String className)
+			throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Class<?> cls = Class.forName(className);
+		Constructor<?> constructor = cls.getConstructor();
+		return constructor.newInstance();
+	}
+
+	/**
+	 * 反射创建无参构造对象
+	 * 
+	 * @param <T> 泛型
+	 * @param cls 字节码
+	 * @return 对象
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
+	public static <T> T newInstance(Class<T> cls) throws NoSuchMethodException, SecurityException,
+			InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Constructor<T> constructor = cls.getConstructor();
+		return constructor.newInstance();
+	}
+
+	/**
+	 * 反射创建有参构造对象
+	 * 
+	 * @param className 类的全限定类名
+	 * @param args 构造参数
+	 * @return 对象
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws ClassNotFoundException
+	 */
+	public static Object newInstance(String className, Object[] args)
+			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException, ClassNotFoundException {
+		Class<?> newClass = Class.forName(className);
+		return newInstance(newClass, args);
+	}
+
+	/**
+	 * 反射创建有参构造对象
+	 * 
+	 * @param <T> 泛型
+	 * @param cls 类字节码
+	 * @param args 构造参数
+	 * @return 对象
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	public static <T> T newInstance(Class<T> cls, Object[] args) throws NoSuchMethodException, SecurityException,
+			InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Class<?>[] argsClass = new Class[args.length];
+		for (int i = 0, j = args.length; i < j; i++) {
+			argsClass[i] = args[i].getClass();
+		}
+		Constructor<T> cons = cls.getConstructor(argsClass);
+		return cons.newInstance(args);
+	}
+
+	/**
 	 * 获得指定接口的代理类
 	 * 
 	 * @param <T> 泛型

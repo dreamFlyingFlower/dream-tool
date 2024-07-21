@@ -1,6 +1,9 @@
 package dream.flying.flower.digest.enums;
 
 import java.security.MessageDigest;
+import java.util.stream.Stream;
+
+import dream.flying.flower.lang.StrHelper;
 
 /**
  * {@link MessageDigest}算法名,需要注意JDK版本
@@ -90,5 +93,11 @@ public enum MessageDigestType {
 
 	public String getType() {
 		return this.type;
+	}
+
+	public static MessageDigestType getType(String algorithm) {
+		return StrHelper.isBlank(algorithm) ? MessageDigestType.SHA_256
+				: Stream.of(values()).filter(t -> t.getType().equalsIgnoreCase(algorithm)).findFirst()
+						.orElse(MessageDigestType.SHA_256);
 	}
 }

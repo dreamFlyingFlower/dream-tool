@@ -1,7 +1,7 @@
 package dream.flying.flower.digest.enums;
 
 /**
- * 加密类型,如AES,DES,RSA等
+ * 密钥类型
  * 
  * @auther 飞花梦影
  * @date 2021-06-19 20:32:04

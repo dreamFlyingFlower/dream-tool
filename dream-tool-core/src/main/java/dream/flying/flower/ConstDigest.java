@@ -20,4 +20,11 @@ public interface ConstDigest {
 
 	/** RSA密钥长度 */
 	int KEY_SIZE_2048 = 2048;
+
+	/** 生成PEM格式时每行字符串个数 */
+	int PEM_LINE_SIZE = 64;
+
+	String PUBLIC_KEY = "publicKey";
+
+	String PRIVATE_KEY = "privateKey";
 }
