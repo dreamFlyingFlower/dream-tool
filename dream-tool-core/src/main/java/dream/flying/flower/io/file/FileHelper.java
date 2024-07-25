@@ -114,6 +114,7 @@ public class FileHelper {
 	// close(br, osr);
 	// }
 	// }
+
 	/**
 	 * 判断文件存在且是一个文件,而不是目录
 	 * 
@@ -122,14 +123,7 @@ public class FileHelper {
 	 * @throws IllegalArgumentException
 	 */
 	public static File checkFile(final File file) {
-		AssertHelper.notNull(file, ConstIO.TOAST_FILE_NULL);
-		if (!file.exists()) {
-			throw new IllegalArgumentException(file + " does not exist");
-		}
-		if (!file.isFile()) {
-			throw new IllegalArgumentException(file + " is not a file");
-		}
-		return file;
+		return checkFile(file, false);
 	}
 
 	/**
@@ -145,6 +139,40 @@ public class FileHelper {
 		if (!file.exists()) {
 			throw new IllegalArgumentException(file + " does not exist");
 		}
+		if (!file.isFile()) {
+			throw new IllegalArgumentException(file + " is not a file");
+		}
+		return file;
+	}
+
+	/**
+	 * 判断文件存在且是一个文件,若文件不存在则创建
+	 * 
+	 * @param file 需要判断的文件
+	 * @return 源文件
+	 * @throws IllegalArgumentException
+	 */
+	public static File checkFile(final File file, boolean create) {
+		AssertHelper.notNull(file, ConstIO.TOAST_FILE_NULL);
+		if (!file.exists()) {
+			if (create) {
+				String fileExtension = getFileExtension(file);
+				if (StrHelper.isNotBlank(fileExtension)) {
+					File parentFile = file.getParentFile();
+					if (!parentFile.exists()) {
+						parentFile.mkdirs();
+					}
+					try {
+						file.createNewFile();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			} else {
+				throw new IllegalArgumentException(file + " does not exist");
+			}
+		}
+
 		if (!file.isFile()) {
 			throw new IllegalArgumentException(file + " is not a file");
 		}
