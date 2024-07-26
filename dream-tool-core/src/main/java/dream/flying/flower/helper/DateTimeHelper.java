@@ -26,7 +26,6 @@ import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import dream.flying.flower.annotation.Example;
@@ -37,7 +36,11 @@ import dream.flying.flower.lang.StrHelper;
 /**
  * {@link LocalDateTime}等工具类,jdk1.8的时间类工具类,和DateHelper差不多
  * 
- * 当直接输出LocalTime.toString()时,类似XX:00:00将不会输出秒,只会输出XX:00,不要直接输出或使用toString()
+ * <pre>
+ * 1.当直接输出LocalTime.toString()时,类似XX:00:00将不会输出秒,只会输出XX:00,不要直接输出或使用toString()
+ * 2.toInstant():类似方法始终都获得的是从1970到现在的时间戳,与时区无关,只有Instant.now()才和时区相关,获得的是UTC时间
+ * 3.{@link Date},{@link LocalDateTime}:默认都与时区无关
+ * </pre>
  * 
  * @author 飞花梦影
  * @date 2019-03-20 16:56:06
@@ -80,43 +83,79 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 将LocalDateTime转换为HH:mm:ss格式
+	 * 将Date转换成指定格式字符串
 	 * 
-	 * @param localDateTime 需要进行转换的时间
-	 * @return 时间字符串
+	 * @param date 时间
+	 * @param pattern 格式化样式
+	 * @return 格式化后字符串
 	 */
-	public static String formatTime() {
-		return DEFAULT_FORMATTER_TIME.format(LocalDateTime.now());
+	public static String format(Date date, DateEnum pattern) {
+		return format(date, DateTimeFormatter.ofPattern(pattern.getPattern()));
 	}
 
 	/**
-	 * 将LocalDateTime转换为HH:mm:ss格式
+	 * 将Date转换成指定格式字符串
 	 * 
-	 * @param localDateTime 需要进行转换的时间
-	 * @return 时间字符串
+	 * @param date 时间
+	 * @param dateTimeFormatter 格式化样式
+	 * @return 格式化后字符串
 	 */
-	public static String formatTime(Date date) {
-		return DEFAULT_FORMATTER_TIME.format(date2Local(date));
+	public static String format(Date date, DateTimeFormatter dateTimeFormatter) {
+		return format(date2Local(date), dateTimeFormatter);
 	}
 
 	/**
-	 * 将LocalTime转换为HH:mm:ss格式
+	 * 将Date转换成指定格式字符串
 	 * 
-	 * @param localTime 需要进行转换的时间
-	 * @return 时间字符串
+	 * @param date 时间
+	 * @param pattern 格式化样式
+	 * @return 格式化后字符串
 	 */
-	public static String formatTime(LocalTime localTime) {
-		return DEFAULT_FORMATTER_TIME.format(localTime);
+	public static String format(Date date, String pattern) {
+		return format(date, DateTimeFormatter.ofPattern(pattern));
 	}
 
 	/**
-	 * 将LocalDateTime转换为HH:mm:ss格式
+	 * 将LocalDateTime转换成指定格式字符串
 	 * 
-	 * @param localDateTime 需要进行转换的时间
-	 * @return 时间字符串
+	 * @param localDateTime 时间
+	 * @param pattern 格式化样式
+	 * @return 格式化后字符串
 	 */
-	public static String formatTime(LocalDateTime localDateTime) {
-		return DEFAULT_FORMATTER_TIME.format(localDateTime);
+	public static String format(LocalDateTime localDateTime, DateEnum pattern) {
+		return format(localDateTime, DateTimeFormatter.ofPattern(pattern.getPattern()));
+	}
+
+	/**
+	 * 将LocalDateTime转换成指定格式字符串
+	 * 
+	 * @param localDateTime 时间
+	 * @param dateTimeFormatter 格式化样式
+	 * @return 格式化后字符串
+	 */
+	public static String format(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
+		return dateTimeFormatter.format(localDateTime);
+	}
+
+	/**
+	 * 将LocalDateTime转换成指定格式字符串
+	 * 
+	 * @param localDateTime 时间
+	 * @param pattern 格式化样式
+	 * @return 格式化后字符串
+	 */
+	public static String format(LocalDateTime localDateTime, String pattern) {
+		return format(localDateTime, DateTimeFormatter.ofPattern(pattern));
+	}
+
+	/**
+	 * 将当前时间转换为指定格式
+	 * 
+	 * @param pattern 时间格式
+	 * @return 时间格式字符串
+	 */
+	public static String format(String pattern) {
+		return DateTimeFormatter.ofPattern(pattern).format(LocalDateTime.now());
 	}
 
 	/**
@@ -208,79 +247,86 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 将Date转换成指定格式字符串
+	 * 将LocalDateTime转换为HH:mm:ss格式
 	 * 
-	 * @param date 时间
-	 * @param pattern 格式化样式
-	 * @return 格式化后字符串
+	 * @param localDateTime 需要进行转换的时间
+	 * @return 时间字符串
 	 */
-	public static String format(Date date, DateEnum pattern) {
-		return format(date, DateTimeFormatter.ofPattern(pattern.getPattern()));
+	public static String formatTime() {
+		return DEFAULT_FORMATTER_TIME.format(LocalDateTime.now());
 	}
 
 	/**
-	 * 将Date转换成指定格式字符串
+	 * 将LocalDateTime转换为HH:mm:ss格式
 	 * 
-	 * @param date 时间
-	 * @param dateTimeFormatter 格式化样式
-	 * @return 格式化后字符串
+	 * @param localDateTime 需要进行转换的时间
+	 * @return 时间字符串
 	 */
-	public static String format(Date date, DateTimeFormatter dateTimeFormatter) {
-		return format(date2Local(date), dateTimeFormatter);
+	public static String formatTime(Date date) {
+		return DEFAULT_FORMATTER_TIME.format(date2Local(date));
 	}
 
 	/**
-	 * 将Date转换成指定格式字符串
+	 * 将LocalDateTime转换为HH:mm:ss格式
 	 * 
-	 * @param date 时间
-	 * @param pattern 格式化样式
-	 * @return 格式化后字符串
+	 * @param localDateTime 需要进行转换的时间
+	 * @return 时间字符串
 	 */
-	public static String format(Date date, String pattern) {
-		return format(date, DateTimeFormatter.ofPattern(pattern));
+	public static String formatTime(LocalDateTime localDateTime) {
+		return DEFAULT_FORMATTER_TIME.format(localDateTime);
 	}
 
 	/**
-	 * 将LocalDateTime转换成指定格式字符串
+	 * 将LocalTime转换为HH:mm:ss格式
 	 * 
-	 * @param localDateTime 时间
-	 * @param pattern 格式化样式
-	 * @return 格式化后字符串
+	 * @param localTime 需要进行转换的时间
+	 * @return 时间字符串
 	 */
-	public static String format(LocalDateTime localDateTime, DateEnum pattern) {
-		return format(localDateTime, DateTimeFormatter.ofPattern(pattern.getPattern()));
+	public static String formatTime(LocalTime localTime) {
+		return DEFAULT_FORMATTER_TIME.format(localTime);
 	}
 
 	/**
-	 * 将LocalDateTime转换成指定格式字符串
+	 * 将当前时间格式化为UTC时间,注意,与时区有关
 	 * 
-	 * @param localDateTime 时间
-	 * @param dateTimeFormatter 格式化样式
-	 * @return 格式化后字符串
+	 * @return 格式化后的UTC时间
 	 */
-	public static String format(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
-		return dateTimeFormatter.format(localDateTime);
+	public static String formatUtcDateTime() {
+		ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
+		return zonedDateTime.format(DEFAULT_FORMATTER_DATETIME);
 	}
 
 	/**
-	 * 将LocalDateTime转换成指定格式字符串
+	 * 将指定时间格式化为UTC时间,注意,与时区有关
 	 * 
-	 * @param localDateTime 时间
-	 * @param pattern 格式化样式
-	 * @return 格式化后字符串
+	 * @param date 指定时间
+	 * @return 格式化后的UTC时间
 	 */
-	public static String format(LocalDateTime localDateTime, String pattern) {
-		return format(localDateTime, DateTimeFormatter.ofPattern(pattern));
+	public static String formatUtcDateTime(Date date) {
+		ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC);
+		return zonedDateTime.format(DEFAULT_FORMATTER_DATETIME);
 	}
 
 	/**
-	 * 将当前时间转换为指定格式
+	 * 将指定时间格式化为UTC时间,注意,与时区有关
 	 * 
-	 * @param pattern 时间格式
-	 * @return 时间格式字符串
+	 * @param localDateTime 指定时间
+	 * @return 格式化后的UTC时间
 	 */
-	public static String format(String pattern) {
-		return DateTimeFormatter.ofPattern(pattern).format(LocalDateTime.now());
+	public static String formatUtcDateTime(LocalDateTime localDateTime) {
+		ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneOffset.systemDefault());
+		return zonedDateTime.withZoneSameInstant(ZoneOffset.UTC).format(DEFAULT_FORMATTER_DATETIME);
+	}
+
+	/**
+	 * 将指定时间格式化为UTC时间,注意,与时区有关
+	 * 
+	 * @param date 指定时间
+	 * @return 格式化后的UTC时间
+	 */
+	public static String formatUtcDateTime(long date) {
+		ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(new Date(date).toInstant(), ZoneOffset.UTC);
+		return zonedDateTime.format(DEFAULT_FORMATTER_DATETIME);
 	}
 
 	/**
@@ -1078,36 +1124,6 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 获得当前时间所属周的周天结束时间
-	 * 
-	 * @return 当前时间所属周的周天结束时间
-	 */
-	public static Date getWeekEndl() {
-		return local2Date(getWeekEndLocal(LocalDateTime.now()));
-	}
-
-	/**
-	 * 获得指定时间所属周的周天结束时间
-	 * 
-	 * @param date 指定时间
-	 * @return 指定时间所属周的周天结束时间
-	 */
-	public static Date getWeekEnd(Date date) {
-		return local2Date(getWeekEndLocal(date2Local(date)));
-	}
-
-	/**
-	 * 获得指定时间所属周的周天结束时间
-	 * 
-	 * @param localDateTime 指定时间
-	 * @return 指定时间所属周的周天结束时间
-	 */
-	public static Date getWeekEnd(LocalDateTime localDateTime) {
-		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 7);
-		return local2Date(getDayEndLocal(with));
-	}
-
-	/**
 	 * 获得指定时间所属周的周一开始时间
 	 * 
 	 * @param localDateTime 指定时间
@@ -1146,6 +1162,36 @@ public interface DateTimeHelper {
 	public static LocalDateTime getWeekBeginLocal(LocalDateTime localDateTime) {
 		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, DayOfWeek.MONDAY.getValue());
 		return getDayBeginLocal(with);
+	}
+
+	/**
+	 * 获得指定时间所属周的周天结束时间
+	 * 
+	 * @param date 指定时间
+	 * @return 指定时间所属周的周天结束时间
+	 */
+	public static Date getWeekEnd(Date date) {
+		return local2Date(getWeekEndLocal(date2Local(date)));
+	}
+
+	/**
+	 * 获得指定时间所属周的周天结束时间
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 指定时间所属周的周天结束时间
+	 */
+	public static Date getWeekEnd(LocalDateTime localDateTime) {
+		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 7);
+		return local2Date(getDayEndLocal(with));
+	}
+
+	/**
+	 * 获得当前时间所属周的周天结束时间
+	 * 
+	 * @return 当前时间所属周的周天结束时间
+	 */
+	public static Date getWeekEndl() {
+		return local2Date(getWeekEndLocal(LocalDateTime.now()));
 	}
 
 	/**
@@ -1606,69 +1652,14 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 将LocalDateTime类型转换为Date类型
+	 * 将LocalDateTime类型转换为Date类型,此处时区无效
 	 * 
 	 * @param localDateTime 需要进行转换的时间
 	 * @return 转换后的时间
 	 */
 	public static Date local2Date(LocalDateTime localDateTime) {
 		AssertHelper.notNull(localDateTime);
-		ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
-		return Date.from(zonedDateTime.toInstant());
-	}
-
-	/**
-	 * 将LocalDateTime类型转换为Date类型  FIXME 没有注入时间
-	 * 
-	 * @param localDateTime 需要进行转换的时间
-	 * @return 转换后的时间
-	 */
-	public static Date local2Date(LocalDateTime localDateTime, ZoneId zoneId) {
-		AssertHelper.notNull(localDateTime);
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(zoneId));
-		return calendar.getTime();
-	}
-
-	/**
-	 * 将格式为yyyy-MM-dd的时间字符串转为Date类型,时分秒都为0
-	 * 
-	 * @param date 时间字符串
-	 * @return date对象
-	 */
-	public static Date parseDate(String date) {
-		return local2Date(parse(date + " 00:00:00"));
-	}
-
-	/**
-	 * 将指定时间字符串格式化格式化
-	 * 
-	 * @param dateTime 时间字符串,若不符合指定格式将报错
-	 * @param pattern 字符串时间的格式
-	 * @return date对象
-	 */
-	public static Date parseDate(String dateTime, DateEnum pattern) {
-		return local2Date(parse(dateTime, pattern.getPattern()));
-	}
-
-	/**
-	 * 将指定时间字符串格式化格式化
-	 * 
-	 * @param dateTime 时间字符串,若不符合指定格式将报错
-	 * @param pattern 字符串时间的格式
-	 * @return date对象
-	 */
-	public static Date parseDate(String dateTime, String pattern) {
-		return local2Date(parse(dateTime, pattern));
-	}
-
-	/**
-	 * 将yyyy-MM-dd HH:mm:ss或yyyy-MM-ddTHH:mm:ss时间格式为Date类型
-	 * 
-	 * @param dateTime 时间字符串,若不符合指定格式将报错
-	 * @return date对象
-	 */
-	public static Date parseDateTime(String dateTime) {
-		return local2Date(parse(dateTime));
+		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
 
 	/**
@@ -1716,14 +1707,45 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 在当前时间上加上或减去指定时间,可以是年月日,时分秒任意
+	 * 将格式为yyyy-MM-dd的时间字符串转为Date类型,时分秒都为0
 	 * 
-	 * @param amount 添加的数量,可以为负数
-	 * @param temporalUnit 单位,使用 @see ChronoUnit 枚举
-	 * @return 修改后的时间
+	 * @param date 时间字符串
+	 * @return date对象
 	 */
-	public static Date plusDate(long amount, TemporalUnit temporalUnit) {
-		return plusDate(LocalDateTime.now(), amount, temporalUnit);
+	public static Date parseDate(String date) {
+		return local2Date(parse(date + " 00:00:00"));
+	}
+
+	/**
+	 * 将指定时间字符串格式化格式化
+	 * 
+	 * @param dateTime 时间字符串,若不符合指定格式将报错
+	 * @param pattern 字符串时间的格式
+	 * @return date对象
+	 */
+	public static Date parseDate(String dateTime, DateEnum pattern) {
+		return local2Date(parse(dateTime, pattern.getPattern()));
+	}
+
+	/**
+	 * 将指定时间字符串格式化格式化
+	 * 
+	 * @param dateTime 时间字符串,若不符合指定格式将报错
+	 * @param pattern 字符串时间的格式
+	 * @return date对象
+	 */
+	public static Date parseDate(String dateTime, String pattern) {
+		return local2Date(parse(dateTime, pattern));
+	}
+
+	/**
+	 * 将yyyy-MM-dd HH:mm:ss或yyyy-MM-ddTHH:mm:ss时间格式为Date类型
+	 * 
+	 * @param dateTime 时间字符串,若不符合指定格式将报错
+	 * @return date对象
+	 */
+	public static Date parseDateTime(String dateTime) {
+		return local2Date(parse(dateTime));
 	}
 
 	/**
@@ -1760,8 +1782,8 @@ public interface DateTimeHelper {
 	 * @param temporalUnit 单位,使用 @see ChronoUnit 枚举
 	 * @return 修改后的时间
 	 */
-	public static LocalDateTime plusDateTime(long amount, TemporalUnit temporalUnit) {
-		return plusDateTime(LocalDateTime.now(), amount, temporalUnit);
+	public static Date plusDate(long amount, TemporalUnit temporalUnit) {
+		return plusDate(LocalDateTime.now(), amount, temporalUnit);
 	}
 
 	/**
@@ -1791,13 +1813,14 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 在当前时间基础上增加或减少amount天,若超过当前最大天数,会自动转到相应月数
+	 * 在当前时间上加上或减去指定时间,可以是年月日,时分秒任意
 	 * 
-	 * @param amount 增加或较少的天数
-	 * @return 新的时间
+	 * @param amount 添加的数量,可以为负数
+	 * @param temporalUnit 单位,使用 @see ChronoUnit 枚举
+	 * @return 修改后的时间
 	 */
-	public static Date plusDay(long amount) {
-		return local2Date(date2Local(new Date()).plusDays(amount));
+	public static LocalDateTime plusDateTime(long amount, TemporalUnit temporalUnit) {
+		return plusDateTime(LocalDateTime.now(), amount, temporalUnit);
 	}
 
 	/**
@@ -1811,13 +1834,13 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 在当前时间基础上增加或减少amount小时,若超过24小时,会自动转到相应天数
+	 * 在当前时间基础上增加或减少amount天,若超过当前最大天数,会自动转到相应月数
 	 * 
-	 * @param amount 增加或较少的小时
+	 * @param amount 增加或较少的天数
 	 * @return 新的时间
 	 */
-	public static Date plusHour(long amount) {
-		return local2Date(date2Local(new Date()).plusHours(amount));
+	public static Date plusDay(long amount) {
+		return local2Date(date2Local(new Date()).plusDays(amount));
 	}
 
 	/**
@@ -1831,13 +1854,13 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 在当前时间基础上增加或减少amount个月,若超过12个月,会自动转到相应年
+	 * 在当前时间基础上增加或减少amount小时,若超过24小时,会自动转到相应天数
 	 * 
-	 * @param amount 增加或较少的月数
+	 * @param amount 增加或较少的小时
 	 * @return 新的时间
 	 */
-	public static Date plusMonth(long amount) {
-		return local2Date(date2Local(new Date()).plusMonths(amount));
+	public static Date plusHour(long amount) {
+		return local2Date(date2Local(new Date()).plusHours(amount));
 	}
 
 	/**
@@ -1851,13 +1874,13 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 在当前时间基础上增加或减少amount个周
+	 * 在当前时间基础上增加或减少amount个月,若超过12个月,会自动转到相应年
 	 * 
-	 * @param amount 增加或较少的周数
+	 * @param amount 增加或较少的月数
 	 * @return 新的时间
 	 */
-	public static Date plusWeek(long amount) {
-		return local2Date(date2Local(new Date()).plusWeeks(amount));
+	public static Date plusMonth(long amount) {
+		return local2Date(date2Local(new Date()).plusMonths(amount));
 	}
 
 	/**
@@ -1868,6 +1891,16 @@ public interface DateTimeHelper {
 	 */
 	public static Date plusWeek(Date date1, long amount) {
 		return local2Date(date2Local(date1).plusWeeks(amount));
+	}
+
+	/**
+	 * 在当前时间基础上增加或减少amount个周
+	 * 
+	 * @param amount 增加或较少的周数
+	 * @return 新的时间
+	 */
+	public static Date plusWeek(long amount) {
+		return local2Date(date2Local(new Date()).plusWeeks(amount));
 	}
 
 	/**
@@ -2049,17 +2082,6 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 设置年份
-	 * 
-	 * @param localDateTime 指定时间
-	 * @param year 指定年份
-	 * @return 新的时间
-	 */
-	static LocalDateTime setYear(LocalDateTime localDateTime, int year) {
-		return localDateTime.withYear(year);
-	}
-
-	/**
 	 * 设置月份
 	 * 
 	 * @param localDateTime 指定时间
@@ -2068,6 +2090,17 @@ public interface DateTimeHelper {
 	 */
 	static LocalDateTime setMonth(LocalDateTime localDateTime, int month) {
 		return localDateTime.withMonth(month);
+	}
+
+	/**
+	 * 设置年份
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param year 指定年份
+	 * @return 新的时间
+	 */
+	static LocalDateTime setYear(LocalDateTime localDateTime, int year) {
+		return localDateTime.withYear(year);
 	}
 
 	/**
@@ -2321,18 +2354,6 @@ public interface DateTimeHelper {
 	/**
 	 * 获取指定时间的UTC时间
 	 * 
-	 * @return Date UTC时间
-	 */
-	public static Date toUtcDate(Date date) {
-
-		Instant ofEpochMilli = Instant.ofEpochMilli(date.getTime());
-
-		return Date.from(Instant.from(LocalDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC)));
-	}
-
-	/**
-	 * 获取指定时间的UTC时间
-	 * 
 	 * @param localDateTime 指定时间
 	 * @return LocalDate UTC时间
 	 */
@@ -2390,6 +2411,17 @@ public interface DateTimeHelper {
 	 */
 	public static LocalDateTime toUtcDateTime(LocalDateTime localDateTime, ZoneOffset zoneOffset) {
 		ZonedDateTime zonedDateTime = localDateTime.atZone(zoneOffset);
+		return LocalDateTime.ofInstant(zonedDateTime.toInstant(), ZoneOffset.UTC);
+	}
+
+	/**
+	 * 将指定时间转换本地时区时间后再转为UTC时间,注意LocalDateTime不带时区
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return LocalDateTime UTC时间
+	 */
+	public static LocalDateTime toUtcDateTime(String localDateTime) {
+		ZonedDateTime zonedDateTime = parse(localDateTime).atZone(ZoneId.systemDefault());
 		return LocalDateTime.ofInstant(zonedDateTime.toInstant(), ZoneOffset.UTC);
 	}
 
