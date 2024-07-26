@@ -143,7 +143,7 @@ public class ReflectHelper {
 	}
 
 	/**
-	 * 从对象实例中查找指定字段,直到Object,若不找到,返回null
+	 * 从对象实例中查找指定字段,直到Object,若找不到,返回null
 	 * 
 	 * @param obj 对象实例
 	 * @param fieldName 需要查找的字段铭

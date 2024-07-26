@@ -18,11 +18,9 @@ import dream.flying.flower.helper.ConvertHepler;
 /**
  * String工具类,参照{@link org.apache.commons.lang3.StringUtils},{@link org.springframework.util.StringUtils}
  * 
- * 正则表达式的分组: @ (),每一个对括号表示一个分组,分组的顺序是从左括号出现的顺序, @
- * $后面加一个数字表示对应某一个分组,替代分组中不可直接表达的字符串
+ * 正则表达式的分组: @ (),每一个对括号表示一个分组,分组的顺序是从左括号出现的顺序, @ $后面加一个数字表示对应某一个分组,替代分组中不可直接表达的字符串
  * 
- * 快快乐乐 去掉叠词为快乐,pattern((.)\\1+,$1):
- * 第一个括号表示第一个分组中的任意字符;\\1表示第一个分组,\\2表示第2个分组,需要紧跟在分组之后
+ * 快快乐乐 去掉叠词为快乐,pattern((.)\\1+,$1): 第一个括号表示第一个分组中的任意字符;\\1表示第一个分组,\\2表示第2个分组,需要紧跟在分组之后
  * +表示可出现多个相同的任意字符,$1表示将分组中的.所代表的任意字符串替换到$1,$2则表示替换第二个分组
  * 
  * @author 飞花梦影
@@ -424,7 +422,7 @@ public class StrHelper extends CharSequenceHelper {
 					if (delimIndex > 1 && template.charAt(delimIndex - 2) == ConstLang.CHAR_BACKSLASH) {
 						// 转义符之前还有一个转义符，占位符依旧有效
 						sbuf.append(template, handledPosition, delimIndex - 1);
-						sbuf.append(ConvertHepler.utf8Str(args[argIndex]));
+						sbuf.append(ConvertHepler.toStr(args[argIndex]));
 						handledPosition = delimIndex + 2;
 					} else {
 						// 占位符被转义
@@ -436,7 +434,7 @@ public class StrHelper extends CharSequenceHelper {
 				} else {
 					// 正常占位符
 					sbuf.append(template, handledPosition, delimIndex);
-					sbuf.append(ConvertHepler.utf8Str(args[argIndex]));
+					sbuf.append(ConvertHepler.toStr(args[argIndex]));
 					handledPosition = delimIndex + 2;
 				}
 			}
@@ -470,8 +468,7 @@ public class StrHelper extends CharSequenceHelper {
 	}
 
 	/**
-	 * 判断源字符串中是否只包含unicode表示的数字或纯数字,不包括小数点,非数字将删除;
-	 * 若是unicode表示的数字,直接返回unicode形式的字符串;数字直接返回
+	 * 判断源字符串中是否只包含unicode表示的数字或纯数字,不包括小数点,非数字将删除; 若是unicode表示的数字,直接返回unicode形式的字符串;数字直接返回
 	 *
 	 * @param str 源字符串
 	 * @return 只包含unicode表示的数字或纯数字字符串
@@ -1317,9 +1314,8 @@ public class StrHelper extends CharSequenceHelper {
 	}
 
 	/**
-	 * Performs the logic for the <code>split</code> and
-	 * <code>splitPreserveAllTokens</code> methods that return a maximum array
-	 * length.
+	 * Performs the logic for the <code>split</code> and <code>splitPreserveAllTokens</code> methods that return a
+	 * maximum array length.
 	 *
 	 * @param str 待分割字符串,可能为null
 	 * @param separatorChar 分割符

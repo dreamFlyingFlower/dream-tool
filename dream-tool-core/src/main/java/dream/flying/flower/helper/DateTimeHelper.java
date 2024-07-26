@@ -5,6 +5,7 @@ import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
 import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -12,6 +13,7 @@ import java.time.MonthDay;
 import java.time.Period;
 import java.time.YearMonth;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -24,6 +26,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import dream.flying.flower.annotation.Example;
@@ -1615,6 +1618,18 @@ public interface DateTimeHelper {
 	}
 
 	/**
+	 * 将LocalDateTime类型转换为Date类型  FIXME 没有注入时间
+	 * 
+	 * @param localDateTime 需要进行转换的时间
+	 * @return 转换后的时间
+	 */
+	public static Date local2Date(LocalDateTime localDateTime, ZoneId zoneId) {
+		AssertHelper.notNull(localDateTime);
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(zoneId));
+		return calendar.getTime();
+	}
+
+	/**
 	 * 将格式为yyyy-MM-dd的时间字符串转为Date类型,时分秒都为0
 	 * 
 	 * @param date 时间字符串
@@ -2283,5 +2298,149 @@ public interface DateTimeHelper {
 		default:
 			throw new IllegalArgumentException("No TimeUnit equivalent for " + chronoUnit);
 		}
+	}
+
+	/**
+	 * 获取当前UTC时间
+	 * 
+	 * @return Instant UTC时间
+	 */
+	public static Instant toUtc() {
+		return Instant.now();
+	}
+
+	/**
+	 * 获取当前UTC时间
+	 * 
+	 * @return LocalDate UTC时间
+	 */
+	public static LocalDate toUtcDate() {
+		return LocalDateTime.now(ZoneOffset.UTC).toLocalDate();
+	}
+
+	/**
+	 * 获取指定时间的UTC时间
+	 * 
+	 * @return Date UTC时间
+	 */
+	public static Date toUtcDate(Date date) {
+
+		Instant ofEpochMilli = Instant.ofEpochMilli(date.getTime());
+
+		return Date.from(Instant.from(LocalDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC)));
+	}
+
+	/**
+	 * 获取指定时间的UTC时间
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return LocalDate UTC时间
+	 */
+	public static LocalDate toUtcDate(LocalDateTime localDateTime) {
+		return toUtcDateTime(localDateTime).toLocalDate();
+	}
+
+	/**
+	 * 将指定时间转换为指定时区时间后再转为UTC时间,注意LocalDateTime不带时区
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param zoneOffset 时区
+	 * @return LocalDate UTC时间
+	 */
+	public static LocalDate toUtcDate(LocalDateTime localDateTime, ZoneOffset zoneOffset) {
+		return toUtcDateTime(localDateTime, zoneOffset).toLocalDate();
+	}
+
+	/**
+	 * 将带时区的指定时间转换为UTC时间
+	 * 
+	 * @param zonedDateTime 时区时间
+	 * @return LocalDate UTC时间
+	 */
+	public static LocalDate toUtcDate(ZonedDateTime zonedDateTime) {
+		return toUtcDateTime(zonedDateTime).toLocalDate();
+	}
+
+	/**
+	 * 获取当前UTC时间
+	 * 
+	 * @return LocalDateTime UTC时间
+	 */
+	public static LocalDateTime toUtcDateTime() {
+		return LocalDateTime.now(ZoneOffset.UTC);
+	}
+
+	/**
+	 * 将指定时间转换本地时区时间后再转为UTC时间,注意LocalDateTime不带时区
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return LocalDateTime UTC时间
+	 */
+	public static LocalDateTime toUtcDateTime(LocalDateTime localDateTime) {
+		ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+		return LocalDateTime.ofInstant(zonedDateTime.toInstant(), ZoneOffset.UTC);
+	}
+
+	/**
+	 * 将指定时间转换为指定时区时间后再转为UTC时间,注意LocalDateTime不带时区
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param zoneOffset 时区
+	 * @return LocalDateTime UTC时间
+	 */
+	public static LocalDateTime toUtcDateTime(LocalDateTime localDateTime, ZoneOffset zoneOffset) {
+		ZonedDateTime zonedDateTime = localDateTime.atZone(zoneOffset);
+		return LocalDateTime.ofInstant(zonedDateTime.toInstant(), ZoneOffset.UTC);
+	}
+
+	/**
+	 * 将带时区的指定时间转换为UTC时间
+	 * 
+	 * @param zonedDateTime 时区时间
+	 * @return LocalDateTime UTC时间
+	 */
+	public static LocalDateTime toUtcDateTime(ZonedDateTime zonedDateTime) {
+		Instant instant = zonedDateTime.toInstant();
+		return LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+	}
+
+	/**
+	 * 获取当前UTC时间
+	 * 
+	 * @return LocalTime UTC时间
+	 */
+	public static LocalTime toUtcTime() {
+		return LocalDateTime.now(ZoneOffset.UTC).toLocalTime();
+	}
+
+	/**
+	 * 获取当前UTC时间
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return LocalTime UTC时间
+	 */
+	public static LocalTime toUtcTime(LocalDateTime localDateTime) {
+		return toUtcDateTime(localDateTime).toLocalTime();
+	}
+
+	/**
+	 * 将指定时间转换为指定时区时间后再转为UTC时间,注意LocalDateTime不带时区
+	 * 
+	 * @param localDateTime 指定时间
+	 * @param zoneOffset 时区
+	 * @return LocalTime UTC时间
+	 */
+	public static LocalTime toUtcTime(LocalDateTime localDateTime, ZoneOffset zoneOffset) {
+		return toUtcDateTime(localDateTime, zoneOffset).toLocalTime();
+	}
+
+	/**
+	 * 将带时区的指定时间转换为UTC时间
+	 * 
+	 * @param zonedDateTime 时区时间
+	 * @return LocalTime UTC时间
+	 */
+	public static LocalTime toUtcTime(ZonedDateTime zonedDateTime) {
+		return toUtcDateTime(zonedDateTime).toLocalTime();
 	}
 }
