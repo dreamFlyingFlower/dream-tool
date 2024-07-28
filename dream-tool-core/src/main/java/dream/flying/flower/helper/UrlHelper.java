@@ -101,7 +101,7 @@ public class UrlHelper {
 	 * @return 解码后字符串
 	 * @throws UnsupportedEncodingException
 	 */
-	public static String UrlDecoder(String url) throws UnsupportedEncodingException {
+	public static String decode(String url) throws UnsupportedEncodingException {
 		return StrHelper.isBlank(url) ? "" : URLDecoder.decode(url, StandardCharsets.UTF_8.displayName());
 	}
 }
