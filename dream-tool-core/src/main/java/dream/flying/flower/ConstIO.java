@@ -1,6 +1,7 @@
 package dream.flying.flower;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * IO流以及File,Path常量
@@ -10,6 +11,12 @@ import java.io.File;
  * @git {@link https://gitee.com/dreamFlyingFlower}
  */
 public interface ConstIO {
+
+	/** 1024字节缓存区 */
+	int BUFFER_SIZE_1024 = 1024;
+
+	/** 2048字节缓存区 */
+	int BUFFER_SIZE_2048 = 2048;
 
 	/** 流结束 */
 	int EOF = -1;

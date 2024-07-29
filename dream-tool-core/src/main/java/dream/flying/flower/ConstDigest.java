@@ -27,4 +27,11 @@ public interface ConstDigest {
 	String PUBLIC_KEY = "publicKey";
 
 	String PRIVATE_KEY = "privateKey";
+
+	/**
+	 * Java密钥,密钥库
+	 */
+	String KEY_STORE = "JKS";
+
+	String X509 = "X.509";
 }
