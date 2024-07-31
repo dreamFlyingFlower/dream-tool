@@ -35,12 +35,16 @@ public enum YesNoEnum implements StatusMsg, PropConverter {
 		return this.ordinal();
 	}
 
-	@Override
-	public Object getValue() {
-		return this.name();
-	}
-
 	public static List<Map<String, Object>> toList() {
 		return EnumStatusMsgHelper.toListMap(YesNoEnum.class);
+	}
+
+	public static boolean isYes(String msg) {
+		return YES.name().equalsIgnoreCase(msg);
+	}
+
+	@Override
+	public Object getValue() {
+		return this.msg;
 	}
 }

@@ -1,4 +1,4 @@
-package com.wy.test;
+package dream.flying.flower;
 
 public class TestReflectBean {
 

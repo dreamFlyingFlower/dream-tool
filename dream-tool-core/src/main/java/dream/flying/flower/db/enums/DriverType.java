@@ -2,6 +2,7 @@ package dream.flying.flower.db.enums;
 
 public enum DriverType {
 
+	DM("dm", "dm.jdbc.driver.DmDriver"),
 	MYSQL("mysql", "com.mysql.jdbc.Driver"),
 	ORACLE("oracle", "oracle.jdbc.driver.OracleDriver"),
 	SQLSERVER("sqlserver", "com.microsoft.sqlserver.jdbc.SQLServerDriver"),
@@ -10,6 +11,7 @@ public enum DriverType {
 	DB2("db2", "com.ibm.db2.jdbc.app.DB2Driver");
 
 	private String name;
+
 	private String driverClass;
 
 	DriverType(String name, String driverClass) {
@@ -23,6 +25,7 @@ public enum DriverType {
 
 	/**
 	 * 根据数据库url拿到数据库匹配的驱动
+	 * 
 	 * @param url 数据库地址
 	 * @return 数据库驱动
 	 */

@@ -1,4 +1,4 @@
-package com.wy.test;
+package dream.flying.flower;
 
 import java.awt.Dimension;
 import java.awt.Panel;
