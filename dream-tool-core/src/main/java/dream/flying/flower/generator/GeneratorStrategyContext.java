@@ -2,21 +2,21 @@ package dream.flying.flower.generator;
 
 public class GeneratorStrategyContext {
 
-	String strategy = "uuid";
+	private String strategy = "SnowFlake";
 
-	int datacenterId;
+	private int datacenterId;
 
-	int machineId;
+	private int machineId;
 
-	SnowFlakeGenerator snowFlakeGenerator = new SnowFlakeGenerator(0, 0);
+	private SnowFlakeGenerator snowFlakeGenerator = new SnowFlakeGenerator(0, 0);
 
-	StringGenerator stringGenerator = new StringGenerator();
+	private StringGenerator stringGenerator = new StringGenerator();
 
 	public String generate() {
-		if (strategy.equalsIgnoreCase("uuid")) {
-			return stringGenerator.uuidGenerate();
-		} else if (strategy.equalsIgnoreCase("SnowFlake")) {
+		if (strategy.equalsIgnoreCase("SnowFlake")) {
 			return snowFlakeGenerator.nextId() + "";
+		} else if (strategy.equalsIgnoreCase("uuid")) {
+			return stringGenerator.uuidGenerate();
 		} else {
 			return stringGenerator.randomGenerate();
 		}
