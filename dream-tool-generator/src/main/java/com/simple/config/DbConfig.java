@@ -11,7 +11,8 @@ import com.simple.mapper.OracleGeneratorMapper;
 import com.simple.mapper.PostgreSQLGeneratorMapper;
 import com.simple.mapper.SQLServerGeneratorMapper;
 import com.simple.properties.ConfigProperties;
-import com.wy.result.ResultException;
+
+import dream.flying.flower.result.ResultException;
 
 /**
  * 数据库配置

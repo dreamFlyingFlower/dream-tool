@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.simple.common.BasePager;
@@ -21,12 +22,12 @@ import com.simple.model.Tableinfo;
 import com.simple.properties.ConfigProperties;
 import com.simple.utils.GenerateUtils;
 import com.simple.utils.VelocityUtils;
-import com.wy.collection.MapTool;
-import com.wy.lang.StrTool;
-import com.wy.result.Result;
-import com.wy.third.json.JsonTools;
-import com.wy.util.ArrayTool;
-import com.wy.util.DateTool;
+
+import dream.flying.flower.collection.MapHelper;
+import dream.flying.flower.helper.ArrayHelper;
+import dream.flying.flower.helper.DateHelper;
+import dream.flying.flower.lang.StrHelper;
+import dream.flying.flower.result.Result;
 
 /**
  * 代码生成器
@@ -49,7 +50,9 @@ public class GeneratorService {
 
 	public Result<?> queryList(BasePager pager) {
 		PageHelper.startPage(pager.getPageIndex(), pager.getPageSize());
-		List<Map<String, Object>> list = generatorMapper.selectLists(JsonTools.parseMap(JSON.toJSONString(pager)));
+		List<Map<String, Object>> list = generatorMapper
+				.selectLists(JSON.parseObject(JSON.toJSONString(pager), new TypeReference<Map<String, Object>>() {
+				}));
 		PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(list);
 		long total = pageInfo.getTotal();
 		return Result.page(list, pageInfo.getPageNum(), pageInfo.getPageSize(), total);
@@ -97,7 +100,7 @@ public class GeneratorService {
 	}
 
 	private byte[] generateCode(List<Map<String, Object>> dbTables,
-	        Map<String, List<Map<String, String>>> handlerColumns, boolean localOrRemote) {
+			Map<String, List<Map<String, String>>> handlerColumns, boolean localOrRemote) {
 		generateMapperXml(dbTables, handlerColumns, localOrRemote);
 		dataSource.setUrl(dataSource.getUrl().replaceAll("&", "&amp;"));
 		// 所有表的信息,需要添加到mybatis自动生成xml的模板中
@@ -105,7 +108,7 @@ public class GeneratorService {
 			String tableName = dbTable.get("tableName").toString();
 			// 处理表信息
 			Tableinfo tableinfo =
-			        GenerateUtils.generateTableinfo(dbTable, handlerColumns.get(tableName), config, dataSource);
+					GenerateUtils.generateTableinfo(dbTable, handlerColumns.get(tableName), config, dataSource);
 			// 生成代码
 			if (localOrRemote) {
 				GenerateUtils.generateCode(tableinfo, config, localOrRemote, dataSource);
@@ -121,7 +124,7 @@ public class GeneratorService {
 
 	@Async
 	public void generateMapperXml(List<Map<String, Object>> dbTables,
-	        Map<String, List<Map<String, String>>> handlerColumns, boolean localOrRemote) {
+			Map<String, List<Map<String, String>>> handlerColumns, boolean localOrRemote) {
 		dataSource.setUrl(dataSource.getUrl().replaceAll("&", "&amp;"));
 		for (Map<String, Object> dbTable : dbTables) {
 			String tableName = dbTable.get("tableName").toString();
@@ -143,37 +146,43 @@ public class GeneratorService {
 	public void generateDict(String tableName, String tableItemName, String... dictCodes) {
 		// 表数据
 		List<Map<String, Object>> dbTables =
-		        generatorMapper.selectLists(MapTool.builder("tableName", tableName).build());
+				generatorMapper.selectLists(MapHelper.builder("tableName", tableName).build());
 		// 所有字段信息
 		List<Map<String, String>> dbColumns = generatorMapper.selectColumninfos(tableName);
 		// 处理表信息
 		Tableinfo tableinfo = GenerateUtils.generateTableinfo(dbTables.get(0), dbColumns, config, dataSource);
 		List<Map<String, Object>> selectDatas = generatorMapper.selectDatas(tableName);
 		Map<Object, Map<String, Object>> mapDictCode2Dicts =
-		        selectDatas.stream().collect(Collectors.toMap(k -> k.get("dict_code"), v -> v));
+				selectDatas.stream().collect(Collectors.toMap(k -> k.get("dict_code"), v -> v));
 		// 查询字典项数据
 		List<Map<String, Object>> selectDataItems = generatorMapper.selectDatas(tableItemName);
-		Map<Object, List<Map<String, Object>>> mapDictCode2DictItems = selectDataItems.stream().filter(
-		        t -> ArrayTool.isNotEmpty(dictCodes) ? !ArrayTool.contains(dictCodes, t.get("dict_code")) : true)
-		        .collect(Collectors.groupingBy(k -> k.get("dict_code")));
+		Map<Object, List<Map<String, Object>>> mapDictCode2DictItems = selectDataItems.stream()
+				.filter(t -> ArrayHelper.isNotEmpty(dictCodes) ? !ArrayHelper.contains(dictCodes, t.get("dict_code"))
+						: true)
+				.collect(Collectors.groupingBy(k -> k.get("dict_code")));
 
 		// 封装模板数据
 		for (Map.Entry<Object, List<Map<String, Object>>> entry : mapDictCode2DictItems.entrySet()) {
 			String className = entry.getKey().toString();
 			className = className.endsWith("state") || className.endsWith("status") || className.endsWith("type")
-			        ? StrTool.snake2Hump(className)
-			        : StrTool.snake2Hump(className) + "Enum";
-			className = StrTool.firstUpper(className);
+					? StrHelper.underline2Hump(className)
+					: StrHelper.underline2Hump(className) + "Enum";
+			className = StrHelper.firstUpper(className);
 			tableinfo.setClassName(className);
 			entry.getValue().stream().forEach(t -> {
 				t.put("dict_code", t.get("dict_code").toString().toUpperCase());
 			});
-			Map<String, Object> map = MapTool.builder("tableinfo", tableinfo).put("columns", tableinfo.getColumns())
-			        .put("className", className).put("comment", mapDictCode2Dicts.get(entry.getKey()).get("dict_name"))
-			        .put("dictItems", entry.getValue()).put("common", config.getCommon())
-			        .put("datetime", DateTool.formatDateTime()).build();
+			Map<String,
+					Object> map = MapHelper.builder("tableinfo", tableinfo)
+							.put("columns", tableinfo.getColumns())
+							.put("className", className)
+							.put("comment", mapDictCode2Dicts.get(entry.getKey()).get("dict_name"))
+							.put("dictItems", entry.getValue())
+							.put("common", config.getCommon())
+							.put("datetime", DateHelper.formatDateTime())
+							.build();
 			VelocityUtils.generateFiles(map, tableinfo,
-			        new ArrayList<String>(Arrays.asList("template/DictEnum.java.vm")), true);
+					new ArrayList<String>(Arrays.asList("template/DictEnum.java.vm")), true);
 		}
 	}
 }

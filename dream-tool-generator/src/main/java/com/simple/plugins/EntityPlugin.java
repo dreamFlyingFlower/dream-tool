@@ -12,7 +12,7 @@ import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.internal.util.StringUtility;
 import org.springframework.util.StringUtils;
 
-import com.wy.annotation.Example;
+import dream.flying.flower.annotation.Example;
 
 /**
  * 自定义根据数据库表生成实体类,未使用

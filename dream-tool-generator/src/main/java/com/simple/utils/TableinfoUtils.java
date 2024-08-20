@@ -4,7 +4,8 @@ import java.util.Map;
 
 import com.simple.model.Tableinfo;
 import com.simple.properties.ConfigProperties;
-import com.wy.lang.StrTool;
+
+import dream.flying.flower.lang.StrHelper;
 
 /**
  * 表信息工具类
@@ -54,10 +55,10 @@ public class TableinfoUtils {
 	 * @return java类名或实例名
 	 */
 	public static String tableToJava(String tableName, String tablePrefixs, boolean clsOrObj) {
-		if (StrTool.isBlank(tableName)) {
+		if (StrHelper.isBlank(tableName)) {
 			return null;
 		}
-		if (StrTool.isNotBlank(tablePrefixs)) {
+		if (StrHelper.isNotBlank(tablePrefixs)) {
 			for (String tablePrefix : tablePrefixs.split(",")) {
 				if (tableName.startsWith(tablePrefix)) {
 					tableName = tableName.replaceFirst(tablePrefix, "");
@@ -65,6 +66,6 @@ public class TableinfoUtils {
 				}
 			}
 		}
-		return StrTool.snake2Hump(tableName, clsOrObj);
+		return StrHelper.underline2Hump(tableName, clsOrObj);
 	}
 }

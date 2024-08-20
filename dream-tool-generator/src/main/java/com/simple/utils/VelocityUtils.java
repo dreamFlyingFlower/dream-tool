@@ -19,11 +19,11 @@ import org.mybatis.generator.api.ShellRunner;
 
 import com.simple.model.Tableinfo;
 import com.simple.properties.ConfigProperties;
-import com.wy.io.IOTool;
-import com.wy.io.file.FileTool;
-import com.wy.lang.StrTool;
-import com.wy.result.ResultException;
 
+import dream.flying.flower.io.IOHelper;
+import dream.flying.flower.io.file.FileHelper;
+import dream.flying.flower.lang.StrHelper;
+import dream.flying.flower.result.ResultException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -67,7 +67,7 @@ public class VelocityUtils {
 		try (StringWriter sw = new StringWriter();) {
 			// 渲染模板
 			Template tpl = Velocity.getTemplate(config.getTemplate().getGeneratorConfig(),
-			        StandardCharsets.UTF_8.displayName());
+					StandardCharsets.UTF_8.displayName());
 			File file = new File("src/main/resources/generator/generatorConfig.xml");
 			if (!file.getParentFile().exists()) {
 				file.getParentFile().mkdirs();
@@ -75,19 +75,19 @@ public class VelocityUtils {
 			if (file.exists()) {
 				file.delete();
 			}
-			BufferedWriter bufferedWriter = FileTool.newBufferedWriter(file, StandardCharsets.UTF_8);
+			BufferedWriter bufferedWriter = FileHelper.newBufferedWriter(file, StandardCharsets.UTF_8);
 			tpl.merge(context, sw);
-			IOTool.write(sw.toString(), bufferedWriter);
+			IOHelper.write(sw.toString(), bufferedWriter);
 			bufferedWriter.flush();
 			ShellRunner.main(new String[] { "-configfile", "src\\main\\resources\\generator\\generatorConfig.xml",
-			        "-overwrite" });
+					"-overwrite" });
 		} catch (IOException e) {
 			throw new ResultException("Mybatis GeneratorConfig.xml渲染模板失败", e);
 		}
 	}
 
 	public static <K, V> byte[] generateFiles(Map<K, V> data, Tableinfo tableinfo, List<String> templates,
-	        boolean localOrRemote) {
+			boolean localOrRemote) {
 		VelocityContext context = new VelocityContext(data);
 		for (String template : templates) {
 			// 渲染模板
@@ -95,7 +95,7 @@ public class VelocityUtils {
 			if (localOrRemote) {
 				try (StringWriter sw = new StringWriter();) {
 					String fileName = GenerateUtils.getFileName(config, template, tableinfo.getClassName());
-					if (StrTool.isBlank(fileName)) {
+					if (StrHelper.isBlank(fileName)) {
 						log.error("unknown template :" + template);
 						continue;
 					}
@@ -103,22 +103,22 @@ public class VelocityUtils {
 					if (!file.getParentFile().exists()) {
 						file.getParentFile().mkdirs();
 					}
-					BufferedWriter generatorFile = FileTool.newBufferedWriter(file, StandardCharsets.UTF_8);
+					BufferedWriter generatorFile = FileHelper.newBufferedWriter(file, StandardCharsets.UTF_8);
 					tpl.merge(context, sw);
-					IOTool.write(sw.toString(), generatorFile);
+					IOHelper.write(sw.toString(), generatorFile);
 					generatorFile.flush();
 				} catch (IOException e) {
 					throw new ResultException("渲染模板失败,表名:" + tableinfo.getTableName(), e);
 				}
 			} else {
 				try (StringWriter sw = new StringWriter();
-				        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-				        ZipOutputStream zip = new ZipOutputStream(outputStream);) {
+						ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+						ZipOutputStream zip = new ZipOutputStream(outputStream);) {
 					tpl.merge(context, sw);
 					// 添加到zip
 					zip.putNextEntry(
-					        new ZipEntry(GenerateUtils.getFileName(config, template, tableinfo.getClassName())));
-					IOTool.write(sw.toString(), zip, StandardCharsets.UTF_8.displayName());
+							new ZipEntry(GenerateUtils.getFileName(config, template, tableinfo.getClassName())));
+					IOHelper.write(sw.toString(), zip, StandardCharsets.UTF_8.displayName());
 					zip.closeEntry();
 					return outputStream.toByteArray();
 				} catch (IOException e) {

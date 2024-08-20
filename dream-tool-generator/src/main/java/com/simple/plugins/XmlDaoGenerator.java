@@ -29,7 +29,7 @@ import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.UpdateByPrimary
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.UpdateByPrimaryKeyWithBLOBsElementGenerator;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.UpdateByPrimaryKeyWithoutBLOBsElementGenerator;
 
-import com.wy.annotation.Example;
+import dream.flying.flower.annotation.Example;
 
 /**
  * 自定义生成mapper.xml方法

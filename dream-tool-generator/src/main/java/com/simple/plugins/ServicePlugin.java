@@ -17,7 +17,7 @@ import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.internal.util.StringUtility;
 import org.springframework.util.StringUtils;
 
-import com.wy.annotation.Example;
+import dream.flying.flower.annotation.Example;
 
 /**
  * 自定义生成service和impl,此处不生成impl

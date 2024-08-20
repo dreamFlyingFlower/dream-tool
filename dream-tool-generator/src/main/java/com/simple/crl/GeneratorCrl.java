@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.simple.common.BasePager;
 import com.simple.service.GeneratorService;
-import com.wy.io.IOTool;
-import com.wy.result.Result;
+
+import dream.flying.flower.io.IOHelper;
+import dream.flying.flower.result.Result;
 
 /**
  * 在线代码生成器
@@ -48,7 +49,7 @@ public class GeneratorCrl {
 		response.setHeader("Content-Disposition", "attachment; filename=\"codes.zip\"");
 		response.addHeader("Content-Length", "" + data.length);
 		response.setContentType("application/octet-stream; charset=UTF-8");
-		IOTool.write(data, response.getOutputStream());
+		IOHelper.write(data, response.getOutputStream());
 	}
 
 	/**
@@ -61,6 +62,6 @@ public class GeneratorCrl {
 		response.setHeader("Content-Disposition", "attachment; filename=\"codes.zip\"");
 		response.addHeader("Content-Length", "" + data.length);
 		response.setContentType("application/octet-stream; charset=UTF-8");
-		IOTool.write(data, response.getOutputStream());
+		IOHelper.write(data, response.getOutputStream());
 	}
 }

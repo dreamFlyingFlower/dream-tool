@@ -12,7 +12,7 @@ import org.mybatis.generator.config.CommentGeneratorConfiguration;
 import org.mybatis.generator.config.Context;
 import org.mybatis.generator.internal.util.StringUtility;
 
-import com.wy.lang.StrTool;
+import dream.flying.flower.lang.StrHelper;
 
 /**
  * 全局配置以及不需要生成的方法
@@ -108,10 +108,10 @@ public class CommonPlugin extends PluginAdapter {
 		configuration.addProperty("suppressDate", this.context.getProperty("suppressDate"));
 		configuration.addProperty("suppressAllComments", this.context.getProperty("suppressAllComments"));
 		configuration.addProperty("addRemarkComments", this.context.getProperty("addRemarkComments"));
-		this.generateModelExample = StrTool.isBlank(this.context.getProperty("generateModelExample")) ? true
-		        : StringUtility.isTrue(this.context.getProperty("generateModelExample"));
-		this.generateMapper = StrTool.isBlank(this.context.getProperty("generateMapper")) ? false
-		        : StringUtility.isTrue(this.context.getProperty("generateMapper"));
+		this.generateModelExample = StrHelper.isBlank(this.context.getProperty("generateModelExample")) ? true
+				: StringUtility.isTrue(this.context.getProperty("generateModelExample"));
+		this.generateMapper = StrHelper.isBlank(this.context.getProperty("generateMapper")) ? false
+				: StringUtility.isTrue(this.context.getProperty("generateMapper"));
 		this.context.setCommentGeneratorConfiguration(configuration);
 		context.getJdbcConnectionConfiguration().addProperty("remarksReporting", "true");
 	}
@@ -129,7 +129,7 @@ public class CommonPlugin extends PluginAdapter {
 	 */
 	@Override
 	public boolean modelGetterMethodGenerated(Method method, TopLevelClass topLevelClass,
-	        IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable, ModelClassType modelClassType) {
+			IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable, ModelClassType modelClassType) {
 		return false;
 	}
 
@@ -138,7 +138,7 @@ public class CommonPlugin extends PluginAdapter {
 	 */
 	@Override
 	public boolean modelSetterMethodGenerated(Method method, TopLevelClass topLevelClass,
-	        IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable, ModelClassType modelClassType) {
+			IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable, ModelClassType modelClassType) {
 		return false;
 	}
 

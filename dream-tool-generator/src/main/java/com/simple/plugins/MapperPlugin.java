@@ -17,7 +17,7 @@ import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import com.wy.lang.StrTool;
+import dream.flying.flower.lang.StrHelper;
 
 /**
  * 生成mapper对应的xml文件
@@ -161,7 +161,7 @@ public class MapperPlugin extends PluginAdapter {
 			}
 			String javaColumn = column.getJavaProperty();
 			if (column.getActualColumnName().startsWith("is_")) {
-				javaColumn = StrTool.firstLower(javaColumn.replace("is", ""));
+				javaColumn = StrHelper.firstLower(javaColumn.replace("is", ""));
 			}
 			whereBuilder.append("<if test = \"query.").append(javaColumn).append(" != null and query.")
 			        .append(javaColumn).append(" != ''\"> ").append(System.lineSeparator()).append("AND a.")

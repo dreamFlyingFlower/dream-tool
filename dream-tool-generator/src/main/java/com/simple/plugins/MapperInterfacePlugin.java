@@ -13,7 +13,7 @@ import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.internal.util.StringUtility;
 import org.springframework.util.StringUtils;
 
-import com.wy.annotation.Example;
+import dream.flying.flower.annotation.Example;
 
 /**
  * 自定义Mapper接口,未使用
