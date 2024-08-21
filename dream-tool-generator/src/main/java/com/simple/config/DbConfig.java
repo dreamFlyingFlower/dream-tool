@@ -41,7 +41,7 @@ public class DbConfig {
 
 	@Bean
 	@Primary
-	public GeneratorMapper getGeneratorDao() {
+	GeneratorMapper getGeneratorDao() {
 		if ("mysql".equalsIgnoreCase(config.getDatabase().getDatabaseType())) {
 			return mySQLGeneratorMapper;
 		} else if ("oracle".equalsIgnoreCase(config.getDatabase().getDatabaseType())) {
