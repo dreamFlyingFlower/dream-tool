@@ -16,4 +16,14 @@ public interface StatusMsg extends CodeMsg<Integer> {
 	 */
 	@Override
 	Integer getCode();
+
+	/**
+	 * 信息
+	 * 
+	 * @return 信息
+	 */
+	@Override
+	default String getMsg() {
+		return toString();
+	}
 }

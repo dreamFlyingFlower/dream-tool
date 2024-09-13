@@ -173,4 +173,9 @@ public enum TipEnum implements StatusMsg {
 	public String getMsg() {
 		return Internation.getStr(key);
 	}
+
+	@Override
+	public String toString() {
+		return super.toString().replaceFirst("TIP", "");
+	}
 }

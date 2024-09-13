@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.activation.MimeType;
+
 import dream.flying.flower.annotation.Nullable;
 import dream.flying.flower.collection.LinkedCaseInsensitiveMap;
 import dream.flying.flower.collection.MapHelper;
@@ -27,6 +29,10 @@ import dream.flying.flower.lang.StrHelper;
  * @git {@link https://github.com/dreamFlyingFlower}
  */
 public class ContentType {
+
+	public static final String JSON = "json";
+
+	public static final String XML = "xml";
 
 	protected static final String WILDCARD_TYPE = "*";
 
@@ -128,6 +134,16 @@ public class ContentType {
 	 */
 	@Deprecated
 	public static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
+
+	/**
+	 * Public constant media type for {@code application/jwt}.
+	 */
+	public static final ContentType APPLICATION_JWT;
+
+	/**
+	 * A String equivalent of {@code application/jwt}.
+	 */
+	public static final String APPLICATION_JWT_VALUE = "application/jwt";
 
 	/**
 	 * Public constant media type for {@code application/octet-stream}.
@@ -362,6 +378,7 @@ public class ContentType {
 		APPLICATION_FORM_URLENCODED = new ContentType("application", "x-www-form-urlencoded");
 		APPLICATION_JSON = new ContentType("application", "json");
 		APPLICATION_JSON_UTF8 = new ContentType("application", "json", StandardCharsets.UTF_8);
+		APPLICATION_JWT = new ContentType("application", "jwt");
 		APPLICATION_NDJSON = new ContentType("application", "x-ndjson");
 		APPLICATION_OCTET_STREAM = new ContentType("application", "octet-stream");
 		APPLICATION_PDF = new ContentType("application", "pdf");
