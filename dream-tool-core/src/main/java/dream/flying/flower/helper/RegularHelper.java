@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.enums.RegexEnum;
 import dream.flying.flower.lang.AssertHelper;
 import dream.flying.flower.lang.StrHelper;
@@ -47,7 +48,7 @@ public class RegularHelper {
 	 * @return true->包含;false->不包含
 	 */
 	public static Boolean containSpecial(CharSequence cs) {
-		return Pattern.compile(ConstLang.STR_SPECIAL).matcher(cs).find();
+		return Pattern.compile(ConstSymbol.SPECIAL).matcher(cs).find();
 	}
 
 	/**

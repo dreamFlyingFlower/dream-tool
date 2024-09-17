@@ -1,6 +1,6 @@
 package dream.flying.flower.result;
 
-import dream.flying.flower.common.StatusMsg;
+import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.enums.TipEnum;
 
 public class ResultException extends RuntimeException {
@@ -17,7 +17,7 @@ public class ResultException extends RuntimeException {
 		this(TipEnum.TIP_SYS_ERROR);
 	}
 
-	public ResultException(StatusMsg statusMsg) {
+	public ResultException(CodeMsg statusMsg) {
 		this(null, statusMsg.getCode(), statusMsg.getMsg());
 	}
 
@@ -67,7 +67,7 @@ public class ResultException extends RuntimeException {
 		throw new ResultException(TipEnum.TIP_SYS_ERROR);
 	}
 
-	public static void throwException(StatusMsg statusMsg) throws ResultException {
+	public static void throwException(CodeMsg statusMsg) throws ResultException {
 		throw new ResultException(statusMsg);
 	}
 

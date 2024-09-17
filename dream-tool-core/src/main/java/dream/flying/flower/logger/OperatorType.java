@@ -1,7 +1,7 @@
 package dream.flying.flower.logger;
 
+import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.PropConverter;
-import dream.flying.flower.common.StatusMsg;
 
 /**
  * 操作日志类型
@@ -10,7 +10,7 @@ import dream.flying.flower.common.StatusMsg;
  * @date 2021-01-13 10:18:54
  * @git {@link https://github.com/mygodness100}
  */
-public enum OperatorType implements StatusMsg, PropConverter {
+public enum OperatorType implements CodeMsg, PropConverter {
 
 	OTHER("其他"),
 	ADMIN("超级管理员"),

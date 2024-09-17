@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 
 import dream.flying.flower.ConstIO;
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.helper.ThreadMonitor;
 import dream.flying.flower.io.file.FileNameHelper;
 import dream.flying.flower.result.ResultException;
@@ -502,7 +502,7 @@ public class SystemHelper {
 	 * @return true->是Unix系统,false->不是
 	 */
 	public static boolean isUnix() {
-		return File.separatorChar == ConstLang.SEPARATOR_UNIX;
+		return File.separatorChar == ConstSymbol.CHAR_UNIX_SEPARATOR;
 	}
 
 	/**
@@ -511,7 +511,7 @@ public class SystemHelper {
 	 * @return true->是Windows系统,false->不是
 	 */
 	public static boolean isWindows() {
-		return File.separatorChar == ConstLang.SEPARATOR_WINDOWS;
+		return File.separatorChar == ConstSymbol.CHAR_WIN_SEPARATOR;
 	}
 
 	/**
@@ -838,9 +838,8 @@ public class SystemHelper {
 	public static class PropertyUser {
 
 		/** 操作系统国家或地区缩写,如CN */
-		public static final String USER_COUNTRY =
-				getSystemProperty("user.country") == null ? getSystemProperty("user.region")
-						: getSystemProperty("user.country");
+		public static final String USER_COUNTRY = getSystemProperty("user.country") == null
+				? getSystemProperty("user.region") : getSystemProperty("user.country");
 
 		/** 当前项目的根目录 */
 		public static final String USER_DIR = getSystemProperty("user.dir");

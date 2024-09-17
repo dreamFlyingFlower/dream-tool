@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Stack;
 
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.io.IOCase;
 import dream.flying.flower.lang.StrHelper;
 import dream.flying.flower.lang.SystemHelper;
@@ -29,9 +29,9 @@ public class FileNameHelper {
 
 	static {
 		if (SystemHelper.isWindows()) {
-			OTHER_SEPARATOR = ConstLang.SEPARATOR_UNIX;
+			OTHER_SEPARATOR = ConstSymbol.CHAR_UNIX_SEPARATOR;
 		} else {
-			OTHER_SEPARATOR = ConstLang.SEPARATOR_WINDOWS;
+			OTHER_SEPARATOR = ConstSymbol.CHAR_WIN_SEPARATOR;
 		}
 	}
 
@@ -75,8 +75,8 @@ public class FileNameHelper {
 			return normalize(fullFilenameToAdd);
 		}
 		char ch = basePath.charAt(len - 1);
-		return isSeparator(ch) ? normalize(basePath + fullFilenameToAdd)
-				: normalize(basePath + File.separator + fullFilenameToAdd);
+		return isSeparator(ch)
+				? normalize(basePath + fullFilenameToAdd) : normalize(basePath + File.separator + fullFilenameToAdd);
 	}
 
 	/**
@@ -340,8 +340,8 @@ public class FileNameHelper {
 			return isSeparator(ch0) ? 1 : 0;
 		} else {
 			if (ch0 == '~') {
-				int posUnix = filename.indexOf(ConstLang.SEPARATOR_UNIX, 1);
-				int posWin = filename.indexOf(ConstLang.SEPARATOR_WINDOWS, 1);
+				int posUnix = filename.indexOf(ConstSymbol.UNIX_SEPARATOR, 1);
+				int posWin = filename.indexOf(ConstSymbol.WIN_SEPARATOR, 1);
 				if (posUnix == -1 && posWin == -1) {
 					return len + 1; // return a length greater than the input
 				}
@@ -360,8 +360,8 @@ public class FileNameHelper {
 				}
 				return -1;
 			} else if (isSeparator(ch0) && isSeparator(ch1)) {
-				int posUnix = filename.indexOf(ConstLang.SEPARATOR_UNIX, 2);
-				int posWin = filename.indexOf(ConstLang.SEPARATOR_WINDOWS, 2);
+				int posUnix = filename.indexOf(ConstSymbol.UNIX_SEPARATOR, 2);
+				int posWin = filename.indexOf(ConstSymbol.WIN_SEPARATOR, 2);
 				if (posUnix == -1 && posWin == -1 || posUnix == 2 || posWin == 2) {
 					return -1;
 				}
@@ -406,7 +406,7 @@ public class FileNameHelper {
 			return null;
 		}
 		if (len > filename.length()) {
-			return filename + ConstLang.SEPARATOR_UNIX;
+			return filename + ConstSymbol.UNIX_SEPARATOR;
 		}
 		return filename.substring(0, len);
 	}
@@ -481,8 +481,8 @@ public class FileNameHelper {
 		if (filename == null) {
 			return -1;
 		}
-		int lastUnixPos = filename.lastIndexOf(ConstLang.SEPARATOR_UNIX);
-		int lastWindowsPos = filename.lastIndexOf(ConstLang.SEPARATOR_WINDOWS);
+		int lastUnixPos = filename.lastIndexOf(ConstSymbol.UNIX_SEPARATOR);
+		int lastWindowsPos = filename.lastIndexOf(ConstSymbol.WIN_SEPARATOR);
 		return Math.max(lastUnixPos, lastWindowsPos);
 	}
 
@@ -496,7 +496,7 @@ public class FileNameHelper {
 		if (filename == null) {
 			return -1;
 		}
-		int extensionPos = filename.lastIndexOf(ConstLang.CHAR_DOT);
+		int extensionPos = filename.lastIndexOf(ConstSymbol.CHAR_DOT);
 		int lastSeparator = indexOfLastSeparator(filename);
 		return lastSeparator > extensionPos ? -1 : extensionPos;
 	}
@@ -508,7 +508,7 @@ public class FileNameHelper {
 	 * @return true->是文件分隔符,false->不是文件分隔符
 	 */
 	public static boolean isSeparator(char ch) {
-		return ch == ConstLang.SEPARATOR_UNIX || ch == ConstLang.SEPARATOR_WINDOWS;
+		return ch == ConstSymbol.CHAR_UNIX_SEPARATOR || ch == ConstSymbol.CHAR_WIN_SEPARATOR;
 	}
 
 	/**
@@ -572,7 +572,7 @@ public class FileNameHelper {
 	 * @return 规范化后的文件路径
 	 */
 	public static String normalize(String filename, boolean unixSeparator) {
-		char separator = unixSeparator ? ConstLang.SEPARATOR_UNIX : ConstLang.SEPARATOR_WINDOWS;
+		char separator = unixSeparator ? ConstSymbol.CHAR_UNIX_SEPARATOR : ConstSymbol.CHAR_WIN_SEPARATOR;
 		return doNormalize(filename, separator, true);
 	}
 
@@ -634,7 +634,7 @@ public class FileNameHelper {
 	 * @return 规范化后的文件路径
 	 */
 	public static String normalizeNoEndSeparator(String filename, boolean unixSeparator) {
-		char separator = unixSeparator ? ConstLang.SEPARATOR_UNIX : ConstLang.SEPARATOR_WINDOWS;
+		char separator = unixSeparator ? ConstSymbol.CHAR_UNIX_SEPARATOR : ConstSymbol.CHAR_WIN_SEPARATOR;
 		return doNormalize(filename, separator, false);
 	}
 
@@ -821,10 +821,10 @@ public class FileNameHelper {
 	 * @return 更新后的文件路径
 	 */
 	public static String separatorsToUnix(String path) {
-		if (path == null || path.indexOf(ConstLang.SEPARATOR_WINDOWS) == -1) {
+		if (path == null || path.indexOf(ConstSymbol.WIN_SEPARATOR) == -1) {
 			return path;
 		}
-		return path.replace(ConstLang.SEPARATOR_WINDOWS, ConstLang.SEPARATOR_UNIX);
+		return path.replace(ConstSymbol.WIN_SEPARATOR, ConstSymbol.UNIX_SEPARATOR);
 	}
 
 	/**
@@ -834,10 +834,10 @@ public class FileNameHelper {
 	 * @return 更新后的文件路径
 	 */
 	public static String separatorsToWindows(String path) {
-		if (path == null || path.indexOf(ConstLang.SEPARATOR_UNIX) == -1) {
+		if (path == null || path.indexOf(ConstSymbol.UNIX_SEPARATOR) == -1) {
 			return path;
 		}
-		return path.replace(ConstLang.SEPARATOR_UNIX, ConstLang.SEPARATOR_WINDOWS);
+		return path.replace(ConstSymbol.UNIX_SEPARATOR, ConstSymbol.WIN_SEPARATOR);
 	}
 
 	/**

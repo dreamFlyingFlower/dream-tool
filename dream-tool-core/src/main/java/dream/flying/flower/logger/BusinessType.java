@@ -1,7 +1,7 @@
 package dream.flying.flower.logger;
 
+import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.PropConverter;
-import dream.flying.flower.common.StatusMsg;
 
 /**
  * 日志类型
@@ -10,7 +10,7 @@ import dream.flying.flower.common.StatusMsg;
  * @date 2021-02-03 16:09:58
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public enum BusinessType implements StatusMsg, PropConverter {
+public enum BusinessType implements CodeMsg, PropConverter {
 
 	OTHER("其他"),
 	LOGIN("登录"),

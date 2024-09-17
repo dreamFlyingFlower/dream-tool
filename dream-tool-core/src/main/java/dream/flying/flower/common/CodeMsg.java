@@ -1,7 +1,5 @@
 package dream.flying.flower.common;
 
-import java.io.Serializable;
-
 /**
  * 自定义各种状态码以及状态信息
  * 
@@ -9,30 +7,43 @@ import java.io.Serializable;
  * @date 2020-02-20 15:14:26
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public interface CodeMsg<ID extends Serializable> {
+public interface CodeMsg extends StatusMsg<Integer> {
 
 	/**
-	 * 状态码,默认为成功状态码1
+	 * 状态码
 	 * 
 	 * @return 数字状态码
 	 */
-	ID getCode();
+	@Override
+	default Integer getCode() {
+		if (Enum.class.isAssignableFrom(this.getClass())) {
+			return ((Enum<?>) this).ordinal();
+		}
+		return null;
+	}
 
 	/**
-	 * 状态信息,默认为响应成功提示信息
+	 * 信息
 	 * 
-	 * @return 状态信息
+	 * @return 信息
 	 */
-	String getMsg();
+	@Override
+	default String getMsg() {
+		if (Enum.class.isAssignableFrom(this.getClass())) {
+			return ((Enum<?>) this).toString();
+		}
+		return null;
+	}
 
 	/**
-	 * 格式化状态信息,{@link String#format(String, Object...)}
+	 * name
 	 * 
-	 * @param format 格式化字符串
-	 * @param args 格式化参数
-	 * @return 状态信息
+	 * @return name
 	 */
-	default String getMsg(String format, Object... args) {
-		return String.format(format, args);
+	default String getName() {
+		if (Enum.class.isAssignableFrom(this.getClass())) {
+			return ((Enum<?>) this).name();
+		}
+		return null;
 	}
 }

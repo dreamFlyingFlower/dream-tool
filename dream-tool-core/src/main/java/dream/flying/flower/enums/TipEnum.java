@@ -1,8 +1,8 @@
 package dream.flying.flower.enums;
 
 import dream.flying.flower.ConstI18n;
+import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.Internation;
-import dream.flying.flower.common.StatusMsg;
 
 /**
  * 各种提示信息
@@ -11,7 +11,7 @@ import dream.flying.flower.common.StatusMsg;
  * @date 2021-03-11 09:51:42
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public enum TipEnum implements StatusMsg {
+public enum TipEnum implements CodeMsg {
 
 	/** 请求失败 */
 	TIP_FAIL(0, ConstI18n.MSG_FAIL),

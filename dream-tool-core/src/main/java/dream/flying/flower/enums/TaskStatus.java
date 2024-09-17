@@ -1,7 +1,7 @@
 package dream.flying.flower.enums;
 
+import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.PropConverter;
-import dream.flying.flower.common.StatusMsg;
 
 /**
  * 任务状态
@@ -10,7 +10,7 @@ import dream.flying.flower.common.StatusMsg;
  * @date 2022-11-27 12:03:45
  * @git {@link https://gitee.com/dreamFlyingFlower}
  */
-public enum TaskStatus implements StatusMsg, PropConverter {
+public enum TaskStatus implements CodeMsg, PropConverter {
 
 	STARTING(0, "开始中"),
 	STARTED(1, "已开始"),

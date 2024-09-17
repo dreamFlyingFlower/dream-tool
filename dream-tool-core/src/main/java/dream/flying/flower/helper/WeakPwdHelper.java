@@ -41,7 +41,7 @@ public class WeakPwdHelper {
 		if (ConstLang.HOLE_NUMBER.contains(str)) {
 			throw new ResultException("不能是连续的数字");
 		}
-		if (ConstLang.HOLE_ALPHABET.contains(str)) {
+		if (ConstLang.HOLE_ALPHABET_LOWER.contains(str.toLowerCase())) {
 			throw new ResultException("不能是连续的字符");
 		}
 	}

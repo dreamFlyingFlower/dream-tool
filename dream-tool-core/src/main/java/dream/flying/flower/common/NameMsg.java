@@ -7,7 +7,7 @@ package dream.flying.flower.common;
  * @date 2020-02-20 15:14:26
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public interface EnumStatusMsg extends CodeMsg<Integer> {
+public interface NameMsg extends StatusMsg<String> {
 
 	/**
 	 * 状态码
@@ -15,9 +15,9 @@ public interface EnumStatusMsg extends CodeMsg<Integer> {
 	 * @return 数字状态码
 	 */
 	@Override
-	default Integer getCode() {
+	default String getCode() {
 		if (Enum.class.isAssignableFrom(this.getClass())) {
-			return ((Enum<?>) this).ordinal();
+			return ((Enum<?>) this).name();
 		}
 		return null;
 	}

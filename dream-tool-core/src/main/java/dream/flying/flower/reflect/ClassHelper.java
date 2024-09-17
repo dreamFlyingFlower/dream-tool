@@ -10,7 +10,7 @@ import java.util.List;
 
 import dream.flying.flower.ConstArray;
 import dream.flying.flower.ConstClass;
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.collection.ListHelper;
 import dream.flying.flower.lang.AssertHelper;
 import dream.flying.flower.result.ResultException;
@@ -124,7 +124,7 @@ public class ClassHelper {
 			return clazz;
 		} catch (final ClassNotFoundException ex) {
 			// 允许点(.)作为内部类的分隔符
-			final int lastDotIndex = className.lastIndexOf(ConstLang.CHAR_DOT);
+			final int lastDotIndex = className.lastIndexOf(ConstSymbol.CHAR_DOT);
 			if (lastDotIndex != -1) {
 				try {
 					return getClass(classLoader, className.substring(0, lastDotIndex)
@@ -284,7 +284,7 @@ public class ClassHelper {
 	 */
 	public static String getPackageName(String className) {
 		AssertHelper.notNull(className, "Class name must not be null");
-		int lastDotIndex = className.lastIndexOf(ConstLang.STR_DOT);
+		int lastDotIndex = className.lastIndexOf(ConstSymbol.DOT);
 		return (lastDotIndex != -1 ? className.substring(0, lastDotIndex) : "");
 	}
 
@@ -307,13 +307,13 @@ public class ClassHelper {
 	 */
 	public static String getShortName(String className) {
 		AssertHelper.notBlank(className, "Class name must not be empty");
-		int lastDotIndex = className.lastIndexOf(ConstLang.STR_DOT);
+		int lastDotIndex = className.lastIndexOf(ConstSymbol.DOT);
 		int nameEndIndex = className.indexOf(ConstClass.CGLIB_CLASS_SEPARATOR);
 		if (nameEndIndex == -1) {
 			nameEndIndex = className.length();
 		}
 		String shortName = className.substring(lastDotIndex + 1, nameEndIndex);
-		shortName = shortName.replace(ConstClass.INNER_CLASS_SEPARATOR_CHAR, ConstLang.CHAR_DOT);
+		shortName = shortName.replace(ConstClass.INNER_CLASS_SEPARATOR_CHAR, ConstSymbol.CHAR_DOT);
 		return shortName;
 	}
 

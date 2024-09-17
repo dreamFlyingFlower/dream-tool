@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import dream.flying.flower.ConstArray;
 import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.annotation.Example;
 import dream.flying.flower.enums.RegexEnum;
 import dream.flying.flower.helper.ArrayHelper;
@@ -18,9 +19,11 @@ import dream.flying.flower.helper.ConvertHepler;
 /**
  * String工具类,参照{@link org.apache.commons.lang3.StringUtils},{@link org.springframework.util.StringUtils}
  * 
- * 正则表达式的分组: @ (),每一个对括号表示一个分组,分组的顺序是从左括号出现的顺序, @ $后面加一个数字表示对应某一个分组,替代分组中不可直接表达的字符串
+ * 正则表达式的分组: @ (),每一个对括号表示一个分组,分组的顺序是从左括号出现的顺序, @
+ * $后面加一个数字表示对应某一个分组,替代分组中不可直接表达的字符串
  * 
- * 快快乐乐 去掉叠词为快乐,pattern((.)\\1+,$1): 第一个括号表示第一个分组中的任意字符;\\1表示第一个分组,\\2表示第2个分组,需要紧跟在分组之后
+ * 快快乐乐 去掉叠词为快乐,pattern((.)\\1+,$1):
+ * 第一个括号表示第一个分组中的任意字符;\\1表示第一个分组,\\2表示第2个分组,需要紧跟在分组之后
  * +表示可出现多个相同的任意字符,$1表示将分组中的.所代表的任意字符串替换到$1,$2则表示替换第二个分组
  * 
  * @author 飞花梦影
@@ -163,18 +166,18 @@ public class StrHelper extends CharSequenceHelper {
 		}
 		if (str.length() == 1) {
 			final char ch = str.charAt(0);
-			if (ch == ConstLang.CHAR_CR || ch == ConstLang.CHAR_LF) {
+			if (ch == ConstSymbol.CHAR_CR || ch == ConstSymbol.CHAR_UNIX_LF) {
 				return ConstLang.STR_EMPTY;
 			}
 			return str;
 		}
 		int lastIdx = str.length() - 1;
 		final char last = str.charAt(lastIdx);
-		if (last == ConstLang.CHAR_LF) {
-			if (str.charAt(lastIdx - 1) == ConstLang.CHAR_CR) {
+		if (last == ConstSymbol.CHAR_UNIX_LF) {
+			if (str.charAt(lastIdx - 1) == ConstSymbol.CHAR_CR) {
 				lastIdx--;
 			}
-		} else if (last != ConstLang.CHAR_CR) {
+		} else if (last != ConstSymbol.CHAR_CR) {
 			lastIdx++;
 		}
 		return str.substring(0, lastIdx);
@@ -197,7 +200,7 @@ public class StrHelper extends CharSequenceHelper {
 		final int lastIdx = strLen - 1;
 		final String ret = str.substring(0, lastIdx);
 		final char last = str.charAt(lastIdx);
-		if (last == ConstLang.CHAR_LF && ret.charAt(lastIdx - 1) == ConstLang.CHAR_CR) {
+		if (last == ConstSymbol.CHAR_UNIX_LF && ret.charAt(lastIdx - 1) == ConstSymbol.CHAR_CR) {
 			return ret.substring(0, lastIdx - 1);
 		}
 		return ret;
@@ -418,8 +421,8 @@ public class StrHelper extends CharSequenceHelper {
 					return sbuf.toString();
 				}
 			} else {
-				if (delimIndex > 0 && template.charAt(delimIndex - 1) == ConstLang.CHAR_BACKSLASH) {
-					if (delimIndex > 1 && template.charAt(delimIndex - 2) == ConstLang.CHAR_BACKSLASH) {
+				if (delimIndex > 0 && template.charAt(delimIndex - 1) == ConstSymbol.CHAR_BACKSLASH) {
+					if (delimIndex > 1 && template.charAt(delimIndex - 2) == ConstSymbol.CHAR_BACKSLASH) {
 						// 转义符之前还有一个转义符，占位符依旧有效
 						sbuf.append(template, handledPosition, delimIndex - 1);
 						sbuf.append(ConvertHepler.toStr(args[argIndex]));
@@ -428,7 +431,7 @@ public class StrHelper extends CharSequenceHelper {
 						// 占位符被转义
 						argIndex--;
 						sbuf.append(template, handledPosition, delimIndex - 1);
-						sbuf.append(ConstLang.CHAR_DELIM_START);
+						sbuf.append(ConstSymbol.BRACE_START);
 						handledPosition = delimIndex + 1;
 					}
 				} else {
@@ -468,7 +471,8 @@ public class StrHelper extends CharSequenceHelper {
 	}
 
 	/**
-	 * 判断源字符串中是否只包含unicode表示的数字或纯数字,不包括小数点,非数字将删除; 若是unicode表示的数字,直接返回unicode形式的字符串;数字直接返回
+	 * 判断源字符串中是否只包含unicode表示的数字或纯数字,不包括小数点,非数字将删除;
+	 * 若是unicode表示的数字,直接返回unicode形式的字符串;数字直接返回
 	 *
 	 * @param str 源字符串
 	 * @return 只包含unicode表示的数字或纯数字字符串
@@ -1314,8 +1318,9 @@ public class StrHelper extends CharSequenceHelper {
 	}
 
 	/**
-	 * Performs the logic for the <code>split</code> and <code>splitPreserveAllTokens</code> methods that return a
-	 * maximum array length.
+	 * Performs the logic for the <code>split</code> and
+	 * <code>splitPreserveAllTokens</code> methods that return a maximum array
+	 * length.
 	 *
 	 * @param str 待分割字符串,可能为null
 	 * @param separatorChar 分割符
@@ -1971,7 +1976,7 @@ public class StrHelper extends CharSequenceHelper {
 	 * @return 删除起始和末尾包裹的字符之后的新字符串
 	 */
 	public static String unwrap(final String str, final char wrapChar) {
-		if (isEmpty(str) || wrapChar == ConstLang.CHAR_NUL || str.length() == 1) {
+		if (isEmpty(str) || wrapChar == ConstSymbol.CHAR_NUL || str.length() == 1) {
 			return str;
 		}
 		if (str.charAt(0) == wrapChar && str.charAt(str.length() - 1) == wrapChar) {
@@ -2009,7 +2014,7 @@ public class StrHelper extends CharSequenceHelper {
 	 * @return 起始和末尾同时添加指定字符之后的新字符串
 	 */
 	public static String wrap(final String str, final char wrapChar) {
-		if (isEmpty(str) || wrapChar == ConstLang.CHAR_NUL) {
+		if (isEmpty(str) || wrapChar == ConstSymbol.CHAR_NUL) {
 			return str;
 		}
 		return wrapChar + str + wrapChar;
@@ -2037,7 +2042,7 @@ public class StrHelper extends CharSequenceHelper {
 	 * @return 起始和末尾同时添加指定字符之后的新字符串
 	 */
 	public static String wrapIfMissing(final String str, final char wrapChar) {
-		if (isEmpty(str) || wrapChar == ConstLang.CHAR_NUL) {
+		if (isEmpty(str) || wrapChar == ConstSymbol.CHAR_NUL) {
 			return str;
 		}
 		final boolean wrapStart = str.charAt(0) != wrapChar;

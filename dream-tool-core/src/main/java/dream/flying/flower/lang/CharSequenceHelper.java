@@ -6,6 +6,7 @@ import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
 import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.helper.ArrayHelper;
 import dream.flying.flower.primitive.CharHelper;
 
@@ -203,7 +204,7 @@ public class CharSequenceHelper {
 	 * @return true->包含;false->不包含
 	 */
 	public static Boolean containsSpecial(CharSequence cs) {
-		return Pattern.compile(ConstLang.STR_SPECIAL).matcher(cs).find();
+		return Pattern.compile(ConstSymbol.SPECIAL).matcher(cs).find();
 	}
 
 	/**

@@ -5,6 +5,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
 import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.lang.StrHelper;
 
 /**
@@ -128,9 +129,9 @@ public class BufferHelper {
 		while (buffer.hasRemaining()) {
 			b = buffer.get();
 			charIndex++;
-			if (b == ConstLang.CHAR_CR) {
+			if (b == ConstSymbol.CHAR_CR) {
 				canEnd = true;
-			} else if (b == ConstLang.CHAR_LF) {
+			} else if (b == ConstSymbol.CHAR_UNIX_LF) {
 				return canEnd ? charIndex - 2 : charIndex - 1;
 			} else {
 				// 只有\r无法确认换行

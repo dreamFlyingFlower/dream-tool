@@ -2,8 +2,8 @@ package dream.flying.flower.enums;
 
 import java.util.stream.Stream;
 
+import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.PropConverter;
-import dream.flying.flower.common.StatusMsg;
 import dream.flying.flower.lang.StrHelper;
 
 /**
@@ -13,7 +13,7 @@ import dream.flying.flower.lang.StrHelper;
  * @date 2022-09-05 11:24:06
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public enum BooleanEnum implements StatusMsg, PropConverter {
+public enum BooleanEnum implements CodeMsg, PropConverter {
 
 	FALSE("否"),
 	TRUE("是");

@@ -3,7 +3,7 @@ package dream.flying.flower.enums;
 import java.text.MessageFormat;
 
 import dream.flying.flower.ConstI18nFormat;
-import dream.flying.flower.common.StatusMsg;
+import dream.flying.flower.common.CodeMsg;
 
 /**
  * 提示或信息类,传入的信息不要带有双引号或单引号
@@ -12,7 +12,7 @@ import dream.flying.flower.common.StatusMsg;
  * @date 2023-02-01 14:03:39
  * @git {@link https://github.com/dreamFlyingFlower }
  */
-public enum TipFormatEnum implements StatusMsg {
+public enum TipFormatEnum implements CodeMsg {
 
 	TIP_LOG_ERROR(0, "@@@:{0}"),
 	TIP_LOG_INFO(0, "###:{0}"),

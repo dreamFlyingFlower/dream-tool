@@ -3,9 +3,9 @@ package dream.flying.flower.enums;
 import java.util.List;
 import java.util.Map;
 
+import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.PropConverter;
-import dream.flying.flower.common.StatusMsg;
-import dream.flying.flower.helper.EnumStatusMsgHelper;
+import dream.flying.flower.helper.CodeMsgHelper;
 
 /**
  * 是否枚举
@@ -14,7 +14,7 @@ import dream.flying.flower.helper.EnumStatusMsgHelper;
  * @date 2022-04-28 09:16:03
  * @git {@link https://github.com/dreamFlyingFlower }
  */
-public enum YesNoEnum implements StatusMsg, PropConverter {
+public enum YesNoEnum implements CodeMsg, PropConverter {
 
 	NO("否"),
 	YES("是");
@@ -36,7 +36,7 @@ public enum YesNoEnum implements StatusMsg, PropConverter {
 	}
 
 	public static List<Map<String, Object>> toList() {
-		return EnumStatusMsgHelper.toListMap(YesNoEnum.class);
+		return CodeMsgHelper.toListMap(YesNoEnum.class);
 	}
 
 	public static boolean isYes(String msg) {
