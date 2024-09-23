@@ -48,7 +48,7 @@ public enum CipherType {
 	/**
 	 * 默认模式
 	 * 
-	 * 分段加密最大长度:((密钥长度/8)-11),解密最大长度:(密钥长度/8),如密钥长度为1024,则加密每行最大长度为117,解密为128
+	 * 原文每行最大数据= 密钥位数(bit)长度/8 - 11
 	 */
 	RSA_CIPHER("RSA/ECB/PKCS1Padding") {
 
@@ -64,7 +64,7 @@ public enum CipherType {
 	},
 
 	/**
-	 * 原文每行最大数据=密钥字节长度-经过SHA1摘要运算后的字符长度(固定为20字节,UTF8下为40个字符)-2
+	 * 原文每行最大数据= 密钥位数(bit)长度/8 - 经过SHA1摘要运算后的字符长度(固定为20字节,UTF8下为40个字符) - 2
 	 */
 	RSA_CIPHER1("RSA/ECB/OAEPWithSHA-1AndMGF1Padding") {
 
@@ -82,7 +82,7 @@ public enum CipherType {
 	/**
 	 * 推荐使用,更安全
 	 * 
-	 * 原文每行最大数据=密钥字节长度-经过SHA256摘要运算后的字符长度(固定为32字节,UTF8下为64个字符)-2
+	 * 原文每行最大数据= 密钥位数(bit)长度/8 - 经过SHA256摘要运算后的字符长度(固定为32字节,UTF8下为64个字符) - 2
 	 */
 	RSA_CIPHER256("RSA/ECB/OAEPWithSHA-256AndMGF1Padding") {
 
@@ -98,7 +98,7 @@ public enum CipherType {
 	},
 
 	/**
-	 * 原文每行最大数据=密钥字节长度-经过SHA256摘要运算后的字符长度(固定为48字节,UTF8下为96个字符)-2
+	 * 原文每行最大数据= 密钥位数(bit)长度/8 - 经过SHA384摘要运算后的字符长度(固定为48字节,UTF8下为96个字符) - 2
 	 */
 	RSA_CIPHER384("RSA/ECB/OAEPWithSHA-384AndMGF1Padding") {
 
@@ -116,7 +116,7 @@ public enum CipherType {
 	/**
 	 * 注意:当密钥长度小于2048时,此模式无法正确加解密
 	 * 
-	 * 原文每行最大数据=密钥字节长度-经过SHA256摘要运算后的字符长度(固定为64字节,UTF8下为128个字符)-2
+	 * 原文每行最大数据= 密钥位数(bit)长度/8 - 经过SHA512摘要运算后的字符长度(固定为64字节,UTF8下为128个字符) - 2
 	 */
 	RSA_CIPHER512("RSA/ECB/OAEPWithSha-512AndMGF1Padding") {
 

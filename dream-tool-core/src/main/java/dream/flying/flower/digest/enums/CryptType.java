@@ -9,11 +9,19 @@ package dream.flying.flower.digest.enums;
  */
 public enum CryptType {
 
+	/** 对称加密 */
 	AES("AES"),
 	DES("DES"),
+	/** 非对称加密 */
+	DH("DH"),
 	RSA("RSA"),
 
-	SHA1_WITH_RSA("SHA1withRSA");
+	MD5_WITH_RSA("MD5withRSA"),
+	SHA1_WITH_RSA("SHA1withRSA"),
+	SHA224_WITH_RSA("SHA224withRSA"),
+	SHA256_WITH_RSA("SHA256withRSA"),
+	SHA384_WITH_RSA("SHA384withRSA"),
+	SHA512_WITH_RSA("SHA512withRSA");
 
 	private String type;
 

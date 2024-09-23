@@ -19,6 +19,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import dream.flying.flower.ConstDigest;
 import dream.flying.flower.binary.HexHelper;
+import dream.flying.flower.binary.enums.EncodeType;
 import dream.flying.flower.digest.enums.CryptType;
 import dream.flying.flower.digest.enums.MessageDigestType;
 import dream.flying.flower.helper.CharsetHelper;
@@ -556,6 +557,68 @@ public class DigestHelper {
 	 */
 	public static String uuid(boolean flag) {
 		return flag ? UUID.randomUUID().toString().replaceAll("-", "") : UUID.randomUUID().toString();
+	}
+
+	/**
+	 * 生成对称密钥
+	 * 
+	 * @return 密钥
+	 */
+	public static SecretKey secretKey() {
+		return secretKey(ConstDigest.KEY_SIZE_256);
+	}
+
+	/**
+	 * 生成对称密钥
+	 * 
+	 * @param length 密钥长度
+	 * @return 密钥
+	 */
+	public static SecretKey secretKey(int length) {
+		try {
+			KeyGenerator keyGenerator = KeyGenerator.getInstance(CryptType.AES.getType());
+			keyGenerator.init(length);
+			return keyGenerator.generateKey();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 生成对称密钥
+	 * 
+	 * @return 密钥
+	 */
+	public static String generateKey() {
+		return generateKey(EncodeType.BASE64);
+	}
+
+	/**
+	 * 生成对称密钥
+	 * 
+	 * @param encodeType 密钥编码方式
+	 * @return 密钥
+	 */
+	public static String generateKey(EncodeType encodeType) {
+		return generateKey(ConstDigest.KEY_SIZE_256, encodeType);
+	}
+
+	/**
+	 * 生成对称密钥
+	 * 
+	 * @param length 密钥长度
+	 * @param encodeType 密钥编码方式
+	 * @return 密钥
+	 */
+	public static String generateKey(int length, EncodeType encodeType) {
+		byte[] secretKey = secretKey(length).getEncoded();
+		switch (encodeType) {
+		case HEX:
+			return HexHelper.encodeHexString(secretKey);
+		default:
+			return Base64.getEncoder().encodeToString(secretKey);
+		}
 	}
 
 	/**

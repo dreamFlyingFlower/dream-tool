@@ -1,5 +1,8 @@
 package dream.flying.flower;
 
+import dream.flying.flower.digest.enums.CipherType;
+import dream.flying.flower.digest.enums.CryptType;
+
 /**
  * 加密相关
  *
@@ -9,29 +12,35 @@ package dream.flying.flower;
  */
 public interface ConstDigest {
 
-	/** RSA最大加密明文大小 */
-	int MAX_ENCRYPT_BLOCK = 117;
+	/** 密钥倍数 */
+	int KEY_SIZE_MULTIPLE = 64;
 
-	/** RSA最大解密密文大小 */
-	int MAX_DECRYPT_BLOCK = 128;
+	/** 密钥最小长度 */
+	int KEY_SIZE_MIN = 512;
 
-	/** RSA密钥长度 */
+	/** 密钥最大长度 */
+	int KEY_SIZE_MAX = 65535;
+
+	/** 密钥长度 */
+	int KEY_SIZE_256 = 256;
+
+	/** 密钥长度 */
 	int KEY_SIZE_1024 = 1024;
 
-	/** RSA密钥长度 */
+	/** 密钥长度 */
 	int KEY_SIZE_2048 = 2048;
 
 	/** 生成PEM格式时每行字符串个数 */
 	int PEM_LINE_SIZE = 64;
 
-	String PUBLIC_KEY = "publicKey";
-
-	String PRIVATE_KEY = "privateKey";
-
-	/**
-	 * Java密钥,密钥库
-	 */
+	/** Java密钥,密钥库 */
 	String KEY_STORE = "JKS";
 
 	String X509 = "X.509";
+
+	/** RSA默认加解密模式以及填充模式 */
+	CipherType DEFAULT_CIPHER_TYPE_RSA = CipherType.RSA_CIPHER256;
+
+	/** RSA默认签名算法 */
+	CryptType DEFAULT_SIGNATURE_RSA = CryptType.SHA256_WITH_RSA;
 }
