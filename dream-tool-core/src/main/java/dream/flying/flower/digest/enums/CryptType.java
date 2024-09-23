@@ -13,9 +13,6 @@ public enum CryptType {
 	DES("DES"),
 	RSA("RSA"),
 
-	AES_CIPHER("AES/ECB/PKCS5Padding"),
-	DES_CIPHER("DES/ECB/PKCS5Padding"),
-
 	SHA1_WITH_RSA("SHA1withRSA");
 
 	private String type;
