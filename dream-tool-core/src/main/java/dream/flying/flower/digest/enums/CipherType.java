@@ -14,9 +14,41 @@ package dream.flying.flower.digest.enums;
 public enum CipherType {
 
 	/**
+	 * 未确定分段最大长度,AES CBC加密和填充模式
+	 */
+	AES_CBC7_CIPHER("AES/CBC/PKCS7Padding") {
+
+		@Override
+		public int encryptLength(int keyLength) {
+			return 0;
+		}
+
+		@Override
+		public int decryptLength(int keyLength) {
+			return 0;
+		}
+	},
+
+	/**
 	 * 未确定分段最大长度
 	 */
 	AES_CIPHER("AES/ECB/PKCS5Padding") {
+
+		@Override
+		public int encryptLength(int keyLength) {
+			return 0;
+		}
+
+		@Override
+		public int decryptLength(int keyLength) {
+			return 0;
+		}
+	},
+
+	/**
+	 * 未确定分段最大长度,AES GCM默认加密和填充模式,暂不支持其他GCM模式
+	 */
+	AES_GCM_CIPHER("AES/GCM/NoPadding") {
 
 		@Override
 		public int encryptLength(int keyLength) {
@@ -46,7 +78,7 @@ public enum CipherType {
 	},
 
 	/**
-	 * 默认模式
+	 * Java默认模式
 	 * 
 	 * 原文每行最大数据= 密钥位数(bit)长度/8 - 11
 	 */

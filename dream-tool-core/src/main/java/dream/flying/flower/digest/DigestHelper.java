@@ -2,11 +2,15 @@ package dream.flying.flower.digest;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.util.Base64;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.crypto.BadPaddingException;
@@ -15,11 +19,13 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import dream.flying.flower.ConstDigest;
 import dream.flying.flower.binary.HexHelper;
 import dream.flying.flower.binary.enums.EncodeType;
+import dream.flying.flower.digest.enums.CipherType;
 import dream.flying.flower.digest.enums.CryptType;
 import dream.flying.flower.digest.enums.MessageDigestType;
 import dream.flying.flower.helper.CharsetHelper;
@@ -30,11 +36,48 @@ import dream.flying.flower.result.ResultException;
 /**
  * Digest加密工具类
  * 
+ * CCM(Counter with CBC-MAC Mode)和GCM(Galois/Counter Mode):
+ * AES加密算法的两种操作模式,都是AEAD(Authenticated Encryption with Associated Data)模式,
+ * 用于同时提供数据加密和认证服务,比ECB和CBC模式更安全,效率更高
+ * 
+ * GCM模式需要指定标签长度(通常是96或128位),CCM模式则不需要指定,因为CCM自带标签生成机制.
+ * 加密完成后,输出的是加密文本和认证标签的合并,这是因为GCM和CCM都是AEAD模式
+ * 
  * @author 飞花梦影
  * @date 2021-03-06 19:29:58
  * @git {@link https://github.com/dreamFlyingFlower}
  */
 public class DigestHelper {
+
+	/**
+	 * 输出当前JDK版本支持的加密模式
+	 */
+	public static void printSecurityProvider() {
+		for (Provider provider : Security.getProviders()) {
+			for (Map.Entry<Object, Object> entry : provider.entrySet()) {
+				System.out.printf("key: [%s]  value: [%s]%n", entry.getKey(), entry.getValue());
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		printSecurityProvider("GCM");
+	}
+
+	/**
+	 * 输出当前JDK版本支持的指定加密模式
+	 * 
+	 * @param cipherType 加密模式
+	 */
+	public static void printSecurityProvider(String cipherType) {
+		for (Provider provider : Security.getProviders()) {
+			for (Map.Entry<Object, Object> entry : provider.entrySet()) {
+				if (((String) entry.getValue()).contains(cipherType)) {
+					System.out.printf("key: [%s]  value: [%s]%n", entry.getKey(), entry.getValue());
+				}
+			}
+		}
+	}
 
 	/**
 	 * AES解密
@@ -672,5 +715,60 @@ public class DigestHelper {
 		base64String.append(getPemBase64(encoded)).append(System.lineSeparator());
 		base64String.append("-----END PUBLIC KEY-----").append(System.lineSeparator());
 		return base64String.toString();
+	}
+
+	/**
+	 * AES的GCM模式加密
+	 *
+	 * @param content 加密内容
+	 * @return hex编码后的加密结果和标签
+	 */
+	public static String aesGcmEncrypt(String content) {
+		// 128比特的密钥
+		byte[] keyBytes = new byte[16];
+		// 初始化向量
+		byte[] iv = new byte[16];
+		SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, CryptType.AES.getType());
+		GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, iv);
+		try {
+			// JDK1.8只支持当前模式,其他模式不支持
+			Cipher cipher = Cipher.getInstance(CipherType.AES_GCM_CIPHER.getType());
+			cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, gcmParameterSpec);
+			// 包含加密文本和认证标签
+			byte[] authenticationTag = cipher.doFinal(content.getBytes());
+			// 输出加密结果和认证标签
+			return HexHelper.encodeHexString(authenticationTag);
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
+				| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * AES的GCM模式加密
+	 *
+	 * @param content 经过hex的加密内容
+	 * @return 原文
+	 */
+	public static String aesGcmDecrypt(String content) {
+		// 128比特的密钥
+		byte[] keyBytes = new byte[16];
+		// 初始化向量
+		byte[] iv = new byte[16];
+		SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, CryptType.AES.getType());
+		GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, iv);
+		try {
+			// JDK1.8只支持当前模式,其他模式不支持
+			Cipher cipher = Cipher.getInstance(CipherType.AES_GCM_CIPHER.getType());
+			cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, gcmParameterSpec);
+			// 包含加密文本和认证标签
+			byte[] authenticationTag = cipher.doFinal(HexHelper.decode(content));
+			return new String(authenticationTag);
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
+				| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

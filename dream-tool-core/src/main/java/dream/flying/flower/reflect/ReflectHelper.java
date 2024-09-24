@@ -68,11 +68,11 @@ public class ReflectHelper {
 		AssertHelper.notNull(member);
 		AccessibleObject ao = (AccessibleObject) member;
 		try {
-			if (ao.isAccessible()) {
+			if (ao.isAccessible() || Modifier.isPublic(member.getModifiers())
+					|| Modifier.isPublic(member.getDeclaringClass().getModifiers())) {
 				return;
 			}
-			if (forceAccess && (!Modifier.isPublic(member.getModifiers())
-					|| !Modifier.isPublic(member.getDeclaringClass().getModifiers()))) {
+			if (forceAccess) {
 				ao.setAccessible(true);
 			}
 		} catch (SecurityException se) {
@@ -108,8 +108,8 @@ public class ReflectHelper {
 	public static <T> Constructor<T> getConstructor(Class<T> type, boolean forceAccess)
 			throws NoSuchMethodException, SecurityException {
 		AssertHelper.notNull(type, "class cannot be null");
-		return forceAccess ? type.getDeclaredConstructor(ConstArray.EMPTY_CLASS)
-				: type.getConstructor(ConstArray.EMPTY_CLASS);
+		return forceAccess
+				? type.getDeclaredConstructor(ConstArray.EMPTY_CLASS) : type.getConstructor(ConstArray.EMPTY_CLASS);
 	}
 
 	/**
@@ -550,8 +550,8 @@ public class ReflectHelper {
 		Class<?> searchType = clazz;
 		// 从本类或父类中查找
 		while (searchType != null) {
-			Method method = forceAccess ? searchType.getDeclaredMethod(name, paramTypes)
-					: searchType.getMethod(name, paramTypes);
+			Method method = forceAccess
+					? searchType.getDeclaredMethod(name, paramTypes) : searchType.getMethod(name, paramTypes);
 			if (null != method) {
 				return method;
 			}

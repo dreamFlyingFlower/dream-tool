@@ -27,7 +27,7 @@
 //		System.out.println(fields);
 // 		Field[] field =  t1.getClass().getDeclaredFields();//获得所有的字段,不管是否可见,获得的字段不是对象身上,而是类上的
 //		for(Field test : field){
-//			test.setAccessible(true);//让private的字段也可见
+//			ReflectHelper.fixAccessible(test);
 //			if(test.getType() == String.class){//getType获得字节码的类型,字节码都是用等号,字节码只有一份
 //				String str = (String)test.get(t1);//从指定的对象中获取字段的值
 //				System.out.println(str);
@@ -100,3 +100,5 @@
 //		}
 //	}
 //}
+
+import dream.flying.flower.reflect.ReflectHelper;

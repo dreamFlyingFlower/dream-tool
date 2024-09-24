@@ -245,7 +245,7 @@ public class RandomHelper {
 		if (chars != null && chars.length == 0) {
 			throw new IllegalArgumentException("The chars array must not be empty");
 		}
-	
+
 		if (start == 0 && end == 0) {
 			if (chars != null) {
 				end = chars.length;
@@ -277,11 +277,11 @@ public class RandomHelper {
 			if (chars == null) {
 				codePoint = random.nextInt(gap) + start;
 				switch (Character.getType(codePoint)) {
-					case Character.UNASSIGNED:
-					case Character.PRIVATE_USE:
-					case Character.SURROGATE:
-						count++;
-						continue;
+				case Character.UNASSIGNED:
+				case Character.PRIVATE_USE:
+				case Character.SURROGATE:
+					count++;
+					continue;
 				}
 			} else {
 				codePoint = chars[random.nextInt(gap) + start];

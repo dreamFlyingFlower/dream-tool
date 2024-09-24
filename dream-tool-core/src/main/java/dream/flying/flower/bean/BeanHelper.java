@@ -124,7 +124,7 @@ public class BeanHelper {
 		Field[] fields = clazz.getDeclaredFields();
 		T t = clazz.getDeclaredConstructor().newInstance();
 		for (Field field : fields) {
-			field.setAccessible(true);
+			ReflectHelper.fixAccessible(field);
 			field.set(t, res.get(field.getName()));
 		}
 		return t;
@@ -152,7 +152,7 @@ public class BeanHelper {
 		Field[] fields = clazz.getDeclaredFields();
 		T t = clazz.getDeclaredConstructor().newInstance();
 		for (Field field : fields) {
-			field.setAccessible(true);
+			ReflectHelper.fixAccessible(field);
 			field.set(t, map.get(field.getName()));
 		}
 		return t;
