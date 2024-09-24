@@ -38,8 +38,11 @@ public interface ConstDigest {
 
 	String X509 = "X.509";
 
-	/** RSA默认加解密模式以及填充模式 */
-	CipherType DEFAULT_CIPHER_TYPE_RSA = CipherType.RSA_CIPHER256;
+	/** RSA默认公钥加密,私钥解密模式以及填充模式,非系统默认,当前模式更安全 */
+	CipherType DEFAULT_CIPHER_TYPE_RSA = CipherType.RSA_ECB_OAEP_SHA256;
+
+	/** RSA默认公钥解密,私钥加密模式以及填充模式,OAEP不可用于当前公私钥解加密模式 */
+	CipherType DEFAULT_CIPHER_TYPE_RSA_PRIVATE = CipherType.RSA_CIPHER;
 
 	/** RSA默认签名算法 */
 	CryptType DEFAULT_SIGNATURE_RSA = CryptType.SHA256_WITH_RSA;

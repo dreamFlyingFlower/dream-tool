@@ -45,6 +45,23 @@ import dream.flying.flower.result.ResultException;
  */
 public class RsaHelper {
 
+	public static void main(String[] args) {
+		// System.out.println(generateKey());
+
+		String publicKey =
+				"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkdpLBeKc0a+r6AWIlvzw7KVpzAiiA3JMdmDEWcWT8biv04CvzWlvgWI6t3nvMt003mozHFJmlOFNjQzmks9Rt+MK/D0iQq5V6lOnn58FE5TlKKXjiQK+pjdfUt748ua5l3PdO5MaHPsV9pHNjy5Xo06vSSelMt0e9UJ9f6nw6sS8KZTXBFVAWnJeTCnl5tKBDqPOBIdH6RLAVmH/wd1rh9gVLEJySmekx2R8TqGcanwebG+QuZcRMdp5ux5FPtf9Oh+0MlYS0ktHZQZg0By7xBLCtSJpPrdm59QD6QoPNJ202hXEvVWiaasm2tEsxHne2eDTFsd/666Kqie0i8pTPwIDAQAB";
+		String privateKey =
+				"MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCR2ksF4pzRr6voBYiW/PDspWnMCKIDckx2YMRZxZPxuK/TgK/NaW+BYjq3ee8y3TTeajMcUmaU4U2NDOaSz1G34wr8PSJCrlXqU6efnwUTlOUopeOJAr6mN19S3vjy5rmXc907kxoc+xX2kc2PLlejTq9JJ6Uy3R71Qn1/qfDqxLwplNcEVUBacl5MKeXm0oEOo84Eh0fpEsBWYf/B3WuH2BUsQnJKZ6THZHxOoZxqfB5sb5C5lxEx2nm7HkU+1/06H7QyVhLSS0dlBmDQHLvEEsK1Imk+t2bn1APpCg80nbTaFcS9VaJpqyba0SzEed7Z4NMWx3/rroqqJ7SLylM/AgMBAAECggEAbQVJjMWdyJLSIWV5erro70qZcTyGtaLLCrU8L4ojEsylCKgpQJZuFb0x/JE1PcThTtr9B0+EhAaA7EzXUKeNArHANVkQ8dzUNYqAQi0gI0npnN+a23/kt+Ot6gjm9tGFqnKdzHkhTMZV3W+QwlS2h0g6d6kdr45fJJ6lpjaF8UUk/L8KhmyckruSXsLbzFqy6j8q35OJNwh2OyRjj6lBm3rc9ViKKFBwOsDFAcY5k66vXwWJryKa5EaroENN+jVHj6pN2nybm8XX4Q/92jafmrQm/0DEhmMlK9dG31NEbLwkI0McxNFI1AB7aL2+Qa04JgzNFQXaTrPo/RAeSRy8eQKBgQDpfZV5X49/RT7voxOUX4ZCnoAC9jSBwgv9x9tXaoqYlWgKlEMDWlGSHV4PueX/O11NeJA2Nidm08Yy/n58blaAkX6hVWTxP8+wAFfYYU6+SStEZn1yickNABrDWj3AIxdHpyY3IyDqOhr1pD+ACyIk15uLTE0x5z1FszbhQIvsIwKBgQCf6dsnfvO8mjmOc/cHOdOry4Y3eoHdkQ5PXA51cNkAkKi4DMh3BzvWZKQhw7ZYL/MuDERwcWJu9dn0v5ZscxziguYpi2EW/jeSvM5v9tZCKX3alr3nGfr2qnVWk5WRsXHE8yRlo/UHQczIvHyOlDXZIKd1Uda3qSfc9ZjckZLQNQKBgF6Y+s5J4SF3NKByOaSLbyHehY6toWhQ7frL1hn8mFppbdWba+sX1KSWMV29u2lE6/BPQF42YpBOjKZsZWKUcYd1axCCQHtdlw9/lBeelQCTNGxp+blGCaayvCUZkpsdnHjzR5BfMx6ym+mZugBugk7a67HsH/pv7WsnyLxKImZxAoGBAIiC0Cz1OQjF92BeKoEmokXDpj3x/K6yR68DfOxQe076Lq1/bBoAONqaa2rPcffyZvvmSP5cLJVglsFSVA0cb4oGCIlqjGVeev5u4yO9acZtORzDFjYUfaLYfPZ9Ym9PNTnV/jouLtwVFcY+8W2dpCJIt+t1A4EhjAAaQHX6Z4QJAoGBAN/9J8lqGQd6WIvSo7yXbgbOT+u1lMhfWazrRTAcQiSDlQihU8JpYJgwW1zOvregUeLHGgrN38O+14Xf4qGxc1MhjQh5qjZkQsmrq/Pqa0Oq+JISe85URkt5q3Na+MZj/KvFV70eGQRMwKK8IvYAky/T6opMIFtIA2fk6wHjvvbx";
+
+		String content =
+				"fdsrwerewtgGERWGRWTRWFEWTGRWgdsgrew罡风等各位以太网同一人委托人武rtewytwywtrwtrwetrwtrwetewrttr" + "讽德诵功热骇人听闻特意认为他we";
+
+		String encryptPrivate = encryptPrivate(privateKey, content);
+		System.out.println(encryptPrivate);
+
+		System.out.println(decryptPublic(publicKey, encryptPrivate));
+	}
+
 	/**
 	 * 加解密
 	 * 
@@ -55,7 +72,7 @@ public class RsaHelper {
 	 * @param encrypt 是否为加密
 	 * @return 加解密后的内容
 	 */
-	private static String crypt(Cipher cipher, int keyLength, byte[] content, CipherType cipherType, boolean encrypt) {
+	private static byte[] crypt(Cipher cipher, int keyLength, byte[] content, CipherType cipherType, boolean encrypt) {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
 			int blockSize = encrypt ? cipherType.encryptLength(keyLength) : cipherType.decryptLength(keyLength);
 			int length = content.length;
@@ -73,8 +90,8 @@ public class RsaHelper {
 				i++;
 				offset = i * blockSize;
 			}
-			return encrypt ? Base64.getEncoder().encodeToString(out.toByteArray())
-					: new String(out.toByteArray(), CharsetHelper.defaultCharset());
+			out.flush();
+			return out.toByteArray();
 		} catch (IOException | IllegalBlockSizeException | BadPaddingException e) {
 			e.printStackTrace();
 			throw new ResultException(e.getMessage());
@@ -106,7 +123,7 @@ public class RsaHelper {
 			Cipher cipher = Cipher.getInstance(cipherType.getType());
 			cipher.init(Cipher.DECRYPT_MODE, privateKey);
 			int keyLength = ((RSAPrivateKey) privateKey).getModulus().bitLength();
-			return crypt(cipher, keyLength, content, cipherType, false);
+			return new String(crypt(cipher, keyLength, content, cipherType, false), CharsetHelper.defaultCharset());
 		} catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
 			e.printStackTrace();
 			throw new ResultException(e.getMessage());
@@ -187,6 +204,111 @@ public class RsaHelper {
 	}
 
 	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param publicKey 公钥
+	 * @param content 未经Base64解码的加密数据
+	 * @return 解密后字符串
+	 */
+	public static String decryptPublic(PublicKey publicKey, byte[] content) {
+		return decryptPublic(publicKey, content, ConstDigest.DEFAULT_CIPHER_TYPE_RSA_PRIVATE);
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param publicKey 公钥
+	 * @param content 未经Base64解码的加密数据
+	 * @param cipherType 加密模式以及填充模式
+	 * @return 解密后字符串
+	 */
+	public static String decryptPublic(PublicKey publicKey, byte[] content, CipherType cipherType) {
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
+			// 解密数据
+			Cipher cipher = Cipher.getInstance(cipherType.getType());
+			cipher.init(Cipher.DECRYPT_MODE, publicKey);
+			int keyLength = ((RSAPublicKey) publicKey).getModulus().bitLength();
+			return new String(crypt(cipher, keyLength, content, cipherType, false), CharsetHelper.defaultCharset());
+		} catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
+			e.printStackTrace();
+			throw new ResultException(e.getMessage());
+		}
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param publicKey 公钥
+	 * @param content 未经Base64解码的加密数据
+	 * @return 解密后字符串
+	 */
+	public static String decryptPublic(PublicKey publicKey, String content) {
+		return decryptPublic(publicKey, content, ConstDigest.DEFAULT_CIPHER_TYPE_RSA_PRIVATE);
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param publicKey 公钥
+	 * @param content 未经Base64解码的加密数据
+	 * @param cipherType 加密模式以及填充模式
+	 * @return 解密后字符串
+	 */
+	public static String decryptPublic(PublicKey publicKey, String content, CipherType cipherType) {
+		// base64编码规定一行字符串不能超过76个,超过换行,换行符会导致编码失败
+		byte[] encryptedData = Base64.getDecoder().decode(content.replaceAll("\r|\n", ""));
+		return decryptPublic(publicKey, encryptedData, cipherType);
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param publicKeyStr 公钥字符串
+	 * @param content 未经Base64解码的加密数据
+	 * @return 解密后字符串
+	 */
+	public static String decryptPublic(String publicKeyStr, byte[] content) {
+		RSAPublicKey publicKey = publicKey(publicKeyStr);
+		return decryptPublic(publicKey, content);
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param publicKeyStr 公钥字符串
+	 * @param content 未经Base64解码的加密数据
+	 * @return 解密后字符串
+	 */
+	public static String decryptPublic(String publicKeyStr, byte[] content, CipherType cipherType) {
+		RSAPublicKey publicKey = publicKey(publicKeyStr);
+		return decryptPublic(publicKey, content, cipherType);
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param publicKeyStr 公钥字符串
+	 * @param content 未经Base64解码的加密数据
+	 * @return 解密后字符串
+	 */
+	public static String decryptPublic(String publicKeyStr, String content) {
+		return decryptPublic(publicKeyStr, content, ConstDigest.DEFAULT_CIPHER_TYPE_RSA_PRIVATE);
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param publicKeyStr 公钥字符串
+	 * @param content 未经Base64解码的加密数据
+	 * @param cipherType 加密模式以及填充模式
+	 * @return 解密后字符串
+	 */
+	public static String decryptPublic(String publicKeyStr, String content, CipherType cipherType) {
+		RSAPublicKey publicKey = publicKey(publicKeyStr);
+		return decryptPublic(publicKey, content, cipherType);
+	}
+
+	/**
 	 * RSA公钥加密,私钥解密
 	 * 
 	 * @param publicKey 公钥
@@ -210,7 +332,7 @@ public class RsaHelper {
 			Cipher cipher = Cipher.getInstance(cipherType.getType());
 			cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 			int keyLength = ((RSAPublicKey) publicKey).getModulus().bitLength();
-			return crypt(cipher, keyLength, content, cipherType, true);
+			return Base64.getEncoder().encodeToString(crypt(cipher, keyLength, content, cipherType, true));
 		} catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
 			e.printStackTrace();
 			throw new ResultException(e.getMessage());
@@ -312,6 +434,134 @@ public class RsaHelper {
 	public static String encrypt(String publicKeyStr, String content, CipherType cipherType) {
 		RSAPublicKey publicKey = publicKey(publicKeyStr);
 		return encrypt(publicKey, content, cipherType, CharsetHelper.defaultCharset());
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param privateKey 私钥
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容超过特定值, 则需要分段加密
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String encryptPrivate(PrivateKey privateKey, byte[] content) {
+		return encryptPrivate(privateKey, content, ConstDigest.DEFAULT_CIPHER_TYPE_RSA_PRIVATE);
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param privateKey 私钥
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容超过特定值, 则需要分段加密
+	 * @param cipherType 加密模式以及填充模式
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String encryptPrivate(PrivateKey privateKey, byte[] content, CipherType cipherType) {
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
+			Cipher cipher = Cipher.getInstance(cipherType.getType());
+			cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+			int keyLength = ((RSAPrivateKey) privateKey).getModulus().bitLength();
+			return Base64.getEncoder().encodeToString(crypt(cipher, keyLength, content, cipherType, true));
+		} catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
+			e.printStackTrace();
+			throw new ResultException(e.getMessage());
+		}
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param privateKey 私钥
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容超过特定值, 则需要分段加密
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String encryptPrivate(PrivateKey privateKey, String content) {
+		return encryptPrivate(privateKey, content, CharsetHelper.defaultCharset());
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param privateKey 私钥
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容超过特定值, 则需要分段加密
+	 * @param charset 字符集
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String encryptPrivate(PrivateKey privateKey, String content, Charset charset) {
+		return encryptPrivate(privateKey, content, ConstDigest.DEFAULT_CIPHER_TYPE_RSA_PRIVATE, charset);
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param privateKey 私钥
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容超过特定值, 则需要分段加密
+	 * @param cipherType 加密模式以及填充模式
+	 * @param charset 字符集
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String encryptPrivate(PrivateKey privateKey, String content, CipherType cipherType, Charset charset) {
+		byte[] plainText = content.getBytes(CharsetHelper.defaultCharset(charset));
+		return encryptPrivate(privateKey, plainText, cipherType);
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param privateKey 私钥
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容超过特定值, 则需要分段加密
+	 * @param charset 字符集
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String encryptPrivate(PrivateKey privateKey, String content, String charset) {
+		return encryptPrivate(privateKey, content, CharsetHelper.defaultCharset(charset));
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param privateKeyStr 私钥字符串
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容超过特定值, 则需要分段加密
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String encryptPrivate(String privateKeyStr, byte[] content) {
+		return encryptPrivate(privateKeyStr, content, ConstDigest.DEFAULT_CIPHER_TYPE_RSA_PRIVATE);
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param privateKeyStr 私钥字符串
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容超过特定值, 则需要分段加密
+	 * @param cipherType 加密模式以及填充模式
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String encryptPrivate(String privateKeyStr, byte[] content, CipherType cipherType) {
+		RSAPrivateKey privateKey = privateKey(privateKeyStr);
+		return encryptPrivate(privateKey, content);
+	}
+
+	/**
+	 * RSA公钥解密,私钥加密
+	 * 
+	 * @param privateKeyStr 私钥字符串
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容超过特定值, 则需要分段加密
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String encryptPrivate(String privateKeyStr, String content) {
+		return encryptPrivate(privateKeyStr, content, ConstDigest.DEFAULT_CIPHER_TYPE_RSA_PRIVATE);
+	}
+
+	/**
+	 * RSA公钥加密,私钥解密
+	 * 
+	 * @param privateKeyStr 私钥字符串
+	 * @param content 加密内容长度受秘钥长度限制,若加密内容超过特定值, 则需要分段加密
+	 * @param cipherType 加密模式以及填充模式
+	 * @return Base64编码后的的加密字符串
+	 */
+	public static String encryptPrivate(String privateKeyStr, String content, CipherType cipherType) {
+		RSAPrivateKey privateKey = privateKey(privateKeyStr);
+		return encryptPrivate(privateKey, content, cipherType, CharsetHelper.defaultCharset());
 	}
 
 	/**

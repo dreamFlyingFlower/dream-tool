@@ -98,7 +98,7 @@ public enum CipherType {
 	/**
 	 * 原文每行最大数据= 密钥位数(bit)长度/8 - 经过SHA1摘要运算后的字符长度(固定为20字节,UTF8下为40个字符) - 2
 	 */
-	RSA_CIPHER1("RSA/ECB/OAEPWithSHA-1AndMGF1Padding") {
+	RSA_ECB_OAEP_SHA1("RSA/ECB/OAEPWithSHA-1AndMGF1Padding") {
 
 		@Override
 		public int encryptLength(int keyLength) {
@@ -116,7 +116,7 @@ public enum CipherType {
 	 * 
 	 * 原文每行最大数据= 密钥位数(bit)长度/8 - 经过SHA256摘要运算后的字符长度(固定为32字节,UTF8下为64个字符) - 2
 	 */
-	RSA_CIPHER256("RSA/ECB/OAEPWithSHA-256AndMGF1Padding") {
+	RSA_ECB_OAEP_SHA256("RSA/ECB/OAEPWithSHA-256AndMGF1Padding") {
 
 		@Override
 		public int encryptLength(int keyLength) {
@@ -132,7 +132,7 @@ public enum CipherType {
 	/**
 	 * 原文每行最大数据= 密钥位数(bit)长度/8 - 经过SHA384摘要运算后的字符长度(固定为48字节,UTF8下为96个字符) - 2
 	 */
-	RSA_CIPHER384("RSA/ECB/OAEPWithSHA-384AndMGF1Padding") {
+	RSA_ECB_OAEP_SHA384("RSA/ECB/OAEPWithSHA-384AndMGF1Padding") {
 
 		@Override
 		public int encryptLength(int keyLength) {
@@ -150,7 +150,7 @@ public enum CipherType {
 	 * 
 	 * 原文每行最大数据= 密钥位数(bit)长度/8 - 经过SHA512摘要运算后的字符长度(固定为64字节,UTF8下为128个字符) - 2
 	 */
-	RSA_CIPHER512("RSA/ECB/OAEPWithSha-512AndMGF1Padding") {
+	RSA_ECB_OAEP_SHA512("RSA/ECB/OAEPWithSha-512AndMGF1Padding") {
 
 		@Override
 		public int encryptLength(int keyLength) {
