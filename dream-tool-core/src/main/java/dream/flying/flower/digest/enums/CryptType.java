@@ -16,7 +16,9 @@ public enum CryptType {
 	DH("DH"),
 	RSA("RSA"),
 
+	/** 签名算法类型 */
 	MD5_WITH_RSA("MD5withRSA"),
+	SHA1_WITH_DSA("SHA1withDSA"),
 	SHA1_WITH_RSA("SHA1withRSA"),
 	SHA224_WITH_RSA("SHA224withRSA"),
 	SHA256_WITH_RSA("SHA256withRSA"),

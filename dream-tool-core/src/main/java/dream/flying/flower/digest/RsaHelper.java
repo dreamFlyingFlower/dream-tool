@@ -45,23 +45,6 @@ import dream.flying.flower.result.ResultException;
  */
 public class RsaHelper {
 
-	public static void main(String[] args) {
-		// System.out.println(generateKey());
-
-		String publicKey =
-				"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkdpLBeKc0a+r6AWIlvzw7KVpzAiiA3JMdmDEWcWT8biv04CvzWlvgWI6t3nvMt003mozHFJmlOFNjQzmks9Rt+MK/D0iQq5V6lOnn58FE5TlKKXjiQK+pjdfUt748ua5l3PdO5MaHPsV9pHNjy5Xo06vSSelMt0e9UJ9f6nw6sS8KZTXBFVAWnJeTCnl5tKBDqPOBIdH6RLAVmH/wd1rh9gVLEJySmekx2R8TqGcanwebG+QuZcRMdp5ux5FPtf9Oh+0MlYS0ktHZQZg0By7xBLCtSJpPrdm59QD6QoPNJ202hXEvVWiaasm2tEsxHne2eDTFsd/666Kqie0i8pTPwIDAQAB";
-		String privateKey =
-				"MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCR2ksF4pzRr6voBYiW/PDspWnMCKIDckx2YMRZxZPxuK/TgK/NaW+BYjq3ee8y3TTeajMcUmaU4U2NDOaSz1G34wr8PSJCrlXqU6efnwUTlOUopeOJAr6mN19S3vjy5rmXc907kxoc+xX2kc2PLlejTq9JJ6Uy3R71Qn1/qfDqxLwplNcEVUBacl5MKeXm0oEOo84Eh0fpEsBWYf/B3WuH2BUsQnJKZ6THZHxOoZxqfB5sb5C5lxEx2nm7HkU+1/06H7QyVhLSS0dlBmDQHLvEEsK1Imk+t2bn1APpCg80nbTaFcS9VaJpqyba0SzEed7Z4NMWx3/rroqqJ7SLylM/AgMBAAECggEAbQVJjMWdyJLSIWV5erro70qZcTyGtaLLCrU8L4ojEsylCKgpQJZuFb0x/JE1PcThTtr9B0+EhAaA7EzXUKeNArHANVkQ8dzUNYqAQi0gI0npnN+a23/kt+Ot6gjm9tGFqnKdzHkhTMZV3W+QwlS2h0g6d6kdr45fJJ6lpjaF8UUk/L8KhmyckruSXsLbzFqy6j8q35OJNwh2OyRjj6lBm3rc9ViKKFBwOsDFAcY5k66vXwWJryKa5EaroENN+jVHj6pN2nybm8XX4Q/92jafmrQm/0DEhmMlK9dG31NEbLwkI0McxNFI1AB7aL2+Qa04JgzNFQXaTrPo/RAeSRy8eQKBgQDpfZV5X49/RT7voxOUX4ZCnoAC9jSBwgv9x9tXaoqYlWgKlEMDWlGSHV4PueX/O11NeJA2Nidm08Yy/n58blaAkX6hVWTxP8+wAFfYYU6+SStEZn1yickNABrDWj3AIxdHpyY3IyDqOhr1pD+ACyIk15uLTE0x5z1FszbhQIvsIwKBgQCf6dsnfvO8mjmOc/cHOdOry4Y3eoHdkQ5PXA51cNkAkKi4DMh3BzvWZKQhw7ZYL/MuDERwcWJu9dn0v5ZscxziguYpi2EW/jeSvM5v9tZCKX3alr3nGfr2qnVWk5WRsXHE8yRlo/UHQczIvHyOlDXZIKd1Uda3qSfc9ZjckZLQNQKBgF6Y+s5J4SF3NKByOaSLbyHehY6toWhQ7frL1hn8mFppbdWba+sX1KSWMV29u2lE6/BPQF42YpBOjKZsZWKUcYd1axCCQHtdlw9/lBeelQCTNGxp+blGCaayvCUZkpsdnHjzR5BfMx6ym+mZugBugk7a67HsH/pv7WsnyLxKImZxAoGBAIiC0Cz1OQjF92BeKoEmokXDpj3x/K6yR68DfOxQe076Lq1/bBoAONqaa2rPcffyZvvmSP5cLJVglsFSVA0cb4oGCIlqjGVeev5u4yO9acZtORzDFjYUfaLYfPZ9Ym9PNTnV/jouLtwVFcY+8W2dpCJIt+t1A4EhjAAaQHX6Z4QJAoGBAN/9J8lqGQd6WIvSo7yXbgbOT+u1lMhfWazrRTAcQiSDlQihU8JpYJgwW1zOvregUeLHGgrN38O+14Xf4qGxc1MhjQh5qjZkQsmrq/Pqa0Oq+JISe85URkt5q3Na+MZj/KvFV70eGQRMwKK8IvYAky/T6opMIFtIA2fk6wHjvvbx";
-
-		String content =
-				"fdsrwerewtgGERWGRWTRWFEWTGRWgdsgrew罡风等各位以太网同一人委托人武rtewytwywtrwtrwetrwtrwetewrttr" + "讽德诵功热骇人听闻特意认为他we";
-
-		String encryptPrivate = encryptPrivate(privateKey, content);
-		System.out.println(encryptPrivate);
-
-		System.out.println(decryptPublic(publicKey, encryptPrivate));
-	}
-
 	/**
 	 * 加解密
 	 * 
@@ -565,67 +548,34 @@ public class RsaHelper {
 	}
 
 	/**
-	 * RSA生成公私钥,默认密钥长度为2048
+	 * RSA生成公私钥,默认密钥长度为1024
 	 * 
-	 * @return 公私钥键值对,公私钥都已经经过base64编码
-	 */
-	public static Map<CryptKeyType, String> generateKey() {
-		return generateKey(ConstDigest.KEY_SIZE_2048);
-	}
-
-	/**
-	 * RSA生成公私钥,默认密钥长度为2048
-	 * 
-	 * @param encodeType 编码类型,默认base64
 	 * @return 公私钥键值对
 	 */
-	public static Map<CryptKeyType, String> generateKey(EncodeType encodeType) {
-		return generateKey(ConstDigest.KEY_SIZE_2048, encodeType);
+	public static Map<CryptKeyType, byte[]> generateKey() {
+		return generateKey(ConstDigest.KEY_SIZE_1024);
 	}
 
 	/**
 	 * RSA生成指定长度公私钥,长度是64倍数
 	 * 
 	 * @param length 密钥长度
-	 * @return 公私钥键值对,公私钥都已经经过base64编码
+	 * @return 公私钥键值对
 	 */
-	public static Map<CryptKeyType, String> generateKey(int length) {
-		return generateKey(length, EncodeType.BASE64);
-	}
-
-	/**
-	 * RSA生成指定长度公私钥,长度是64倍数
-	 * 
-	 * @param length 密钥长度
-	 * @param encodeType 编码类型
-	 * @return 公私钥键值对,公私钥都已经经过hex或base64编码
-	 */
-	public static Map<CryptKeyType, String> generateKey(int length, EncodeType encodeType) {
+	public static Map<CryptKeyType, byte[]> generateKey(int length) {
 		KeyPair keyPair = generateKeyPair(length);
-		switch (encodeType) {
-		case HEX:
-			return MapHelper
-					.builderGeneric(CryptKeyType.PUBLIC_KEY,
-							HexHelper.encodeHexString(keyPair.getPublic().getEncoded()))
-					.put(CryptKeyType.PRIVATE_KEY, HexHelper.encodeHexString(keyPair.getPrivate().getEncoded()))
-					.build();
-		default:
-			return MapHelper
-					.builderGeneric(CryptKeyType.PUBLIC_KEY,
-							Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()))
-					.put(CryptKeyType.PRIVATE_KEY,
-							Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded()))
-					.build();
-		}
+		return MapHelper.builderGeneric(CryptKeyType.PUBLIC_KEY, keyPair.getPublic().getEncoded())
+				.put(CryptKeyType.PRIVATE_KEY, keyPair.getPrivate().getEncoded())
+				.build();
 	}
 
 	/**
-	 * RSA生成公私钥,默认密钥长度2048
+	 * RSA生成公私钥,默认密钥长度1024
 	 * 
 	 * @return 密钥对
 	 */
 	public static KeyPair generateKeyPair() {
-		return generateKeyPair(ConstDigest.KEY_SIZE_2048);
+		return generateKeyPair(ConstDigest.KEY_SIZE_1024);
 	}
 
 	/**
@@ -648,6 +598,78 @@ public class RsaHelper {
 			e.printStackTrace();
 			throw new ResultException(e.getMessage());
 		}
+	}
+
+	/**
+	 * RSA生成公私钥,默认密钥长度为1024
+	 * 
+	 * @return 公私钥键值对,公私钥都已经经过base64编码
+	 */
+	public static Map<CryptKeyType, String> generateKeyString() {
+		return generateKeyString(ConstDigest.KEY_SIZE_1024);
+	}
+
+	/**
+	 * RSA生成公私钥,默认密钥长度为1024
+	 * 
+	 * @param encodeType 编码类型,默认base64
+	 * @return 公私钥键值对
+	 */
+	public static Map<CryptKeyType, String> generateKeyString(EncodeType encodeType) {
+		return generateKeyString(ConstDigest.KEY_SIZE_1024, encodeType);
+	}
+
+	/**
+	 * RSA生成指定长度公私钥,长度是64倍数
+	 * 
+	 * @param length 密钥长度
+	 * @return 公私钥键值对,公私钥都已经经过base64编码
+	 */
+	public static Map<CryptKeyType, String> generateKeyString(int length) {
+		return generateKeyString(length, EncodeType.BASE64);
+	}
+
+	/**
+	 * RSA生成指定长度公私钥,长度是64倍数
+	 * 
+	 * @param length 密钥长度
+	 * @param encodeType 编码类型
+	 * @return 公私钥键值对,公私钥都已经经过hex或base64编码
+	 */
+	public static Map<CryptKeyType, String> generateKeyString(int length, EncodeType encodeType) {
+		KeyPair keyPair = generateKeyPair(length);
+		switch (encodeType) {
+		case HEX:
+			return MapHelper
+					.builderGeneric(CryptKeyType.PUBLIC_KEY,
+							HexHelper.encodeHexString(keyPair.getPublic().getEncoded()))
+					.put(CryptKeyType.PRIVATE_KEY, HexHelper.encodeHexString(keyPair.getPrivate().getEncoded()))
+					.build();
+		default:
+			return MapHelper
+					.builderGeneric(CryptKeyType.PUBLIC_KEY,
+							Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()))
+					.put(CryptKeyType.PRIVATE_KEY,
+							Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded()))
+					.build();
+		}
+	}
+
+	public static void main(String[] args) {
+		// System.out.println(generateKey());
+
+		String publicKey =
+				"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkdpLBeKc0a+r6AWIlvzw7KVpzAiiA3JMdmDEWcWT8biv04CvzWlvgWI6t3nvMt003mozHFJmlOFNjQzmks9Rt+MK/D0iQq5V6lOnn58FE5TlKKXjiQK+pjdfUt748ua5l3PdO5MaHPsV9pHNjy5Xo06vSSelMt0e9UJ9f6nw6sS8KZTXBFVAWnJeTCnl5tKBDqPOBIdH6RLAVmH/wd1rh9gVLEJySmekx2R8TqGcanwebG+QuZcRMdp5ux5FPtf9Oh+0MlYS0ktHZQZg0By7xBLCtSJpPrdm59QD6QoPNJ202hXEvVWiaasm2tEsxHne2eDTFsd/666Kqie0i8pTPwIDAQAB";
+		String privateKey =
+				"MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCR2ksF4pzRr6voBYiW/PDspWnMCKIDckx2YMRZxZPxuK/TgK/NaW+BYjq3ee8y3TTeajMcUmaU4U2NDOaSz1G34wr8PSJCrlXqU6efnwUTlOUopeOJAr6mN19S3vjy5rmXc907kxoc+xX2kc2PLlejTq9JJ6Uy3R71Qn1/qfDqxLwplNcEVUBacl5MKeXm0oEOo84Eh0fpEsBWYf/B3WuH2BUsQnJKZ6THZHxOoZxqfB5sb5C5lxEx2nm7HkU+1/06H7QyVhLSS0dlBmDQHLvEEsK1Imk+t2bn1APpCg80nbTaFcS9VaJpqyba0SzEed7Z4NMWx3/rroqqJ7SLylM/AgMBAAECggEAbQVJjMWdyJLSIWV5erro70qZcTyGtaLLCrU8L4ojEsylCKgpQJZuFb0x/JE1PcThTtr9B0+EhAaA7EzXUKeNArHANVkQ8dzUNYqAQi0gI0npnN+a23/kt+Ot6gjm9tGFqnKdzHkhTMZV3W+QwlS2h0g6d6kdr45fJJ6lpjaF8UUk/L8KhmyckruSXsLbzFqy6j8q35OJNwh2OyRjj6lBm3rc9ViKKFBwOsDFAcY5k66vXwWJryKa5EaroENN+jVHj6pN2nybm8XX4Q/92jafmrQm/0DEhmMlK9dG31NEbLwkI0McxNFI1AB7aL2+Qa04JgzNFQXaTrPo/RAeSRy8eQKBgQDpfZV5X49/RT7voxOUX4ZCnoAC9jSBwgv9x9tXaoqYlWgKlEMDWlGSHV4PueX/O11NeJA2Nidm08Yy/n58blaAkX6hVWTxP8+wAFfYYU6+SStEZn1yickNABrDWj3AIxdHpyY3IyDqOhr1pD+ACyIk15uLTE0x5z1FszbhQIvsIwKBgQCf6dsnfvO8mjmOc/cHOdOry4Y3eoHdkQ5PXA51cNkAkKi4DMh3BzvWZKQhw7ZYL/MuDERwcWJu9dn0v5ZscxziguYpi2EW/jeSvM5v9tZCKX3alr3nGfr2qnVWk5WRsXHE8yRlo/UHQczIvHyOlDXZIKd1Uda3qSfc9ZjckZLQNQKBgF6Y+s5J4SF3NKByOaSLbyHehY6toWhQ7frL1hn8mFppbdWba+sX1KSWMV29u2lE6/BPQF42YpBOjKZsZWKUcYd1axCCQHtdlw9/lBeelQCTNGxp+blGCaayvCUZkpsdnHjzR5BfMx6ym+mZugBugk7a67HsH/pv7WsnyLxKImZxAoGBAIiC0Cz1OQjF92BeKoEmokXDpj3x/K6yR68DfOxQe076Lq1/bBoAONqaa2rPcffyZvvmSP5cLJVglsFSVA0cb4oGCIlqjGVeev5u4yO9acZtORzDFjYUfaLYfPZ9Ym9PNTnV/jouLtwVFcY+8W2dpCJIt+t1A4EhjAAaQHX6Z4QJAoGBAN/9J8lqGQd6WIvSo7yXbgbOT+u1lMhfWazrRTAcQiSDlQihU8JpYJgwW1zOvregUeLHGgrN38O+14Xf4qGxc1MhjQh5qjZkQsmrq/Pqa0Oq+JISe85URkt5q3Na+MZj/KvFV70eGQRMwKK8IvYAky/T6opMIFtIA2fk6wHjvvbx";
+
+		String content =
+				"fdsrwerewtgGERWGRWTRWFEWTGRWgdsgrew罡风等各位以太网同一人委托人武rtewytwywtrwtrwetrwtrwetewrttr" + "讽德诵功热骇人听闻特意认为他we";
+
+		String encryptPrivate = encryptPrivate(privateKey, content);
+		System.out.println(encryptPrivate);
+
+		System.out.println(decryptPublic(publicKey, encryptPrivate));
 	}
 
 	/**
