@@ -11,40 +11,26 @@ import dream.flying.flower.lang.AssertHelper;
  * SecureRandom随机数字,随机字符串工具类,比使用Random随机数更安全
  * 
  * <pre>
- * 1.Random 最多生成48位随机值,但是SecureRandom最多可生成128位随机值
- * 2.SecureRandom 不使用固定种子值,而是从操作系统/dev/random 随机数文件中不断获取新的种子值
- * SHA1PRNG是一种伪随机数生成器算法，在Java SecureRandom中，它被作为Windows下默认的随机数生成算法。该算法基于SHA-1算法，但通过添加额外的步骤来提高随机性。
-
-SHA1PRNG算法使用一个种子来初始化随机数生成器。SHA1PRNG算法使用SHA-1算法来计算一个哈希值，这个哈希值会被用来产生随机数。
-
-
-NativePRNGBlocking
-Java SecureRandom中，NativePRNG 算法是Linux 下默认的随机数生成算法。
-
-NativePRNGBlocking 初始播种时使用 /dev/random 中的 20 个字节初始化内部 SHA1PRNG 实例，
-
-当调用 nextBytes()、nextInt() 等：使用内部 SHA1PRNG 实例的输出和从 /dev/random 读取的数据的进行 异或
-
-NativePRNGBlocking每次计算随机数需要从/dev/random文件中获取数值。当/dev/random的随机数不足时，NativePRNGBlocking将会被阻塞。在桌面应用程序中，/dev/random文件很少会受到阻塞，因为它可以收集用户的鼠标、点击等事件。然而，在Web程序中，由于并发度较高，生成/dev/random数据可能会出现不足的情况。
-
-例如有人使用 NativePRNGBlocking 算法，在线上环境服务启动时，一直被阻塞。就是因为/dev/random数据较少，NativePRNGBlocking 初始化被阻塞。
-
-NativePRNGNonBlocking
-为了避免获取随机数被阻塞，NativePRNGNonBlocking选择从/dev/urandom中获取随机数。
-
-在/dev/urandom 和 /dev/random之间有一些区别。
-
-/dev/random通过收集系统上的环境噪声（如硬件噪声、磁盘活动等）来生成随机数。它只在系统上具有足够的环境噪声时才能生成高质量的随机数。
-
-而/dev/urandom是一个伪随机数生成器设备文件，它使用内部熵池持续生成随机数，不管系统上的环境噪声有多少。因此，/dev/urandom生成随机数的速度比/dev/random快得多。
-
-总结一下，/dev/urandom生成的随机数质量稍差，但是能稳定输出。而/dev/random生成的随机数质量较高，但是在系统噪音较少时生成随机数据较慢，可能会阻塞部分应用。
-
-因此，建议大家一般情况下使用NativePRNGNonBlocking来读取/dev/urandom，这样可以换取稳定的随机数据输出，虽然牺牲了一些随机数的质量
-
-使用阻塞算法可能导致线上问题 ，详情参考 使用NativePRNGBlocking 生产环境被阻塞
-
-SecureRandom并不是线程安全的，可以使用synchronized关键字同步，或者 使用ThreadLocal 为每个线程保存一个 SecureRandom实例
+ * 1.Random最多生成48位随机值,SecureRandom最多可生成128位随机值
+ * 2.SecureRandom不使用固定种子值,而是从操作系统/dev/random 随机数文件中不断获取新的种子值
+ * 3.SHA1PRNG:Windows下默认的随机数生成算法.该算法基于SHA-1算法,但通过添加额外的步骤来提高随机性.
+ * 		该算法使用一个种子来初始化随机数生成器,使用SHA-1算法来计算一个哈希值,这个哈希值会被用来产生随机数
+ * 4.NativePRNGBlocking:Linux下默认的随机数生成算法.
+ * 		算法初始播种时使用/dev/random中的20个字节初始化内部 SHA1PRNG 实例,当调用nextInt()等:
+ * 		使用内部 SHA1PRNG 实例的输出和从 /dev/random 读取的数据的进行 异或.
+ * 		算法每次计算随机数需要从/dev/random文件中获取数值.当/dev/random的随机数不足时,NativePRNGBlocking将会被阻塞.
+ * 		在桌面应用程序中,/dev/random文件很少会受到阻塞,因为它可以收集用户的鼠标、点击等事件.
+ * 		然而,在Web程序中,由于并发度较高,生成/dev/random数据可能会出现不足的情况
+ * 		如有人使用 NativePRNGBlocking 算法,在线上环境服务启动时,一直被阻塞,就是因为/dev/random数据较少,NativePRNGBlocking 初始化被阻塞
+ * 5.NativePRNGNonBlocking:为了避免获取随机数被阻塞,NativePRNGNonBlocking选择从/dev/urandom中获取随机数.
+ * 		在/dev/urandom 和 /dev/random之间有一些区别:
+ * 		/dev/random通过收集系统上的环境噪声(如硬件噪声、磁盘活动等)来生成随机数,它只在系统上具有足够的环境噪声时才能生成高质量的随机数;
+ * 		/dev/urandom是一个伪随机数生成器设备文件,它使用内部熵池持续生成随机数,不管系统上的环境噪声有多少.
+ * 		因此,/dev/urandom生成随机数的速度比/dev/random快得多
+ * 6./dev/urandom生成的随机数质量稍差,但是稳定;/dev/random生成的随机数质量较高,但是在系统噪音较少时生成随机数据较慢,可能会阻塞部分应用.
+ * 		建议一般情况下使用NativePRNGNonBlocking来读取/dev/urandom,这样可以换取稳定的随机数据输出,虽然牺牲了一些随机数的质量.
+ * 		使用阻塞算法可能导致线上问题
+ * 7.SecureRandom并不是线程安全的,可以使用synchronized关键字同步,或者 使用ThreadLocal 为每个线程保存一个 SecureRandom实例
  * </pre>
  * 
  * @author 飞花梦影
@@ -53,7 +39,7 @@ SecureRandom并不是线程安全的，可以使用synchronized关键字同步�
  */
 public class SecureRandomHelper {
 
-	private static final Random RANDOM = new Random();
+	private static final Random RANDOM = new SecureRandom();
 
 	public SecureRandomHelper() {
 		super();
@@ -63,16 +49,9 @@ public class SecureRandomHelper {
 	 * 获得一个随机的boolean值
 	 * 
 	 * @return boolean值
-	 * @throws NoSuchAlgorithmException 
+	 * @throws NoSuchAlgorithmException
 	 */
 	public static boolean nextBoolean() throws NoSuchAlgorithmException {
-
-		SecureRandom secureRandom1 = SecureRandom.getInstance("SHA1PRNG");
-		SecureRandom secureRandom2 = SecureRandom.getInstance("NativePRNGBlocking");
-		SecureRandom secureRandom3 = SecureRandom.getInstance("NativePRNGNonBlocking");
-
-		secureRandom1.nextLong();
-
 		return RANDOM.nextBoolean();
 	}
 
