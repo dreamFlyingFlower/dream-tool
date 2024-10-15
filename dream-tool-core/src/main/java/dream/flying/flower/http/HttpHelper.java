@@ -4,15 +4,27 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 import dream.flying.flower.bean.BeanHelper;
 import dream.flying.flower.collection.MapHelper;
@@ -361,4 +373,89 @@ public class HttpHelper {
 			return key + "=" + String.valueOf(value);
 		}
 	}
+
+	private static TrustManager[] loadKeyStore() throws Exception {
+		KeyStore trustStore = KeyStore.getInstance("JKS");
+		// Java信任域名证书cacerts,密码默认为changeit
+		trustStore.load(HttpHelper.class.getResourceAsStream("/cacerts"), "changeit".toCharArray());
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+		tmf.init(trustStore);
+		return tmf.getTrustManagers();
+	}
+
+	private static KeyManager[] loadP12(String keyStorePassword) throws Exception {
+		KeyStore clientStore = KeyStore.getInstance("PKCS12");
+		clientStore.load(HttpHelper.class.getResourceAsStream("/cert.p12"), keyStorePassword.toCharArray());
+		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+		kmf.init(clientStore, keyStorePassword.toCharArray());
+		return kmf.getKeyManagers();
+	}
+
+	private static SSLSocketFactory buildSslSocketFactory(KeyManager[] kms, TrustManager[] tms) throws Exception {
+		SSLContext sslContext = SSLContext.getInstance("TLS");
+		sslContext.init(kms, tms, new SecureRandom());
+		return sslContext.getSocketFactory();
+	}
+
+	/**
+	 * HTTPS调用
+	 * 
+	 * @param requestUrl 请求地址
+	 * @param requestMethod 请求方式
+	 * @param params 参数
+	 * @param keyStorePassword keyStore密码
+	 * @return 结果
+	 */
+	public static String httpsRequest(String requestUrl, String requestMethod, String params, String keyStorePassword) {
+		StringBuffer buffer = new StringBuffer();
+		try {
+			// 加载keyStore(JKS)文件
+			TrustManager[] tms = loadKeyStore();
+
+			// 加载P12文件
+			KeyManager[] kms = loadP12(keyStorePassword);
+
+			// 从SSLContext对象中得到SSLSocketFactory对象
+			SSLSocketFactory sslSocketFactory = buildSslSocketFactory(kms, tms);
+
+			URL url = new URL(requestUrl);
+			HttpsURLConnection httpUrlConn = (javax.net.ssl.HttpsURLConnection) url.openConnection();
+			httpUrlConn.setSSLSocketFactory(sslSocketFactory);
+			httpUrlConn.setDoOutput(true);
+			httpUrlConn.setDoInput(true);
+			httpUrlConn.setRequestMethod(requestMethod);
+			httpUrlConn.setUseCaches(false);
+			httpUrlConn.setInstanceFollowRedirects(true);
+			httpUrlConn.setRequestProperty("Content-Type", "application/json");
+			httpUrlConn.setRequestProperty("Accept", "application/json");
+			httpUrlConn.setConnectTimeout(2000);
+			httpUrlConn.setReadTimeout(3000);
+			httpUrlConn.connect();
+			// 当有数据需要提交时
+			if (null != params) {
+				try (OutputStream outputStream = new DataOutputStream(httpUrlConn.getOutputStream());) {
+					outputStream.write(params.getBytes("UTF-8"));
+					outputStream.flush();
+				}
+			}
+			// 将返回的输入流转换成字符串
+			try (InputStream inputStream = httpUrlConn.getInputStream();
+					InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);) {
+				String str = null;
+				while ((str = bufferedReader.readLine()) != null) {
+					buffer.append(str);
+				}
+				return buffer.toString();
+			} finally {
+				if (httpUrlConn != null) {
+					httpUrlConn.disconnect();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return buffer.toString();
+	}
+
 }

@@ -1,5 +1,7 @@
 package dream.flying.flower.http;
 
+import java.util.List;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -7,8 +9,10 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import dream.flying.flower.collection.CollectionHelper;
+
 /**
- * Https自动信任
+ * 信任所有HTTPS证书
  *
  * @author 飞花梦影
  * @date 2024-07-19 16:16:18
@@ -16,13 +20,17 @@ import javax.net.ssl.X509TrustManager;
  */
 public class HttpsTrust {
 
-	public static void beforeConnection() {
+	/**
+	 * 信任所有证书
+	 */
+	public static void trustAllCerts() {
 		try {
 			trustHttpsCertificates();
 			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
 
 				@Override
-				public boolean verify(String urlHostName, SSLSession session) {
+				public boolean verify(String hostname, SSLSession session) {
+					// 若直接返回true,表示信任所有证书
 					return true;
 				}
 			});
@@ -31,12 +39,41 @@ public class HttpsTrust {
 		}
 	}
 
+	/**
+	 * 信任指定证书
+	 * 
+	 * @param trustedCerts 信任证书列表
+	 */
+	public static void trustCerts(List<String> trustedCerts) {
+		try {
+			trustHttpsCertificates();
+			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+
+				@Override
+				public boolean verify(String hostname, SSLSession session) {
+					if ("localhost".equals(hostname) || "127.0.0.1".equals(hostname)) {
+						return true;
+					}
+					if (CollectionHelper.isEmpty(trustedCerts)) {
+						return false;
+					}
+					if (trustedCerts.contains(hostname)) {
+						return true;
+					}
+					return false;
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private static void trustHttpsCertificates() throws Exception {
-		TrustManager[] trustAllCerts = new TrustManager[1];
+		TrustManager[] trustManagers = new TrustManager[1];
 		TrustManager httpTrustManager = new HttpsTrustManager();
-		trustAllCerts[0] = httpTrustManager;
+		trustManagers[0] = httpTrustManager;
 		SSLContext sc = javax.net.ssl.SSLContext.getInstance("SSL");
-		sc.init(null, trustAllCerts, null);
+		sc.init(null, trustManagers, null);
 		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 	}
 
