@@ -14,5 +14,9 @@ public class Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
+
+		// args = new String[] { "-configfile",
+		// "src\\main\\resources\\generator\\generatorConfig.xml", "-overwrite" };
+		// ShellRunner.main(args);
 	}
 }

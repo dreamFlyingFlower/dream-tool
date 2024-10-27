@@ -69,9 +69,9 @@ public class EntityPlugin extends PluginAdapter {
 		baseEntity = this.properties.getProperty("baseEntity");
 		genericType = Boolean.parseBoolean(this.properties.getProperty("genericType"));
 		validModel = StringUtils.hasText(this.properties.getProperty("validModel")) ? true
-		        : Boolean.parseBoolean(this.properties.getProperty("validModel"));
+				: Boolean.parseBoolean(this.properties.getProperty("validModel"));
 		validModelExample = StringUtils.hasText(this.properties.getProperty("validModelExample")) ? true
-		        : Boolean.parseBoolean(this.properties.getProperty("validModelExample"));
+				: Boolean.parseBoolean(this.properties.getProperty("validModelExample"));
 		context.addProperty("baseEntity", this.baseEntity);
 	}
 
@@ -80,8 +80,10 @@ public class EntityPlugin extends PluginAdapter {
 		if (StringUtility.stringHasValue(schema)) {
 			nameBuilder.append(schema).append(".");
 		}
-		return nameBuilder.append(context.getBeginningDelimiter()).append(name).append(context.getEndingDelimiter())
-		        .toString();
+		return nameBuilder.append(context.getBeginningDelimiter())
+				.append(name)
+				.append(context.getEndingDelimiter())
+				.toString();
 	}
 
 	/**
@@ -103,12 +105,13 @@ public class EntityPlugin extends PluginAdapter {
 			if (usePersistence) {
 				topLevelClass.addImportedType("javax.persistence.Table");
 				topLevelClass.addAnnotation(new StringBuilder("@Table(name = \"").append(getDelimiterName(tableName))
-				        .append("\")").toString());
+						.append("\")")
+						.toString());
 			}
 			/** 是否有泛型 */
 			if (genericType) {
 				topLevelClass.setSuperClass(
-				        baseEntity + "<" + introspectedTable.getFullyQualifiedTable().getDomainObjectName() + ">");
+						baseEntity + "<" + introspectedTable.getFullyQualifiedTable().getDomainObjectName() + ">");
 			} else {
 				topLevelClass.setSuperClass(baseEntity);
 			}
@@ -121,7 +124,7 @@ public class EntityPlugin extends PluginAdapter {
 	 */
 	@Override
 	public boolean modelFieldGenerated(Field field, TopLevelClass topLevelClass, IntrospectedColumn introspectedColumn,
-	        IntrospectedTable introspectedTable, ModelClassType modelClassType) {
+			IntrospectedTable introspectedTable, ModelClassType modelClassType) {
 		if (!validModel) {
 			return false;
 		}
@@ -165,8 +168,8 @@ public class EntityPlugin extends PluginAdapter {
 			// 在 Oracle 中,如果需要是 SEQ_TABLENAME,那么可以配置为 select SEQ_{1}
 			String tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
 			String sql = MessageFormat.format(
-			        introspectedTable.getTableConfiguration().getGeneratedKey().getRuntimeSqlStatement(), tableName,
-			        tableName.toUpperCase());
+					introspectedTable.getTableConfiguration().getGeneratedKey().getRuntimeSqlStatement(), tableName,
+					tableName.toUpperCase());
 			topLevelClass.addImportedType("javax.persistence.GeneratedValue");
 			topLevelClass.addImportedType("javax.persistence.GenerationType");
 			field.addAnnotation("@GeneratedValue(strategy = GenerationType.IDENTITY, generator = \"" + sql + "\")");

@@ -5,7 +5,9 @@
 
 <generatorConfiguration>
 
-	<context id="demo" defaultModelType="flat" targetRuntime="MyBatis3Simple">
+	<properties resource="generator/generator.properties" />
+
+	<context id="demo" defaultModelType="flat" targetRuntime="MyBatis3">
 
 		<property name="beginningDelimiter" value="`" />
 		<property name="endingDelimiter" value="`" />
@@ -14,21 +16,69 @@
 		<property name="suppressAllComments" value="true" />
 		<property name="addRemarkComments" value="true" />
 		<property name="generateModelExample" value="false" />
+		<!-- 是否添加注释 -->
+		<property name="addRemarkComments" value="true" />
+		<!-- 是否生成swagger2注解 -->
+		<property name="swagger2" value="true" />
 		<property name="generateMapper" value="false" />
 		<property name="generateMapperXml" value="true" />
 
-		<plugin type="com.simple.plugins.MapperPlugin"/>
+		<!-- 通用Model插件 -->
+		<plugin type="com.simple.plugins.EntityPlugin">
+			<property name="validModel" value="${valid.model}" />
+			<property name="validModelExample" value="${valid.model.example}" />
+			<property name="usePersistence" value="false" />
+			<property name="baseModel" value="${base.model}" />
+			<property name="lombok" value="BUILDER" />
+			<property name="forceAnnotation" value="true" />
+		</plugin>
+
+		<!-- 通用 Mapper 插件 -->
+		<plugin type="com.simple.plugins.MapperPlugin">
+			<!-- 是否运行mapper接口以及xml生成类,有时候不需要重新生成mapper -->
+			<property name="validMapper" value="${valid.mapper}" />
+			<property name="validMapperXml" value="${valid.mapper.xml}" />
+			<property name="baseMappers" value="${base.mappers}" />
+			<property name="targetProject" value="${target.project.main}" />
+			<property name="targetPackage" value="${target.package.mappers}" />
+		</plugin>
+
+		<!-- 生成 Service 类 -->
+		<plugin type="com.simple.plugins.ServicePlugin">
+			<!-- 是否运行service生成类,有时候不需要重新生成service -->
+			<property name="validService" value="${valid.service}" />
+			<property name="validServiceImpl" value="${valid.service.impl}" />
+			<property name="baseService" value="${base.service}" />
+			<property name="baseServiceImpl" value="${base.service.impl}" />
+			<property name="targetProject" value="${target.project.main}" />
+			<property name="targetPackage" value="${target.package.service}" />
+			<property name="targetPackageMapper" value="${target.package.mapper}" />
+		</plugin>
+
+		<!-- 生成Controller的类 -->
+		<plugin type="com.simple.plugins.ControllerPlugin">
+			<property name="validCrl" value="${valid.crl}" />
+			<property name="baseCrl" value="${base.controller}" />
+			<property name="targetProject" value="${target.project.main}" />
+			<property name="targetPackage" value="${target.package.crl}" />
+			<property name="targetPackageService" value="${target.package.service}" />
+		</plugin>
+
+		<plugin type="com.simple.plugins.MapperPlugin" />
 
 		<!-- 通用实体类,Mapper,xml生成 -->
 		<plugin type="com.simple.plugins.CommonPlugin" />
 
+		<!-- 读取数据库表的注释,生成 Model 的注释 -->
+		<commentGenerator type="com.simple.plugins.CommentPlugin" />
+
 		<!-- 连接数据库配置 -->
-		<jdbcConnection driverClass="com.mysql.cj.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/dream_basic?useUnicode=true&amp;amp;amp;tinyInt1isBit=false&amp;amp;amp;characterEncoding=UTF-8&amp;amp;amp;useSSL=false&amp;amp;amp;serverTimezone=Asia/Shanghai"
-			userId="root" password="52LDforever">
+		<jdbcConnection driverClass="${jdbc.driverClass}" connectionURL="${jdbc.url}" userId="${jdbc.username}"
+			password="${jdbc.password}">
 			<property name="nullCatalogMeansCurrent" value="true" />
 		</jdbcConnection>
 
-		<javaModelGenerator targetProject="src\main\java\" targetPackage="com.wy.user.entity">
+		<javaModelGenerator targetProject="${target.package.model}" targetPackage="${target.project.main}">
 			<property name="constructorBased" value="false" />
 			<property name="enableSubPackages" value="false" />
 			<property name="immutable" value="false" />
@@ -36,39 +86,15 @@
 		</javaModelGenerator>
 
 		<!-- 生成Mapper对应的xml文件地址 -->
-		<sqlMapGenerator targetProject="src\main\resources\" targetPackage="mappers" />
-		
-		<!-- 生成的Mapper文件地址 -->
-		<javaClientGenerator type="XMLMAPPER" targetProject="src\main\java\" targetPackage="com.wy.user.mapper" />
+		<sqlMapGenerator targetProject="${target.resource.mapper}" targetPackage="${target.project.mapper}" />
 
-		<table tableName="ts_button" domainObjectName="Button">
-			<generatedKey column="id" sqlStatement="JDBC" />
-		</table>
-		<table tableName="ts_role" domainObjectName="Role">
-			<generatedKey column="id" sqlStatement="JDBC" />
-		</table>
-		<table tableName="ts_menu" domainObjectName="Menu">
-			<generatedKey column="id" sqlStatement="JDBC" />
-		</table>
-		<table tableName="ts_dict_item" domainObjectName="DictItem">
-		</table>
-		<table tableName="ts_dict" domainObjectName="Dict">
-		</table>
-		<table tableName="ts_role_resource" domainObjectName="RoleResource">
-			<generatedKey column="id" sqlStatement="JDBC" />
-		</table>
+		<!-- 生成的Mapper文件地址 -->
+		<javaClientGenerator type="XMLMAPPER" targetProject="${target.package.mapper}"
+			targetPackage="${target.project.main}" />
+
 		<table tableName="ts_user" domainObjectName="User">
 		</table>
-		<table tableName="ts_permission" domainObjectName="Permission">
-			<generatedKey column="id" sqlStatement="JDBC" />
-		</table>
 		<table tableName="ts_org" domainObjectName="Org">
-			<generatedKey column="id" sqlStatement="JDBC" />
-		</table>
-		<table tableName="ts_user_role" domainObjectName="UserRole">
-			<generatedKey column="id" sqlStatement="JDBC" />
-		</table>
-		<table tableName="ts_depart" domainObjectName="Depart">
 			<generatedKey column="id" sqlStatement="JDBC" />
 		</table>
 		<!-- 自动从数据库中生成uuid赋值给VARCHAR类型主键 -->
