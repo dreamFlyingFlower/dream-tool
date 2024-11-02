@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -37,6 +38,15 @@ import dream.flying.flower.primitive.CharHelper;
 
 /**
  * Map工具类
+ * 
+ * <pre>
+ * {@link Map#compute(Object, BiFunction)}:根据key获得旧的值,根据BiFunction做一次运算后再存入Map中,并返回新的值
+ * {@link Map#computeIfAbsent(Object, Function)}:根据key获得旧的值,如果值不存在,则根据BiFunction做一次运算后再存入Map中并返回新值;存在则直接返回原值
+ * {@link Map#computeIfPresent(Object, BiFunction)}:根据key获得旧的值,如果值存在,则根据BiFunction做一次运算后再存入Map中并返回新值;不存在则直接返回原值
+ * {@link Map#merge(Object, Object, BiFunction)}:如果key存在,将value按照function做1次计算后,更新到Map中;如果key不存在,将key-value放入Map中
+ * {@link Map#putIfAbsent(Object, Object)}:不存在key或者值为null时,才将键值对放入Map
+ * {@link Map#replace(Object, Object)}:如果key存在,则更新值,并返回旧值;如果key不存在,什么也不做
+ * </pre>
  * 
  * @author 飞花梦影
  * @date 2021-03-02 10:10:20
@@ -191,190 +201,222 @@ public class MapHelper {
 	 * @return value或defaultValue
 	 */
 	public static <K, V> V get(Map<K, V> map, K k, V defaultValue) {
-		return isEmpty(map) ? defaultValue : null == map.get(k) ? defaultValue : map.get(k);
+		return map.getOrDefault(k, defaultValue);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Bool,若值为null,返回false
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @return 值
 	 */
-	public static Boolean getBool(Map<?, ?> map, Object key) {
+	public static <K, V> Boolean getBool(Map<K, V> map, K key) {
 		return getBool(map, key, false);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Bool
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @param defaultValue 默认值
 	 * @return 值
 	 */
-	public static Boolean getBool(Map<?, ?> map, Object key, Boolean defaultValue) {
+	public static <K, V> Boolean getBool(Map<K, V> map, K key, Boolean defaultValue) {
 		return isEmpty(map) ? defaultValue : BooleanHelper.toBool(map.get(key), defaultValue);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Character,若值为null,返回0的char值
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @return 值
 	 */
-	public static Character getChar(Map<?, ?> map, Object key) {
+	public static <K, V> Character getChar(Map<K, V> map, K key) {
 		return getChar(map, key, (char) 0);
 	}
 
 	/**
-	 * 获取Map指定key的值，并转换为Character
-	 *
+	 * 获取Map指定key的值,并转换为Character
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @param defaultValue 默认值
 	 * @return 值
 	 */
-	public static Character getChar(Map<?, ?> map, Object key, Character defaultValue) {
+	public static <K, V> Character getChar(Map<K, V> map, K key, Character defaultValue) {
 		return isEmpty(map) ? defaultValue : CharHelper.toChar(map.get(key), defaultValue);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Double,若值为null,返回0
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @return 值
 	 */
-	public static Double getDouble(Map<?, ?> map, Object key) {
+	public static <K, V> Double getDouble(Map<K, V> map, K key) {
 		return getDouble(map, key, 0.0);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Double
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @param defaultValue 默认值
 	 * @return 值
 	 */
-	public static Double getDouble(Map<?, ?> map, Object key, Double defaultValue) {
+	public static <K, V> Double getDouble(Map<K, V> map, K key, Double defaultValue) {
 		return isEmpty(map) ? defaultValue : NumberHelper.toDouble(map.get(key), defaultValue);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Float,若值为null,返回0
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @return 值
 	 */
-	public static Float getFloat(Map<?, ?> map, Object key) {
+	public static <K, V> Float getFloat(Map<K, V> map, K key) {
 		return getFloat(map, key, 0f);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Float
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @param defaultValue 默认值
 	 * @return 值
 	 */
-	public static Float getFloat(Map<?, ?> map, Object key, Float defaultValue) {
+	public static <K, V> Float getFloat(Map<K, V> map, K key, Float defaultValue) {
 		return isEmpty(map) ? defaultValue : NumberHelper.toFloat(map.get(key), defaultValue);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Integer,若值为null,返回0
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @return 值
 	 */
-	public static Integer getInt(Map<?, ?> map, Object key) {
+	public static <K, V> Integer getInt(Map<K, V> map, K key) {
 		return getInt(map, key, 0);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Integer
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @param defaultValue 默认值
 	 * @return 值
 	 */
-	public static Integer getInt(Map<?, ?> map, Object key, Integer defaultValue) {
+	public static <K, V> Integer getInt(Map<K, V> map, K key, Integer defaultValue) {
 		return isEmpty(map) ? defaultValue : NumberHelper.toInt(map.get(key), defaultValue);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Long,若值为null,返回0
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @return 值
 	 */
-	public static Long getLong(Map<?, ?> map, Object key) {
+	public static <K, V> Long getLong(Map<K, V> map, K key) {
 		return getLong(map, key, 0l);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Long
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @param defaultValue 默认值
 	 * @return 值
 	 */
-	public static Long getLong(Map<?, ?> map, Object key, Long defaultValue) {
+	public static <K, V> Long getLong(Map<K, V> map, K key, Long defaultValue) {
 		return isEmpty(map) ? defaultValue : NumberHelper.toLong(map.get(key), defaultValue);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Short,若值为null,返回0
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @return 值
 	 */
-	public static Short getShort(Map<?, ?> map, Object key) {
+	public static <K, V> Short getShort(Map<K, V> map, K key) {
 		return getShort(map, key, (short) 0);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为Short
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @param defaultValue 默认值
 	 * @return 值
 	 */
-	public static Short getShort(Map<?, ?> map, Object key, Short defaultValue) {
+	public static <K, V> Short getShort(Map<K, V> map, K key, Short defaultValue) {
 		return isEmpty(map) ? defaultValue : NumberHelper.toShort(map.get(key), defaultValue);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为字符串
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @return 值
 	 */
-	public static String getStr(Map<?, ?> map, Object key) {
+	public static <K, V> String getStr(Map<K, V> map, K key) {
 		return getStr(map, key);
 	}
 
 	/**
 	 * 获取Map指定key的值,并转换为字符串
-	 *
+	 * 
+	 * @param <K> 泛型key
+	 * @param <V> 泛型value
 	 * @param map Map
 	 * @param key 键
 	 * @param defaultValue 默认值
 	 * @return 值
 	 */
-	public static String getStr(Map<?, ?> map, Object key, String defaultValue) {
+	public static <K, V> String getStr(Map<K, V> map, K key, String defaultValue) {
 		return isEmpty(map) ? defaultValue : StrHelper.toString(map.get(key), defaultValue);
 	}
 
