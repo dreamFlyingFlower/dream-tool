@@ -42,33 +42,34 @@ public class Result<T> implements Serializable {
 	/**
 	 * 是否分页
 	 */
-	private boolean page;
+	private Boolean page;
 
 	/**
 	 * 分页时当前页数
 	 */
-	private long pageIndex;
+	private Long pageIndex;
 
 	/**
 	 * 分页时每页条数
 	 */
-	private long pageSize;
+	private Long pageSize;
 
 	/**
 	 * 分页时数据的总条数
 	 */
-	private long total;
+	private Long total;
 
 	/**
 	 * 分页时的总页数
 	 */
-	private long totalPage;
+	private Long totalPage;
 
 	public Result() {
 		super();
 	}
 
-	public Result(int code, String msg, T data, boolean page, int pageIndex, int pageSize, long total, long totalPage) {
+	public Result(int code, String msg, T data, boolean page, long pageIndex, long pageSize, long total,
+			long totalPage) {
 		super();
 		this.code = code;
 		this.msg = msg;
@@ -137,11 +138,13 @@ public class Result<T> implements Serializable {
 	}
 
 	public static <T> Result<T> result(int code, String msg, T t) {
-		return Result.<T>builder().code(code)
+		return Result.<T>builder()
+				.code(code)
 				.msg(StrHelper.isBlank(msg)
-						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
-						: msg)
-				.data(t).page(false).build();
+						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail")) : msg)
+				.data(t)
+				.page(false)
+				.build();
 	}
 
 	public static <T> Result<T> page(T t, long pageIndex, long pageSize, long total) {
@@ -153,12 +156,17 @@ public class Result<T> implements Serializable {
 	}
 
 	public static <T> Result<T> page(int code, String msg, T t, long pageIndex, long pageSize, long total) {
-		return Result.<T>builder().code(code)
+		return Result.<T>builder()
+				.code(code)
 				.msg(StrHelper.isBlank(msg)
-						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
-						: msg)
-				.data(t).page(true).pageIndex(pageIndex).pageSize(pageSize).total(total)
-				.totalPage(pageSize == 0 ? 0 : (long) (Math.ceil((double) total / pageSize))).build();
+						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail")) : msg)
+				.data(t)
+				.page(true)
+				.pageIndex(pageIndex)
+				.pageSize(pageSize)
+				.total(total)
+				.totalPage(pageSize == 0 ? 0 : (long) (Math.ceil((double) total / pageSize)))
+				.build();
 	}
 
 	/**
@@ -281,7 +289,7 @@ public class Result<T> implements Serializable {
 		this.data = data;
 	}
 
-	public boolean isPage() {
+	public Boolean isPage() {
 		return page;
 	}
 
@@ -289,7 +297,7 @@ public class Result<T> implements Serializable {
 		this.page = page;
 	}
 
-	public long getPageIndex() {
+	public Long getPageIndex() {
 		return pageIndex;
 	}
 
@@ -297,7 +305,7 @@ public class Result<T> implements Serializable {
 		this.pageIndex = pageIndex;
 	}
 
-	public long getPageSize() {
+	public Long getPageSize() {
 		return pageSize;
 	}
 
@@ -305,7 +313,7 @@ public class Result<T> implements Serializable {
 		this.pageSize = pageSize;
 	}
 
-	public long getTotal() {
+	public Long getTotal() {
 		return total;
 	}
 
@@ -313,7 +321,7 @@ public class Result<T> implements Serializable {
 		this.total = total;
 	}
 
-	public long getTotalPage() {
+	public Long getTotalPage() {
 		return totalPage;
 	}
 
