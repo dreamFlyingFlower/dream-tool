@@ -31,17 +31,12 @@ public enum BusinessType implements CodeMsg, PropConverter {
 	}
 
 	@Override
-	public Integer getCode() {
+	public Integer getValue() {
 		return this.ordinal();
 	}
 
 	@Override
 	public String getMsg() {
-		return this.msg;
-	}
-
-	@Override
-	public Object getValue() {
 		return this.msg;
 	}
 }

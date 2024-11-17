@@ -18,7 +18,7 @@ public class ResultException extends RuntimeException {
 	}
 
 	public ResultException(CodeMsg statusMsg) {
-		this(null, statusMsg.getCode(), statusMsg.getMsg());
+		this(null, statusMsg.getValue(), statusMsg.getMsg());
 	}
 
 	public ResultException(CharSequence message) {

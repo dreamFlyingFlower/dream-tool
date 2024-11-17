@@ -15,7 +15,7 @@ public interface NameMsg extends StatusMsg<String> {
 	 * @return 数字状态码
 	 */
 	@Override
-	default String getCode() {
+	default String getValue() {
 		if (Enum.class.isAssignableFrom(this.getClass())) {
 			return ((Enum<?>) this).name();
 		}

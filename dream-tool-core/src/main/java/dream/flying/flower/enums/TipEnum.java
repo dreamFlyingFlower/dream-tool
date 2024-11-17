@@ -165,7 +165,7 @@ public enum TipEnum implements CodeMsg {
 	}
 
 	@Override
-	public Integer getCode() {
+	public Integer getValue() {
 		return code;
 	}
 

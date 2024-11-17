@@ -19,17 +19,17 @@ public enum TipFormatEnum implements CodeMsg {
 
 	/** 必传参数为空 */
 	TIP_PARAM_REQUIRED_IS_NULL(TipEnum.TIP_PARAM_REQUIRED_IS_NULL
-			.getCode(), ConstI18nFormat.MSG_FORMAT_PARAM_REQUIRED_IS_NULL),
+			.getValue(), ConstI18nFormat.MSG_FORMAT_PARAM_REQUIRED_IS_NULL),
 
 	/** 请求URL不存在 */
 	TIP_REQUEST_URL_NOT_EXIST(TipEnum.TIP_REQUEST_URL_NOT_EXIST
-			.getCode(), ConstI18nFormat.MSG_FORMAT_REQUEST_URL_NOT_EXIST),
+			.getValue(), ConstI18nFormat.MSG_FORMAT_REQUEST_URL_NOT_EXIST),
 	/** 请求方式不支持 */
 	TIP_REQUEST_HTTP_METHOD_NOT_SUPPORTED(TipEnum.TIP_REQUEST_HTTP_METHOD_NOT_SUPPORTED
-			.getCode(), ConstI18nFormat.MSG_FORMAT_REQUEST_HTTP_METHOD_NOT_SUPPORTED),
+			.getValue(), ConstI18nFormat.MSG_FORMAT_REQUEST_HTTP_METHOD_NOT_SUPPORTED),
 	/** 请求媒体类型不支持 */
 	TIP_REQUEST_MEDIA_TYPE_NOT_SUPPORTED(TipEnum.TIP_REQUEST_MEDIA_TYPE_NOT_SUPPORTED
-			.getCode(), ConstI18nFormat.MSG_FORMAT_REQUEST_MEDIA_TYPE_NOT_SUPPORTED);
+			.getValue(), ConstI18nFormat.MSG_FORMAT_REQUEST_MEDIA_TYPE_NOT_SUPPORTED);
 
 	private Integer code;
 
@@ -46,7 +46,7 @@ public enum TipFormatEnum implements CodeMsg {
 	}
 
 	@Override
-	public Integer getCode() {
+	public Integer getValue() {
 		return code;
 	}
 

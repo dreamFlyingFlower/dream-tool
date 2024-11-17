@@ -56,4 +56,13 @@ public interface ConstDate {
 	String TIMEWEEK = "HH:mm:ss EEE";
 
 	String WEEK = "EEE";
+
+	/** 秒与毫秒换算 */
+	int TIME_MILLSECONDS = 1000;
+
+	/** 秒与微秒换算 */
+	int TIME_MICROSECONDS = 1000000;
+
+	/** 秒与纳秒换算 */
+	int TIME_NANOSECONDS = 1000000000;
 }

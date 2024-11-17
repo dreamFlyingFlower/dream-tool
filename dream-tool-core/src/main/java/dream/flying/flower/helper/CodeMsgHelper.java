@@ -33,7 +33,7 @@ public class CodeMsgHelper {
 	public static <E extends Enum<E> & CodeMsg> E getEnum(int code, Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		for (E e : list) {
-			if (e.getCode().intValue() == code) {
+			if (e.getValue().intValue() == code) {
 				return e;
 			}
 		}
@@ -51,7 +51,7 @@ public class CodeMsgHelper {
 	public static <E extends Enum<E> & StatusMsg<String>> E getEnum(String code, Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		for (E e : list) {
-			if (code.equals(e.getCode())) {
+			if (code.equals(e.getValue())) {
 				return e;
 			}
 		}
@@ -69,7 +69,7 @@ public class CodeMsgHelper {
 	public static <E extends Enum<E> & CodeMsg> String getMsg(int code, Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		for (E e : list) {
-			if (e.getCode().intValue() == code) {
+			if (e.getValue().intValue() == code) {
 				return e.getMsg();
 			}
 		}
@@ -87,7 +87,7 @@ public class CodeMsgHelper {
 	public static <E extends Enum<E> & CodeMsg> String getName(int code, Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		for (E e : list) {
-			if (e.getCode().intValue() == code) {
+			if (e.getValue().intValue() == code) {
 				return e.name();
 			}
 		}
@@ -110,7 +110,7 @@ public class CodeMsgHelper {
 					.add("',msg:'")
 					.add(t.getMsg())
 					.add("',code:'")
-					.add(t.getCode() + "")
+					.add(t.getValue() + "")
 					.add("',name:'")
 					.add(t.name())
 					.add("'}");
@@ -142,7 +142,7 @@ public class CodeMsgHelper {
 		List<Map<String, Object>> ret = new ArrayList<>();
 		list.forEach(t -> {
 			Map<String, Object> map = new HashMap<>();
-			map.put("code", t.getCode());
+			map.put("code", t.getValue());
 			map.put("msg", t.getMsg());
 			map.put("name", t.name());
 			ret.add(map);
@@ -164,7 +164,7 @@ public class CodeMsgHelper {
 		List<Map<String, Object>> ret = new ArrayList<>();
 		list.stream().filter(predicate).forEach(t -> {
 			Map<String, Object> map = new HashMap<>();
-			map.put("code", t.getCode());
+			map.put("code", t.getValue());
 			map.put("msg", t.getMsg());
 			map.put("name", t.name());
 			ret.add(map);
@@ -184,8 +184,8 @@ public class CodeMsgHelper {
 		Map<String, Map<String, Object>> enumMap = new HashMap<>();
 		list.forEach(t -> {
 			Map<String, Object> map = new HashMap<>();
-			String key = String.valueOf(t.getCode());
-			map.put("code", String.valueOf(t.getCode()));
+			String key = String.valueOf(t.getValue());
+			map.put("code", String.valueOf(t.getValue()));
 			map.put("msg", t.getMsg());
 			map.put("name", t.name());
 			enumMap.put(key, map);
@@ -206,7 +206,7 @@ public class CodeMsgHelper {
 		list.forEach(t -> {
 			Map<String, Object> map = new HashMap<>();
 			String key = String.valueOf(t.name());
-			map.put("code", String.valueOf(t.getCode()));
+			map.put("code", String.valueOf(t.getValue()));
 			map.put("msg", t.getMsg());
 			map.put("name", t.name());
 			enumMap.put(key, map);

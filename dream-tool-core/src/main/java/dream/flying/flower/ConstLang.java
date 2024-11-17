@@ -57,12 +57,12 @@ public interface ConstLang {
 	/** 未知 */
 	String STR_UNKNOWN = "UNKNOWN";
 
-	/** 秒与毫秒换算 */
-	int TIME_MILLSECONDS = 1000;
+	/** 冒号分隔符 */
+	String DELIMITER_COLON = ":";
 
-	/** 秒与微秒换算 */
-	int TIME_MICROSECONDS = 1000000;
+	/** 逗号分隔符 */
+	String DELIMITER_COMMA = ",";
 
-	/** 秒与纳秒换算 */
-	int TIME_NANOSECONDS = 1000000000;
+	/** 下划线分隔符 */
+	String DELIMITER_UNDERLINE = "_";
 }

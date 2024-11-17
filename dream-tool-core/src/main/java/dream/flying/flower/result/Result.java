@@ -106,7 +106,7 @@ public class Result<T> implements Serializable {
 	}
 
 	public static <T> Result<T> error(CodeMsg tipCode) {
-		return error(tipCode.getCode(), tipCode.getMsg());
+		return error(tipCode.getValue(), tipCode.getMsg());
 	}
 
 	public static <T> Result<T> error(int code, String msg) {
@@ -134,7 +134,7 @@ public class Result<T> implements Serializable {
 	}
 
 	public static <T> Result<T> result(TipEnum tip, T t) {
-		return result(tip.getCode(), tip.getMsg(), t);
+		return result(tip.getValue(), tip.getMsg(), t);
 	}
 
 	public static <T> Result<T> result(int code, String msg, T t) {

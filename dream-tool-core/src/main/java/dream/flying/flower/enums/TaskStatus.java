@@ -30,17 +30,12 @@ public enum TaskStatus implements CodeMsg, PropConverter {
 	}
 
 	@Override
-	public Integer getCode() {
+	public Integer getValue() {
 		return code;
 	}
 
 	@Override
 	public String getMsg() {
 		return msg;
-	}
-
-	@Override
-	public Object getValue() {
-		return this.ordinal();
 	}
 }

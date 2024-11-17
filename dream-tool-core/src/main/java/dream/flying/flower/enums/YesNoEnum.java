@@ -31,7 +31,7 @@ public enum YesNoEnum implements CodeMsg, PropConverter {
 	}
 
 	@Override
-	public Integer getCode() {
+	public Integer getValue() {
 		return this.ordinal();
 	}
 
@@ -41,10 +41,5 @@ public enum YesNoEnum implements CodeMsg, PropConverter {
 
 	public static boolean isYes(String msg) {
 		return YES.name().equalsIgnoreCase(msg);
-	}
-
-	@Override
-	public Object getValue() {
-		return this.msg;
 	}
 }

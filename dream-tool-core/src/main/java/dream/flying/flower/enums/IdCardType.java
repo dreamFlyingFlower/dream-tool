@@ -30,7 +30,7 @@ public enum IdCardType implements CodeMsg {
 	}
 
 	@Override
-	public Integer getCode() {
+	public Integer getValue() {
 		return ordinal();
 	}
 

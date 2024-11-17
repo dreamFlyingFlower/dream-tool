@@ -16,7 +16,7 @@ public interface StatusMsg<ID extends Serializable> {
 	 * 
 	 * @return 状态码
 	 */
-	ID getCode();
+	ID getValue();
 
 	/**
 	 * 状态信息

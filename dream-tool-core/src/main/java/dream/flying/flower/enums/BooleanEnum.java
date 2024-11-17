@@ -25,7 +25,7 @@ public enum BooleanEnum implements CodeMsg, PropConverter {
 	}
 
 	public static BooleanEnum getByCode(Integer code) {
-		return Stream.of(BooleanEnum.values()).filter(t -> t.getCode().intValue() == code).findFirst().orElse(null);
+		return Stream.of(BooleanEnum.values()).filter(t -> t.getValue().intValue() == code).findFirst().orElse(null);
 	}
 
 	public static boolean isFalse(BooleanEnum booleanEnum) {
@@ -91,12 +91,7 @@ public enum BooleanEnum implements CodeMsg, PropConverter {
 	}
 
 	@Override
-	public Integer getCode() {
+	public Integer getValue() {
 		return this.ordinal();
-	}
-
-	@Override
-	public Object getValue() {
-		return this.getMsg();
 	}
 }
