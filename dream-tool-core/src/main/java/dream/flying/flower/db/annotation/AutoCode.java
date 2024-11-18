@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 自动生成Code,需要使用redis
+ * 自动生成Code,默认使用DefaultSerialCodeHandler,在当前jar运行目录下生成文件,若该文件删除,编码序列化会重新开始.若引入了dream-spring-boot-starter-redis,优先使用redis
  *
  * @author 飞花梦影
  * @date 2023-06-07 09:39:19
