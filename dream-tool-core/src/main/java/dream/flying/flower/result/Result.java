@@ -68,8 +68,8 @@ public class Result<T> implements Serializable {
 		super();
 	}
 
-	public Result(int code, String msg, T data, boolean page, long pageIndex, long pageSize, long total,
-			long totalPage) {
+	public Result(int code, String msg, T data, Boolean page, Long pageIndex, Long pageSize, Long total,
+			Long totalPage) {
 		super();
 		this.code = code;
 		this.msg = msg;
@@ -141,7 +141,8 @@ public class Result<T> implements Serializable {
 		return Result.<T>builder()
 				.code(code)
 				.msg(StrHelper.isBlank(msg)
-						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail")) : msg)
+						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
+						: msg)
 				.data(t)
 				.page(false)
 				.build();
@@ -159,7 +160,8 @@ public class Result<T> implements Serializable {
 		return Result.<T>builder()
 				.code(code)
 				.msg(StrHelper.isBlank(msg)
-						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail")) : msg)
+						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
+						: msg)
 				.data(t)
 				.page(true)
 				.pageIndex(pageIndex)
