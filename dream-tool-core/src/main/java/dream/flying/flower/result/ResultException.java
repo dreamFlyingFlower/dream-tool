@@ -63,11 +63,11 @@ public class ResultException extends RuntimeException {
 		this.code = code;
 	}
 
-	public static void throwException() throws ResultException {
+	public static void throwException() {
 		throw new ResultException(TipEnum.TIP_SYS_ERROR);
 	}
 
-	public static void throwException(CodeMsg statusMsg) throws ResultException {
+	public static void throwException(CodeMsg statusMsg) {
 		throw new ResultException(statusMsg);
 	}
 
@@ -97,7 +97,7 @@ public class ResultException extends RuntimeException {
 		throw new ResultException(throwable, code, throwable.getMessage());
 	}
 
-	public static void throwResultException(Throwable throwable, CharSequence message) {
+	public static void throwException(Throwable throwable, CharSequence message) {
 		throwException(throwable, 0, message);
 	}
 
