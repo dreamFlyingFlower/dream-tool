@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 一个标记注解,表示被标记的类或对象暂未使用
+ * 一个标记注解,表示被标记的类已改造完毕
  *
  * @author 飞花梦影
  * @date 2021-03-11 23:23:31
@@ -16,6 +16,6 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Unused {
+public @interface Reform {
 
 }

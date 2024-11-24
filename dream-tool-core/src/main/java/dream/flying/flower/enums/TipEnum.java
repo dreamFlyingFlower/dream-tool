@@ -164,6 +164,10 @@ public enum TipEnum implements CodeMsg {
 		this.key = key;
 	}
 
+	public String getKey() {
+		return this.key;
+	}
+
 	@Override
 	public Integer getValue() {
 		return code;

@@ -1,7 +1,5 @@
 package dream.flying.flower.enums;
 
-import java.text.MessageFormat;
-
 import dream.flying.flower.ConstI18nFormat;
 import dream.flying.flower.common.CodeMsg;
 
@@ -13,9 +11,6 @@ import dream.flying.flower.common.CodeMsg;
  * @git {@link https://github.com/dreamFlyingFlower }
  */
 public enum TipFormatEnum implements CodeMsg {
-
-	TIP_LOG_ERROR(0, "@@@:{0}"),
-	TIP_LOG_INFO(0, "###:{0}"),
 
 	/** 必传参数为空 */
 	TIP_PARAM_REQUIRED_IS_NULL(TipEnum.TIP_PARAM_REQUIRED_IS_NULL
@@ -33,16 +28,15 @@ public enum TipFormatEnum implements CodeMsg {
 
 	private Integer code;
 
-	private String msg;
+	private String key;
 
-	private TipFormatEnum(Integer code, String msg) {
+	private TipFormatEnum(Integer code, String key) {
 		this.code = code;
-		this.msg = msg;
+		this.key = key;
 	}
 
-	@Override
-	public String toString() {
-		return msg;
+	public String getKey() {
+		return this.key;
 	}
 
 	@Override
@@ -52,15 +46,11 @@ public enum TipFormatEnum implements CodeMsg {
 
 	@Override
 	public String getMsg() {
-		return msg;
-	}
-
-	public String getMsg(Object... msgs) {
-		return MessageFormat.format(this.msg, msgs);
+		return key;
 	}
 
 	@Override
-	public String getMsg(String format, Object... msgs) {
-		return MessageFormat.format(this.msg, msgs);
+	public String toString() {
+		return super.toString().replaceFirst("TIP", "");
 	}
 }
