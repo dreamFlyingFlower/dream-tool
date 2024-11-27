@@ -1,6 +1,6 @@
 package dream.flying.flower.helper;
 
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.lang.StrHelper;
 import dream.flying.flower.result.ResultException;
 
@@ -38,10 +38,10 @@ public class WeakPwdHelper {
 	 * @param str 需判断的字符串
 	 */
 	public static void assertContinueChar(String str) {
-		if (ConstLang.HOLE_NUMBER.contains(str)) {
+		if (ConstString.NUMBER.contains(str)) {
 			throw new ResultException("不能是连续的数字");
 		}
-		if (ConstLang.HOLE_ALPHABET_LOWER.contains(str.toLowerCase())) {
+		if (ConstString.ALPHABET_LOWER.contains(str.toLowerCase())) {
 			throw new ResultException("不能是连续的字符");
 		}
 	}

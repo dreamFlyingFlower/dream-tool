@@ -15,7 +15,7 @@ import java.util.SortedSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.lang.AssertHelper;
 
 /**
@@ -107,7 +107,7 @@ public class CollectionHelper {
 			return null;
 		}
 		if (!iterator.hasNext()) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 		final Object first = iterator.next();
 		if (!iterator.hasNext()) {

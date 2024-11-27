@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dream.flying.flower.ConstArray;
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.annotation.Example;
 import dream.flying.flower.enums.RegexEnum;
@@ -56,7 +56,7 @@ public class StrHelper extends CharSequenceHelper {
 	 * @return 带指定省略符的字符串
 	 */
 	public static String abbreviate(final String str, final String abbrevMarker, final int maxWidth) {
-		if (isNotEmpty(str) && ConstLang.STR_EMPTY.equals(abbrevMarker) && maxWidth > 0) {
+		if (isNotEmpty(str) && ConstString.STR_EMPTY.equals(abbrevMarker) && maxWidth > 0) {
 			return str.substring(0, maxWidth);
 		} else if (isAnyEmpty(str, abbrevMarker)) {
 			return str;
@@ -167,7 +167,7 @@ public class StrHelper extends CharSequenceHelper {
 		if (str.length() == 1) {
 			final char ch = str.charAt(0);
 			if (ch == ConstSymbol.CHAR_CR || ch == ConstSymbol.CHAR_UNIX_LF) {
-				return ConstLang.STR_EMPTY;
+				return ConstString.STR_EMPTY;
 			}
 			return str;
 		}
@@ -195,7 +195,7 @@ public class StrHelper extends CharSequenceHelper {
 		}
 		final int strLen = str.length();
 		if (strLen < 2) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 		final int lastIdx = strLen - 1;
 		final String ret = str.substring(0, lastIdx);
@@ -255,7 +255,7 @@ public class StrHelper extends CharSequenceHelper {
 		}
 		int count = 0;
 		int idx = 0;
-		while ((idx = str.indexOf(sub, idx)) != ConstLang.INDEX_NOT_FOUND) {
+		while ((idx = str.indexOf(sub, idx)) != ConstArray.INDEX_NOT_FOUND) {
 			count++;
 			idx += sub.length();
 		}
@@ -327,8 +327,8 @@ public class StrHelper extends CharSequenceHelper {
 			return str1;
 		}
 		final int at = indexOfDifference(str1, str2);
-		if (at == ConstLang.INDEX_NOT_FOUND) {
-			return ConstLang.STR_EMPTY;
+		if (at == ConstArray.INDEX_NOT_FOUND) {
+			return ConstString.STR_EMPTY;
 		}
 		return str2.substring(at);
 	}
@@ -411,7 +411,7 @@ public class StrHelper extends CharSequenceHelper {
 		int handledPosition = 0;
 		int delimIndex;// 占位符所在位置
 		for (int argIndex = 0; argIndex < args.length; argIndex++) {
-			delimIndex = template.indexOf(ConstLang.EMPTY_JSON, handledPosition);
+			delimIndex = template.indexOf(ConstString.EMPTY_JSON, handledPosition);
 			if (delimIndex == -1) {
 				if (handledPosition == 0) {
 					return template;
@@ -455,16 +455,16 @@ public class StrHelper extends CharSequenceHelper {
 	 */
 	public static String getCommonPrefix(final String... strs) {
 		if (ArrayHelper.isEmpty(strs)) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 		final int smallestIndexOfDiff = indexOfDifference(strs);
-		if (smallestIndexOfDiff == ConstLang.INDEX_NOT_FOUND) {
+		if (smallestIndexOfDiff == ConstArray.INDEX_NOT_FOUND) {
 			if (strs[0] == null) {
-				return ConstLang.STR_EMPTY;
+				return ConstString.STR_EMPTY;
 			}
 			return strs[0];
 		} else if (smallestIndexOfDiff == 0) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		} else {
 			return strs[0].substring(0, smallestIndexOfDiff);
 		}
@@ -535,7 +535,7 @@ public class StrHelper extends CharSequenceHelper {
 				}
 			}
 		}
-		return ConstLang.INDEX_NOT_FOUND;
+		return ConstArray.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -547,7 +547,7 @@ public class StrHelper extends CharSequenceHelper {
 	 */
 	public static int indexOfAnyBut(final String str, final String searchStr) {
 		if (isEmpty(str) || isEmpty(searchStr)) {
-			return ConstLang.INDEX_NOT_FOUND;
+			return ConstArray.INDEX_NOT_FOUND;
 		}
 		final int strLen = str.length();
 		for (int i = 0; i < strLen; i++) {
@@ -564,7 +564,7 @@ public class StrHelper extends CharSequenceHelper {
 				}
 			}
 		}
-		return ConstLang.INDEX_NOT_FOUND;
+		return ConstArray.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -654,7 +654,7 @@ public class StrHelper extends CharSequenceHelper {
 				}
 			}
 		}
-		return ConstLang.INDEX_NOT_FOUND;
+		return ConstArray.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -713,7 +713,7 @@ public class StrHelper extends CharSequenceHelper {
 		if (pads <= 0) {
 			return str;
 		}
-		if (pads > ConstLang.PAD_LIMIT) {
+		if (pads > ConstString.PAD_LIMIT) {
 			return leftPad(str, size, String.valueOf(padChar));
 		}
 		return repeat(padChar, pads).concat(str);
@@ -741,7 +741,7 @@ public class StrHelper extends CharSequenceHelper {
 			return null;
 		}
 		if (isEmpty(padStr)) {
-			padStr = ConstLang.STR_EMPTY;
+			padStr = ConstString.STR_EMPTY;
 		}
 		final int padLen = padStr.length();
 		final int strLen = str.length();
@@ -749,7 +749,7 @@ public class StrHelper extends CharSequenceHelper {
 		if (pads <= 0) {
 			return str;
 		}
-		if (padLen == 1 && pads <= ConstLang.PAD_LIMIT) {
+		if (padLen == 1 && pads <= ConstString.PAD_LIMIT) {
 			return leftPad(str, size, padStr.charAt(0));
 		}
 		if (pads == padLen) {
@@ -814,13 +814,13 @@ public class StrHelper extends CharSequenceHelper {
 	private static int ordinalIndexOf(final String str, final String searchStr, final int ordinal,
 			final boolean lastIndex) {
 		if (ObjectHelper.isNull(str, searchStr) || ordinal <= 0) {
-			return ConstLang.INDEX_NOT_FOUND;
+			return ConstArray.INDEX_NOT_FOUND;
 		}
 		if (searchStr.length() == 0) {
 			return lastIndex ? str.length() : 0;
 		}
 		int found = 0;
-		int index = lastIndex ? str.length() : ConstLang.INDEX_NOT_FOUND;
+		int index = lastIndex ? str.length() : ConstArray.INDEX_NOT_FOUND;
 		do {
 			if (lastIndex) {
 				index = str.lastIndexOf(searchStr, index - 1);
@@ -849,7 +849,7 @@ public class StrHelper extends CharSequenceHelper {
 			return null;
 		}
 		if (overlay == null) {
-			overlay = ConstLang.STR_EMPTY;
+			overlay = ConstString.STR_EMPTY;
 		}
 		final int len = str.length();
 		start = start < 0 ? 0 : start;
@@ -1000,7 +1000,7 @@ public class StrHelper extends CharSequenceHelper {
 	 */
 	public static String repeat(final char ch, final int repeat) {
 		if (repeat <= 0) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 		final char[] buf = new char[repeat];
 		for (int i = repeat - 1; i >= 0; i--) {
@@ -1021,13 +1021,13 @@ public class StrHelper extends CharSequenceHelper {
 			return null;
 		}
 		if (repeat <= 0) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 		final int inputLength = str.length();
 		if (repeat == 1 || inputLength == 0) {
 			return str;
 		}
-		if (inputLength == 1 && repeat <= ConstLang.PAD_LIMIT) {
+		if (inputLength == 1 && repeat <= ConstString.PAD_LIMIT) {
 			return repeat(str.charAt(0), repeat);
 		}
 		final int outputLength = inputLength * repeat;
@@ -1113,14 +1113,14 @@ public class StrHelper extends CharSequenceHelper {
 		}
 		int start = 0;
 		int end = ignoreCase ? indexOfIgnoreCase(str, searchStr, start) : str.indexOf(searchStr, start);
-		if (end == ConstLang.INDEX_NOT_FOUND) {
+		if (end == ConstArray.INDEX_NOT_FOUND) {
 			return str;
 		}
 		final int replLength = searchStr.length();
 		int increase = Math.max(replacement.length() - replLength, 0);
 		increase *= max < 0 ? 16 : Math.min(max, 64);
 		final StringBuilder buf = new StringBuilder(str.length() + increase);
-		while (end != ConstLang.INDEX_NOT_FOUND) {
+		while (end != ConstArray.INDEX_NOT_FOUND) {
 			buf.append(str, start, end).append(replacement);
 			start = end + replLength;
 			if (--max == 0) {
@@ -1199,7 +1199,7 @@ public class StrHelper extends CharSequenceHelper {
 		if (pads <= 0) {
 			return str;
 		}
-		if (pads > ConstLang.PAD_LIMIT) {
+		if (pads > ConstString.PAD_LIMIT) {
 			return rightPad(str, size, String.valueOf(padChar));
 		}
 		return str.concat(repeat(padChar, pads));
@@ -1229,7 +1229,7 @@ public class StrHelper extends CharSequenceHelper {
 			return null;
 		}
 		if (isEmpty(padStr)) {
-			padStr = ConstLang.STR_SPACE;
+			padStr = ConstString.STR_SPACE;
 		}
 		final int padLen = padStr.length();
 		final int strLen = str.length();
@@ -1237,7 +1237,7 @@ public class StrHelper extends CharSequenceHelper {
 		if (pads <= 0) {
 			return str;
 		}
-		if (padLen == 1 && pads <= ConstLang.PAD_LIMIT) {
+		if (padLen == 1 && pads <= ConstString.PAD_LIMIT) {
 			return rightPad(str, size, padStr.charAt(0));
 		}
 
@@ -1466,7 +1466,7 @@ public class StrHelper extends CharSequenceHelper {
 		} else if (stripChars.isEmpty()) {
 			return str;
 		} else {
-			while (end != 0 && stripChars.indexOf(str.charAt(end - 1)) != ConstLang.INDEX_NOT_FOUND) {
+			while (end != 0 && stripChars.indexOf(str.charAt(end - 1)) != ConstArray.INDEX_NOT_FOUND) {
 				end--;
 			}
 		}
@@ -1527,7 +1527,7 @@ public class StrHelper extends CharSequenceHelper {
 		} else if (stripChars.isEmpty()) {
 			return str;
 		} else {
-			while (start != strLen && stripChars.indexOf(str.charAt(start)) != ConstLang.INDEX_NOT_FOUND) {
+			while (start != strLen && stripChars.indexOf(str.charAt(start)) != ConstArray.INDEX_NOT_FOUND) {
 				start++;
 			}
 		}
@@ -1546,11 +1546,11 @@ public class StrHelper extends CharSequenceHelper {
 			return str;
 		}
 		if (separator == null) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 		final int pos = str.indexOf(separator);
-		if (pos == ConstLang.INDEX_NOT_FOUND) {
-			return ConstLang.STR_EMPTY;
+		if (pos == ConstArray.INDEX_NOT_FOUND) {
+			return ConstString.STR_EMPTY;
 		}
 		return str.substring(pos + separator.length());
 	}
@@ -1567,11 +1567,11 @@ public class StrHelper extends CharSequenceHelper {
 			return str;
 		}
 		if (isEmpty(separator)) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 		final int pos = str.lastIndexOf(separator);
-		if (pos == ConstLang.INDEX_NOT_FOUND || pos == str.length() - separator.length()) {
-			return ConstLang.STR_EMPTY;
+		if (pos == ConstArray.INDEX_NOT_FOUND || pos == str.length() - separator.length()) {
+			return ConstString.STR_EMPTY;
 		}
 		return str.substring(pos + separator.length());
 	}
@@ -1588,10 +1588,10 @@ public class StrHelper extends CharSequenceHelper {
 			return str;
 		}
 		if (separator.isEmpty()) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 		final int pos = str.indexOf(separator);
-		if (pos == ConstLang.INDEX_NOT_FOUND) {
+		if (pos == ConstArray.INDEX_NOT_FOUND) {
 			return str;
 		}
 		return str.substring(0, pos);
@@ -1609,7 +1609,7 @@ public class StrHelper extends CharSequenceHelper {
 			return str;
 		}
 		final int pos = str.lastIndexOf(separator);
-		if (pos == ConstLang.INDEX_NOT_FOUND) {
+		if (pos == ConstArray.INDEX_NOT_FOUND) {
 			return str;
 		}
 		return str.substring(0, pos);
@@ -1639,9 +1639,9 @@ public class StrHelper extends CharSequenceHelper {
 			return null;
 		}
 		final int start = str.indexOf(open);
-		if (start != ConstLang.INDEX_NOT_FOUND) {
+		if (start != ConstArray.INDEX_NOT_FOUND) {
 			final int end = str.indexOf(close, start + open.length());
-			if (end != ConstLang.INDEX_NOT_FOUND) {
+			if (end != ConstArray.INDEX_NOT_FOUND) {
 				return str.substring(start + open.length(), end);
 			}
 		}
@@ -1715,7 +1715,7 @@ public class StrHelper extends CharSequenceHelper {
 
 		// if start is greater than end, return ""
 		if (start > end) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 
 		if (start < 0) {
@@ -1784,7 +1784,7 @@ public class StrHelper extends CharSequenceHelper {
 	 * @return 源字符串或""
 	 */
 	public static String toString(final Object str) {
-		return toString(str, ConstLang.STR_EMPTY);
+		return toString(str, ConstString.STR_EMPTY);
 	}
 
 	/**
@@ -1806,7 +1806,7 @@ public class StrHelper extends CharSequenceHelper {
 	 * @return 字符串
 	 */
 	public static String toString(String str, final Charset charset) {
-		return new String(str.getBytes(charset), ConstLang.DEFAULT_CHARSET);
+		return new String(str.getBytes(charset), ConstString.DEFAULT_CHARSET);
 	}
 
 	/**

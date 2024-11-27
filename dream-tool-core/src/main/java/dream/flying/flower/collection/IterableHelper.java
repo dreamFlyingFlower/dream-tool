@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.annotation.Nullable;
 import dream.flying.flower.lang.AssertHelper;
 import dream.flying.flower.reflect.ReflectHelper;
@@ -498,7 +498,7 @@ public class IterableHelper {
 	public static <T> String join(Iterator<T> iterator, CharSequence delimiter, Function<T, String> function,
 			String prefix, String suffix) {
 		if (null == iterator) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 		StringJoiner joiner = new StringJoiner(delimiter, prefix, suffix);
 		while (iterator.hasNext()) {

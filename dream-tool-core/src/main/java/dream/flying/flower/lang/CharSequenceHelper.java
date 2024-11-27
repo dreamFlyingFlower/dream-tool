@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstArray;
 import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.helper.ArrayHelper;
 import dream.flying.flower.primitive.CharHelper;
@@ -221,7 +221,7 @@ public class CharSequenceHelper {
 		if (valid.length == 0) {
 			return false;
 		}
-		return indexOfAnyBut(cs, valid) == ConstLang.INDEX_NOT_FOUND;
+		return indexOfAnyBut(cs, valid) == ConstArray.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -464,7 +464,7 @@ public class CharSequenceHelper {
 	 */
 	public static int indexOfAnyBut(final CharSequence cs, final char... searchChars) {
 		if (isEmpty(cs) || ArrayHelper.isEmpty(searchChars)) {
-			return ConstLang.INDEX_NOT_FOUND;
+			return ConstArray.INDEX_NOT_FOUND;
 		}
 		final int csLen = cs.length();
 		final int csLast = csLen - 1;
@@ -485,7 +485,7 @@ public class CharSequenceHelper {
 			}
 			return i;
 		}
-		return ConstLang.INDEX_NOT_FOUND;
+		return ConstArray.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -511,7 +511,7 @@ public class CharSequenceHelper {
 	 */
 	public static int indexOfIgnoreCase(final CharSequence str, final CharSequence searchStr, int start) {
 		if (str == null || searchStr == null) {
-			return ConstLang.INDEX_NOT_FOUND;
+			return ConstArray.INDEX_NOT_FOUND;
 		}
 		if (searchStr.length() == 0) {
 			return start;
@@ -519,14 +519,14 @@ public class CharSequenceHelper {
 		start = start < 0 ? 0 : start;
 		int endLimit = str.length() - searchStr.length() + 1;
 		if (start > endLimit) {
-			return ConstLang.INDEX_NOT_FOUND;
+			return ConstArray.INDEX_NOT_FOUND;
 		}
 		for (int i = start; i < endLimit; i++) {
 			if (regionMatches(str, true, i, searchStr, 0, searchStr.length())) {
 				return i;
 			}
 		}
-		return ConstLang.INDEX_NOT_FOUND;
+		return ConstArray.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -538,7 +538,7 @@ public class CharSequenceHelper {
 	 */
 	public static int indexOfDifference(final CharSequence cs1, final CharSequence cs2) {
 		if (cs1 == cs2) {
-			return ConstLang.INDEX_NOT_FOUND;
+			return ConstArray.INDEX_NOT_FOUND;
 		}
 		if (cs1 == null || cs2 == null) {
 			return 0;
@@ -552,7 +552,7 @@ public class CharSequenceHelper {
 		if (i < cs2.length() || i < cs1.length()) {
 			return i;
 		}
-		return ConstLang.INDEX_NOT_FOUND;
+		return ConstArray.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -563,7 +563,7 @@ public class CharSequenceHelper {
 	 */
 	public static int indexOfDifference(final CharSequence... css) {
 		if (ArrayHelper.length(css) <= 1) {
-			return ConstLang.INDEX_NOT_FOUND;
+			return ConstArray.INDEX_NOT_FOUND;
 		}
 		boolean anyStringNull = false;
 		boolean allStringsNull = true;
@@ -583,7 +583,7 @@ public class CharSequenceHelper {
 		}
 		// 处理都是null和部分""
 		if (allStringsNull || longestStrLen == 0 && !anyStringNull) {
-			return ConstLang.INDEX_NOT_FOUND;
+			return ConstArray.INDEX_NOT_FOUND;
 		}
 		// 处理都是""
 		if (shortestStrLen == 0) {
@@ -1055,21 +1055,21 @@ public class CharSequenceHelper {
 	 */
 	public static int lastIndexOfIgnoreCase(final CharSequence str, final CharSequence searchStr, int start) {
 		if (str == null || searchStr == null) {
-			return ConstLang.INDEX_NOT_FOUND;
+			return ConstArray.INDEX_NOT_FOUND;
 		}
 		if (searchStr.length() == 0) {
 			return start;
 		}
 		start = start > str.length() - searchStr.length() ? str.length() - searchStr.length() : start;
 		if (start < 0) {
-			return ConstLang.INDEX_NOT_FOUND;
+			return ConstArray.INDEX_NOT_FOUND;
 		}
 		for (int i = start; i >= 0; i--) {
 			if (regionMatches(str, true, i, searchStr, 0, searchStr.length())) {
 				return i;
 			}
 		}
-		return ConstLang.INDEX_NOT_FOUND;
+		return ConstArray.INDEX_NOT_FOUND;
 	}
 
 	/**

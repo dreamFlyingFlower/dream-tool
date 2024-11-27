@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.enums.RegexEnum;
 import dream.flying.flower.lang.AssertHelper;
@@ -172,7 +172,7 @@ public class RegularHelper {
 	 * @return 删除匹配正则之后的字符串
 	 */
 	public static String removeAll(final String text, final Pattern regex) {
-		return replaceAll(text, regex, ConstLang.STR_EMPTY);
+		return replaceAll(text, regex, ConstString.STR_EMPTY);
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class RegularHelper {
 	 * @return 删除匹配正则之后的字符串
 	 */
 	public static String removeAll(final String text, final String regex) {
-		return replaceAll(text, regex, ConstLang.STR_EMPTY);
+		return replaceAll(text, regex, ConstString.STR_EMPTY);
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class RegularHelper {
 	 * @return 删除匹配正则之后的字符串
 	 */
 	public static String removeFirst(final String text, final Pattern regex) {
-		return replaceFirst(text, regex, ConstLang.STR_EMPTY);
+		return replaceFirst(text, regex, ConstString.STR_EMPTY);
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class RegularHelper {
 	 * @return 删除匹配正则之后的字符串
 	 */
 	public static String removeFirst(final String text, final String regex) {
-		return replaceFirst(text, regex, ConstLang.STR_EMPTY);
+		return replaceFirst(text, regex, ConstString.STR_EMPTY);
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class RegularHelper {
 	 * @return The resulting {@code String}
 	 */
 	public static String removePattern(final String text, final String regex) {
-		return replacePattern(text, regex, ConstLang.STR_EMPTY);
+		return replacePattern(text, regex, ConstString.STR_EMPTY);
 	}
 
 	/**

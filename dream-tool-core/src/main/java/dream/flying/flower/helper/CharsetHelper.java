@@ -3,7 +3,7 @@ package dream.flying.flower.helper;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.lang.StrHelper;
 
 /**
@@ -21,7 +21,7 @@ public class CharsetHelper {
 	 * @return UTF-8
 	 */
 	public static Charset defaultCharset() {
-		return ConstLang.DEFAULT_CHARSET;
+		return ConstString.DEFAULT_CHARSET;
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class CharsetHelper {
 	 * @return 字符集
 	 */
 	public static Charset defaultCharset(final Charset charset) {
-		return charset == null ? ConstLang.DEFAULT_CHARSET : charset;
+		return charset == null ? ConstString.DEFAULT_CHARSET : charset;
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class CharsetHelper {
 		if (StrHelper.isNotBlank(charsetName) && Charset.isSupported(charsetName)) {
 			return Charset.forName(charsetName);
 		} else {
-			return ConstLang.DEFAULT_CHARSET;
+			return ConstString.DEFAULT_CHARSET;
 		}
 	}
 

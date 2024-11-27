@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.lang.StrHelper;
 
@@ -84,7 +84,7 @@ public class BufferHelper {
 	 * @return {@link ByteBuffer}
 	 */
 	public static ByteBuffer create(CharSequence data) {
-		return create(data.toString().getBytes(ConstLang.DEFAULT_CHARSET));
+		return create(data.toString().getBytes(ConstString.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class BufferHelper {
 	 * @return 字符串
 	 */
 	public static String read(ByteBuffer buffer) {
-		return read(buffer, ConstLang.DEFAULT_CHARSET);
+		return read(buffer, ConstString.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -245,7 +245,7 @@ public class BufferHelper {
 			byte[] bs = readBytes(buffer, startPosition, endPosition);
 			return StrHelper.toString(bs, charset);
 		} else if (endPosition == startPosition) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 		return null;
 	}

@@ -12,6 +12,15 @@ import dream.flying.flower.digest.enums.CryptType;
  */
 public interface ConstDigest {
 
+	/** -1 */
+	int NEGATIVE_ONE = -1;
+
+	/** 0 */
+	int ZERO = 0;
+
+	/** 1 */
+	int POSITIVE_ONE = 1;
+
 	/** 密钥倍数 */
 	int KEY_SIZE_MULTIPLE = 64;
 

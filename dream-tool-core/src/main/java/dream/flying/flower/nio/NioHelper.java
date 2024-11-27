@@ -12,7 +12,7 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 
 import dream.flying.flower.ConstIO;
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.helper.CharsetHelper;
 import dream.flying.flower.io.output.ByteArrayOutputStream;
 import dream.flying.flower.lang.AssertHelper;
@@ -156,7 +156,7 @@ public class NioHelper {
 	 * @return 内容
 	 */
 	public static String readUtf8(FileChannel fileChannel) throws IOException {
-		return read(fileChannel, ConstLang.DEFAULT_CHARSET);
+		return read(fileChannel, ConstString.DEFAULT_CHARSET);
 	}
 
 	/**

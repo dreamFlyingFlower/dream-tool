@@ -6,13 +6,16 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
- * 数组相关常量
+ * 数组集合相关常量
  *
  * @author 飞花梦影
  * @date 2022-05-15 15:00:55
  * @git {@link https://gitee.com/dreamFlyingFlower}
  */
 public interface ConstArray {
+
+	/** 索引未找到时的返回值 */
+	int INDEX_NOT_FOUND = -1;
 
 	/** 用于hex输出 */
 	char[] DIGITS_LOWER = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };

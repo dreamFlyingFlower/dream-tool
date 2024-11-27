@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.reflect.ReflectHelper;
 
 /**
@@ -132,7 +132,7 @@ public class ListHelper extends CollectionHelper {
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		}
 		final List<?> subList = list.subList(start, end);
 		return join(separator, subList.iterator());

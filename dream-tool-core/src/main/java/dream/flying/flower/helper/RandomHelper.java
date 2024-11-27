@@ -2,7 +2,7 @@ package dream.flying.flower.helper;
 
 import java.util.Random;
 
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.lang.AssertHelper;
 
 /**
@@ -238,7 +238,7 @@ public class RandomHelper {
 	public static String random(int count, int start, int end, final boolean letters, final boolean numbers,
 			final char[] chars, final Random random) {
 		if (count == 0) {
-			return ConstLang.STR_EMPTY;
+			return ConstString.STR_EMPTY;
 		} else if (count < 0) {
 			throw new IllegalArgumentException("Requested random string length " + count + " is less than 0.");
 		}

@@ -67,7 +67,7 @@ import java.util.zip.ZipOutputStream;
 import dream.flying.flower.ConstArray;
 import dream.flying.flower.ConstFile;
 import dream.flying.flower.ConstIO;
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.binary.HexHelper;
 import dream.flying.flower.digest.DigestHelper;
 import dream.flying.flower.helper.CharsetHelper;
@@ -1921,7 +1921,7 @@ public class FileHelper {
 	 * @throws IOException
 	 */
 	public static List<String> readLines(File file) throws IOException {
-		return readLines(file, ConstLang.DEFAULT_CHARSET);
+		return readLines(file, ConstString.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -2152,7 +2152,7 @@ public class FileHelper {
 	 */
 	public static void write(File file, String content, boolean append) throws IOException {
 		AssertHelper.notNull(file, ConstIO.TOAST_FILE_NULL);
-		byte[] bytes = content.getBytes(ConstLang.DEFAULT_CHARSET);
+		byte[] bytes = content.getBytes(ConstString.DEFAULT_CHARSET);
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file, append));) {
 			bos.write(bytes);
 		}

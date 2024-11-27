@@ -53,7 +53,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import dream.flying.flower.ConstLang;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.bean.BeanHelper;
 import dream.flying.flower.collection.MapHelper;
 import dream.flying.flower.io.IOHelper;
@@ -233,7 +233,7 @@ public class XmlHelper {
 		if (xmlContent == null) {
 			return null;
 		}
-		return xmlContent.replaceAll(COMMENT_REGEX, ConstLang.STR_EMPTY);
+		return xmlContent.replaceAll(COMMENT_REGEX, ConstString.STR_EMPTY);
 	}
 
 	/**
