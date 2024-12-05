@@ -1,4 +1,4 @@
-package dream.flying.flower.common;
+package dream.flying.flower;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
  * @date 2021-02-24 14:59:36
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public interface Encoding {
+public interface ConstEncoding {
 
 	String UTF8 = "UTF-8";
 

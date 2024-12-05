@@ -1,4 +1,4 @@
-package dream.flying.flower.common;
+package dream.flying.flower;
 
 /**
  * 常用常量
