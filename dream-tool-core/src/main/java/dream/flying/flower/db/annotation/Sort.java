@@ -39,5 +39,5 @@ public @interface Sort {
 	 * 
 	 * @return 排序类型
 	 */
-	SortType direction() default SortType.ASC;
+	SortType sortType() default SortType.ASC;
 }

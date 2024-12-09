@@ -37,5 +37,5 @@ public enum QueryType {
 	/** not in */
 	NOTIN,
 	/** group by */
-	GROUPBY,
+	GROUPBY;
 }
