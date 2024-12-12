@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * @git {@link <a href="https://github.com/dreamFlyingFlower">...</a>}
  */
 @Documented
-@Target({ ElementType.TYPE_USE })
+@Target({ ElementType.TYPE_USE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Reform {
 
