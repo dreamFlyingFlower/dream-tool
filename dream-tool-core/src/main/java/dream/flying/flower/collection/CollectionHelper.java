@@ -107,7 +107,7 @@ public class CollectionHelper {
 			return null;
 		}
 		if (!iterator.hasNext()) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final Object first = iterator.next();
 		if (!iterator.hasNext()) {

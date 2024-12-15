@@ -1,10 +1,7 @@
 package dream.flying.flower;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 /**
- * 基础常量
+ * 字符串常量
  *
  * @author 飞花梦影
  * @date 2022-05-15 15:05:17
@@ -18,17 +15,14 @@ public interface ConstString {
 	/** 所有大写字母 */
 	String ALPHABET_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+	/** 所有数字 */
+	String NUMBER = "0123456789";
+
 	/** and */
-	String AND = "and";
+	String AND = "AND";
 
-	/** 一个空字符 */
-	char CHAR_SPACE = ' ';
-
-	/** 默认编码集 */
-	Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-
-	/** 默认编码集字符串 */
-	String DEFAULT_CHARSET_NAME = DEFAULT_CHARSET.name();
+	/** or */
+	String OR = "OR";
 
 	/** 冒号分隔符 */
 	String DELIMITER_COLON = ConstSymbol.COLON;
@@ -42,32 +36,17 @@ public interface ConstString {
 	/** 下划线分隔符 */
 	String DELIMITER_UNDERLINE = ConstSymbol.UNDERLINE;
 
+	/** 空字符串 */
+	String EMPTY = "";
+
 	/** 空Json */
 	String EMPTY_JSON = "{}";
 
-	/** FALSE */
-	String FALSE = "FALSE";
-
-	/** N */
-	String N = "N";
-
-	/** NO */
-	String NO = "NO";
+	/** 一个空白字符串 */
+	String ONE_SPACE = " ";
 
 	/** null字符串 */
 	String NULL = "NULL";
-
-	/** 所有数字 */
-	String NUMBER = "0123456789";
-
-	/** OFF */
-	String OFF = "OFF";
-
-	/** ON */
-	String ON = "ON";
-
-	/** or */
-	String OR = "or";
 
 	/** 能填充的最大长度 */
 	int PAD_LIMIT = 8192;
@@ -75,26 +54,26 @@ public interface ConstString {
 	/** 斜杠 */
 	String SLASH = ConstSymbol.SLASH;
 
-	/** 空字符串 */
-	String STR_EMPTY = "";
-
 	/** 错误 */
-	String STR_ERROR = "ERROR";
+	String ERROR = "ERROR";
 
 	/** 失败 */
-	String STR_FAILURE = "FAILURE";
+	String FAIL = "FAIL";
 
-	/** 一个空白字符串 */
-	String STR_SPACE = " ";
+	/** 失败 */
+	String FAILURE = "FAILURE";
 
 	/** 成功 */
 	String SUCCESS = "SUCCESS";
 
-	/** YES */
-	String TRUE = "TRUE";
-
 	/** 未知 */
 	String UNKNOWN = "UNKNOWN";
+
+	/** N */
+	String N = "N";
+
+	/** NO */
+	String NO = "NO";
 
 	/** Y */
 	String Y = "Y";
@@ -102,6 +81,24 @@ public interface ConstString {
 	/** YES */
 	String YES = "YES";
 
+	/** FALSE */
+	String FALSE = "FALSE";
+
+	/** YES */
+	String TRUE = "TRUE";
+
+	/** OFF */
+	String OFF = "OFF";
+
+	/** ON */
+	String ON = "ON";
+
 	/** 零 */
 	String ZERO = "0";
+
+	/** 1 */
+	String ONE = "1";
+
+	/** -1 */
+	String ONE_NEGATIVE = "-1";
 }

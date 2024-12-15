@@ -4,13 +4,13 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 常用字符集
+ * 字符集编码常量
  * 
  * @author 飞花梦影
  * @date 2021-02-24 14:59:36
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public interface ConstEncoding {
+public interface ConstCharset {
 
 	String UTF8 = "UTF-8";
 
@@ -43,4 +43,10 @@ public interface ConstEncoding {
 	Charset CHARSET_GBK = Charset.forName(GBK);
 
 	Charset CHARSET_GB2312 = Charset.forName(GB2312);
+
+	/** 默认编码集 */
+	Charset DEFAULT_CHARSET = CHARSET_UTF8;
+
+	/** 默认编码集字符串 */
+	String DEFAULT_CHARSET_NAME = DEFAULT_CHARSET.name();
 }

@@ -932,11 +932,11 @@ public class ArrayHelper {
 	 */
 	public static String join(final String separator, final byte[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -969,11 +969,11 @@ public class ArrayHelper {
 	 */
 	public static String join(final String separator, final char[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -1006,11 +1006,11 @@ public class ArrayHelper {
 	 */
 	public static String join(final String separator, final double[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -1046,7 +1046,7 @@ public class ArrayHelper {
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -1078,11 +1078,11 @@ public class ArrayHelper {
 	 */
 	public static String join(final String separator, final int[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -1114,11 +1114,11 @@ public class ArrayHelper {
 	 */
 	public static String join(final String separator, final long[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -1150,12 +1150,12 @@ public class ArrayHelper {
 	 */
 	public static String join(String separator, final Object[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		separator = StrHelper.toString(separator);
 		final int noOfItems = end - start;
 		if (noOfItems <= 0 || start >= array.length) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		if (array[start] != null) {
@@ -1192,11 +1192,11 @@ public class ArrayHelper {
 	 */
 	public static String join(final String separator, final short[] array, final int start, final int end) {
 		if (isEmpty(array)) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final StringBuilder buf = new StringBuilder(noOfItems * 16);
 		buf.append(array[start]);
@@ -1230,7 +1230,7 @@ public class ArrayHelper {
 	 * @since JDK1.8
 	 */
 	public static String join8(final String separator, final double[] array, final int start, final int end) {
-		return join8(separator, array, start, end, ConstString.STR_EMPTY, ConstString.STR_EMPTY);
+		return join8(separator, array, start, end, ConstString.EMPTY, ConstString.EMPTY);
 	}
 
 	/**
@@ -1248,11 +1248,11 @@ public class ArrayHelper {
 	public static String join8(final String separator, final double[] array, final int start, final int end,
 			String prefix, String suffix) {
 		if (isEmpty(array)) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		StringJoiner stringJoiner = new StringJoiner(separator, prefix, suffix);
 		for (int i = start; i < end; i++) {

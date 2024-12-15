@@ -65,9 +65,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import dream.flying.flower.ConstArray;
+import dream.flying.flower.ConstCharset;
 import dream.flying.flower.ConstFile;
 import dream.flying.flower.ConstIO;
-import dream.flying.flower.ConstString;
 import dream.flying.flower.binary.HexHelper;
 import dream.flying.flower.digest.DigestHelper;
 import dream.flying.flower.helper.CharsetHelper;
@@ -78,7 +78,8 @@ import dream.flying.flower.lang.StrHelper;
 import dream.flying.flower.result.ResultException;
 
 /**
- * File工具类,所有需要用到字符串编码的地方,都使用UTF-8 FIXME ,{@link org.springframework.util.FastByteArrayOutputStream}
+ * File工具类,所有需要用到字符串编码的地方,都使用UTF-8 FIXME
+ * ,{@link org.springframework.util.FastByteArrayOutputStream}
  * 
  * @author 飞花梦影
  * @date 2021-02-28 20:10:31
@@ -298,7 +299,8 @@ public class FileHelper {
 				for (File childFile : listFiles) {
 					if (childFile.isFile()) {
 						String fileName = childFile.getParent() + File.separator
-								+ childFile.getName().replace("[YYDM-11FANS][Gundam_Seed-Destiny-HD-ReMaster]", "")
+								+ childFile.getName()
+										.replace("[YYDM-11FANS][Gundam_Seed-Destiny-HD-ReMaster]", "")
 										.replace("[BDRIP][X264-10bit_AAC][720P]", "");
 						childFile.renameTo(new File(fileName));
 					}
@@ -1446,7 +1448,8 @@ public class FileHelper {
 	 * @param from 需要移动的目录
 	 * @param to 目标目录
 	 * @param create true->当目标目录不存在时,创建,false->当目标目录不存在时,不创建
-	 * @throws FileExistsException if the directory exists in the destination directory
+	 * @throws FileExistsException if the directory exists in the destination
+	 *         directory
 	 * @throws IOException if source or destination is invalid
 	 */
 	public static void moveDirectory(final File from, final File to, final boolean create) throws IOException {
@@ -1562,7 +1565,8 @@ public class FileHelper {
 	 * @param from 需要移动的文件或目录
 	 * @param to 目标目录
 	 * @param create true->当目标目录不存在时,创建,false->当目标目录不存在时,不创建
-	 * @throws FileExistsException if the directory or file exists in the destination directory
+	 * @throws FileExistsException if the directory or file exists in the
+	 *         destination directory
 	 * @throws IOException if source or destination is invalid
 	 */
 	public static void moveToDirectory(final File from, final File to, final boolean create) throws IOException {
@@ -1921,7 +1925,7 @@ public class FileHelper {
 	 * @throws IOException
 	 */
 	public static List<String> readLines(File file) throws IOException {
-		return readLines(file, ConstString.DEFAULT_CHARSET);
+		return readLines(file, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -2152,7 +2156,7 @@ public class FileHelper {
 	 */
 	public static void write(File file, String content, boolean append) throws IOException {
 		AssertHelper.notNull(file, ConstIO.TOAST_FILE_NULL);
-		byte[] bytes = content.getBytes(ConstString.DEFAULT_CHARSET);
+		byte[] bytes = content.getBytes(ConstCharset.DEFAULT_CHARSET);
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file, append));) {
 			bos.write(bytes);
 		}
@@ -2318,7 +2322,8 @@ public class FileHelper {
 	 * @param charset 字符编码
 	 * @param lines 写入的数据
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
+	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines)
 			throws IOException {
@@ -2333,7 +2338,8 @@ public class FileHelper {
 	 * @param lines 写入的数据
 	 * @param append 文件操作模式,true->追加写入,false->覆盖写入
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
+	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
 			final boolean append) throws IOException {
@@ -2348,7 +2354,8 @@ public class FileHelper {
 	 * @param lines 写入的数据
 	 * @param lineEnding 文件换行符
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
+	 *         by the VM
 	 */
 	public static void writeLines(final File file, final String charsetName, final Collection<?> lines,
 			final String lineEnding) throws IOException {
@@ -2363,7 +2370,8 @@ public class FileHelper {
 	 * @param lines 写入的数据
 	 * @param lineEnding 文件换行符
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
+	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
 			final String lineEnding) throws IOException {
@@ -2379,7 +2387,8 @@ public class FileHelper {
 	 * @param lineEnding 文件换行符
 	 * @param append 文件操作模式,true->追加写入,false->覆盖写入
 	 * @throws IOException in case of an I/O error
-	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported by the VM
+	 * @throws java.io.UnsupportedEncodingException if the encoding is not supported
+	 *         by the VM
 	 */
 	public static void writeLines(final File file, final Charset charset, final Collection<?> lines,
 			final String lineEnding, final boolean append) throws IOException {

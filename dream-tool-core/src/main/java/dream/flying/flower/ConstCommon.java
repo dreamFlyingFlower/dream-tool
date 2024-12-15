@@ -10,11 +10,14 @@ package dream.flying.flower;
 public interface ConstCommon {
 
 	/** 成功 */
-	String SUCCESS = "success";
+	String SUCCESS = "SUCCESS";
 
 	/** 错误 */
-	String ERROR = "error";
+	String ERROR = "ERROR";
 
 	/** 失败 */
-	String FAIL = "fail";
+	String FAIL = "FAIL";
+
+	/** 失败 */
+	String FAILURE = "FAILURE";
 }

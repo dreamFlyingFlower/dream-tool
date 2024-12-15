@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import dream.flying.flower.ConstCharset;
 import dream.flying.flower.ConstIO;
-import dream.flying.flower.ConstString;
 import dream.flying.flower.helper.ArrayHelper;
 import dream.flying.flower.helper.CharsetHelper;
 import dream.flying.flower.io.output.ByteArrayOutputStream;
@@ -356,7 +356,7 @@ public final class IOHelper {
 	 * @param output 字符输出流,写数据
 	 */
 	public static void copy(final InputStream input, final Writer output) throws IOException {
-		copy(input, output, ConstString.DEFAULT_CHARSET);
+		copy(input, output, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -392,7 +392,7 @@ public final class IOHelper {
 	 * @param output 字节输出流,写数据
 	 */
 	public static void copy(final Reader input, final OutputStream output) throws IOException {
-		copy(input, output, ConstString.DEFAULT_CHARSET);
+		copy(input, output, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -566,7 +566,7 @@ public final class IOHelper {
 	 * @return 字符串
 	 */
 	public static String copyToString(final InputStream input) throws IOException {
-		return copyToString(input, ConstString.DEFAULT_CHARSET);
+		return copyToString(input, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -615,7 +615,7 @@ public final class IOHelper {
 	 * @return URI资源中的字符串
 	 */
 	public static String copyToString(final URI uri) throws IOException {
-		return copyToString(uri, ConstString.DEFAULT_CHARSET);
+		return copyToString(uri, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -648,7 +648,7 @@ public final class IOHelper {
 	 * @return 字符串
 	 */
 	public static String copyToString(final URL url) throws IOException {
-		return copyToString(url, ConstString.DEFAULT_CHARSET);
+		return copyToString(url, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -683,7 +683,7 @@ public final class IOHelper {
 	 * @return 字符行迭代器
 	 */
 	public static ReaderLineIterator lineIterator(final InputStream input) throws IOException {
-		return new ReaderLineIterator(new InputStreamReader(input, ConstString.DEFAULT_CHARSET));
+		return new ReaderLineIterator(new InputStreamReader(input, ConstCharset.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -818,7 +818,7 @@ public final class IOHelper {
 	 * @return 字节流中所有的行
 	 */
 	public static List<String> readLines(final InputStream input) throws IOException {
-		return readLines(input, ConstString.DEFAULT_CHARSET);
+		return readLines(input, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1113,7 +1113,7 @@ public final class IOHelper {
 	 * @return 字节数组
 	 */
 	public static byte[] toByteArray(final Reader input) throws IOException {
-		return toByteArray(input, ConstString.DEFAULT_CHARSET);
+		return toByteArray(input, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1189,7 +1189,7 @@ public final class IOHelper {
 	 * @return 字节输入流中的字符数组
 	 */
 	public static char[] toCharArray(final InputStream is) throws IOException {
-		return toCharArray(is, ConstString.DEFAULT_CHARSET);
+		return toCharArray(is, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1235,7 +1235,7 @@ public final class IOHelper {
 	 * @return 字节数组输入流
 	 */
 	public static InputStream toInputStream(final CharSequence input) {
-		return toInputStream(input, ConstString.DEFAULT_CHARSET);
+		return toInputStream(input, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1280,7 +1280,7 @@ public final class IOHelper {
 	 * @param output 字符输出流,往流中写数据
 	 */
 	public static void write(final byte[] data, final Writer output) throws IOException {
-		write(data, output, ConstString.DEFAULT_CHARSET);
+		write(data, output, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1314,7 +1314,7 @@ public final class IOHelper {
 	 * @param output 字节输出流,往流中写数据
 	 */
 	public static void write(final char[] data, final OutputStream output) throws IOException {
-		write(data, output, ConstString.DEFAULT_CHARSET);
+		write(data, output, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1361,7 +1361,7 @@ public final class IOHelper {
 	 * @param output 字节输出流,往流中写数据
 	 */
 	public static void write(final CharSequence data, final OutputStream output) throws IOException {
-		write(data, output, ConstString.DEFAULT_CHARSET);
+		write(data, output, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1471,7 +1471,7 @@ public final class IOHelper {
 	 * @param output 输出流
 	 */
 	public static void writeLines(final Collection<?> lines, final OutputStream output) throws IOException {
-		writeLines(lines, System.lineSeparator(), output, ConstString.DEFAULT_CHARSET);
+		writeLines(lines, System.lineSeparator(), output, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -1483,7 +1483,7 @@ public final class IOHelper {
 	 */
 	public static void writeLines(final Collection<?> lines, final String lineEnding, final OutputStream output)
 			throws IOException {
-		writeLines(lines, lineEnding, output, ConstString.DEFAULT_CHARSET);
+		writeLines(lines, lineEnding, output, ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**

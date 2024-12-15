@@ -69,7 +69,7 @@ public class HtmlHelper {
 	 * @return 清除标签后的文本
 	 */
 	public static String cleanHtmlTag(String content) {
-		return content.replaceAll(RE_HTML_MARK, ConstString.STR_EMPTY);
+		return content.replaceAll(RE_HTML_MARK, ConstString.EMPTY);
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class HtmlHelper {
 			// \s+(?=>) 表示属性值后跟空格加>,即末尾的属性,此时去掉空格
 			// (?=\s|>) 表示属性值后跟空格（属性后还有别的属性）或者跟>（最后一个属性）
 			regex = StrHelper.format("(?i)(\\s*{}\\s*=[^>]+?\\s+(?=>))|(\\s*{}\\s*=[^>]+?(?=\\s|>))", attr, attr);
-			content = content.replaceAll(regex, ConstString.STR_EMPTY);
+			content = content.replaceAll(regex, ConstString.EMPTY);
 		}
 		return content;
 	}
@@ -168,7 +168,7 @@ public class HtmlHelper {
 	private static String encode(String text) {
 		int len;
 		if ((text == null) || ((len = text.length()) == 0)) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		StringBuilder buffer = new StringBuilder(len + (len >> 2));
 		char c;

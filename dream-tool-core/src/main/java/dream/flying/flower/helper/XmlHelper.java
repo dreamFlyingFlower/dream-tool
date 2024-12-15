@@ -233,7 +233,7 @@ public class XmlHelper {
 		if (xmlContent == null) {
 			return null;
 		}
-		return xmlContent.replaceAll(COMMENT_REGEX, ConstString.STR_EMPTY);
+		return xmlContent.replaceAll(COMMENT_REGEX, ConstString.EMPTY);
 	}
 
 	/**

@@ -6,6 +6,7 @@ import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
 import dream.flying.flower.ConstArray;
+import dream.flying.flower.ConstString;
 import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.helper.ArrayHelper;
 import dream.flying.flower.primitive.CharHelper;
@@ -418,7 +419,7 @@ public class CharSequenceHelper {
 	 * @return 源字符串或""
 	 */
 	public static String getDefault(final String str) {
-		return isBlank(str) ? "" : str;
+		return isBlank(str) ? ConstString.EMPTY : str;
 	}
 
 	/**

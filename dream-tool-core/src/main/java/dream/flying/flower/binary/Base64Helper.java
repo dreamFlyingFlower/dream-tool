@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 
 import dream.flying.flower.ConstArray;
+import dream.flying.flower.ConstCharset;
 import dream.flying.flower.ConstString;
 import dream.flying.flower.helper.CharsetHelper;
 import dream.flying.flower.lang.StrHelper;
@@ -40,7 +41,7 @@ public class Base64Helper {
 		if (StrHelper.isBlank(src)) {
 			return ConstArray.EMPTY_BYTE;
 		}
-		return decode(src.getBytes(ConstString.DEFAULT_CHARSET));
+		return decode(src.getBytes(ConstCharset.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -94,7 +95,7 @@ public class Base64Helper {
 		if (StrHelper.isBlank(src)) {
 			return ConstArray.EMPTY_BYTE;
 		}
-		return Base64.getUrlDecoder().decode(src.getBytes(ConstString.DEFAULT_CHARSET));
+		return Base64.getUrlDecoder().decode(src.getBytes(ConstCharset.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -148,7 +149,7 @@ public class Base64Helper {
 		if (StrHelper.isBlank(src)) {
 			return ConstArray.EMPTY_BYTE;
 		}
-		return Base64.getEncoder().encode(src.getBytes(ConstString.DEFAULT_CHARSET));
+		return Base64.getEncoder().encode(src.getBytes(ConstCharset.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -202,7 +203,7 @@ public class Base64Helper {
 		if (StrHelper.isBlank(src)) {
 			return ConstArray.EMPTY_BYTE;
 		}
-		return Base64.getUrlEncoder().encode(src.getBytes(ConstString.DEFAULT_CHARSET));
+		return Base64.getUrlEncoder().encode(src.getBytes(ConstCharset.DEFAULT_CHARSET));
 	}
 
 	/**
@@ -241,9 +242,9 @@ public class Base64Helper {
 	 */
 	public static String encodeString(byte[] src) {
 		if (src == null || src.length == 0) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
-		return new String(encode(src), ConstString.DEFAULT_CHARSET);
+		return new String(encode(src), ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -254,8 +255,8 @@ public class Base64Helper {
 	 */
 	public static String encodeUrlString(byte[] src) {
 		if (src == null || src.length == 0) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
-		return new String(encodeUrl(src), ConstString.DEFAULT_CHARSET);
+		return new String(encodeUrl(src), ConstCharset.DEFAULT_CHARSET);
 	}
 }

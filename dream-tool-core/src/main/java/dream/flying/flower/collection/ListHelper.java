@@ -132,7 +132,7 @@ public class ListHelper extends CollectionHelper {
 		}
 		final int noOfItems = end - start;
 		if (noOfItems <= 0) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		final List<?> subList = list.subList(start, end);
 		return join(separator, subList.iterator());

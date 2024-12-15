@@ -498,7 +498,7 @@ public class IterableHelper {
 	public static <T> String join(Iterator<T> iterator, CharSequence delimiter, Function<T, String> function,
 			String prefix, String suffix) {
 		if (null == iterator) {
-			return ConstString.STR_EMPTY;
+			return ConstString.EMPTY;
 		}
 		StringJoiner joiner = new StringJoiner(delimiter, prefix, suffix);
 		while (iterator.hasNext()) {

@@ -8,8 +8,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import dream.flying.flower.ConstCharset;
 import dream.flying.flower.ConstIO;
-import dream.flying.flower.ConstString;
 
 /**
  * 该类为字节输出流,写数据进入字节数组的基类,写入数据时字节数组会自动扩容,该类使用close()无效
@@ -147,7 +147,7 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream {
 	 */
 	@Override
 	public String toString() {
-		return new String(toByteArray(), ConstString.DEFAULT_CHARSET);
+		return new String(toByteArray(), ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**

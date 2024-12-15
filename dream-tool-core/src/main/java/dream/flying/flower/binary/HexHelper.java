@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 import dream.flying.flower.ConstArray;
-import dream.flying.flower.ConstString;
+import dream.flying.flower.ConstCharset;
 import dream.flying.flower.helper.CharsetHelper;
 import dream.flying.flower.result.ResultException;
 
@@ -25,7 +25,7 @@ public class HexHelper {
 	 * @return 转换编码后解码的字节数组
 	 */
 	public static byte[] decode(final byte[] data) {
-		return decode(new String(data, ConstString.DEFAULT_CHARSET).toCharArray());
+		return decode(new String(data, ConstCharset.DEFAULT_CHARSET).toCharArray());
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class HexHelper {
 	 * @return 转换编码后解码的字节数组
 	 */
 	public static byte[] decode(final ByteBuffer buffer) {
-		return decode(new String(toByteArray(buffer), ConstString.DEFAULT_CHARSET).toCharArray());
+		return decode(new String(toByteArray(buffer), ConstCharset.DEFAULT_CHARSET).toCharArray());
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class HexHelper {
 	 * @return 转换为16进制字符串之后再转换为UTF8编码的字节数组
 	 */
 	public static byte[] encode(final byte[] array) {
-		return encodeHexString(array).getBytes(ConstString.DEFAULT_CHARSET);
+		return encodeHexString(array).getBytes(ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class HexHelper {
 	 * @return 转换为16进制字符串之后再进行UTF8编码的字节数组,长度是源字节数组的2倍
 	 */
 	public static byte[] encode(final ByteBuffer data) {
-		return encodeHexString(data).getBytes(ConstString.DEFAULT_CHARSET);
+		return encodeHexString(data).getBytes(ConstCharset.DEFAULT_CHARSET);
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class HexHelper {
 	public static char[] encode(final Object object) {
 		byte[] byteArray;
 		if (object instanceof String) {
-			byteArray = ((String) object).getBytes(ConstString.DEFAULT_CHARSET);
+			byteArray = ((String) object).getBytes(ConstCharset.DEFAULT_CHARSET);
 		} else if (object instanceof ByteBuffer) {
 			byteArray = toByteArray((ByteBuffer) object);
 		} else {
