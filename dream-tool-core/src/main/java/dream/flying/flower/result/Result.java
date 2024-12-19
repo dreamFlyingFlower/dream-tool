@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import dream.flying.flower.ConstI18n;
 import dream.flying.flower.collection.MapHelper;
 import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.Internation;
@@ -86,7 +87,7 @@ public class Result<T> implements Serializable {
 	}
 
 	public static <T> Result<T> ok(T t) {
-		return ok(Internation.getStr("msg_success"), t);
+		return ok(Internation.getStr(ConstI18n.MSG_SUCCESS), t);
 	}
 
 	public static <T> Result<T> ok(String msg, T t) {
@@ -94,11 +95,11 @@ public class Result<T> implements Serializable {
 	}
 
 	public static <T> Result<T> ok(int code, T t) {
-		return result(code, Internation.getStr("msg_success"), t);
+		return result(code, Internation.getStr(ConstI18n.MSG_SUCCESS), t);
 	}
 
 	public static <T> Result<T> error() {
-		return error("");
+		return error(Internation.getStr(ConstI18n.MSG_FAIL));
 	}
 
 	public static <T> Result<T> error(String msg) {
@@ -141,7 +142,8 @@ public class Result<T> implements Serializable {
 		return Result.<T>builder()
 				.code(code)
 				.msg(StrHelper.isBlank(msg)
-						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
+						? (code == 1 ? Internation.getStr(ConstI18n.MSG_SUCCESS)
+								: Internation.getStr(ConstI18n.MSG_FAIL))
 						: msg)
 				.data(t)
 				.page(false)
@@ -160,7 +162,8 @@ public class Result<T> implements Serializable {
 		return Result.<T>builder()
 				.code(code)
 				.msg(StrHelper.isBlank(msg)
-						? (code > 0 ? Internation.getStr("msg_success") : Internation.getStr("msg_fail"))
+						? (code == 1 ? Internation.getStr(ConstI18n.MSG_SUCCESS)
+								: Internation.getStr(ConstI18n.MSG_FAIL))
 						: msg)
 				.data(t)
 				.page(true)
