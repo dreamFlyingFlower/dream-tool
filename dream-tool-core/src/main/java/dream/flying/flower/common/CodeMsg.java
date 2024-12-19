@@ -17,7 +17,7 @@ public interface CodeMsg extends StatusMsg<Integer> {
 	@Override
 	default Integer getValue() {
 		if (Enum.class.isAssignableFrom(this.getClass())) {
-			return ((Enum<?>) this).ordinal() + 1;
+			return ((Enum<?>) this).ordinal();
 		}
 		return null;
 	}
