@@ -2,6 +2,7 @@ package dream.flying.flower.enums;
 
 import java.util.stream.Stream;
 
+import dream.flying.flower.ConstString;
 import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.PropConverter;
 import dream.flying.flower.lang.StrHelper;
@@ -24,14 +25,24 @@ public enum BooleanEnum implements CodeMsg, PropConverter {
 		this.msg = msg;
 	}
 
-	public static BooleanEnum getByCode(Integer code) {
-		return Stream.of(BooleanEnum.values()).filter(t -> t.getValue().intValue() == code).findFirst().orElse(null);
+	public static BooleanEnum get(Integer code) {
+		return Stream.of(values()).filter(t -> t.getValue().intValue() == code).findFirst().orElse(null);
 	}
 
 	public static boolean isFalse(BooleanEnum booleanEnum) {
 		return FALSE == booleanEnum;
 	}
 
+	public static boolean isFalse(int code) {
+		return FALSE.ordinal() == code;
+	}
+
+	/**
+	 * 判断值是否为false.null不为false,包括false,no,0,off
+	 * 
+	 * @param value 待判断的值
+	 * @return true->是false;false->不是false
+	 */
 	public static boolean isFalse(Object value) {
 		if (value == null) {
 			return false;
@@ -43,11 +54,12 @@ public enum BooleanEnum implements CodeMsg, PropConverter {
 		if (StrHelper.isBlank(valueStr)) {
 			return false;
 		}
-		valueStr = valueStr.trim().toLowerCase();
+		valueStr = valueStr.trim().toUpperCase();
 		switch (valueStr) {
-		case "false":
-		case "no":
-		case "0":
+		case ConstString.FALSE:
+		case ConstString.NO:
+		case ConstString.ZERO:
+		case ConstString.OFF:
 			return true;
 		default:
 			return false;
@@ -62,6 +74,12 @@ public enum BooleanEnum implements CodeMsg, PropConverter {
 		return TRUE.ordinal() == code;
 	}
 
+	/**
+	 * 判断值是否为true,包括true,yes,ok,1,on
+	 * 
+	 * @param value 待判断的值
+	 * @return true->是true;false->不是true
+	 */
 	public static boolean isTrue(Object value) {
 		if (value == null) {
 			return false;
@@ -73,12 +91,13 @@ public enum BooleanEnum implements CodeMsg, PropConverter {
 		if (StrHelper.isBlank(valueStr)) {
 			return false;
 		}
-		valueStr = valueStr.trim().toLowerCase();
+		valueStr = valueStr.trim().toUpperCase();
 		switch (valueStr) {
-		case "true":
-		case "yes":
-		case "ok":
-		case "1":
+		case ConstString.TRUE:
+		case ConstString.YES:
+		case ConstString.OK:
+		case ConstString.ONE:
+		case ConstString.ON:
 			return true;
 		default:
 			return false;
@@ -93,5 +112,13 @@ public enum BooleanEnum implements CodeMsg, PropConverter {
 	@Override
 	public Integer getValue() {
 		return this.ordinal();
+	}
+
+	public static BooleanEnum get(int value) {
+		return Stream.of(values()).filter(t -> (t.ordinal() + 1) == value).findFirst().orElse(null);
+	}
+
+	public static BooleanEnum get(String value) {
+		return Stream.of(values()).filter(t -> t.name().equalsIgnoreCase(value)).findFirst().orElse(null);
 	}
 }

@@ -32,7 +32,7 @@ public enum BusinessType implements CodeMsg, PropConverter {
 
 	@Override
 	public Integer getValue() {
-		return this.ordinal();
+		return this.ordinal() + 1;
 	}
 
 	@Override

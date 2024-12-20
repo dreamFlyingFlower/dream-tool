@@ -34,11 +34,11 @@ public enum IdCardType implements CodeMsg {
 		return ordinal();
 	}
 
-	public static IdCardType get(int code) {
-		return Stream.of(values()).filter(t -> t.ordinal() == code).findFirst().orElse(null);
+	public static IdCardType get(int value) {
+		return Stream.of(values()).filter(t -> (t.ordinal() + 1) == value).findFirst().orElse(null);
 	}
 
-	public static IdCardType get(String code) {
-		return Stream.of(values()).filter(t -> t.name().equalsIgnoreCase(code)).findFirst().orElse(null);
+	public static IdCardType get(String value) {
+		return Stream.of(values()).filter(t -> t.name().equalsIgnoreCase(value)).findFirst().orElse(null);
 	}
 }

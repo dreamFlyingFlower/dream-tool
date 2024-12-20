@@ -81,6 +81,9 @@ public interface ConstString {
 	/** YES */
 	String YES = "YES";
 
+	/** OK */
+	String OK = "OK";
+
 	/** FALSE */
 	String FALSE = "FALSE";
 
