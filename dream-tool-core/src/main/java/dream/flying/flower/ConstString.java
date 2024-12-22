@@ -48,6 +48,9 @@ public interface ConstString {
 	/** null字符串 */
 	String NULL = "NULL";
 
+	/** 字符串NONE */
+	String NONE = "NONE";
+
 	/** 能填充的最大长度 */
 	int PAD_LIMIT = 8192;
 
