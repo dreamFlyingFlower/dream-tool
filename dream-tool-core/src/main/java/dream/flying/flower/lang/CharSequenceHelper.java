@@ -423,6 +423,16 @@ public class CharSequenceHelper {
 	}
 
 	/**
+	 * 若源对象为null,则返回"";若不为null,返回源对象字符串
+	 *
+	 * @param str 源对象
+	 * @return 字符串或""
+	 */
+	public static String getDefault(final Object str) {
+		return null == str ? ConstString.EMPTY : str.toString();
+	}
+
+	/**
 	 * 若源字符串空,则返回默认字符串;若不为空,返回源字符串
 	 *
 	 * @param <T> 泛型
