@@ -1,23 +1,20 @@
 package dream.flying.flower;
 
 /**
- * 常用常量
+ * 通用数据
  *
  * @author 飞花梦影
- * @date 2024-09-14 00:17:34
+ * @date 2024-12-27 13:09:08
  * @git {@link https://github.com/dreamFlyingFlower}
  */
 public interface ConstCommon {
 
-	/** 成功 */
-	String SUCCESS = "SUCCESS";
+	/** 树形结构最上层数据的parentId */
+	Long ROOT_ID = 0L;
 
-	/** 错误 */
-	String ERROR = "ERROR";
+	/** 树形结构最上层数据的parentCode */
+	String ROOT_CODE = "0";
 
-	/** 失败 */
-	String FAIL = "FAIL";
-
-	/** 失败 */
-	String FAILURE = "FAILURE";
+	/** 树形结构最上层数据的parentName */
+	String ROOT_NAME = "根数据";
 }
