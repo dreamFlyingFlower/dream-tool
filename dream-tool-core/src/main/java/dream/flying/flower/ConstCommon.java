@@ -16,5 +16,5 @@ public interface ConstCommon {
 	String ROOT_CODE = "0";
 
 	/** 树形结构最上层数据的parentName */
-	String ROOT_NAME = "根数据";
+	String ROOT_NAME = "默认";
 }

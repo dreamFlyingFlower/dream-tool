@@ -10,5 +10,8 @@ package dream.flying.flower;
 public interface ConstChar {
 
 	/** 一个空字符 */
-	char CHAR_SPACE = ' ';
+	char SPACE = ' ';
+
+	/** 0 */
+	char ZERO = '0';
 }
