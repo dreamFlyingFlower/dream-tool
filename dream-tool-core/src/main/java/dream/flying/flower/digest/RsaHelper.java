@@ -3,6 +3,8 @@ package dream.flying.flower.digest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -34,6 +36,7 @@ import dream.flying.flower.digest.enums.CipherType;
 import dream.flying.flower.digest.enums.CryptKeyType;
 import dream.flying.flower.digest.enums.CryptType;
 import dream.flying.flower.helper.CharsetHelper;
+import dream.flying.flower.io.file.FileHelper;
 import dream.flying.flower.result.ResultException;
 
 /**
@@ -655,7 +658,7 @@ public class RsaHelper {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// System.out.println(generateKey());
 
 		String publicKey =
@@ -665,11 +668,26 @@ public class RsaHelper {
 
 		String content =
 				"fdsrwerewtgGERWGRWTRWFEWTGRWgdsgrew罡风等各位以太网同一人委托人武rtewytwywtrwtrwetrwtrwetewrttr" + "讽德诵功热骇人听闻特意认为他we";
-
 		String encryptPrivate = encryptPrivate(privateKey, content);
 		System.out.println(encryptPrivate);
 
 		System.out.println(decryptPublic(publicKey, encryptPrivate));
+
+		System.out.println("--------------------");
+
+		Path privateKeyPath = Paths.get(
+				"F:\\repository\\dream-backend-auth3\\dream-backend-auth-server3\\src\\main\\resources\\rsa\\",
+				"private.pem");
+		Path publicKeyPath = Paths.get(
+				"F:\\repository\\dream-backend-auth3\\dream-backend-auth-server3\\src\\main\\resources\\rsa\\",
+				"public.pem");
+		String privateKeyString = FileHelper.read(privateKeyPath.toFile());
+		String publicKeyString = FileHelper.read(publicKeyPath.toFile());
+
+		String encryptPrivateString = encryptPrivate(privateKeyString, content);
+		System.out.println(encryptPrivateString);
+
+		System.out.println(decryptPublic(publicKeyString, encryptPrivateString));
 	}
 
 	/**

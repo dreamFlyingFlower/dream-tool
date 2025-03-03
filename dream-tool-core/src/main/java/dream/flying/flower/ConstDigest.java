@@ -55,4 +55,22 @@ public interface ConstDigest {
 
 	/** RSA默认签名算法 */
 	CryptType DEFAULT_SIGNATURE_RSA = CryptType.SHA256_WITH_RSA;
+
+	/** PEM格式Certificate开头 */
+	String PEM_CERTIFICATE_BEGIN = "-----BEGIN CERTIFICATE-----";
+
+	/** PEM格式Certificate结尾 */
+	String PEM_CERTIFICATE_END = "-----END CERTIFICATE-----";
+
+	/** PEM格式RSA私钥开头 */
+	String PEM_PRIVATE_KEY_BEGIN = "-----BEGIN RSA PRIVATE KEY-----";
+
+	/** PEM格式RSA私钥结尾 */
+	String PEM_PRIVATE_KEY_END = "-----END RSA PRIVATE KEY-----";
+
+	/** PEM格式RSA公钥开头 */
+	String PEM_PUBLIC_KEY_BEGIN = "-----BEGIN PUBLIC KEY-----";
+
+	/** PEM格式RSA公钥结尾 */
+	String PEM_PUBLIC_KEY_END = "-----END PUBLIC KEY-----";
 }

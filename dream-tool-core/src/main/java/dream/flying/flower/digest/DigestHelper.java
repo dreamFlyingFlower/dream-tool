@@ -59,7 +59,7 @@ public class DigestHelper {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		printSecurityProvider("GCM");
 	}
@@ -683,9 +683,9 @@ public class DigestHelper {
 	 */
 	public static String getPemCertificate(byte[] encoded) {
 		StringBuffer base64String = new StringBuffer("");
-		base64String.append("-----BEGIN CERTIFICATE-----").append(System.lineSeparator());
+		base64String.append(ConstDigest.PEM_CERTIFICATE_BEGIN).append(System.lineSeparator());
 		base64String.append(getPemBase64(encoded)).append(System.lineSeparator());
-		base64String.append("-----END CERTIFICATE-----").append(System.lineSeparator());
+		base64String.append(ConstDigest.PEM_CERTIFICATE_END).append(System.lineSeparator());
 		return base64String.toString();
 	}
 
@@ -697,9 +697,9 @@ public class DigestHelper {
 	 */
 	public static String getPemPrivateKey(byte[] encoded) {
 		StringBuffer base64String = new StringBuffer("");
-		base64String.append("-----BEGIN RSA PRIVATE KEY-----").append(System.lineSeparator());
+		base64String.append(ConstDigest.PEM_PRIVATE_KEY_BEGIN).append(System.lineSeparator());
 		base64String.append(getPemBase64(encoded)).append(System.lineSeparator());
-		base64String.append("-----END RSA PRIVATE KEY-----").append(System.lineSeparator());
+		base64String.append(ConstDigest.PEM_PRIVATE_KEY_END).append(System.lineSeparator());
 		return base64String.toString();
 	}
 
@@ -711,9 +711,9 @@ public class DigestHelper {
 	 */
 	public static String getPemPublicKey(byte[] encoded) {
 		StringBuffer base64String = new StringBuffer("");
-		base64String.append("-----BEGIN PUBLIC KEY-----").append(System.lineSeparator());
+		base64String.append(ConstDigest.PEM_PUBLIC_KEY_BEGIN).append(System.lineSeparator());
 		base64String.append(getPemBase64(encoded)).append(System.lineSeparator());
-		base64String.append("-----END PUBLIC KEY-----").append(System.lineSeparator());
+		base64String.append(ConstDigest.PEM_PUBLIC_KEY_END).append(System.lineSeparator());
 		return base64String.toString();
 	}
 
