@@ -1,7 +1,7 @@
 package dream.flying.flower;
 
 /**
- * 数字
+ * 数字常量
  *
  * @author 飞花梦影
  * @date 2024-12-27 13:09:08
@@ -32,4 +32,6 @@ public interface ConstDigit {
 	int NINE = 9;
 
 	int TEN = 10;
+
+	int SIXTEEN = 16;
 }
