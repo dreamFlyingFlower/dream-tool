@@ -1,8 +1,11 @@
 package dream.flying.flower.digest;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
@@ -551,12 +554,12 @@ public class RsaHelper {
 	}
 
 	/**
-	 * RSA生成公私钥,默认密钥长度为1024
+	 * RSA生成公私钥,默认密钥长度为2048
 	 * 
 	 * @return 公私钥键值对
 	 */
 	public static Map<CryptKeyType, byte[]> generateKey() {
-		return generateKey(ConstDigest.KEY_SIZE_1024);
+		return generateKey(ConstDigest.KEY_SIZE_2048);
 	}
 
 	/**
@@ -573,12 +576,12 @@ public class RsaHelper {
 	}
 
 	/**
-	 * RSA生成公私钥,默认密钥长度1024
+	 * RSA生成公私钥,默认密钥长度2048
 	 * 
 	 * @return 密钥对
 	 */
 	public static KeyPair generateKeyPair() {
-		return generateKeyPair(ConstDigest.KEY_SIZE_1024);
+		return generateKeyPair(ConstDigest.KEY_SIZE_2048);
 	}
 
 	/**
@@ -604,22 +607,46 @@ public class RsaHelper {
 	}
 
 	/**
-	 * RSA生成公私钥,默认密钥长度为1024
+	 * 根据已有公私钥字节数组生成RSA密钥对
+	 * 
+	 * @param publicKeyBytes 公钥字节数组
+	 * @param privateKeyBytes 私钥字节数组
+	 * @return 密钥对
+	 */
+	public static KeyPair generateKeyPair(byte[] publicKeyBytes, byte[] privateKeyBytes) {
+		try {
+			KeyFactory keyFactory = KeyFactory.getInstance(CryptType.RSA.getType());
+
+			X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
+			PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+
+			PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
+			PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
+
+			return new KeyPair(publicKey, privateKey);
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			e.printStackTrace();
+			throw new ResultException(e.getMessage());
+		}
+	}
+
+	/**
+	 * RSA生成公私钥,默认密钥长度为2048
 	 * 
 	 * @return 公私钥键值对,公私钥都已经经过base64编码
 	 */
 	public static Map<CryptKeyType, String> generateKeyString() {
-		return generateKeyString(ConstDigest.KEY_SIZE_1024);
+		return generateKeyString(ConstDigest.KEY_SIZE_2048);
 	}
 
 	/**
-	 * RSA生成公私钥,默认密钥长度为1024
+	 * RSA生成公私钥,默认密钥长度为2048
 	 * 
 	 * @param encodeType 编码类型,默认base64
 	 * @return 公私钥键值对
 	 */
 	public static Map<CryptKeyType, String> generateKeyString(EncodeType encodeType) {
-		return generateKeyString(ConstDigest.KEY_SIZE_1024, encodeType);
+		return generateKeyString(ConstDigest.KEY_SIZE_2048, encodeType);
 	}
 
 	/**
@@ -693,12 +720,11 @@ public class RsaHelper {
 	/**
 	 * 生成RSA私钥
 	 * 
-	 * @param privateKeyStr 私钥字符串
+	 * @param privateKeyBytes 私钥字节数组
 	 * @return RSA私钥
 	 */
-	public static RSAPrivateKey privateKey(String privateKeyStr) {
-		PKCS8EncodedKeySpec keySpec =
-				new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyStr.replaceAll("\r|\n", "")));
+	public static RSAPrivateKey privateKey(byte[] privateKeyBytes) {
+		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
 		try {
 			KeyFactory keyFactory = KeyFactory.getInstance(CryptType.RSA.getType());
 			return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
@@ -709,14 +735,23 @@ public class RsaHelper {
 	}
 
 	/**
+	 * 生成RSA私钥
+	 * 
+	 * @param privateKeyStr 私钥字符串
+	 * @return RSA私钥
+	 */
+	public static RSAPrivateKey privateKey(String privateKeyStr) {
+		return privateKey(Base64.getDecoder().decode(privateKeyStr.replaceAll("\r|\n", "")));
+	}
+
+	/**
 	 * 生成RSA公钥
 	 * 
-	 * @param publicKeyStr 公钥字符串
+	 * @param publicKeyBytes 公钥字节数组
 	 * @return RSA公钥
 	 */
-	public static final RSAPublicKey publicKey(String publicKeyStr) {
-		X509EncodedKeySpec keySpec =
-				new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyStr.replaceAll("\r|\n", "")));
+	public static final RSAPublicKey publicKey(byte[] publicKeyBytes) {
+		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
 		try {
 			KeyFactory keyFactory = KeyFactory.getInstance(CryptType.RSA.getType());
 			return (RSAPublicKey) keyFactory.generatePublic(keySpec);
@@ -724,6 +759,52 @@ public class RsaHelper {
 			e.printStackTrace();
 			throw new ResultException(e.getMessage());
 		}
+	}
+
+	/**
+	 * 生成RSA公钥
+	 * 
+	 * @param path 公钥地址
+	 * @return RSA公钥
+	 */
+	public static final RSAPublicKey publicKey(File path) {
+		return publicKey(path.toPath());
+	}
+
+	/**
+	 * 生成RSA公钥
+	 * 
+	 * @param path 公钥地址
+	 * @return RSA公钥
+	 */
+	public static final RSAPublicKey publicKey(Path path) {
+		try {
+			byte[] keyBytes = Files.readAllBytes(path);
+			return publicKey(keyBytes);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 生成RSA公钥
+	 * 
+	 * @param publicKeyStr 公钥字符串
+	 * @return RSA公钥
+	 */
+	public static final RSAPublicKey publicKey(String publicKeyStr) {
+		return publicKey(Base64.getDecoder().decode(publicKeyStr.replaceAll("\r|\n", "")));
+	}
+
+	/**
+	 * 生成RSA公钥
+	 * 
+	 * @param uri 公钥地址
+	 * @return RSA公钥
+	 */
+	public static final RSAPublicKey publicKey(URI uri) {
+		return publicKey(new File(uri));
 	}
 
 	/**
