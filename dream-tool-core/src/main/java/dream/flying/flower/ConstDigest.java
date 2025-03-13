@@ -63,14 +63,20 @@ public interface ConstDigest {
 	String PEM_CERTIFICATE_END = "-----END CERTIFICATE-----";
 
 	/** PEM格式RSA私钥开头 */
-	String PEM_PRIVATE_KEY_BEGIN = "-----BEGIN RSA PRIVATE KEY-----";
+	String PEM_RSA_PRIVATE_KEY_BEGIN = "-----BEGIN RSA PRIVATE KEY-----";
 
 	/** PEM格式RSA私钥结尾 */
-	String PEM_PRIVATE_KEY_END = "-----END RSA PRIVATE KEY-----";
+	String PEM_RSA_PRIVATE_KEY_END = "-----END RSA PRIVATE KEY-----";
 
 	/** PEM格式RSA公钥开头 */
-	String PEM_PUBLIC_KEY_BEGIN = "-----BEGIN PUBLIC KEY-----";
+	String PEM_RSA_PUBLIC_KEY_BEGIN = "-----BEGIN PUBLIC KEY-----";
 
 	/** PEM格式RSA公钥结尾 */
-	String PEM_PUBLIC_KEY_END = "-----END PUBLIC KEY-----";
+	String PEM_RSA_PUBLIC_KEY_END = "-----END PUBLIC KEY-----";
+
+	/** PEM格式私钥开头 */
+	String PEM_PRIVATE_KEY_BEGIN = "-----BEGIN PRIVATE KEY-----";
+
+	/** PEM格式私钥结尾 */
+	String PEM_PRIVATE_KEY_END = "-----END PRIVATE KEY-----";
 }

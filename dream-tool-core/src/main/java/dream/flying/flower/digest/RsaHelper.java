@@ -585,28 +585,6 @@ public class RsaHelper {
 	}
 
 	/**
-	 * RSA生成公私钥
-	 * 
-	 * @param length 密钥长度
-	 * @return 密钥对
-	 */
-	public static KeyPair generateKeyPair(int length) {
-		if (length % ConstDigest.KEY_SIZE_MULTIPLE != 0 || length < ConstDigest.KEY_SIZE_MIN
-				|| length > ConstDigest.KEY_SIZE_MAX) {
-			throw new ResultException("密钥长度错误,必须是64的倍数,且长度在512至65535之间");
-		}
-		try {
-			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(CryptType.RSA.getType());
-			SecureRandom secureRandom = new SecureRandom();
-			keyPairGenerator.initialize(length, secureRandom);
-			return keyPairGenerator.generateKeyPair();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			throw new ResultException(e.getMessage());
-		}
-	}
-
-	/**
 	 * 根据已有公私钥字节数组生成RSA密钥对
 	 * 
 	 * @param publicKeyBytes 公钥字节数组
@@ -625,6 +603,28 @@ public class RsaHelper {
 
 			return new KeyPair(publicKey, privateKey);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			e.printStackTrace();
+			throw new ResultException(e.getMessage());
+		}
+	}
+
+	/**
+	 * RSA生成公私钥
+	 * 
+	 * @param length 密钥长度
+	 * @return 密钥对
+	 */
+	public static KeyPair generateKeyPair(int length) {
+		if (length % ConstDigest.KEY_SIZE_MULTIPLE != 0 || length < ConstDigest.KEY_SIZE_MIN
+				|| length > ConstDigest.KEY_SIZE_MAX) {
+			throw new ResultException("密钥长度错误,必须是64的倍数,且长度在512至65535之间");
+		}
+		try {
+			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(CryptType.RSA.getType());
+			SecureRandom secureRandom = new SecureRandom();
+			keyPairGenerator.initialize(length, secureRandom);
+			return keyPairGenerator.generateKeyPair();
+		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			throw new ResultException(e.getMessage());
 		}
@@ -735,6 +735,34 @@ public class RsaHelper {
 	}
 
 	/**
+	 * 从本地目录中读取私钥
+	 * 
+	 * @param path 私钥地址
+	 * @return 私钥
+	 */
+	public static RSAPrivateKey privateKey(File path) {
+		return privateKey(path.toPath());
+	}
+
+	/**
+	 * 从本地目录中读取私钥
+	 * 
+	 * @param path 私钥地址
+	 * @return 私钥
+	 */
+	public static RSAPrivateKey privateKey(Path path) {
+		try {
+			String key = new String(Files.readAllBytes(path));
+			key = DigestHelper.formatRsaKey(key);
+			byte[] keyBytes = Base64.getDecoder().decode(key);
+			return privateKey(keyBytes);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
 	 * 生成RSA私钥
 	 * 
 	 * @param privateKeyStr 私钥字符串
@@ -779,7 +807,9 @@ public class RsaHelper {
 	 */
 	public static final RSAPublicKey publicKey(Path path) {
 		try {
-			byte[] keyBytes = Files.readAllBytes(path);
+			String key = new String(Files.readAllBytes(path));
+			key = DigestHelper.formatRsaKey(key);
+			byte[] keyBytes = Base64.getDecoder().decode(key);
 			return publicKey(keyBytes);
 		} catch (IOException e) {
 			e.printStackTrace();

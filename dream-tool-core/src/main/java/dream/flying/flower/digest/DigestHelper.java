@@ -697,9 +697,9 @@ public class DigestHelper {
 	 */
 	public static String getPemPrivateKey(byte[] encoded) {
 		StringBuffer base64String = new StringBuffer("");
-		base64String.append(ConstDigest.PEM_PRIVATE_KEY_BEGIN).append(System.lineSeparator());
+		base64String.append(ConstDigest.PEM_RSA_PRIVATE_KEY_BEGIN).append(System.lineSeparator());
 		base64String.append(getPemBase64(encoded)).append(System.lineSeparator());
-		base64String.append(ConstDigest.PEM_PRIVATE_KEY_END).append(System.lineSeparator());
+		base64String.append(ConstDigest.PEM_RSA_PRIVATE_KEY_END).append(System.lineSeparator());
 		return base64String.toString();
 	}
 
@@ -711,9 +711,9 @@ public class DigestHelper {
 	 */
 	public static String getPemPublicKey(byte[] encoded) {
 		StringBuffer base64String = new StringBuffer("");
-		base64String.append(ConstDigest.PEM_PUBLIC_KEY_BEGIN).append(System.lineSeparator());
+		base64String.append(ConstDigest.PEM_RSA_PUBLIC_KEY_BEGIN).append(System.lineSeparator());
 		base64String.append(getPemBase64(encoded)).append(System.lineSeparator());
-		base64String.append(ConstDigest.PEM_PUBLIC_KEY_END).append(System.lineSeparator());
+		base64String.append(ConstDigest.PEM_RSA_PUBLIC_KEY_END).append(System.lineSeparator());
 		return base64String.toString();
 	}
 
@@ -770,5 +770,17 @@ public class DigestHelper {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static String formatRsaKey(String key) {
+		return key
+				// 如果是PEM格式RSA,删除私钥开头和结尾标志
+				.replaceAll(ConstDigest.PEM_RSA_PRIVATE_KEY_BEGIN, "")
+				.replaceAll(ConstDigest.PEM_RSA_PRIVATE_KEY_END, "")
+				// 如果是PEM格式RSA,删除公钥开头和结尾标志
+				.replaceAll(ConstDigest.PEM_RSA_PUBLIC_KEY_BEGIN, "")
+				.replaceAll(ConstDigest.PEM_RSA_PUBLIC_KEY_END, "")
+				// 删除空格,制表符,换行等
+				.replaceAll("\\s", "");
 	}
 }
