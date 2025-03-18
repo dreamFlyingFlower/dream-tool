@@ -26,11 +26,16 @@ public @interface Logger {
 	String value() default "";
 
 	/**
-	 * 默认功能描述,当logOtherType不等于StatusMsg.class时,使用logOtherType方法的值
+	 * 日志类型,当logOtherType不等于StatusMsg.class时,使用logOtherType方法的值
 	 * 
-	 * @return 默认功能描述
+	 * @return 日志类型
 	 */
 	BusinessType businessType() default BusinessType.OTHER;
+
+	/**
+	 * 操作描述
+	 */
+	String description() default "";
 
 	/**
 	 * 扩展功能描述,只有当该字节码不等于StatusMsg.class时才生效,此时忽略logType,实现类必须有无参构造
@@ -52,10 +57,10 @@ public @interface Logger {
 	/**
 	 * 是否保存请求的参数
 	 */
-	boolean isSaveRequestParams() default true;
+	boolean saveRequest() default true;
 
 	/**
 	 * 是否保存响应的参数
 	 */
-	boolean isSaveResponseResult() default true;
+	boolean saveResponse() default true;
 }
