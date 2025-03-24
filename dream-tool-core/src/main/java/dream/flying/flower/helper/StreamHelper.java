@@ -119,7 +119,8 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> DoubleSummaryStatistics summaryDouble(Collection<T> collection, Function<T, Double> function) {
-		return CollectionHelper.isEmpty(collection) ? new DoubleSummaryStatistics()
+		return CollectionHelper.isEmpty(collection)
+				? new DoubleSummaryStatistics()
 				: collection.stream().collect(Collectors.summarizingDouble(function::apply));
 	}
 
@@ -132,8 +133,8 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> DoubleSummaryStatistics summaryDouble(Collection<T> collection, ToDoubleFunction<T> function) {
-		return CollectionHelper.isEmpty(collection) ? new DoubleSummaryStatistics()
-				: collection.stream().collect(Collectors.summarizingDouble(function));
+		return CollectionHelper.isEmpty(collection)
+				? new DoubleSummaryStatistics() : collection.stream().collect(Collectors.summarizingDouble(function));
 	}
 
 	/**
@@ -145,8 +146,8 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> IntSummaryStatistics summaryInt(Collection<T> collection, Function<T, Integer> function) {
-		return CollectionHelper.isEmpty(collection) ? new IntSummaryStatistics()
-				: collection.stream().collect(Collectors.summarizingInt(function::apply));
+		return CollectionHelper.isEmpty(collection)
+				? new IntSummaryStatistics() : collection.stream().collect(Collectors.summarizingInt(function::apply));
 	}
 
 	/**
@@ -158,8 +159,8 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> IntSummaryStatistics summaryInt(Collection<T> collection, ToIntFunction<T> function) {
-		return CollectionHelper.isEmpty(collection) ? new IntSummaryStatistics()
-				: collection.stream().collect(Collectors.summarizingInt(function));
+		return CollectionHelper.isEmpty(collection)
+				? new IntSummaryStatistics() : collection.stream().collect(Collectors.summarizingInt(function));
 	}
 
 	/**
@@ -171,7 +172,8 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> LongSummaryStatistics summaryLong(Collection<T> collection, Function<T, Long> function) {
-		return CollectionHelper.isEmpty(collection) ? new LongSummaryStatistics()
+		return CollectionHelper.isEmpty(collection)
+				? new LongSummaryStatistics()
 				: collection.stream().collect(Collectors.summarizingLong(function::apply));
 	}
 
@@ -184,8 +186,8 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> LongSummaryStatistics summaryLong(Collection<T> collection, ToLongFunction<T> function) {
-		return CollectionHelper.isEmpty(collection) ? new LongSummaryStatistics()
-				: collection.stream().collect(Collectors.summarizingLong(function));
+		return CollectionHelper.isEmpty(collection)
+				? new LongSummaryStatistics() : collection.stream().collect(Collectors.summarizingLong(function));
 	}
 
 	/**
