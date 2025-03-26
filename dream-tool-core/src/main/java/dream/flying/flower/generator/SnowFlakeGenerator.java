@@ -88,14 +88,14 @@ public class SnowFlakeGenerator {
 		}
 
 		if (currStmp == lastStmp) {
-			// 相同毫秒内，序列号自增
+			// 相同毫秒内,序列号自增
 			sequence = (sequence + 1) & MAX_SEQUENCE;
 			// 同一毫秒的序列数已经达到最大
 			if (sequence == 0L) {
 				currStmp = getNextMill();
 			}
 		} else {
-			// 不同毫秒内，序列号置为0
+			// 不同毫秒内,序列号置为0
 			sequence = 0L;
 		}
 
@@ -145,7 +145,8 @@ public class SnowFlakeGenerator {
 		long diffTime = Long.parseLong(time, 2);
 		long timeLong = diffTime + START_STMP;
 
-		SnowFlakeGenerator snowFlakeIdParse = new SnowFlakeGenerator(dataCenterIdInt, workerIdInt, sequenceInt, timeLong);
+		SnowFlakeGenerator snowFlakeIdParse =
+				new SnowFlakeGenerator(dataCenterIdInt, workerIdInt, sequenceInt, timeLong);
 
 		return snowFlakeIdParse;
 	}
