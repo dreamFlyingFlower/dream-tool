@@ -42,4 +42,8 @@ public enum YesNoEnum implements CodeMsg, PropConverter {
 	public static boolean isYes(String msg) {
 		return YES.name().equalsIgnoreCase(msg);
 	}
+
+	public static boolean isYes(int value) {
+		return YES.ordinal() == value;
+	}
 }
