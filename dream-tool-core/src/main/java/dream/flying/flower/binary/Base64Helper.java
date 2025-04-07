@@ -6,6 +6,7 @@ import java.util.Base64;
 import dream.flying.flower.ConstArray;
 import dream.flying.flower.ConstCharset;
 import dream.flying.flower.ConstString;
+import dream.flying.flower.helper.ArrayHelper;
 import dream.flying.flower.helper.CharsetHelper;
 import dream.flying.flower.lang.StrHelper;
 
@@ -25,7 +26,7 @@ public class Base64Helper {
 	 * @return 解码后的字节数组
 	 */
 	public static byte[] decode(byte[] src) {
-		if (src == null || src.length == 0) {
+		if (ArrayHelper.isEmpty(src)) {
 			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getDecoder().decode(src);
@@ -79,7 +80,7 @@ public class Base64Helper {
 	 * @return 原始字节数组
 	 */
 	public static byte[] decodeUrl(byte[] src) {
-		if (src == null || src.length == 0) {
+		if (ArrayHelper.isEmpty(src)) {
 			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getUrlDecoder().decode(src);
@@ -133,7 +134,7 @@ public class Base64Helper {
 	 * @return 编码后的字节数组
 	 */
 	public static byte[] encode(byte[] src) {
-		if (src == null || src.length == 0) {
+		if (ArrayHelper.isEmpty(src)) {
 			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getEncoder().encode(src);
@@ -187,7 +188,7 @@ public class Base64Helper {
 	 * @return 编码后的字节数组
 	 */
 	public static byte[] encodeUrl(byte[] src) {
-		if (src == null || src.length == 0) {
+		if (ArrayHelper.isEmpty(src)) {
 			return ConstArray.EMPTY_BYTE;
 		}
 		return Base64.getUrlEncoder().encode(src);
@@ -241,7 +242,7 @@ public class Base64Helper {
 	 * @return Base64编码并UTF8编码后的字符串
 	 */
 	public static String encodeString(byte[] src) {
-		if (src == null || src.length == 0) {
+		if (ArrayHelper.isEmpty(src)) {
 			return ConstString.EMPTY;
 		}
 		return new String(encode(src), ConstCharset.DEFAULT_CHARSET);
@@ -254,7 +255,7 @@ public class Base64Helper {
 	 * @return 编码后的URL字符串
 	 */
 	public static String encodeUrlString(byte[] src) {
-		if (src == null || src.length == 0) {
+		if (ArrayHelper.isEmpty(src)) {
 			return ConstString.EMPTY;
 		}
 		return new String(encodeUrl(src), ConstCharset.DEFAULT_CHARSET);
