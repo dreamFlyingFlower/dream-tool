@@ -882,4 +882,22 @@ public final class DateHelper {
 	public static int span2Day(Date begintime, Date endtime) {
 		return (int) ((endtime.getTime() - begintime.getTime()) / ONE_DAY);
 	}
+
+	/**
+	 * 判断指定时间是否在2个时间之间
+	 * 
+	 * @param nowTime 待判断时间
+	 * @param beginTime 开始时间
+	 * @param endTime 结束时间
+	 * @return true->是;false->否
+	 */
+	public static Boolean betweenDate(Date nowTime, Date beginTime, Date endTime) {
+		Calendar date = Calendar.getInstance();
+		date.setTime(nowTime);
+		Calendar begin = Calendar.getInstance();
+		begin.setTime(beginTime);
+		Calendar end = Calendar.getInstance();
+		end.setTime(endTime);
+		return date.after(begin) && date.before(end);
+	}
 }

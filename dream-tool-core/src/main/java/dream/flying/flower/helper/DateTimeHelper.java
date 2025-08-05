@@ -52,24 +52,41 @@ public interface DateTimeHelper {
 	 * 默认格式化时间字符串HH:mm:ss,系统自带的{@link DateTimeFormatter#ISO_LOCAL_TIME}默认字符串带毫秒
 	 */
 	DateTimeFormatter DEFAULT_FORMATTER_TIME = new DateTimeFormatterBuilder().appendValue(HOUR_OF_DAY, 2)
-			.appendLiteral(':').appendValue(MINUTE_OF_HOUR, 2).optionalStart().appendLiteral(':')
-			.appendValue(SECOND_OF_MINUTE, 2).optionalStart().parseStrict().toFormatter();
+			.appendLiteral(':')
+			.appendValue(MINUTE_OF_HOUR, 2)
+			.optionalStart()
+			.appendLiteral(':')
+			.appendValue(SECOND_OF_MINUTE, 2)
+			.optionalStart()
+			.parseStrict()
+			.toFormatter();
 
 	/**
 	 * 默认格式化年月日时分秒字符串yyyy-MM-dd HH:mm:ss,系统自带的默认格式化字符串中间带T
 	 */
-	DateTimeFormatter DEFAULT_FORMATTER =
-			new DateTimeFormatterBuilder().parseCaseInsensitive().append(DateTimeFormatter.ISO_LOCAL_DATE)
-					.appendLiteral(' ').append(DEFAULT_FORMATTER_TIME).optionalStart().parseStrict().toFormatter();
+	DateTimeFormatter DEFAULT_FORMATTER = new DateTimeFormatterBuilder().parseCaseInsensitive()
+			.append(DateTimeFormatter.ISO_LOCAL_DATE)
+			.appendLiteral(' ')
+			.append(DEFAULT_FORMATTER_TIME)
+			.optionalStart()
+			.parseStrict()
+			.toFormatter();
 
 	/**
 	 * 定时时间格式化字符串:yyyy-MM-dd HH:mm:ss,等同于DEFAULT_FORMATTER
 	 */
 	DateTimeFormatter DEFAULT_FORMATTER_DATETIME = new DateTimeFormatterBuilder().appendValue(ChronoField.YEAR)
-			.appendLiteral("-").appendValue(ChronoField.MONTH_OF_YEAR).appendLiteral("-")
-			.appendValue(ChronoField.DAY_OF_MONTH).appendLiteral(" ").appendValue(ChronoField.HOUR_OF_DAY)
-			.appendLiteral(":").appendValue(ChronoField.MINUTE_OF_HOUR).appendLiteral(":")
-			.appendValue(ChronoField.SECOND_OF_MINUTE).toFormatter();
+			.appendLiteral("-")
+			.appendValue(ChronoField.MONTH_OF_YEAR)
+			.appendLiteral("-")
+			.appendValue(ChronoField.DAY_OF_MONTH)
+			.appendLiteral(" ")
+			.appendValue(ChronoField.HOUR_OF_DAY)
+			.appendLiteral(":")
+			.appendValue(ChronoField.MINUTE_OF_HOUR)
+			.appendLiteral(":")
+			.appendValue(ChronoField.SECOND_OF_MINUTE)
+			.toFormatter();
 
 	/**
 	 * 将Date类型转换为LocalDateTime类型
@@ -330,12 +347,12 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 获得当前时间所在日期的零点时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 获得当前时间所在日期的零点时间,但是toString()不会显示秒和纳秒,需要强制格式化为yyyy-MM-dd HH:mm:ss
 	 * 
 	 * @return 当前时间所在日期零点时间
 	 */
-	public static Date getDayBegin() {
-		return local2Date(LocalDateTime.of(LocalDate.now(), LocalTime.MIN));
+	public static LocalDateTime getDayBegin() {
+		return LocalDate.now().atStartOfDay();
 	}
 
 	/**
@@ -344,9 +361,8 @@ public interface DateTimeHelper {
 	 * @param date 指定时间
 	 * @return 当前时间所在日期零点时间
 	 */
-	public static Date getDayBegin(Date date) {
-		LocalDateTime date2Local = date2Local(date);
-		return local2Date(LocalDateTime.of(date2Local.toLocalDate(), LocalTime.MIN));
+	public static LocalDateTime getDayBegin(Date date) {
+		return date2Local(date).toLocalDate().atStartOfDay();
 	}
 
 	/**
@@ -355,37 +371,8 @@ public interface DateTimeHelper {
 	 * @param localDateTime 指定时间
 	 * @return 当前时间所在日期零点时间
 	 */
-	public static Date getDayBegin(LocalDateTime localDateTime) {
-		return local2Date(LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MIN));
-	}
-
-	/**
-	 * 获得当前时间所在日期的零点时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
-	 * 
-	 * @return 当前时间所在日期零点时间
-	 */
-	public static LocalDateTime getDayBeginLocal() {
-		return LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
-	}
-
-	/**
-	 * 获得指定时间所在日期的零点时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
-	 * 
-	 * @param date 指定时间
-	 * @return 当前时间所在日期零点时间
-	 */
-	public static LocalDateTime getDayBeginLocal(Date date) {
-		return LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MIN);
-	}
-
-	/**
-	 * 获得指定时间所在日期的零点时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
-	 * 
-	 * @param localDateTime 指定时间
-	 * @return 当前时间所在日期零点时间
-	 */
-	public static LocalDateTime getDayBeginLocal(LocalDateTime localDateTime) {
-		return LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.of(0, 0, 0));
+	public static LocalDateTime getDayBegin(LocalDateTime localDateTime) {
+		return localDateTime.toLocalDate().atStartOfDay();
 	}
 
 	/**
@@ -419,7 +406,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getDayBeginStr(Date date, DateEnum dateFormat) {
 		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MIN);
-		return dateFormat == null ? DEFAULT_FORMATTER.format(localDateTime)
+		return dateFormat == null
+				? DEFAULT_FORMATTER.format(localDateTime)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(localDateTime);
 	}
 
@@ -432,8 +420,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getDayBeginStr(Date date, DateTimeFormatter dateTimeFormatter) {
 		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MIN);
-		return dateTimeFormatter == null ? DEFAULT_FORMATTER.format(localDateTime)
-				: dateTimeFormatter.format(localDateTime);
+		return dateTimeFormatter == null
+				? DEFAULT_FORMATTER.format(localDateTime) : dateTimeFormatter.format(localDateTime);
 	}
 
 	/**
@@ -445,8 +433,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getDayBeginStr(Date date, String format) {
 		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MIN);
-		return StrHelper.isBlank(format) ? DEFAULT_FORMATTER.format(localDateTime)
-				: DateTimeFormatter.ofPattern(format).format(localDateTime);
+		return StrHelper.isBlank(format)
+				? DEFAULT_FORMATTER.format(localDateTime) : DateTimeFormatter.ofPattern(format).format(localDateTime);
 	}
 
 	/**
@@ -501,63 +489,43 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 获得当前时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 获得当前时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss.ZZ,如2020-12-12 23:59:59.999999999
 	 * 
 	 * @return 当前时间所在日期结束时间
 	 */
-	public static Date getDayEnd() {
-		return local2Date(LocalDateTime.of(LocalDate.now(), LocalTime.MAX));
+	public static LocalDateTime getDayEnd() {
+		return LocalDateTime.now().toLocalDate().atTime(LocalTime.MAX);
 	}
 
 	/**
-	 * 获得指定时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 获得指定时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss.ZZ,如2020-12-12 23:59:59.999999999
 	 * 
 	 * @param date 指定时间
 	 * @return 当前时间所在日期结束时间
 	 */
-	public static Date getDayEnd(Date date) {
-		LocalDateTime date2Local = date2Local(date);
-		return local2Date(LocalDateTime.of(date2Local.toLocalDate(), LocalTime.MAX));
+	public static LocalDateTime getDayEnd(Date date) {
+		LocalDateTime localDateTime = date2Local(date);
+		return localDateTime.toLocalDate().atTime(LocalTime.MAX);
 	}
 
 	/**
-	 * 获得指定时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 获得指定时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss.ZZ,如2020-12-12 23:59:59.999999999
 	 * 
-	 * @param date 指定时间
+	 * @param localDate 指定时间
 	 * @return 当前时间所在日期结束时间
 	 */
-	public static Date getDayEnd(LocalDateTime localDateTime) {
-		return local2Date(LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX));
+	public static LocalDateTime getDayEnd(LocalDate localDate) {
+		return localDate.atTime(LocalTime.MAX);
 	}
 
 	/**
-	 * 获得当前时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
+	 * 获得指定时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss.ZZ,如2020-12-12 23:59:59.999999999
 	 * 
+	 * @param localDateTime 指定时间
 	 * @return 当前时间所在日期结束时间
 	 */
-	public static LocalDateTime getDayEndLocal() {
-		return LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-	}
-
-	/**
-	 * 获得指定时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
-	 * 
-	 * @param date 指定时间
-	 * @return 当前时间所在日期结束时间
-	 */
-	public static LocalDateTime getDayEndLocal(Date date) {
-		LocalDateTime date2Local = date2Local(date);
-		return LocalDateTime.of(date2Local.toLocalDate(), LocalTime.MAX);
-	}
-
-	/**
-	 * 获得指定时间所在日期的结束时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 23:59:59
-	 * 
-	 * @param date 指定时间
-	 * @return 当前时间所在日期结束时间
-	 */
-	public static LocalDateTime getDayEndLocal(LocalDateTime localDateTime) {
-		return LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
+	public static LocalDateTime getDayEnd(LocalDateTime localDateTime) {
+		return localDateTime.toLocalDate().atTime(LocalTime.MAX);
 	}
 
 	/**
@@ -589,7 +557,8 @@ public interface DateTimeHelper {
 	public static String getDayEndStr(Date date, DateEnum dateFormat) {
 		AssertHelper.notNull(date);
 		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MAX);
-		return dateFormat == null ? DEFAULT_FORMATTER.format(localDateTime)
+		return dateFormat == null
+				? DEFAULT_FORMATTER.format(localDateTime)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(localDateTime);
 	}
 
@@ -603,8 +572,8 @@ public interface DateTimeHelper {
 	public static String getDayEndStr(Date date, DateTimeFormatter dateTimeFormatter) {
 		AssertHelper.notNull(date);
 		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MAX);
-		return dateTimeFormatter == null ? DEFAULT_FORMATTER.format(localDateTime)
-				: dateTimeFormatter.format(localDateTime);
+		return dateTimeFormatter == null
+				? DEFAULT_FORMATTER.format(localDateTime) : dateTimeFormatter.format(localDateTime);
 	}
 
 	/**
@@ -617,8 +586,8 @@ public interface DateTimeHelper {
 	public static String getDayEndStr(Date date, String format) {
 		AssertHelper.notNull(date);
 		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MAX);
-		return StrHelper.isBlank(format) ? DEFAULT_FORMATTER.format(localDateTime)
-				: DateTimeFormatter.ofPattern(format).format(localDateTime);
+		return StrHelper.isBlank(format)
+				? DEFAULT_FORMATTER.format(localDateTime) : DateTimeFormatter.ofPattern(format).format(localDateTime);
 	}
 
 	/**
@@ -641,7 +610,8 @@ public interface DateTimeHelper {
 	public static String getDayEndStr(LocalDateTime localDateTime, DateEnum dateFormat) {
 		AssertHelper.notNull(localDateTime);
 		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
-		return dateFormat == null ? DEFAULT_FORMATTER.format(localDateTime)
+		return dateFormat == null
+				? DEFAULT_FORMATTER.format(localDateTime)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(localDateTime);
 	}
 
@@ -655,8 +625,8 @@ public interface DateTimeHelper {
 	public static String getDayEndStr(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
 		AssertHelper.notNull(localDateTime);
 		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
-		return dateTimeFormatter == null ? DEFAULT_FORMATTER.format(localDateTime)
-				: dateTimeFormatter.format(localDateTime);
+		return dateTimeFormatter == null
+				? DEFAULT_FORMATTER.format(localDateTime) : dateTimeFormatter.format(localDateTime);
 	}
 
 	/**
@@ -669,8 +639,8 @@ public interface DateTimeHelper {
 	public static String getDayEndStr(LocalDateTime localDateTime, String format) {
 		AssertHelper.notNull(localDateTime);
 		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
-		return StrHelper.isBlank(format) ? DEFAULT_FORMATTER.format(localDateTime)
-				: DateTimeFormatter.ofPattern(format).format(localDateTime);
+		return StrHelper.isBlank(format)
+				? DEFAULT_FORMATTER.format(localDateTime) : DateTimeFormatter.ofPattern(format).format(localDateTime);
 	}
 
 	/**
@@ -932,7 +902,8 @@ public interface DateTimeHelper {
 	public static String getMonthEndStr(LocalDateTime localDateTime, DateEnum dateFormat) {
 		AssertHelper.notNull(localDateTime);
 		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
-		return dateFormat == null ? DEFAULT_FORMATTER.format(localDateTime)
+		return dateFormat == null
+				? DEFAULT_FORMATTER.format(localDateTime)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(localDateTime);
 	}
 
@@ -946,8 +917,8 @@ public interface DateTimeHelper {
 	public static String getMonthEndStr(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
 		AssertHelper.notNull(localDateTime);
 		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
-		return dateTimeFormatter == null ? DEFAULT_FORMATTER.format(localDateTime)
-				: dateTimeFormatter.format(localDateTime);
+		return dateTimeFormatter == null
+				? DEFAULT_FORMATTER.format(localDateTime) : dateTimeFormatter.format(localDateTime);
 	}
 
 	/**
@@ -960,8 +931,8 @@ public interface DateTimeHelper {
 	public static String getMonthEndStr(LocalDateTime localDateTime, String pattern) {
 		AssertHelper.notNull(localDateTime);
 		localDateTime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.MAX);
-		return StrHelper.isBlank(pattern) ? DEFAULT_FORMATTER.format(localDateTime)
-				: DateTimeFormatter.ofPattern(pattern).format(localDateTime);
+		return StrHelper.isBlank(pattern)
+				? DEFAULT_FORMATTER.format(localDateTime) : DateTimeFormatter.ofPattern(pattern).format(localDateTime);
 	}
 
 	/**
@@ -1131,7 +1102,7 @@ public interface DateTimeHelper {
 	 */
 	public static Date getWeekBegin(LocalDateTime localDateTime) {
 		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 1);
-		return local2Date(getDayBeginLocal(with));
+		return local2Date(getDayBegin(with));
 	}
 
 	/**
@@ -1161,7 +1132,7 @@ public interface DateTimeHelper {
 	 */
 	public static LocalDateTime getWeekBeginLocal(LocalDateTime localDateTime) {
 		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, DayOfWeek.MONDAY.getValue());
-		return getDayBeginLocal(with);
+		return getDayBegin(with);
 	}
 
 	/**
@@ -1182,7 +1153,7 @@ public interface DateTimeHelper {
 	 */
 	public static Date getWeekEnd(LocalDateTime localDateTime) {
 		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 7);
-		return local2Date(getDayEndLocal(with));
+		return local2Date(getDayEnd(with));
 	}
 
 	/**
@@ -1221,7 +1192,7 @@ public interface DateTimeHelper {
 	 */
 	public static LocalDateTime getWeekEndLocal(LocalDateTime localDateTime) {
 		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, DayOfWeek.SUNDAY.getValue());
-		return getDayEndLocal(with);
+		return getDayEnd(with);
 	}
 
 	/**
@@ -1314,7 +1285,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearBeginStr(Date date, DateEnum dateFormat) {
 		LocalDateTime yearBeginLocal = getYearBeginLocal(date2Local(date));
-		return null == dateFormat ? DEFAULT_FORMATTER.format(yearBeginLocal)
+		return null == dateFormat
+				? DEFAULT_FORMATTER.format(yearBeginLocal)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(yearBeginLocal);
 	}
 
@@ -1327,8 +1299,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearBeginStr(Date date, DateTimeFormatter dateTimeFormatter) {
 		LocalDateTime yearBeginLocal = getYearBeginLocal(date2Local(date));
-		return null == dateTimeFormatter ? DEFAULT_FORMATTER.format(yearBeginLocal)
-				: dateTimeFormatter.format(yearBeginLocal);
+		return null == dateTimeFormatter
+				? DEFAULT_FORMATTER.format(yearBeginLocal) : dateTimeFormatter.format(yearBeginLocal);
 	}
 
 	/**
@@ -1340,7 +1312,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearBeginStr(Date date, String pattern) {
 		LocalDateTime yearBeginLocal = getYearBeginLocal(date2Local(date));
-		return StrHelper.isBlank(pattern) ? DEFAULT_FORMATTER.format(yearBeginLocal)
+		return StrHelper.isBlank(pattern)
+				? DEFAULT_FORMATTER.format(yearBeginLocal)
 				: DateTimeFormatter.ofPattern(pattern).format(yearBeginLocal);
 	}
 
@@ -1363,7 +1336,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearBeginStr(LocalDateTime localDateTime, DateEnum dateFormat) {
 		LocalDateTime yearBeginLocal = getYearBeginLocal(localDateTime);
-		return null == dateFormat ? DEFAULT_FORMATTER.format(yearBeginLocal)
+		return null == dateFormat
+				? DEFAULT_FORMATTER.format(yearBeginLocal)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(yearBeginLocal);
 	}
 
@@ -1376,8 +1350,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearBeginStr(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
 		LocalDateTime yearBeginLocal = getYearBeginLocal(localDateTime);
-		return null == dateTimeFormatter ? DEFAULT_FORMATTER.format(yearBeginLocal)
-				: dateTimeFormatter.format(yearBeginLocal);
+		return null == dateTimeFormatter
+				? DEFAULT_FORMATTER.format(yearBeginLocal) : dateTimeFormatter.format(yearBeginLocal);
 	}
 
 	/**
@@ -1389,7 +1363,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearBeginStr(LocalDateTime localDateTime, String pattern) {
 		LocalDateTime yearBeginLocal = getYearBeginLocal(localDateTime);
-		return StrHelper.isBlank(pattern) ? DEFAULT_FORMATTER.format(yearBeginLocal)
+		return StrHelper.isBlank(pattern)
+				? DEFAULT_FORMATTER.format(yearBeginLocal)
 				: DateTimeFormatter.ofPattern(pattern).format(yearBeginLocal);
 	}
 
@@ -1483,7 +1458,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearEndStr(Date date, DateEnum dateFormat) {
 		LocalDateTime yearEndLocal = getYearEndLocal(date2Local(date));
-		return null == dateFormat ? DEFAULT_FORMATTER.format(yearEndLocal)
+		return null == dateFormat
+				? DEFAULT_FORMATTER.format(yearEndLocal)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(yearEndLocal);
 	}
 
@@ -1496,8 +1472,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearEndStr(Date date, DateTimeFormatter dateTimeFormatter) {
 		LocalDateTime yearEndLocal = getYearEndLocal(date2Local(date));
-		return null == dateTimeFormatter ? DEFAULT_FORMATTER.format(yearEndLocal)
-				: dateTimeFormatter.format(yearEndLocal);
+		return null == dateTimeFormatter
+				? DEFAULT_FORMATTER.format(yearEndLocal) : dateTimeFormatter.format(yearEndLocal);
 	}
 
 	/**
@@ -1509,8 +1485,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearEndStr(Date date, String pattern) {
 		LocalDateTime yearEndLocal = getYearEndLocal(date2Local(date));
-		return StrHelper.isBlank(pattern) ? DEFAULT_FORMATTER.format(yearEndLocal)
-				: DateTimeFormatter.ofPattern(pattern).format(yearEndLocal);
+		return StrHelper.isBlank(pattern)
+				? DEFAULT_FORMATTER.format(yearEndLocal) : DateTimeFormatter.ofPattern(pattern).format(yearEndLocal);
 	}
 
 	/**
@@ -1532,7 +1508,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearEndStr(LocalDateTime localDateTime, DateEnum dateFormat) {
 		LocalDateTime yearEndLocal = getYearEndLocal(localDateTime);
-		return null == dateFormat ? DEFAULT_FORMATTER.format(yearEndLocal)
+		return null == dateFormat
+				? DEFAULT_FORMATTER.format(yearEndLocal)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(yearEndLocal);
 	}
 
@@ -1545,8 +1522,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearEndStr(LocalDateTime localDateTime, DateTimeFormatter dateTimeFormatter) {
 		LocalDateTime yearEndLocal = getYearEndLocal(localDateTime);
-		return null == dateTimeFormatter ? DEFAULT_FORMATTER.format(yearEndLocal)
-				: dateTimeFormatter.format(yearEndLocal);
+		return null == dateTimeFormatter
+				? DEFAULT_FORMATTER.format(yearEndLocal) : dateTimeFormatter.format(yearEndLocal);
 	}
 
 	/**
@@ -1558,8 +1535,8 @@ public interface DateTimeHelper {
 	 */
 	public static String getYearEndStr(LocalDateTime localDateTime, String pattern) {
 		LocalDateTime yearEndLocal = getYearEndLocal(localDateTime);
-		return StrHelper.isBlank(pattern) ? DEFAULT_FORMATTER.format(yearEndLocal)
-				: DateTimeFormatter.ofPattern(pattern).format(yearEndLocal);
+		return StrHelper.isBlank(pattern)
+				? DEFAULT_FORMATTER.format(yearEndLocal) : DateTimeFormatter.ofPattern(pattern).format(yearEndLocal);
 	}
 
 	/**
@@ -1931,7 +1908,8 @@ public interface DateTimeHelper {
 	 * @return true是,false否
 	 */
 	public static boolean sameMonth(TemporalAccessor temporalAccessor1, TemporalAccessor temporalAccessor2) {
-		return (null == temporalAccessor1 || null == temporalAccessor2) ? false
+		return (null == temporalAccessor1 || null == temporalAccessor2)
+				? false
 				: temporalAccessor1.get(ChronoField.MONTH_OF_YEAR) == temporalAccessor2.get(ChronoField.MONTH_OF_YEAR);
 	}
 
@@ -1977,7 +1955,8 @@ public interface DateTimeHelper {
 	 * @return true是,false否
 	 */
 	public static boolean sameMonthDay(TemporalAccessor temporalAccessor1, TemporalAccessor temporalAccessor2) {
-		return (null == temporalAccessor1 || null == temporalAccessor2) ? false
+		return (null == temporalAccessor1 || null == temporalAccessor2)
+				? false
 				: temporalAccessor1.get(ChronoField.MONTH_OF_YEAR) == temporalAccessor2.get(ChronoField.MONTH_OF_YEAR)
 						&& temporalAccessor1.get(ChronoField.DAY_OF_MONTH) == temporalAccessor2
 								.get(ChronoField.DAY_OF_MONTH);
@@ -2474,5 +2453,27 @@ public interface DateTimeHelper {
 	 */
 	public static LocalTime toUtcTime(ZonedDateTime zonedDateTime) {
 		return toUtcDateTime(zonedDateTime).toLocalTime();
+	}
+
+	/**
+	 * 判断指定时间是否在2个时间之间
+	 * 
+	 * @param nowTime 待判断时间
+	 * @param beginTime 开始时间
+	 * @param endTime 结束时间
+	 * @return true->是;false->否
+	 */
+	public static Boolean betweenDate(Instant nowTime, Instant beginTime, Instant endTime) {
+		return nowTime.isAfter(beginTime) && nowTime.isBefore(endTime);
+	}
+
+	/**
+	 * 时区转换.支持的时区通过ZoneId.getAvailableZoneIds()查看
+	 * 
+	 * @param zoneId 时区
+	 * @return 转换后的时区
+	 */
+	public static ZonedDateTime convertZone(String zoneId) {
+		return ZonedDateTime.now(ZoneId.of(zoneId));
 	}
 }
