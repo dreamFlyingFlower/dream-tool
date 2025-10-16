@@ -1,7 +1,7 @@
 package dream.flying.flower.enums;
 
 import dream.flying.flower.ConstI18n;
-import dream.flying.flower.common.CodeMsg;
+import dream.flying.flower.common.NumberMsg;
 import dream.flying.flower.common.Internation;
 
 /**
@@ -11,7 +11,7 @@ import dream.flying.flower.common.Internation;
  * @date 2021-03-11 09:51:42
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public enum TipEnum implements CodeMsg {
+public enum TipEnum implements NumberMsg {
 
 	/** 请求失败 */
 	TIP_FAIL(0, ConstI18n.MSG_FAIL),
@@ -155,12 +155,12 @@ public enum TipEnum implements CodeMsg {
 	/** 请求超时 */
 	TIP_REQUEST_TIME_OUT(11003, ConstI18n.MSG_REQUEST_TIME_OUT);
 
-	private final Integer code;
+	private final Integer value;
 
 	private final String key;
 
-	TipEnum(Integer code, String key) {
-		this.code = code;
+	TipEnum(Integer value, String key) {
+		this.value = value;
 		this.key = key;
 	}
 
@@ -170,7 +170,7 @@ public enum TipEnum implements CodeMsg {
 
 	@Override
 	public Integer getValue() {
-		return code;
+		return value;
 	}
 
 	@Override

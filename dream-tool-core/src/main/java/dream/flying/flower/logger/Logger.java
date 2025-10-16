@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import dream.flying.flower.common.NameMsg;
+import dream.flying.flower.common.CodeMsg;
 
 /**
  * 自定义操作日志记录注解
@@ -42,7 +42,7 @@ public @interface Logger {
 	 * 
 	 * @return 自定义功能描述
 	 */
-	Class<? extends NameMsg> logOtherType() default NameMsg.class;
+	Class<? extends CodeMsg> logOtherType() default CodeMsg.class;
 
 	/**
 	 * 操作人类别
@@ -52,7 +52,7 @@ public @interface Logger {
 	/**
 	 * 扩展操作人类别,只有当该字节码不等于StatusMsg.class时才生效,此时忽略operatorType,实现类必须有无参构造
 	 */
-	Class<? extends NameMsg> operatorOtherType() default NameMsg.class;
+	Class<? extends CodeMsg> operatorOtherType() default CodeMsg.class;
 
 	/**
 	 * 是否保存请求的参数

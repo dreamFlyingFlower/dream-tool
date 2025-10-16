@@ -1,6 +1,6 @@
 package dream.flying.flower.enums;
 
-import dream.flying.flower.common.CodeMsg;
+import dream.flying.flower.common.NumberMsg;
 import dream.flying.flower.common.PropConverter;
 
 /**
@@ -10,7 +10,7 @@ import dream.flying.flower.common.PropConverter;
  * @date 2022-04-26 09:45:05
  * @git {@link https://github.com/dreamFlyingFlower }
  */
-public enum ResponseEnum implements CodeMsg, PropConverter {
+public enum ResponseEnum implements NumberMsg, PropConverter {
 
 	SUCCESS(1, "成功"),
 	FAIL(0, "失败"),

@@ -2,7 +2,7 @@ package dream.flying.flower.logger;
 
 import java.util.stream.Stream;
 
-import dream.flying.flower.common.CodeMsg;
+import dream.flying.flower.common.NumberMsg;
 import dream.flying.flower.common.PropConverter;
 import dream.flying.flower.lang.StrHelper;
 
@@ -13,7 +13,7 @@ import dream.flying.flower.lang.StrHelper;
  * @date 2021-02-03 16:09:58
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public enum BusinessType implements CodeMsg, PropConverter {
+public enum BusinessType implements NumberMsg, PropConverter {
 
 	OTHER("其他,other"),
 	LOGIN("登录,login"),
