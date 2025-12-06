@@ -3,7 +3,9 @@ package dream.flying.flower.nio;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -29,7 +31,7 @@ public class NioHelper {
 	/**
 	 * 默认缓存大小 8192
 	 */
-	public static final int DEFAULT_BUFFER_SIZE = 8192;
+	// public static final int DEFAULT_BUFFER_SIZE = 8192;
 
 	/**
 	 * 默认中等缓存大小 16384
@@ -78,7 +80,7 @@ public class NioHelper {
 	 * @return 拷贝的字节数
 	 */
 	public static long copy(ReadableByteChannel input, WritableByteChannel output) throws IOException {
-		return copy(input, output, DEFAULT_BUFFER_SIZE);
+		return copy(input, output, ConstIO.DEFAULT_BUFFER_SIZE);
 	}
 
 	/**
@@ -106,7 +108,7 @@ public class NioHelper {
 			ChannelProgress channelProgress) throws IOException {
 		AssertHelper.notNull(input, "InputStream is null !");
 		AssertHelper.notNull(output, "OutputStream is null !");
-		ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize <= 0 ? DEFAULT_BUFFER_SIZE : bufferSize);
+		ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize <= 0 ? ConstIO.DEFAULT_BUFFER_SIZE : bufferSize);
 		long size = 0;
 		if (null != channelProgress) {
 			channelProgress.start();
@@ -133,8 +135,9 @@ public class NioHelper {
 	 * @return 内容
 	 */
 	public static String read(ReadableByteChannel channel, Charset charset) throws IOException {
-		ByteArrayOutputStream out = read(channel);
-		return null == charset ? out.toString() : out.toString(charset);
+		try (ByteArrayOutputStream out = read(channel);) {
+			return out.toString(CharsetHelper.defaultCharset(charset));
+		}
 	}
 
 	/**
@@ -180,5 +183,21 @@ public class NioHelper {
 	public static String read(FileChannel fileChannel, Charset charset) throws IOException {
 		MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size()).load();
 		return CharsetHelper.defaultCharset(charset).decode(buffer).toString();
+	}
+
+	/**
+	 * 从{@link Reader}中读取String
+	 *
+	 * @param reader {@link Reader}
+	 * @return String 结果
+	 * @throws IOException
+	 */
+	public static String read(Reader reader) throws IOException {
+		final StringBuilder builder = new StringBuilder();
+		final CharBuffer buffer = CharBuffer.allocate(ConstIO.DEFAULT_BUFFER_SIZE);
+		while (-1 != reader.read(buffer)) {
+			builder.append(buffer.flip());
+		}
+		return builder.toString();
 	}
 }

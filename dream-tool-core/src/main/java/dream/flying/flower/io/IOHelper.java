@@ -578,6 +578,7 @@ public final class IOHelper {
 	 */
 	public static String copyToString(final InputStream input, final Charset charset) throws IOException {
 		Objects.requireNonNull(input, "inputstream can't by null");
+
 		try (final StringBuilderWriter sw = new StringBuilderWriter()) {
 			copy(input, sw, charset);
 			return sw.toString();
@@ -1057,8 +1058,8 @@ public final class IOHelper {
 	 */
 	public static BufferedInputStream toBufferedInputStream(final InputStream inputStream) {
 		Objects.requireNonNull(inputStream, "inputStream can't be null");
-		return inputStream instanceof BufferedInputStream ? (BufferedInputStream) inputStream
-				: new BufferedInputStream(inputStream);
+		return inputStream instanceof BufferedInputStream
+				? (BufferedInputStream) inputStream : new BufferedInputStream(inputStream);
 	}
 
 	/**

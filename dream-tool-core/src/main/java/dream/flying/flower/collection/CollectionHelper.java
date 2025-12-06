@@ -10,10 +10,13 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import dream.flying.flower.ConstString;
 import dream.flying.flower.lang.AssertHelper;
@@ -280,8 +283,8 @@ public class CollectionHelper {
 	 */
 	public static <T> ArrayList<T> newArrayList(Iterable<? extends T> elements) {
 		AssertHelper.notNull(elements);
-		return (elements instanceof Collection) ? new ArrayList<>((Collection<? extends T>) elements)
-				: newArrayList(elements);
+		return (elements instanceof Collection)
+				? new ArrayList<>((Collection<? extends T>) elements) : newArrayList(elements);
 	}
 
 	/**
@@ -516,5 +519,25 @@ public class CollectionHelper {
 		final Set<T> set = sort ? new LinkedHashSet<>(initialCapacity) : new HashSet<>(initialCapacity);
 		Collections.addAll(set, ts);
 		return set;
+	}
+
+	/**
+	 * 将集合中的元素根据指定方法转换Set<V>
+	 * 
+	 * @param <T> 源集合中元素类型
+	 * @param <V> 转换后Set中的元素类型
+	 * @param datas 集合
+	 * @param valueFunction 将源集合元素转换为V的方法
+	 * @return valueFunction转换后的值为元素的Set
+	 */
+	static <T, V> Set<V> toSet(Collection<T> datas, Function<T, V> valueFunction) {
+		Objects.requireNonNull(valueFunction);
+
+		return Optional.ofNullable(datas)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.map(valueFunction)
+				.collect(Collectors.toSet());
 	}
 }

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
@@ -25,6 +26,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import dream.flying.flower.annotation.Example;
@@ -689,6 +691,88 @@ public class MapHelper {
 			builder.put(key, valueFunction.apply(key));
 		}
 		return builder;
+	}
+
+	/**
+	 * 将集合中的元素根据指定方法转换为Map<K,T>
+	 * 
+	 * @param <K> 转换后key类型
+	 * @param <T> 集合数据类型
+	 * @param datas 数据来源,元素不可为null
+	 * @param keyFunction 需要根据集合元素转换为key的方法
+	 * @return keyFunction转换后的值为key,当前数据为value的Map
+	 */
+	public static <T, K> Map<K, T> toMap(Collection<T> datas, Function<T, K> keyFunction) {
+		Objects.requireNonNull(keyFunction);
+
+		return Optional.ofNullable(datas)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.toMap(keyFunction, t -> t, (o, n) -> o));
+	}
+
+	/**
+	 * 将集合中的元素根据指定方法转换为Map<K,V>
+	 * 
+	 * @param <T> 集合元素类型
+	 * @param <K> 根据集合元素转换后的key类型
+	 * @param <V> 根据集合元素转换后的value类型
+	 * @param datas 数据来源,元素不可为null
+	 * @param keyFunction 需要根据集合元素转换为key的方法
+	 * @param valueFunction 需要根据集合元素转换为value的方法
+	 * @return keyFunction转换后的值为key,valueFunction转换后的值为valu的Map
+	 */
+	static <T, K, V> Map<K, V> toMap(Collection<T> datas, Function<T, K> keyFunction, Function<T, V> valueFunction) {
+		Objects.requireNonNull(keyFunction);
+		Objects.requireNonNull(valueFunction);
+
+		return Optional.ofNullable(datas)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.toMap(k -> keyFunction.apply(k), v -> valueFunction.apply(v), (o, n) -> o));
+	}
+
+	/**
+	 * 将集合中的元素根据指定方法转换为Map<K,T>
+	 * 
+	 * @param <K> 转换后key类型
+	 * @param <T> 集合数据类型
+	 * @param datas 数据来源,元素可为null
+	 * @param keyFunction 需要根据集合元素转换为key的方法
+	 * @return keyFunction转换后的值为key,当前数据为value的Map
+	 */
+	public static <T, K> Map<K, T> toMapNull(Collection<T> datas, Function<T, K> keyFunction) {
+		Objects.requireNonNull(keyFunction);
+
+		return Optional.ofNullable(datas)
+				.orElse(Collections.emptyList())
+				.stream()
+				.collect(HashMap::new, (map, t) -> map.putIfAbsent(keyFunction.apply(t), t), HashMap::putAll);
+	}
+
+	/**
+	 * 将集合中的元素根据指定方法转换为Map<K,V>
+	 * 
+	 * @param <T> 集合元素类型
+	 * @param <K> 根据集合元素转换后的key类型
+	 * @param <V> 根据集合元素转换后的value类型
+	 * @param datas 数据来源,元素可为null
+	 * @param keyFunction 需要根据集合元素转换为key的方法
+	 * @param valueFunction 需要根据集合元素转换为value的方法
+	 * @return keyFunction转换后的值为key,valueFunction转换后的值为valu的Map
+	 */
+	static <T, K, V> Map<K, V> toMapNull(Collection<T> datas, Function<T, K> keyFunction,
+			Function<T, V> valueFunction) {
+		Objects.requireNonNull(keyFunction);
+		Objects.requireNonNull(valueFunction);
+
+		return Optional.ofNullable(datas)
+				.orElse(Collections.emptyList())
+				.stream()
+				.collect(HashMap::new, (map, t) -> map.putIfAbsent(keyFunction.apply(t), valueFunction.apply(t)),
+						HashMap::putAll);
 	}
 
 	/**
