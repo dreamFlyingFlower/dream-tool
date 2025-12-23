@@ -1,11 +1,15 @@
 package dream.flying.flower.helper;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.DoubleSummaryStatistics;
+import java.util.HashMap;
 import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -15,7 +19,7 @@ import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import dream.flying.flower.collection.CollectionHelper;
+import dream.flying.flower.ConstDigit;
 
 /**
  * Stream工具类
@@ -24,10 +28,10 @@ import dream.flying.flower.collection.CollectionHelper;
  * @date 2023-08-31 09:58:27
  * @git {@link https://gitee.com/dreamFlyingFlower}
  */
-public class StreamHelper {
+public class LambdaHelper {
 
 	/**
-	 * 将集合中的每个元素转换为流之后再将所有流合并为一个流
+	 * 将集合中的每个元素转换为流之后再将所有流合并为一个流,再将流中的元素合并为一个集合
 	 * 
 	 * @param <T> 目标泛型
 	 * @param <R> 结果泛型
@@ -36,11 +40,16 @@ public class StreamHelper {
 	 * @return 新的List
 	 */
 	public static <T, R> List<R> flatMap2List(Collection<T> collection, Function<T, Stream<R>> function) {
-		return collection.stream().flatMap(function).collect(Collectors.toList());
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.flatMap(function)
+				.collect(Collectors.toList());
 	}
 
 	/**
-	 * 将集合中的每个元素转换为流之后再将所有流合并为一个流
+	 * 将集合中的每个元素转换为流之后再将所有流合并为一个流,再将流中的元素合并为一个集合
 	 * 
 	 * @param <T> 目标泛型
 	 * @param <R> 结果泛型
@@ -49,7 +58,12 @@ public class StreamHelper {
 	 * @return 新的Set
 	 */
 	public static <T, R> Set<R> flatMap2Set(Collection<T> collection, Function<T, Stream<R>> function) {
-		return collection.stream().flatMap(function).collect(Collectors.toSet());
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.flatMap(function)
+				.collect(Collectors.toSet());
 	}
 
 	/**
@@ -61,7 +75,11 @@ public class StreamHelper {
 	 * @return Map<R, List<T>>
 	 */
 	public static <T, R> Map<R, List<T>> group(Collection<T> collection, Function<T, R> function) {
-		return collection.stream().collect(Collectors.groupingBy(function));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.groupingBy(function));
 	}
 
 	/**
@@ -75,7 +93,11 @@ public class StreamHelper {
 	 */
 	public static <T, R, G> Map<R, Map<G, List<T>>> group(Collection<T> collection, Function<T, R> function,
 			Function<T, G> innerFunction) {
-		return collection.stream().collect(Collectors.groupingBy(function, Collectors.groupingBy(innerFunction)));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.groupingBy(function, Collectors.groupingBy(innerFunction)));
 	}
 
 	/**
@@ -87,7 +109,11 @@ public class StreamHelper {
 	 * @return Map<Boolean, List<T>>
 	 */
 	public static <T> Map<Boolean, List<T>> partition(Collection<T> collection, Predicate<T> predicate) {
-		return collection.stream().collect(Collectors.partitioningBy(predicate));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.partitioningBy(predicate));
 	}
 
 	/**
@@ -97,7 +123,13 @@ public class StreamHelper {
 	 * @return 和
 	 */
 	public static int sumInt(Collection<Integer> collection) {
-		return CollectionHelper.isEmpty(collection) ? 0 : collection.stream().reduce(Integer::sum).get().intValue();
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.reduce(Integer::sum)
+				.orElse(ConstDigit.ZERO)
+				.intValue();
 	}
 
 	/**
@@ -107,7 +139,13 @@ public class StreamHelper {
 	 * @return 和
 	 */
 	public static long sumLong(Collection<Long> collection) {
-		return CollectionHelper.isEmpty(collection) ? 0L : collection.stream().reduce(Long::sum).get().longValue();
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.reduce(Long::sum)
+				.orElse(ConstDigit.ZEROL)
+				.longValue();
 	}
 
 	/**
@@ -119,9 +157,11 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> DoubleSummaryStatistics summaryDouble(Collection<T> collection, Function<T, Double> function) {
-		return CollectionHelper.isEmpty(collection)
-				? new DoubleSummaryStatistics()
-				: collection.stream().collect(Collectors.summarizingDouble(function::apply));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.summarizingDouble(function::apply));
 	}
 
 	/**
@@ -133,8 +173,11 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> DoubleSummaryStatistics summaryDouble(Collection<T> collection, ToDoubleFunction<T> function) {
-		return CollectionHelper.isEmpty(collection)
-				? new DoubleSummaryStatistics() : collection.stream().collect(Collectors.summarizingDouble(function));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.summarizingDouble(function));
 	}
 
 	/**
@@ -146,8 +189,11 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> IntSummaryStatistics summaryInt(Collection<T> collection, Function<T, Integer> function) {
-		return CollectionHelper.isEmpty(collection)
-				? new IntSummaryStatistics() : collection.stream().collect(Collectors.summarizingInt(function::apply));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.summarizingInt(function::apply));
 	}
 
 	/**
@@ -159,8 +205,11 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> IntSummaryStatistics summaryInt(Collection<T> collection, ToIntFunction<T> function) {
-		return CollectionHelper.isEmpty(collection)
-				? new IntSummaryStatistics() : collection.stream().collect(Collectors.summarizingInt(function));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.summarizingInt(function));
 	}
 
 	/**
@@ -172,9 +221,11 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> LongSummaryStatistics summaryLong(Collection<T> collection, Function<T, Long> function) {
-		return CollectionHelper.isEmpty(collection)
-				? new LongSummaryStatistics()
-				: collection.stream().collect(Collectors.summarizingLong(function::apply));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.summarizingLong(function::apply));
 	}
 
 	/**
@@ -186,8 +237,11 @@ public class StreamHelper {
 	 * @return 统计对象
 	 */
 	public static <T> LongSummaryStatistics summaryLong(Collection<T> collection, ToLongFunction<T> function) {
-		return CollectionHelper.isEmpty(collection)
-				? new LongSummaryStatistics() : collection.stream().collect(Collectors.summarizingLong(function));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.summarizingLong(function));
 	}
 
 	/**
@@ -200,7 +254,12 @@ public class StreamHelper {
 	 * @return 新的集合
 	 */
 	public static <T, R> List<R> toList(Collection<T> collection, Function<T, R> function) {
-		return collection.stream().map(function).collect(Collectors.toList());
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.map(function)
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -213,7 +272,11 @@ public class StreamHelper {
 	 * @return Map<K, T>
 	 */
 	public static <T, K> Map<K, T> toMap(Collection<T> collection, Function<T, K> functionKey) {
-		return collection.stream().collect(Collectors.toMap(functionKey, t -> t, (p, n) -> null == n ? p : n));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.toMap(functionKey, Function.identity(), (o, n) -> o));
 	}
 
 	/**
@@ -224,12 +287,16 @@ public class StreamHelper {
 	 * @param <V> 转换后Map的value类型
 	 * @param collection 原始集合
 	 * @param functionKey Map中key的转换方法
-	 * @param functionValue Map中的value的转换方法
+	 * @param functionValue Map中的value的转换方法,转换后的值不可为null
 	 * @return Map<K, V>
 	 */
 	public static <T, K, V> Map<K, V> toMap(Collection<T> collection, Function<T, K> functionKey,
 			Function<T, V> functionValue) {
-		return collection.stream().collect(Collectors.toMap(functionKey, functionValue, (p, n) -> null == n ? p : n));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.toMap(functionKey, functionValue, (o, n) -> o));
 	}
 
 	/**
@@ -241,8 +308,11 @@ public class StreamHelper {
 	 * @param functionKey Map中key的转换方法
 	 * @return Map<K, T>
 	 */
-	public static <T, K> Map<K, T> toMapDefault(Collection<T> collection, Function<T, K> functionKey) {
-		return collection.stream().collect(Collectors.toMap(functionKey, t -> t, (p, n) -> n));
+	public static <T, K> Map<K, T> toMapNull(Collection<T> collection, Function<T, K> functionKey) {
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.collect(HashMap::new, (map, t) -> map.putIfAbsent(functionKey.apply(t), t), HashMap::putAll);
 	}
 
 	/**
@@ -253,12 +323,17 @@ public class StreamHelper {
 	 * @param <V> 转换后Map的value类型
 	 * @param collection 原始集合
 	 * @param functionKey Map中key的转换方法
-	 * @param functionValue Map中的value的转换方法
+	 * @param functionValue Map中的value的转换方法,转换后的值可为null
 	 * @return Map<K, V>
 	 */
-	public static <T, K, V> Map<K, V> toMapDefault(Collection<T> collection, Function<T, K> functionKey,
+	public static <T, K, V> Map<K, V> toMapNull(Collection<T> collection, Function<T, K> functionKey,
 			Function<T, V> functionValue) {
-		return collection.stream().collect(Collectors.toMap(functionKey, functionValue, (p, n) -> n));
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.collect(HashMap::new, (map, t) -> map.putIfAbsent(functionKey.apply(t), functionValue.apply(t)),
+						HashMap::putAll);
 	}
 
 	/**
@@ -271,6 +346,11 @@ public class StreamHelper {
 	 * @return 新的集合
 	 */
 	public static <T, R> Set<R> toSet(Collection<T> collection, Function<T, R> function) {
-		return collection.stream().map(function).collect(Collectors.toSet());
+		return Optional.ofNullable(collection)
+				.orElse(Collections.emptyList())
+				.stream()
+				.filter(Objects::nonNull)
+				.map(function)
+				.collect(Collectors.toSet());
 	}
 }

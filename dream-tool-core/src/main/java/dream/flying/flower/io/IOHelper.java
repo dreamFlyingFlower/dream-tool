@@ -151,9 +151,8 @@ public final class IOHelper {
 		if (input1 == null ^ input2 == null) {
 			return false;
 		}
-		final BufferedInputStream bufferedInput1 = toBufferedInputStream(input1);
-		final BufferedInputStream bufferedInput2 = toBufferedInputStream(input2);
-		try {
+		try (BufferedInputStream bufferedInput1 = toBufferedInputStream(input1);
+				BufferedInputStream bufferedInput2 = toBufferedInputStream(input2);) {
 			int ch = bufferedInput1.read();
 			while (ConstIO.EOF != ch) {
 				final int ch2 = bufferedInput2.read();
@@ -185,9 +184,8 @@ public final class IOHelper {
 		if (input1 == null ^ input2 == null) {
 			return false;
 		}
-		final BufferedReader bufferedInput1 = toBufferedReader(input1);
-		final BufferedReader bufferedInput2 = toBufferedReader(input2);
-		try {
+		try (BufferedReader bufferedInput1 = toBufferedReader(input1);
+				BufferedReader bufferedInput2 = toBufferedReader(input2);) {
 			int ch = bufferedInput1.read();
 			while (ConstIO.EOF != ch) {
 				final int ch2 = bufferedInput2.read();

@@ -28,6 +28,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.nio.channels.Pipe;
+import java.nio.channels.Pipe.SinkChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
@@ -268,8 +269,8 @@ public class FileHelper {
 	 * @throws FileNotFoundException
 	 */
 	public static String generateChecksumMd5(File file) throws IOException {
-		try (FileInputStream in = new FileInputStream(file);) {
-			MappedByteBuffer byteBuffer = in.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+		try (FileInputStream fis = new FileInputStream(file); FileChannel fileChannel = fis.getChannel();) {
+			MappedByteBuffer byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
 			return DigestHelper.md5Hex(byteBuffer);
 		}
 	}
@@ -368,12 +369,10 @@ public class FileHelper {
 		// 将块文件排序,按名称升序
 		List<File> fileList = Arrays.asList(files);
 		Collections.sort(fileList, (file1, file2) -> {
-			if (Integer.parseInt(
-					file1.getName().indexOf("_") > -1 ? file1.getName().substring(file1.getName().indexOf("_") + 1)
-							: file1.getName()) > Integer
-									.parseInt(file2.getName().indexOf("_") > -1
-											? file2.getName().substring(file2.getName().indexOf("_") + 1)
-											: file2.getName())) {
+			if (Integer.parseInt(file1.getName().indexOf("_") > -1
+					? file1.getName().substring(file1.getName().indexOf("_") + 1) : file1.getName()) > Integer
+							.parseInt(file2.getName().indexOf("_") > -1
+									? file2.getName().substring(file2.getName().indexOf("_") + 1) : file2.getName())) {
 				return 1;
 			}
 			return -1;
@@ -568,7 +567,10 @@ public class FileHelper {
 	public static void copy(byte[] in, File out) throws IOException {
 		AssertHelper.notNull(in, "No input byte array specified");
 		AssertHelper.notNull(out, "No output File specified");
-		IOHelper.copy(new ByteArrayInputStream(in), Files.newOutputStream(out.toPath()));
+
+		try (OutputStream os = Files.newOutputStream(out.toPath())) {
+			IOHelper.copy(new ByteArrayInputStream(in), os);
+		}
 	}
 
 	/**
@@ -746,7 +748,9 @@ public class FileHelper {
 	 */
 	public static byte[] copyToByteArray(File file) throws IOException {
 		AssertHelper.notNull(file, ConstIO.TOAST_FILE_NULL);
-		return copyToByteArray(Files.newInputStream(file.toPath()));
+		try (InputStream is = Files.newInputStream(file.toPath())) {
+			return copyToByteArray(is);
+		}
 	}
 
 	/**
@@ -1050,7 +1054,9 @@ public class FileHelper {
 	 */
 	public static String getFileMd5(File file) throws NoSuchAlgorithmException, IOException {
 		AssertHelper.notNull(file);
-		return getFileMd5(new FileInputStream(file));
+		try (InputStream is = new FileInputStream(file)) {
+			return getFileMd5(is);
+		}
 	}
 
 	/**
@@ -1981,10 +1987,11 @@ public class FileHelper {
 	 */
 	public static byte[] readToByteDirect(final File file) throws IOException {
 		MappedByteBuffer mappedByteBuffer = null;
-		try (RandomAccessFile tempRaf = new RandomAccessFile(file, "rw");) {
+		try (RandomAccessFile tempRaf = new RandomAccessFile(file, "rw");
+				FileChannel fileChannel = tempRaf.getChannel();) {
 			byte[] dst = new byte[ConstIO.DEFAULT_BUFFER_SIZE_DIRECT];
 			long length = file.length();
-			mappedByteBuffer = tempRaf.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, length);
+			mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, 0, length);
 			for (int offset = 0; offset < length; offset += ConstIO.DEFAULT_BUFFER_SIZE_DIRECT) {
 				if (length - offset >= ConstIO.DEFAULT_BUFFER_SIZE_DIRECT) {
 					for (int i = 0; i < ConstIO.DEFAULT_BUFFER_SIZE_DIRECT; i++)
@@ -2467,11 +2474,11 @@ public class FileHelper {
 		File file = new File(srcPath);
 		try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));
 				WritableByteChannel writableByteChannel = Channels.newChannel(zipOut);
-				RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");) {
+				RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+				FileChannel fileChannel = randomAccessFile.getChannel();) {
 			zipOut.putNextEntry(new ZipEntry(".zip"));
 			// 内存中的映射文件
-			MappedByteBuffer mappedByteBuffer =
-					randomAccessFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 1024);
+			MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, 1024);
 			writableByteChannel.write(mappedByteBuffer);
 		}
 	}
@@ -2484,11 +2491,12 @@ public class FileHelper {
 	 * @throws IOException
 	 */
 	public static void zipPip(String srcPath, String desPath) throws IOException {
-		try (WritableByteChannel out = Channels.newChannel(new FileOutputStream(desPath))) {
+		try (FileOutputStream fos = new FileOutputStream(desPath); WritableByteChannel out = Channels.newChannel(fos)) {
 			Pipe pipe = Pipe.open();
 			// 异步任务
 			CompletableFuture.runAsync(() -> {
-				try (ZipOutputStream zos = new ZipOutputStream(Channels.newOutputStream(pipe.sink()));
+				try (SinkChannel sinkChannel = pipe.sink();
+						ZipOutputStream zos = new ZipOutputStream(Channels.newOutputStream(sinkChannel));
 						WritableByteChannel innerOut = Channels.newChannel(zos);
 						FileInputStream fis = new FileInputStream(new File(srcPath));
 						FileChannel fileChannel = fis.getChannel();) {
@@ -2500,12 +2508,13 @@ public class FileHelper {
 				}
 			});
 			// 获取读通道
-			ReadableByteChannel readableByteChannel = pipe.source();
-			ByteBuffer buffer = ByteBuffer.allocate(((int) new File(srcPath).getTotalSpace()) * 10);
-			while (readableByteChannel.read(buffer) >= 0) {
-				buffer.flip();
-				out.write(buffer);
-				buffer.clear();
+			try (ReadableByteChannel readableByteChannel = pipe.source();) {
+				ByteBuffer buffer = ByteBuffer.allocate(((int) new File(srcPath).getTotalSpace()) * 10);
+				while (readableByteChannel.read(buffer) >= 0) {
+					buffer.flip();
+					out.write(buffer);
+					buffer.clear();
+				}
 			}
 		}
 	}

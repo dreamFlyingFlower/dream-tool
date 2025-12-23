@@ -44,6 +44,8 @@ import dream.flying.flower.lang.AssertHelper;
 /**
  * Path工具类,File的进阶版 {@link Path},{@link Files} FIXME
  * 
+ * 注意:Path.get()无法读取JAR包中通过ClassPathResource读取的文件
+ * 
  * @author 飞花梦影
  * @date 2021-03-08 15:04:04
  * @git {@link https://github.com/dreamFlyingFlower}
@@ -885,8 +887,8 @@ public class PathHelper {
 	 * @return Set
 	 */
 	public static Set<FileVisitOption> toFileVisitOptionSet(final FileVisitOption... fileVisitOptions) {
-		return fileVisitOptions == null ? EnumSet.noneOf(FileVisitOption.class)
-				: Arrays.stream(fileVisitOptions).collect(Collectors.toSet());
+		return fileVisitOptions == null
+				? EnumSet.noneOf(FileVisitOption.class) : Arrays.stream(fileVisitOptions).collect(Collectors.toSet());
 	}
 
 	/**

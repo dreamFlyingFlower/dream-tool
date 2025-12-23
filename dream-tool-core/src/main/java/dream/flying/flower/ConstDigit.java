@@ -13,6 +13,8 @@ public interface ConstDigit {
 
 	int ZERO = 0;
 
+	long ZEROL = 0L;
+
 	int ONE = 1;
 
 	int TWO = 2;
