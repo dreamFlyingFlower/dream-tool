@@ -22,7 +22,8 @@ public class HttpDownloads {
 	// 默认请求方式
 	public static final String DEFAULT_METHOD = "GET";
 
-	private HttpDownloads() {}
+	private HttpDownloads() {
+	}
 
 	/**
 	 * 多线程下载文件
@@ -110,18 +111,19 @@ class DownloadThread extends Thread {
 			if (code == 200) {
 				int size = con.getContentLength();
 				System.err.println("线程:" + this.getName() + ",下载的数据量为:" + size);
-				InputStream in = con.getInputStream();
-				// 写同一文件
-				RandomAccessFile file = new RandomAccessFile(fileName, "rw");
-				// 设置从文件的什么位置开始写数据
-				file.seek(start);
-				// 读取数据
-				byte[] b = new byte[1024];
-				int len = 0;
-				while ((len = in.read(b)) != -1) {
-					file.write(b, 0, len);
+				try (InputStream in = con.getInputStream()) {
+					// 写同一文件
+					RandomAccessFile file = new RandomAccessFile(fileName, "rw");
+					// 设置从文件的什么位置开始写数据
+					file.seek(start);
+					// 读取数据
+					byte[] b = new byte[1024];
+					int len = 0;
+					while ((len = in.read(b)) != -1) {
+						file.write(b, 0, len);
+					}
+					file.close();
 				}
-				file.close();
 			}
 			con.disconnect();
 		} catch (Exception e) {

@@ -74,7 +74,7 @@ public final class IOHelper {
 	 */
 	public static void close(final Closeable closeable) {
 		try {
-			if (closeable != null) {
+			if (null != closeable) {
 				closeable.close();
 			}
 		} catch (IOException e) {
@@ -210,6 +210,7 @@ public final class IOHelper {
 	 * @throws NullPointerException if either input is null
 	 * @throws IOException if an I/O error occurs
 	 */
+	@SuppressWarnings("resource")
 	public static boolean contentEqualsIgnoreEOL(final Reader input1, final Reader input2) throws IOException {
 		if (input1 == input2) {
 			return true;
@@ -235,6 +236,7 @@ public final class IOHelper {
 	 * @param out 要复制到其中的输入流
 	 * @throws IOException in case of I/O errors
 	 */
+	@SuppressWarnings("resource")
 	public static void copy(byte[] in, OutputStream out) throws IOException {
 		AssertHelper.notNull(in, "No input byte array specified");
 		AssertHelper.notNull(out, "No OutputStream specified");
@@ -265,6 +267,7 @@ public final class IOHelper {
 	 * @param buffer 缓存区字节数组
 	 * @return 最终从输入流读取的字节长度
 	 */
+	@SuppressWarnings("resource")
 	public static long copy(final InputStream input, final OutputStream output, final byte[] buffer) {
 		Objects.requireNonNull(input, "inputstream can't by null");
 		Objects.requireNonNull(output, "outputstream can't by null");
@@ -319,6 +322,7 @@ public final class IOHelper {
 	 * @param buffer 缓冲数组
 	 * @return 实际复制的字节长度
 	 */
+	@SuppressWarnings("resource")
 	public static long copy(final InputStream input, final OutputStream output, final long inputOffset,
 			final long length, final byte[] buffer) throws IOException {
 		Objects.requireNonNull(input, "inputstream can't by null");
@@ -364,6 +368,7 @@ public final class IOHelper {
 	 * @param output 字符输出流,写数据
 	 * @param inputCharset 将字节输入流包装成字符输入流时的字符集编码
 	 */
+	@SuppressWarnings("resource")
 	public static void copy(final InputStream input, final Writer output, final Charset inputCharset)
 			throws IOException {
 		Objects.requireNonNull(input, "inputstream can't by null");
@@ -400,6 +405,7 @@ public final class IOHelper {
 	 * @param output 字符输出流,写数据
 	 * @param outputCharset 将输出流包装成字符流时的字符集,默认UTF8
 	 */
+	@SuppressWarnings("resource")
 	public static void copy(final Reader input, final OutputStream output, final Charset outputCharset)
 			throws IOException {
 		Objects.requireNonNull(output, "outputstream can't by null");
@@ -438,6 +444,7 @@ public final class IOHelper {
 	 * @param buffer 缓冲字符数组
 	 * @return 复制的字符大小
 	 */
+	@SuppressWarnings("resource")
 	public static long copy(final Reader input, final Writer output, final char[] buffer) throws IOException {
 		Objects.requireNonNull(input, "inputstream can't by null");
 		Objects.requireNonNull(output, "outputstream can't by null");
@@ -475,6 +482,7 @@ public final class IOHelper {
 	 * @param buffer 字符缓冲数组
 	 * @return 实际复制的字符长度
 	 */
+	@SuppressWarnings("resource")
 	public static long copy(final Reader input, final Writer output, final long inputOffset, final long length,
 			final char[] buffer) throws IOException {
 		Objects.requireNonNull(input, "inputstream can't by null");
@@ -510,6 +518,7 @@ public final class IOHelper {
 	 * @param out 输出流
 	 * @throws IOException in case of I/O errors
 	 */
+	@SuppressWarnings("resource")
 	public static void copy(String in, Charset charset, OutputStream out) throws IOException {
 		AssertHelper.notNull(in, "No input String specified");
 		AssertHelper.notNull(charset, "No Charset specified");
@@ -527,6 +536,7 @@ public final class IOHelper {
 	 * @param out 输出流
 	 * @throws IOException in case of I/O errors
 	 */
+	@SuppressWarnings("resource")
 	public static void copy(String in, Writer out) throws IOException {
 		AssertHelper.notNull(in, "No input String specified");
 		AssertHelper.notNull(out, "No Writer specified");
@@ -545,6 +555,7 @@ public final class IOHelper {
 	 * @param charset 字符集
 	 * @return 字符串
 	 */
+	@SuppressWarnings("resource")
 	public static String copyToString(ByteArrayOutputStream baos, Charset charset) {
 		AssertHelper.notNull(baos, "No ByteArrayOutputStream specified");
 		AssertHelper.notNull(charset, "No Charset specified");
@@ -574,6 +585,7 @@ public final class IOHelper {
 	 * @param charset 将字节输入流包装成字符输入流时的字符集
 	 * @return 字符串
 	 */
+	@SuppressWarnings("resource")
 	public static String copyToString(final InputStream input, final Charset charset) throws IOException {
 		Objects.requireNonNull(input, "inputstream can't by null");
 
@@ -827,6 +839,7 @@ public final class IOHelper {
 	 * @param charset 指定字符集
 	 * @return 字节流中所有的行
 	 */
+	@SuppressWarnings("resource")
 	public static List<String> readLines(final InputStream input, final Charset charset) throws IOException {
 		Objects.requireNonNull(input, "inputstream can't by null");
 		final InputStreamReader reader = new InputStreamReader(input, CharsetHelper.defaultCharset(charset));
@@ -850,6 +863,7 @@ public final class IOHelper {
 	 * @param input 字符输入流,读数据
 	 * @return 字节流中所有的行
 	 */
+	@SuppressWarnings("resource")
 	public static List<String> readLines(final Reader input) throws IOException {
 		final BufferedReader reader = toBufferedReader(Objects.requireNonNull(input, "Reader can't be null"));
 		final List<String> list = new ArrayList<>();
@@ -1054,6 +1068,7 @@ public final class IOHelper {
 	 * @return 包装后的字节缓冲流
 	 * @throws NullPointerException if the input parameter is null
 	 */
+	@SuppressWarnings("resource")
 	public static BufferedInputStream toBufferedInputStream(final InputStream inputStream) {
 		Objects.requireNonNull(inputStream, "inputStream can't be null");
 		return inputStream instanceof BufferedInputStream
@@ -1066,6 +1081,7 @@ public final class IOHelper {
 	 * @param reader 字符流
 	 * @return 字符缓冲流
 	 */
+	@SuppressWarnings("resource")
 	public static BufferedReader toBufferedReader(final Reader reader) {
 		Objects.requireNonNull(reader, "Reader can't be null");
 		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
@@ -1493,6 +1509,7 @@ public final class IOHelper {
 	 * @param output 输出流
 	 * @param charset 将字符串转换为字节数组时的编码集
 	 */
+	@SuppressWarnings("resource")
 	public static void writeLines(final Collection<?> lines, String lineEnding, final OutputStream output,
 			final Charset charset) throws IOException {
 		Objects.requireNonNull(output, "outputstream can't by null");
@@ -1529,6 +1546,7 @@ public final class IOHelper {
 	 * @param lineEnding 换行符,若不指定,根据系统默认指定
 	 * @param output 输出流
 	 */
+	@SuppressWarnings("resource")
 	public static void writeLines(final Collection<?> lines, String lineEnding, final Writer output)
 			throws IOException {
 		Objects.requireNonNull(output, "Writer can't by null");

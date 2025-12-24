@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import dream.flying.flower.io.IOHelper;
 import dream.flying.flower.lang.AssertHelper;
 import dream.flying.flower.reflect.ClassHelper;
 
@@ -212,15 +213,20 @@ public class ResourceHelper {
 	 * @throws IOException
 	 */
 	public static Properties readProperties(String path) throws IOException {
-		InputStream inputStream = ResourceHelper.class.getResourceAsStream(path);
-		if (null == inputStream) {
-			inputStream = ResourceHelper.class.getClassLoader().getResourceAsStream(path);
-		}
-		Properties properties = new Properties();
-		if (null != inputStream) {
+		InputStream inputStream = null;
+		try {
+			inputStream = ResourceHelper.class.getResourceAsStream(path);
+			if (null == inputStream) {
+				inputStream = ResourceHelper.class.getClassLoader().getResourceAsStream(path);
+			}
+
+			Properties properties = new Properties();
 			properties.load(inputStream);
+
+			return properties;
+		} finally {
+			IOHelper.close(inputStream);
 		}
-		return properties;
 	}
 
 	/**
@@ -244,16 +250,18 @@ public class ResourceHelper {
 	public static Properties readProperties(List<String> paths) throws IOException {
 		Properties properties = new Properties();
 		InputStream inputStream = null;
-		for (String path : paths) {
-			inputStream = ResourceHelper.class.getResourceAsStream(path);
-			if (null == inputStream) {
-				inputStream = ResourceHelper.class.getClassLoader().getResourceAsStream(path);
-			}
-			if (null != inputStream) {
+		try {
+			for (String path : paths) {
+				inputStream = ResourceHelper.class.getResourceAsStream(path);
+				if (null == inputStream) {
+					inputStream = ResourceHelper.class.getClassLoader().getResourceAsStream(path);
+				}
 				properties.load(inputStream);
 			}
+			return properties;
+		} finally {
+			IOHelper.close(inputStream);
 		}
-		return properties;
 	}
 
 	/**
@@ -261,7 +269,8 @@ public class ResourceHelper {
 	 * 
 	 * @param resourceLocation 需要解析的资源地址,如"classpath:"伪URL, "file:" URL, 或者普通文件地址
 	 * @return {@link File}
-	 * @throws FileNotFoundException if the resource cannot be resolved to a file in the file system
+	 * @throws FileNotFoundException if the resource cannot be resolved to a file in
+	 *         the file system
 	 */
 	public static File toFile(String resourceLocation) throws FileNotFoundException {
 		AssertHelper.notNull(resourceLocation, "Resource location must not be null");
@@ -290,7 +299,8 @@ public class ResourceHelper {
 	 * 
 	 * @param uri 需要解析的URL资源
 	 * @return {@link File}
-	 * @throws FileNotFoundException if the URL cannot be resolved to a file in the file system
+	 * @throws FileNotFoundException if the URL cannot be resolved to a file in the
+	 *         file system
 	 */
 	public static File toFile(URL url) throws FileNotFoundException {
 		return toFile(url, "URL");
@@ -302,7 +312,8 @@ public class ResourceHelper {
 	 * @param uri 需要解析的URL资源
 	 * @param description 创建URL的原始资源描述,如class path location
 	 * @return {@link File}
-	 * @throws FileNotFoundException if the URL cannot be resolved to a file in the file system
+	 * @throws FileNotFoundException if the URL cannot be resolved to a file in the
+	 *         file system
 	 */
 	public static File toFile(URL url, String description) throws FileNotFoundException {
 		AssertHelper.notNull(url, "Resource URL must not be null");
@@ -323,7 +334,8 @@ public class ResourceHelper {
 	 * 
 	 * @param uri 需要解析的URI资源
 	 * @return {@link File}
-	 * @throws FileNotFoundException if the URL cannot be resolved to a file in the file system
+	 * @throws FileNotFoundException if the URL cannot be resolved to a file in the
+	 *         file system
 	 */
 	public static File toFile(URI uri) throws FileNotFoundException {
 		return toFile(uri, "URI");
@@ -335,7 +347,8 @@ public class ResourceHelper {
 	 * @param uri 需要解析的URI资源
 	 * @param description 创建URI的原始资源描述,如class path location
 	 * @return {@link File}
-	 * @throws FileNotFoundException if the URL cannot be resolved to a file in the file system
+	 * @throws FileNotFoundException if the URL cannot be resolved to a file in the
+	 *         file system
 	 */
 	public static File toFile(URI uri, String description) throws FileNotFoundException {
 		AssertHelper.notNull(uri, "Resource URI must not be null");
