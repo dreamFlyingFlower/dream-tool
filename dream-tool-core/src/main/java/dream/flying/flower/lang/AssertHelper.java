@@ -2,6 +2,7 @@ package dream.flying.flower.lang;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import dream.flying.flower.collection.CollectionHelper;
@@ -1002,10 +1003,8 @@ public class AssertHelper {
 	 * @throws IllegalArgumentException 当对象为null
 	 */
 	public static <T> T notNull(T t) {
-		if (t == null) {
-			throw new IllegalArgumentException("[Assertion failed] - the parameter can't be null");
-		}
-		return t;
+		return Optional.ofNullable(t)
+				.orElseThrow(() -> new IllegalArgumentException("[Assertion failed] - the parameter can't be null"));
 	}
 
 	/**
@@ -1018,10 +1017,7 @@ public class AssertHelper {
 	 * @throws IllegalArgumentException 当对象为null
 	 */
 	public static <T> T notNull(T t, String message) {
-		if (t == null) {
-			throw new IllegalArgumentException(message);
-		}
-		return t;
+		return Optional.ofNullable(t).orElseThrow(() -> new IllegalArgumentException(message));
 	}
 
 	/**
