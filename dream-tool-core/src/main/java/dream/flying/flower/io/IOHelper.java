@@ -267,7 +267,6 @@ public final class IOHelper {
 	 * @param buffer 缓存区字节数组
 	 * @return 最终从输入流读取的字节长度
 	 */
-	@SuppressWarnings("resource")
 	public static long copy(final InputStream input, final OutputStream output, final byte[] buffer) {
 		Objects.requireNonNull(input, "inputstream can't by null");
 		Objects.requireNonNull(output, "outputstream can't by null");
