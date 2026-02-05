@@ -8,7 +8,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import dream.flying.flower.ConstSymbol;
 import dream.flying.flower.lang.StrHelper;
 
 /**
@@ -103,5 +106,19 @@ public class UrlHelper {
 	 */
 	public static String decode(String url) throws UnsupportedEncodingException {
 		return StrHelper.isBlank(url) ? "" : URLDecoder.decode(url, StandardCharsets.UTF_8.displayName());
+	}
+
+	/**
+	 * 域名以及URL路径拼接
+	 * 
+	 * @param domain 域名
+	 * @param urls URL路径列表
+	 * @return 拼接后的URL
+	 */
+	public static String concat(String domain, String... urls) {
+		return (domain.endsWith(ConstSymbol.SLASH) ? domain.substring(0, domain.length() - 1) : domain)
+				+ Stream.of(urls)
+						.map(url -> url.startsWith(ConstSymbol.SLASH) ? url.substring(1) : url)
+						.collect(Collectors.joining(ConstSymbol.SLASH));
 	}
 }
