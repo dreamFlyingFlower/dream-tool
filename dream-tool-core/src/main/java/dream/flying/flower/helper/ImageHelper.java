@@ -121,6 +121,16 @@ public class ImageHelper {
 	}
 
 	/**
+	 * 将图片文件转成base64
+	 * 
+	 * @param bytes 文件字节数组
+	 * @return Base64字符串
+	 */
+	public static String toBase64(byte[] bytes) {
+		return Base64.getEncoder().encodeToString(bytes);
+	}
+
+	/**
 	 * base64 Code decode String save to targetPath.
 	 * 
 	 * @param base64Code String
