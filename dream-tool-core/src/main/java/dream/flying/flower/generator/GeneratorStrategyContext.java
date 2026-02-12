@@ -12,6 +12,18 @@ public class GeneratorStrategyContext {
 
 	private StringGenerator stringGenerator = new StringGenerator();
 
+	private GeneratorStrategyContext() {
+	}
+
+	private static class Inner {
+
+		private static final GeneratorStrategyContext INSTANCE = new GeneratorStrategyContext();
+	}
+
+	public static GeneratorStrategyContext getInstance() {
+		return Inner.INSTANCE;
+	}
+
 	public String generate() {
 		if (strategy.equalsIgnoreCase("SnowFlake")) {
 			return snowFlakeGenerator.nextId() + "";
