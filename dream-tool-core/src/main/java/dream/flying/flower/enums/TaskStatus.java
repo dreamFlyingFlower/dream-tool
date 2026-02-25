@@ -2,7 +2,7 @@ package dream.flying.flower.enums;
 
 import java.util.stream.Stream;
 
-import dream.flying.flower.common.NumberMsg;
+import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.PropConverter;
 
 /**
@@ -12,7 +12,7 @@ import dream.flying.flower.common.PropConverter;
  * @date 2022-11-27 12:03:45
  * @git {@link https://gitee.com/dreamFlyingFlower}
  */
-public enum TaskStatus implements NumberMsg, PropConverter {
+public enum TaskStatus implements CodeMsg, PropConverter {
 
 	PREPAER("准备中"),
 	RUNNING("运行中"),

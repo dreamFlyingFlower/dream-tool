@@ -1,6 +1,6 @@
 package dream.flying.flower.logger;
 
-import dream.flying.flower.common.NumberMsg;
+import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.PropConverter;
 
 /**
@@ -10,7 +10,7 @@ import dream.flying.flower.common.PropConverter;
  * @date 2021-01-13 10:18:54
  * @git {@link https://github.com/mygodness100}
  */
-public enum OperatorType implements NumberMsg, PropConverter {
+public enum OperatorType implements CodeMsg, PropConverter {
 
 	OTHER("其他"),
 	ADMIN("超级管理员"),

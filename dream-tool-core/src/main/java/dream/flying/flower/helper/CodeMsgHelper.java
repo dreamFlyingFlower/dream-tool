@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Predicate;
 
-import dream.flying.flower.common.NumberMsg;
 import dream.flying.flower.common.CodeMsg;
+import dream.flying.flower.common.NameMsg;
 import dream.flying.flower.common.StatusMsg;
 
 /**
@@ -30,7 +30,7 @@ public class CodeMsgHelper {
 	 * @param enumClass 枚举字节码
 	 * @return 枚举或null
 	 */
-	public static <E extends Enum<E> & NumberMsg> E getEnum(int code, Class<E> enumClass) {
+	public static <E extends Enum<E> & CodeMsg> E getEnum(int code, Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		for (E e : list) {
 			if (e.getValue().intValue() == code) {
@@ -66,7 +66,7 @@ public class CodeMsgHelper {
 	 * @param enumClass 枚举字节码
 	 * @return msg或null
 	 */
-	public static <E extends Enum<E> & NumberMsg> String getMsg(int code, Class<E> enumClass) {
+	public static <E extends Enum<E> & CodeMsg> String getMsg(int code, Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		for (E e : list) {
 			if (e.getValue().intValue() == code) {
@@ -84,7 +84,7 @@ public class CodeMsgHelper {
 	 * @param enumClass 枚举字节码
 	 * @return name()或null
 	 */
-	public static <E extends Enum<E> & NumberMsg> String getName(int code, Class<E> enumClass) {
+	public static <E extends Enum<E> & CodeMsg> String getName(int code, Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		for (E e : list) {
 			if (e.getValue().intValue() == code) {
@@ -101,7 +101,7 @@ public class CodeMsgHelper {
 	 * @param enumClass 枚举字节码
 	 * @return json字符串
 	 */
-	public static <E extends Enum<E> & CodeMsg> String toJsonStr(Class<E> enumClass) {
+	public static <E extends Enum<E> & NameMsg> String toJsonStr(Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		StringJoiner sj = new StringJoiner(",", "[", "]");
 		list.forEach(t -> {
@@ -158,7 +158,7 @@ public class CodeMsgHelper {
 	 * @param predicate 过滤条件
 	 * @return List<Map>
 	 */
-	public static <E extends Enum<E> & CodeMsg> List<Map<String, Object>> toListMap(Class<E> enumClass,
+	public static <E extends Enum<E> & NameMsg> List<Map<String, Object>> toListMap(Class<E> enumClass,
 			Predicate<E> predicate) {
 		List<E> list = toList(enumClass);
 		List<Map<String, Object>> ret = new ArrayList<>();
@@ -179,7 +179,7 @@ public class CodeMsgHelper {
 	 * @param enumClass 枚举字节码
 	 * @return Map
 	 */
-	public static <E extends Enum<E> & CodeMsg> Map<String, Map<String, Object>> toMapCode(Class<E> enumClass) {
+	public static <E extends Enum<E> & NameMsg> Map<String, Map<String, Object>> toMapCode(Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		Map<String, Map<String, Object>> enumMap = new HashMap<>();
 		list.forEach(t -> {
@@ -200,7 +200,7 @@ public class CodeMsgHelper {
 	 * @param enumClass 枚举字节码
 	 * @return Map
 	 */
-	public static <E extends Enum<E> & CodeMsg> Map<String, Map<String, Object>> toMapName(Class<E> enumClass) {
+	public static <E extends Enum<E> & NameMsg> Map<String, Map<String, Object>> toMapName(Class<E> enumClass) {
 		List<E> list = toList(enumClass);
 		Map<String, Map<String, Object>> enumMap = new HashMap<>();
 		list.forEach(t -> {

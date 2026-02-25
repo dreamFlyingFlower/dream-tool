@@ -3,7 +3,7 @@ package dream.flying.flower.enums;
 import java.util.List;
 import java.util.Map;
 
-import dream.flying.flower.common.NumberMsg;
+import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.PropConverter;
 import dream.flying.flower.helper.CodeMsgHelper;
 
@@ -14,7 +14,7 @@ import dream.flying.flower.helper.CodeMsgHelper;
  * @date 2022-04-28 09:16:03
  * @git {@link https://github.com/dreamFlyingFlower }
  */
-public enum YesNoEnum implements NumberMsg, PropConverter {
+public enum YesNoEnum implements CodeMsg, PropConverter {
 
 	NO("否"),
 	YES("是");

@@ -86,7 +86,7 @@ public class FileNameHelper {
 	 * @param newFileName 新文件名,不带路径
 	 * @return 拼接后的文件名
 	 */
-	public static String concatFileName(String originalFileName, String newFileName) {
+	public static String newName(String originalFileName, String newFileName) {
 		String extension = getExtension(originalFileName);
 		return newFileName + (StrHelper.isBlank(extension) ? "" : "." + extension);
 	}

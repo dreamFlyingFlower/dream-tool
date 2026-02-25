@@ -1,13 +1,13 @@
 package dream.flying.flower.common;
 
 /**
- * 自定义字符串状态码以及状态信息
+ * 自定义数字状态码以及状态信息
  * 
  * @author 飞花梦影
  * @date 2020-02-20 15:14:26
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public interface CodeMsg extends StatusMsg<String> {
+public interface CodeMsg extends StatusMsg<Integer> {
 
 	/**
 	 * 状态码
@@ -15,9 +15,9 @@ public interface CodeMsg extends StatusMsg<String> {
 	 * @return 数字状态码
 	 */
 	@Override
-	default String getValue() {
+	default Integer getValue() {
 		if (Enum.class.isAssignableFrom(this.getClass())) {
-			return ((Enum<?>) this).name();
+			return ((Enum<?>) this).ordinal();
 		}
 		return null;
 	}

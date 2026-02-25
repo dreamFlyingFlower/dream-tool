@@ -2,7 +2,7 @@ package dream.flying.flower.enums;
 
 import java.util.stream.Stream;
 
-import dream.flying.flower.common.NumberMsg;
+import dream.flying.flower.common.CodeMsg;
 
 /**
  * 身份标识类型
@@ -11,7 +11,7 @@ import dream.flying.flower.common.NumberMsg;
  * @date 2024-07-30 21:34:56
  * @git {@link https://github.com/dreamFlyingFlower}
  */
-public enum IdCardType implements NumberMsg {
+public enum IdCardType implements CodeMsg {
 
 	/** 未知 */
 	UNKNOWN,

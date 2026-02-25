@@ -9,7 +9,7 @@ import java.util.Objects;
 
 import dream.flying.flower.ConstI18n;
 import dream.flying.flower.collection.MapHelper;
-import dream.flying.flower.common.NumberMsg;
+import dream.flying.flower.common.CodeMsg;
 import dream.flying.flower.common.Internation;
 import dream.flying.flower.enums.TipEnum;
 import dream.flying.flower.lang.StrHelper;
@@ -106,7 +106,7 @@ public class Result<T> implements Serializable {
 		return error(0, msg);
 	}
 
-	public static <T> Result<T> error(NumberMsg tipCode) {
+	public static <T> Result<T> error(CodeMsg tipCode) {
 		return error(tipCode.getValue(), tipCode.getMsg());
 	}
 

@@ -1,7 +1,7 @@
 package dream.flying.flower.enums;
 
 import dream.flying.flower.ConstI18nFormat;
-import dream.flying.flower.common.NumberMsg;
+import dream.flying.flower.common.CodeMsg;
 
 /**
  * 提示或信息类,传入的信息不要带有双引号或单引号
@@ -10,7 +10,7 @@ import dream.flying.flower.common.NumberMsg;
  * @date 2023-02-01 14:03:39
  * @git {@link https://github.com/dreamFlyingFlower }
  */
-public enum TipFormatEnum implements NumberMsg {
+public enum TipFormatEnum implements CodeMsg {
 
 	/** 必传参数为空 */
 	TIP_PARAM_REQUIRED_IS_NULL(TipEnum.TIP_PARAM_REQUIRED_IS_NULL
