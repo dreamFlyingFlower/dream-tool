@@ -15,7 +15,7 @@ import dream.flying.flower.enums.TipEnum;
 import dream.flying.flower.lang.StrHelper;
 
 /**
- * result工具类,code为1时成功,其他全部失败
+ * result工具类,code为1时成功,其他全部失败.按照 ResponseEntity
  * 
  * @author ParadiseWY
  * @date 2020-02-20 14:47:42
