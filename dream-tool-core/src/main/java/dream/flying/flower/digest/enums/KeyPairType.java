@@ -13,10 +13,12 @@ package dream.flying.flower.digest.enums;
  */
 public enum KeyPairType {
 
-	/** DSA key pair type. */
+	/** DSA key pair type */
 	DSA,
-	/** RSA key pair type. */
+	/** RSA key pair type */
 	RSA,
-	/** ECDSA key pair type. */
-	ECDSA;
+	/** ECDSA key pair type */
+	ECDSA,
+	/** EC key pair type */
+	EC,
 }

@@ -30,11 +30,18 @@ public @interface Query {
 	String javaField() default "";
 
 	/**
-	 * mapper中的数据库字段名
+	 * 数据库字段名
 	 * 
 	 * @return 数据库字段名
 	 */
 	String tableColumn() default "";
+
+	/**
+	 * 是否忽略空值,默认 true
+	 *
+	 * @return true-忽略空值,false-不忽略
+	 */
+	boolean ignoreNull() default true;
 
 	/**
 	 * 查询类型
@@ -42,4 +49,25 @@ public @interface Query {
 	 * @return 查询类型
 	 */
 	QueryType type() default QueryType.EQ;
+
+	/**
+	 * 表别名,默认为空则使用主表别名
+	 *
+	 * @return 表别名
+	 */
+	String alias() default "";
+
+	/**
+	 * 自定义 SQL 片段,用于复杂查询
+	 *
+	 * @return SQL 片段
+	 */
+	String sql() default "";
+
+	/**
+	 * 自定义查询查询类型,当customizeType()有值时使用,无值时使用type(),需通过 QueryHandlerRegistry 注册
+	 *
+	 * @return 查询类型
+	 */
+	String customizeType() default "EQ";
 }

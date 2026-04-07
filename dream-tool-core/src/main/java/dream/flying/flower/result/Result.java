@@ -15,7 +15,7 @@ import dream.flying.flower.enums.TipEnum;
 import dream.flying.flower.lang.StrHelper;
 
 /**
- * result工具类,code为1时成功,其他全部失败.按照 ResponseEntity
+ * result工具类,code为1时成功,其他全部失败
  * 
  * @author ParadiseWY
  * @date 2020-02-20 14:47:42
@@ -142,8 +142,8 @@ public class Result<T> implements Serializable {
 		return Result.<T>builder()
 				.code(code)
 				.msg(StrHelper.isBlank(msg)
-						? (code == 1 ? Internation.getStr(ConstI18n.MSG_SUCCESS)
-								: Internation.getStr(ConstI18n.MSG_FAIL))
+						? (code == 1
+								? Internation.getStr(ConstI18n.MSG_SUCCESS) : Internation.getStr(ConstI18n.MSG_FAIL))
 						: msg)
 				.data(t)
 				.page(false)
@@ -162,8 +162,8 @@ public class Result<T> implements Serializable {
 		return Result.<T>builder()
 				.code(code)
 				.msg(StrHelper.isBlank(msg)
-						? (code == 1 ? Internation.getStr(ConstI18n.MSG_SUCCESS)
-								: Internation.getStr(ConstI18n.MSG_FAIL))
+						? (code == 1
+								? Internation.getStr(ConstI18n.MSG_SUCCESS) : Internation.getStr(ConstI18n.MSG_FAIL))
 						: msg)
 				.data(t)
 				.page(true)
