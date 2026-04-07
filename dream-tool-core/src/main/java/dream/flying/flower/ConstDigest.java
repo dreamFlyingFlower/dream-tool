@@ -21,6 +21,15 @@ public interface ConstDigest {
 	/** 1 */
 	int POSITIVE_ONE = 1;
 
+	/** HMAC-SHA1 密钥长度 (字节),内部压缩或填充后就是20字节,不安全 */
+	int HMAC_SHA1_SIZE = 20;
+
+	/** HMAC-SHA256 密钥长度 (字节),内部压缩或填充后就是32字节 */
+	int HMAC_SHA256_SIZE = 32;
+
+	/** HMAC-SHA512 密钥长度 (字节),内部压缩或填充后就是64字节 */
+	int HMAC_SHA512_SIZE = 64;
+
 	/** 密钥倍数 */
 	int KEY_SIZE_MULTIPLE = 64;
 

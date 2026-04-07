@@ -1,6 +1,7 @@
 package dream.flying.flower.lang;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -1755,6 +1756,16 @@ public class StrHelper extends CharSequenceHelper {
 			i += Character.charCount(newCodePoint);
 		}
 		return new String(newCodePoints, 0, outOffset);
+	}
+
+	/**
+	 * 将字符串转换为字节数据
+	 * 
+	 * @param str 待转换字符串
+	 * @return 字节数据
+	 */
+	public static byte[] toBytes(String str) {
+		return str.getBytes(StandardCharsets.UTF_8);
 	}
 
 	/**
