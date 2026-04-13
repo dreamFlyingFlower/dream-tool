@@ -1,5 +1,9 @@
 package dream.flying.flower.digest.enums;
 
+import java.util.stream.Stream;
+
+import dream.flying.flower.ConstDigest;
+
 /**
  * Hmac算法名,需要注意JDK版本
  * 
@@ -110,5 +114,34 @@ public enum HmacAlgorithmType {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public static HmacAlgorithmType of(String type) {
+		return Stream.of(HmacAlgorithmType.values())
+				.filter(t -> t.name.equalsIgnoreCase(type))
+				.findFirst()
+				.orElse(null);
+	}
+
+	/**
+	 * 根据算法类型获取随机密钥长度
+	 * 
+	 * @param hmacAlgorithmType 算法类型
+	 * @return 随机密钥长度
+	 */
+	public static int length(HmacAlgorithmType hmacAlgorithmType) {
+		switch (hmacAlgorithmType) {
+		case HMAC_SHA_1:
+			return ConstDigest.HMAC_SHA1_SIZE;
+		case HMAC_SHA_224:
+		case HMAC_SHA_256:
+			return ConstDigest.HMAC_SHA256_SIZE;
+		case HMAC_MD5:
+		case HMAC_SHA_384:
+		case HMAC_SHA_512:
+			return ConstDigest.HMAC_SHA512_SIZE;
+		default:
+			return ConstDigest.HMAC_SHA512_SIZE;
+		}
 	}
 }

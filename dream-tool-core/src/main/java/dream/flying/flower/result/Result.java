@@ -17,7 +17,7 @@ import dream.flying.flower.lang.StrHelper;
 /**
  * result工具类,code为1时成功,其他全部失败
  * 
- * @author ParadiseWY
+ * @author 飞花梦影
  * @date 2020-02-20 14:47:42
  * @git {@link https://github.com/mygodness100}
  */
