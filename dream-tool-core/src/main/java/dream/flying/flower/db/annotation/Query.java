@@ -37,6 +37,13 @@ public @interface Query {
 	String tableColumn() default "";
 
 	/**
+	 * 是否忽略字段,默认 false
+	 * 
+	 * @return true->忽略;false->不忽略
+	 */
+	boolean ignore() default false;
+
+	/**
 	 * 是否忽略空值,默认 true
 	 *
 	 * @return true-忽略空值,false-不忽略
