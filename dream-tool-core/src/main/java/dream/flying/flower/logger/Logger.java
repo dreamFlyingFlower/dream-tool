@@ -22,8 +22,31 @@ public @interface Logger {
 
 	/**
 	 * 日志模块
+	 * 
+	 * @param 日志所属模块
 	 */
 	String value() default "";
+
+	/**
+	 * 是否记录日志,配置其他注解或切面使用
+	 * 
+	 * @return 默认记录
+	 */
+	boolean enabled() default true;
+
+	/**
+	 * 是否将日志输出到日志文件
+	 * 
+	 * @return 默认输出
+	 */
+	boolean outputFile() default true;
+
+	/**
+	 * 是否将日志存储到数据库
+	 * 
+	 * @return 默认存储
+	 */
+	boolean storeDb() default true;
 
 	/**
 	 * 日志类型,当logOtherType不等于StatusMsg.class时,使用logOtherType方法的值
