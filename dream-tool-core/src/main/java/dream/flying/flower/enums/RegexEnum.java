@@ -1,5 +1,7 @@
 package dream.flying.flower.enums;
 
+import java.util.regex.Pattern;
+
 /**
  * 常用字符串校验枚举
  *
@@ -45,35 +47,35 @@ package dream.flying.flower.enums;
 public enum RegexEnum {
 
 	/** 英文和数字 */
-	REGEX_ENGNUM("^[A-Za-z0-9]+$"),
+	REGEX_ENGNUM(Pattern.compile("^[A-Za-z0-9]+$")),
 
 	/** 检查是否全中文,不包括标点符号等 */
-	REGEX_CHINA("^[\\u4E00-\\u9FA5]*$"),
+	REGEX_CHINA(Pattern.compile("^[\\u4E00-\\u9FA5]*$")),
 
 	/** 中英文和数字,下划线 */
-	REGEX_CHENNUM("^[\\u4E00-\\u9FA5A-Za-z0-9_]*$"),
+	REGEX_CHENNUM(Pattern.compile("^[\\u4E00-\\u9FA5A-Za-z0-9_]*$")),
 
 	/** 检查手机号 */
-	REGEX_PHONE("\\d{3}-\\d{8}|1\\d{10}"),
+	REGEX_PHONE(Pattern.compile("\\d{3}-\\d{8}|1\\d{10}")),
 
 	/** 检查是否邮箱 */
-	REGEX_EMAIL("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*"),
+	REGEX_EMAIL(Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*")),
 
 	/** 身份证,18位和15位 */
-	REGEX_IDCARD("^[1-9]\\d{5}[12]\\d{3}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)"
-			+ "|(^[1-9]\\d{5}\\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\\d{2}$"),
+	REGEX_IDCARD(Pattern.compile("^[1-9]\\d{5}[12]\\d{3}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)"
+			+ "|(^[1-9]\\d{5}\\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\\d{2}$")),
 
 	/** QQ号 */
-	REGEX_QQ("[1-9][0-9]{4,}"),
+	REGEX_QQ(Pattern.compile("[1-9][0-9]{4,}")),
 
 	/** 邮编 */
-	REGEX_ZIPCODE("[1-9]\\d{5}(?!\\d)"),
+	REGEX_ZIPCODE(Pattern.compile("[1-9]\\d{5}(?!\\d)")),
 
 	/** 是否为货币 */
-	REGEX_MONEY("^(\\d+(?:\\.\\d+)?)$"),
+	REGEX_MONEY(Pattern.compile("^(\\d+(?:\\.\\d+)?)$")),
 
 	/** 数字 */
-	REGEX_NUMBER("\\d+"),
+	REGEX_NUMBER(Pattern.compile("\\d+")),
 
 	/**
 	 * 判断字符串是否为统一社会信用代码（18位）<br>
@@ -84,74 +86,85 @@ public enum RegexEnum {
 	 * 第9位~第17位：主体标识码（组织机构代码）（共九位字符）<br>
 	 * 第18位：校验码​（共一位字符）<br>
 	 */
-	REGEX_USCC("^(11|12|13|19|51|52|53|59|91|92|93|Y1)[1-9]{1}[0-9]{5}[0-9A-HJ-NP-RT-UW-Y0-9]{9}[0-90-9A-HJ-NP-RT-UW-Y]{1}$"),
+	REGEX_USCC(Pattern.compile(
+			"^(11|12|13|19|51|52|53|59|91|92|93|Y1)[1-9]{1}[0-9]{5}[0-9A-HJ-NP-RT-UW-Y0-9]{9}[0-90-9A-HJ-NP-RT-UW-Y]{1}$")),
 
 	/** 银联帐号 */
-	REGEX_UNIONPAYCARD("^62[0-5]\\d{13,16}$"),
+	REGEX_UNIONPAYCARD(Pattern.compile("^62[0-5]\\d{13,16}$")),
 
 	/** 符合yyyy-MM-dd日期格式的时间字符串 */
-	REGEX_DATE("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$"),
+	REGEX_DATE(Pattern.compile("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$")),
 
 	/** 符合yyyy/MM/dd日期格式的时间字符串 */
-	REGEX_DATE_SLASH("^\\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])$"),
+	REGEX_DATE_SLASH(Pattern.compile("^\\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])$")),
 
 	/** 符合yyyyMMdd日期格式的时间字符串 */
-	REGEX_DATE_NONE("^\\d{4}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$"),
+	REGEX_DATE_NONE(Pattern.compile("^\\d{4}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$")),
 
 	/** 符合yyyy-MM-dd HH:mm:ss日期格式的时间字符串 */
-	REGEX_DATETIME("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) ([0-1][0-9]|2[0-3])(:[0-5][0-9]){2}$"),
+	REGEX_DATETIME(Pattern
+			.compile("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) ([0-1][0-9]|2[0-3])(:[0-5][0-9]){2}$")),
 
 	/** 符合yyyy/MM/dd HH:mm:ss日期格式的时间字符串 */
-	REGEX_DATETIME_SLASH("^\\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1]) ([0-1][0-9]|2[0-3])(:[0-5][0-9]){2}$"),
+	REGEX_DATETIME_SLASH(Pattern
+			.compile("^\\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1]) ([0-1][0-9]|2[0-3])(:[0-5][0-9]){2}$")),
 
 	/** 符合yyyyMMdd HH:mm:ss日期格式的时间字符串 */
-	REGEX_DATETIME_NONE("^\\d{4}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1]) ([0-1][0-9]|2[0-3])(:[0-5][0-9]){2}$"),
+	REGEX_DATETIME_NONE(Pattern
+			.compile("^\\d{4}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1]) ([0-1][0-9]|2[0-3])(:[0-5][0-9]){2}$")),
 
 	/** 匹配双字节字符,包括汉字.可以用来计算字符串的长度,一个双字节字符长度计2,ASCII字符计1 FIXME */
-	REGEX_DOUBLE_CHAR("[^\\x00-\\xff]"),
+	REGEX_DOUBLE_CHAR(Pattern.compile("[^\\x00-\\xff]")),
 
 	/** 匹配多个空白行 */
-	REGEX_BLANK("[\\n\\s*\\r]+"),
+	REGEX_BLANK(Pattern.compile("[\\n\\s*\\r]+")),
 
 	/** 匹配首尾空白字符 */
-	REGEX_BLANK_BEGIN_END("^\\s*(.)+|(.)+\\s*$"),
+	REGEX_BLANK_BEGIN_END(Pattern.compile("^\\s*(.)+|(.)+\\s*$")),
 
 	/** 匹配网址URL FIXME */
-	REGEX_URL("[a-zA-z]+://[^\\s]*"),
+	REGEX_URL(Pattern.compile("[a-zA-z]+://[^\\s]*")),
 
 	/** 匹配IPV4地址 FIXME */
-	REGEX_NETWORK_IPV4("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b"),
+	REGEX_NETWORK_IPV4(Pattern.compile(
+			"\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b")),
 
 	/** 匹配IPV6地址 FIXME */
-	REGEX_NETWORK_IPV6("(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:"
+	REGEX_NETWORK_IPV6(Pattern.compile("(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:"
 			+ "|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}"
 			+ "|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}"
 			+ "|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})"
 			+ "|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}"
 			+ "|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]"
 			+ "|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]"
-			+ "|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"),
+			+ "|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))")),
 
 	/** 匹配子网掩码 FIXME */
-	REGEX_NETWORK_MASK("((?:(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d))"),
+	REGEX_NETWORK_MASK(Pattern
+			.compile("((?:(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d))")),
 
 	/** 匹配HTML标记,只能匹配一部分,复杂的仍然不能匹配 */
-	REGEX_HTML_TAG("<(\\S*?)[^>]*>.*?</\\1>|<.*? />"),
+	REGEX_HTML_TAG(Pattern.compile("<(\\S*?)[^>]*>.*?</\\1>|<.*? />")),
 
 	/** 匹配HTML页面img标签中的src属性 FIXME */
-	REGEX_HTML_IMG_SRC("\\< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)"),
+	REGEX_HTML_IMG_SRC(Pattern.compile("\\< *[img][^\\>]*[src] *= *[\"\']{0,1}([^\"\'\\ >]*)")),
 
 	/** 匹配HTML页面a标签中的超链接 FIXME */
-	REGEX_HTML_A_HREF("(<a\\s*(?!.*\\brel=)[^>]*)(href=\"https?:\\/\\/)((?!(?:(?:www\\.)?'.implode('|(?:www\\.)?', $follow_list).'))[^\" rel=\"external nofollow\" ]+)\"((?!.*\\brel=)[^>]*)(?:[^>]*)>");
+	REGEX_HTML_A_HREF(Pattern.compile(
+			"(<a\\s*(?!.*\\brel=)[^>]*)(href=\"https?:\\/\\/)((?!(?:(?:www\\.)?'.implode('|(?:www\\.)?', $follow_list).'))[^\" rel=\"external nofollow\" ]+)\"((?!.*\\brel=)[^>]*)(?:[^>]*)>"));
 
-	private String regex;
+	private Pattern pattern;
 
-	RegexEnum(String regex) {
-		this.regex = regex;
+	RegexEnum(Pattern pattern) {
+		this.pattern = pattern;
+	}
+
+	public Pattern getValue() {
+		return pattern;
 	}
 
 	@Override
 	public String toString() {
-		return regex;
+		return pattern.pattern();
 	}
 }

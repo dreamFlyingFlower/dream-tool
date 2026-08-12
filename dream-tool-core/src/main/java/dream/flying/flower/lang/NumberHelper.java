@@ -801,6 +801,54 @@ public class NumberHelper {
 	}
 
 	/**
+	 * 判断目标数字是否在某一个区间内(左右都闭合)
+	 * 
+	 * @param target 目标数字
+	 * @param min 最小值
+	 * @param max 最大值
+	 * @return true->是;false->否
+	 */
+	public static boolean region(int target, int min, int max) {
+		return target >= min && target <= max;
+	}
+
+	/**
+	 * 判断目标数字是否在某一个区间内(左闭右开)
+	 * 
+	 * @param target 目标数字
+	 * @param min 最小值
+	 * @param max 最大值
+	 * @return true->是;false->否
+	 */
+	public static boolean regionLcro(int target, int min, int max) {
+		return target >= min && target < max;
+	}
+
+	/**
+	 * 判断目标数字是否在某一个区间内(左开右闭)
+	 * 
+	 * @param target 目标数字
+	 * @param min 最小值
+	 * @param max 最大值
+	 * @return true->是;false->否
+	 */
+	public static boolean regionLorc(int target, int min, int max) {
+		return target > min && target <= max;
+	}
+
+	/**
+	 * 判断目标数字是否在某一个区间内(左开右开)
+	 * 
+	 * @param target 目标数字
+	 * @param min 最小值
+	 * @param max 最大值
+	 * @return true->是;false->否
+	 */
+	public static boolean regionLoro(int target, int min, int max) {
+		return target > min && target < max;
+	}
+
+	/**
 	 * 获得范围内的随机数,包括开头和结尾
 	 * 
 	 * @param a 最小数
