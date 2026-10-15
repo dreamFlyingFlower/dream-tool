@@ -39,7 +39,16 @@ import dream.flying.flower.lang.StrHelper;
  * <pre>
  * 1.当直接输出LocalTime.toString()时,类似XX:00:00将不会输出秒,只会输出XX:00,不要直接输出或使用toString()
  * 2.toInstant():类似方法始终都获得的是从1970到现在的时间戳,与时区无关,只有Instant.now()才和时区相关,获得的是UTC时间
- * 3.{@link Date},{@link LocalDateTime}:默认都与时区无关
+ * 3.{@link Date},{@link LocalDateTime}: 无时区时间,即获取到的时间就是本地时间,不会加减时区
+ * 4.{@link ZonedDateTime}: 绑定时区的时间,转换时区时间和无时区时间
+ * </pre>
+ * 
+ * 
+ * 时区:
+ * 
+ * <pre>
+ * UTC: 标准时间,所有时区的基准点
+ * 时区时间: 以UTC为基准的偏移时间,如Asia/Shanghai时区就是在UTC时间上+8小时,即UTC时间是4点,上海12点
  * </pre>
  * 
  * @author 飞花梦影
@@ -89,13 +98,14 @@ public interface DateTimeHelper {
 			.toFormatter();
 
 	/**
-	 * 将Date类型转换为LocalDateTime类型
+	 * 将Date转换为LocalDateTime
 	 * 
 	 * @param date 需要进行转换的时间
-	 * @return 转换后的时间
+	 * @return 转换后的时间,和date时间相同
 	 */
-	public static LocalDateTime date2Local(Date date) {
+	public static LocalDateTime toLocal(Date date) {
 		AssertHelper.notNull(date);
+		// date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
 	}
 
@@ -118,7 +128,7 @@ public interface DateTimeHelper {
 	 * @return 格式化后字符串
 	 */
 	public static String format(Date date, DateTimeFormatter dateTimeFormatter) {
-		return format(date2Local(date), dateTimeFormatter);
+		return format(toLocal(date), dateTimeFormatter);
 	}
 
 	/**
@@ -191,7 +201,7 @@ public interface DateTimeHelper {
 	 * @return 日期字符串
 	 */
 	public static String formatDate(Date date) {
-		return DateTimeFormatter.ISO_LOCAL_DATE.format(date2Local(date));
+		return DateTimeFormatter.ISO_LOCAL_DATE.format(toLocal(date));
 	}
 
 	/**
@@ -240,7 +250,7 @@ public interface DateTimeHelper {
 	 * @return 时间字符串
 	 */
 	public static String formatDateTime(Date date) {
-		return formatDateTime(date2Local(date));
+		return formatDateTime(toLocal(date));
 	}
 
 	/**
@@ -280,7 +290,7 @@ public interface DateTimeHelper {
 	 * @return 时间字符串
 	 */
 	public static String formatTime(Date date) {
-		return DEFAULT_FORMATTER_TIME.format(date2Local(date));
+		return DEFAULT_FORMATTER_TIME.format(toLocal(date));
 	}
 
 	/**
@@ -362,7 +372,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在日期零点时间
 	 */
 	public static LocalDateTime getDayBegin(Date date) {
-		return date2Local(date).toLocalDate().atStartOfDay();
+		return toLocal(date).toLocalDate().atStartOfDay();
 	}
 
 	/**
@@ -392,7 +402,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在日期零点时间字符串
 	 */
 	public static String getDayBeginStr(Date date) {
-		LocalDateTime date2Local = date2Local(date);
+		LocalDateTime date2Local = toLocal(date);
 		LocalDateTime localDateTime = LocalDateTime.of(date2Local.toLocalDate(), LocalTime.MIN);
 		return DEFAULT_FORMATTER.format(localDateTime);
 	}
@@ -405,7 +415,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在日期零点时间字符串
 	 */
 	public static String getDayBeginStr(Date date, DateEnum dateFormat) {
-		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MIN);
+		LocalDateTime localDateTime = LocalDateTime.of(toLocal(date).toLocalDate(), LocalTime.MIN);
 		return dateFormat == null
 				? DEFAULT_FORMATTER.format(localDateTime)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(localDateTime);
@@ -419,7 +429,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在日期零点时间字符串
 	 */
 	public static String getDayBeginStr(Date date, DateTimeFormatter dateTimeFormatter) {
-		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MIN);
+		LocalDateTime localDateTime = LocalDateTime.of(toLocal(date).toLocalDate(), LocalTime.MIN);
 		return dateTimeFormatter == null
 				? DEFAULT_FORMATTER.format(localDateTime) : dateTimeFormatter.format(localDateTime);
 	}
@@ -432,7 +442,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在日期零点时间字符串
 	 */
 	public static String getDayBeginStr(Date date, String format) {
-		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MIN);
+		LocalDateTime localDateTime = LocalDateTime.of(toLocal(date).toLocalDate(), LocalTime.MIN);
 		return StrHelper.isBlank(format)
 				? DEFAULT_FORMATTER.format(localDateTime) : DateTimeFormatter.ofPattern(format).format(localDateTime);
 	}
@@ -504,7 +514,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在日期结束时间
 	 */
 	public static LocalDateTime getDayEnd(Date date) {
-		LocalDateTime localDateTime = date2Local(date);
+		LocalDateTime localDateTime = toLocal(date);
 		return localDateTime.toLocalDate().atTime(LocalTime.MAX);
 	}
 
@@ -556,7 +566,7 @@ public interface DateTimeHelper {
 	 */
 	public static String getDayEndStr(Date date, DateEnum dateFormat) {
 		AssertHelper.notNull(date);
-		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MAX);
+		LocalDateTime localDateTime = LocalDateTime.of(toLocal(date).toLocalDate(), LocalTime.MAX);
 		return dateFormat == null
 				? DEFAULT_FORMATTER.format(localDateTime)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(localDateTime);
@@ -571,7 +581,7 @@ public interface DateTimeHelper {
 	 */
 	public static String getDayEndStr(Date date, DateTimeFormatter dateTimeFormatter) {
 		AssertHelper.notNull(date);
-		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MAX);
+		LocalDateTime localDateTime = LocalDateTime.of(toLocal(date).toLocalDate(), LocalTime.MAX);
 		return dateTimeFormatter == null
 				? DEFAULT_FORMATTER.format(localDateTime) : dateTimeFormatter.format(localDateTime);
 	}
@@ -585,7 +595,7 @@ public interface DateTimeHelper {
 	 */
 	public static String getDayEndStr(Date date, String format) {
 		AssertHelper.notNull(date);
-		LocalDateTime localDateTime = LocalDateTime.of(date2Local(date).toLocalDate(), LocalTime.MAX);
+		LocalDateTime localDateTime = LocalDateTime.of(toLocal(date).toLocalDate(), LocalTime.MAX);
 		return StrHelper.isBlank(format)
 				? DEFAULT_FORMATTER.format(localDateTime) : DateTimeFormatter.ofPattern(format).format(localDateTime);
 	}
@@ -664,7 +674,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月第一天的时间
 	 */
 	public static LocalDateTime getFirstDayOfMonth(Date date) {
-		return date2Local(date).with(TemporalAdjusters.firstDayOfMonth());
+		return toLocal(date).with(TemporalAdjusters.firstDayOfMonth());
 	}
 
 	/**
@@ -693,7 +703,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月最后一天的时间
 	 */
 	public static LocalDateTime getLastDayOfMonth(Date date) {
-		return date2Local(date).with(TemporalAdjusters.lastDayOfMonth());
+		return toLocal(date).with(TemporalAdjusters.lastDayOfMonth());
 	}
 
 	/**
@@ -712,7 +722,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在月的开始时间
 	 */
 	public static Date getMonthBegin() {
-		return local2Date(LocalDateTime.of(LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),
+		return toDate(LocalDateTime.of(LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),
 				LocalTime.MIN));
 	}
 
@@ -723,8 +733,8 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的开始时间
 	 */
 	public static Date getMonthBegin(Date date) {
-		return local2Date(LocalDateTime.of(date2Local(date).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),
-				LocalTime.MIN));
+		return toDate(
+				LocalDateTime.of(toLocal(date).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(), LocalTime.MIN));
 	}
 
 	/**
@@ -734,7 +744,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的开始时间
 	 */
 	public static Date getMonthBegin(LocalDateTime localDateTime) {
-		return local2Date(
+		return toDate(
 				LocalDateTime.of(localDateTime.with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(), LocalTime.MIN));
 	}
 
@@ -755,8 +765,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的开始时间
 	 */
 	public static LocalDateTime getMonthBeginLocal(Date date) {
-		return LocalDateTime.of(date2Local(date).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),
-				LocalTime.MIN);
+		return LocalDateTime.of(toLocal(date).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(), LocalTime.MIN);
 	}
 
 	/**
@@ -775,7 +784,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在月的结束时间
 	 */
 	public static Date getMonthEnd() {
-		return local2Date(getMonthEndLocal());
+		return toDate(getMonthEndLocal());
 	}
 
 	/**
@@ -785,7 +794,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的结束时间
 	 */
 	public static Date getMonthEnd(Date date) {
-		return local2Date(getMonthEndLocal(date));
+		return toDate(getMonthEndLocal(date));
 	}
 
 	/**
@@ -795,7 +804,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的结束时间
 	 */
 	public static Date getMonthEnd(LocalDateTime localDateTime) {
-		return local2Date(getMonthEndLocal(localDateTime));
+		return toDate(getMonthEndLocal(localDateTime));
 	}
 
 	/**
@@ -816,7 +825,7 @@ public interface DateTimeHelper {
 	 */
 	public static LocalDateTime getMonthEndLocal(Date date) {
 		AssertHelper.notNull(date);
-		return LocalDateTime.of(date2Local(date).with(TemporalAdjusters.lastDayOfMonth()).toLocalDate(), LocalTime.MAX);
+		return LocalDateTime.of(toLocal(date).with(TemporalAdjusters.lastDayOfMonth()).toLocalDate(), LocalTime.MAX);
 	}
 
 	/**
@@ -857,7 +866,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的结束时间字符串
 	 */
 	public static String getMonthEndStr(Date date, DateEnum dateFormat) {
-		return getMonthEndStr(date2Local(date), dateFormat);
+		return getMonthEndStr(toLocal(date), dateFormat);
 	}
 
 	/**
@@ -868,7 +877,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的结束时间字符串
 	 */
 	public static String getMonthEndStr(Date date, DateTimeFormatter dateTimeFormatter) {
-		return getMonthEndStr(date2Local(date), dateTimeFormatter);
+		return getMonthEndStr(toLocal(date), dateTimeFormatter);
 	}
 
 	/**
@@ -879,7 +888,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的结束时间字符串
 	 */
 	public static String getMonthEndStr(Date date, String pattern) {
-		return getMonthEndStr(date2Local(date), pattern);
+		return getMonthEndStr(toLocal(date), pattern);
 	}
 
 	/**
@@ -936,12 +945,30 @@ public interface DateTimeHelper {
 	}
 
 	/**
+	 * 获取季度第一天
+	 */
+	public static LocalDate getQuarterStart(LocalDate date) {
+		int q = getQuarter(date);
+		int startMonth = (q - 1) * 3 + 1;
+		return LocalDate.of(date.getYear(), startMonth, 1);
+	}
+
+	/**
+	 * 获取季度最后一天
+	 */
+	public static LocalDate getQuarterEnd(LocalDate date) {
+		int q = getQuarter(date);
+		int endMonth = q * 3;
+		return LocalDate.of(date.getYear(), endMonth, 1).plusMonths(1).minusDays(1);
+	}
+
+	/**
 	 * 判断指定时间所属季度
 	 * 
 	 * @param date 指定时间
 	 * @return 1->第一季度;2->第二季度;3->第三季度;4->第四季度
 	 */
-	public static int getSeason(Date date) {
+	public static int getQuarter(Date date) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		int month = c.get(Calendar.MONTH);
@@ -960,21 +987,23 @@ public interface DateTimeHelper {
 	/**
 	 * 判断指定时间所属季度
 	 * 
-	 * @param date 指定时间
+	 * @param localDate 指定时间
 	 * @return 1->第一季度;2->第二季度;3->第三季度;4->第四季度
 	 */
-	public static int getSeason(LocalDateTime localDateTime) {
-		int month = localDateTime.get(ChronoField.MONTH_OF_YEAR);
-		if (month > 0 && month <= 3) {
-			return 1;
-		} else if (month > 3 && month <= 6) {
-			return 2;
-		} else if (month > 6 && month <= 9) {
-			return 3;
-		} else if (month > 9 && month <= 12) {
-			return 4;
-		}
-		return 0;
+	public static int getQuarter(LocalDate localDate) {
+		int m = localDate.getMonthValue();
+		return (m - 1) / 3 + 1;
+	}
+
+	/**
+	 * 判断指定时间所属季度
+	 * 
+	 * @param localDateTime 指定时间
+	 * @return 1->第一季度;2->第二季度;3->第三季度;4->第四季度
+	 */
+	public static int getQuarter(LocalDateTime localDateTime) {
+		int m = localDateTime.getMonthValue();
+		return (m - 1) / 3 + 1;
 	}
 
 	/**
@@ -993,7 +1022,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的所属季度的开始时间
 	 */
 	public static Date getSeasonBegin(Date date) {
-		int beginMonth = (getSeason(date) - 1) * 3;
+		int beginMonth = (getQuarter(date) - 1) * 3;
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.MONTH, beginMonth);
@@ -1007,7 +1036,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的所属季度的开始时间
 	 */
 	public static Date getSeasonBegin(LocalDateTime localDateTime) {
-		int beginMonth = (getSeason(localDateTime) - 1) * 3 + 1;
+		int beginMonth = (getQuarter(localDateTime) - 1) * 3 + 1;
 		return getMonthBegin(LocalDateTime.of(localDateTime.getYear(), beginMonth, 1, 0, 0));
 	}
 
@@ -1027,7 +1056,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的所属季度的结束时间
 	 */
 	public static Date getSeasonEnd(Date date) {
-		int beginMonth = getSeason(date) * 3 - 1;
+		int beginMonth = getQuarter(date) * 3 - 1;
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.MONTH, beginMonth);
@@ -1041,7 +1070,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的所属季度的结束时间
 	 */
 	public static Date getSeasonEnd(LocalDateTime localDateTime) {
-		int beginMonth = getSeason(localDateTime) * 3;
+		int beginMonth = getQuarter(localDateTime) * 3;
 		return getMonthEnd(LocalDateTime.of(localDateTime.getYear(), beginMonth, 1, 0, 0));
 	}
 
@@ -1061,7 +1090,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的所属季度的结束时间
 	 */
 	public static LocalDateTime getSeasonEndLocal(Date date) {
-		return getSeasonEndLocal(date2Local(date));
+		return getSeasonEndLocal(toLocal(date));
 	}
 
 	/**
@@ -1071,7 +1100,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的所属季度的结束时间
 	 */
 	public static LocalDateTime getSeasonEndLocal(LocalDateTime localDateTime) {
-		int beginMonth = getSeason(localDateTime) * 3;
+		int beginMonth = getQuarter(localDateTime) * 3;
 		return getMonthEndLocal(LocalDateTime.of(localDateTime.getYear(), beginMonth, 1, 0, 0));
 	}
 
@@ -1081,7 +1110,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所属周的周一的开始时间
 	 */
 	public static Date getWeekBegin() {
-		return local2Date(getWeekBeginLocal(LocalDateTime.now()));
+		return toDate(getWeekBeginLocal(LocalDateTime.now()));
 	}
 
 	/**
@@ -1091,7 +1120,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所属周的周一的开始时间
 	 */
 	public static Date getWeekBegin(Date date) {
-		return local2Date(getWeekBeginLocal(date2Local(date)));
+		return toDate(getWeekBeginLocal(toLocal(date)));
 	}
 
 	/**
@@ -1102,7 +1131,7 @@ public interface DateTimeHelper {
 	 */
 	public static Date getWeekBegin(LocalDateTime localDateTime) {
 		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 1);
-		return local2Date(getDayBegin(with));
+		return toDate(getDayBegin(with));
 	}
 
 	/**
@@ -1121,7 +1150,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所属周的周一的开始时间
 	 */
 	public static LocalDateTime getWeekBeginLocal(Date date) {
-		return getWeekBeginLocal(date2Local(date));
+		return getWeekBeginLocal(toLocal(date));
 	}
 
 	/**
@@ -1142,7 +1171,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所属周的周天结束时间
 	 */
 	public static Date getWeekEnd(Date date) {
-		return local2Date(getWeekEndLocal(date2Local(date)));
+		return toDate(getWeekEndLocal(toLocal(date)));
 	}
 
 	/**
@@ -1153,7 +1182,7 @@ public interface DateTimeHelper {
 	 */
 	public static Date getWeekEnd(LocalDateTime localDateTime) {
 		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 7);
-		return local2Date(getDayEnd(with));
+		return toDate(getDayEnd(with));
 	}
 
 	/**
@@ -1162,7 +1191,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所属周的周天结束时间
 	 */
 	public static Date getWeekEndl() {
-		return local2Date(getWeekEndLocal(LocalDateTime.now()));
+		return toDate(getWeekEndLocal(LocalDateTime.now()));
 	}
 
 	/**
@@ -1181,7 +1210,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所属周的周天结束时间
 	 */
 	public static LocalDateTime getWeekEndLocal(Date date) {
-		return getWeekEndLocal(date2Local(date));
+		return getWeekEndLocal(toLocal(date));
 	}
 
 	/**
@@ -1201,7 +1230,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在年的开始时间
 	 */
 	public static Date getYearBegin() {
-		return local2Date(getYearBeginLocal());
+		return toDate(getYearBeginLocal());
 	}
 
 	/**
@@ -1211,7 +1240,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在年的开始时间
 	 */
 	public static Date getYearBegin(Date date) {
-		return local2Date(getYearBeginLocal(date2Local(date)));
+		return toDate(getYearBeginLocal(toLocal(date)));
 	}
 
 	/**
@@ -1222,7 +1251,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在年的开始时间
 	 */
 	public static Date getYearBegin(LocalDateTime localDateTime) {
-		return local2Date(getYearBeginLocal(localDateTime));
+		return toDate(getYearBeginLocal(localDateTime));
 	}
 
 	/**
@@ -1243,7 +1272,7 @@ public interface DateTimeHelper {
 	 */
 	public static LocalDateTime getYearBeginLocal(Date date) {
 		AssertHelper.notNull(date);
-		return LocalDateTime.of(date2Local(date).with(TemporalAdjusters.firstDayOfYear()).toLocalDate(), LocalTime.MIN);
+		return LocalDateTime.of(toLocal(date).with(TemporalAdjusters.firstDayOfYear()).toLocalDate(), LocalTime.MIN);
 	}
 
 	/**
@@ -1273,7 +1302,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在年的开始时间字符串
 	 */
 	public static String getYearBeginStr(Date date) {
-		return getYearBeginStr(date2Local(date), DEFAULT_FORMATTER);
+		return getYearBeginStr(toLocal(date), DEFAULT_FORMATTER);
 	}
 
 	/**
@@ -1284,7 +1313,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在年的开始时间字符串
 	 */
 	public static String getYearBeginStr(Date date, DateEnum dateFormat) {
-		LocalDateTime yearBeginLocal = getYearBeginLocal(date2Local(date));
+		LocalDateTime yearBeginLocal = getYearBeginLocal(toLocal(date));
 		return null == dateFormat
 				? DEFAULT_FORMATTER.format(yearBeginLocal)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(yearBeginLocal);
@@ -1298,7 +1327,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在年的开始时间字符串
 	 */
 	public static String getYearBeginStr(Date date, DateTimeFormatter dateTimeFormatter) {
-		LocalDateTime yearBeginLocal = getYearBeginLocal(date2Local(date));
+		LocalDateTime yearBeginLocal = getYearBeginLocal(toLocal(date));
 		return null == dateTimeFormatter
 				? DEFAULT_FORMATTER.format(yearBeginLocal) : dateTimeFormatter.format(yearBeginLocal);
 	}
@@ -1311,7 +1340,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在年的开始时间字符串
 	 */
 	public static String getYearBeginStr(Date date, String pattern) {
-		LocalDateTime yearBeginLocal = getYearBeginLocal(date2Local(date));
+		LocalDateTime yearBeginLocal = getYearBeginLocal(toLocal(date));
 		return StrHelper.isBlank(pattern)
 				? DEFAULT_FORMATTER.format(yearBeginLocal)
 				: DateTimeFormatter.ofPattern(pattern).format(yearBeginLocal);
@@ -1374,7 +1403,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在年的结束时间
 	 */
 	public static Date getYearEnd() {
-		return local2Date(getYearEndLocal());
+		return toDate(getYearEndLocal());
 	}
 
 	/**
@@ -1384,7 +1413,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在年的结束时间
 	 */
 	public static Date getYearEnd(Date date) {
-		return local2Date(getYearEndLocal(date2Local(date)));
+		return toDate(getYearEndLocal(toLocal(date)));
 	}
 
 	/**
@@ -1395,7 +1424,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在年的结束时间
 	 */
 	public static Date getYearEnd(LocalDateTime localDateTime) {
-		return local2Date(getYearEndLocal(localDateTime));
+		return toDate(getYearEndLocal(localDateTime));
 	}
 
 	/**
@@ -1416,7 +1445,7 @@ public interface DateTimeHelper {
 	 */
 	public static LocalDateTime getYearEndLocal(Date date) {
 		AssertHelper.notNull(date);
-		return LocalDateTime.of(date2Local(date).with(TemporalAdjusters.lastDayOfYear()).toLocalDate(), LocalTime.MAX);
+		return LocalDateTime.of(toLocal(date).with(TemporalAdjusters.lastDayOfYear()).toLocalDate(), LocalTime.MAX);
 	}
 
 	/**
@@ -1446,7 +1475,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在年的结束时间字符串
 	 */
 	public static String getYearEndStr(Date date) {
-		return getYearEndStr(date2Local(date), DEFAULT_FORMATTER);
+		return getYearEndStr(toLocal(date), DEFAULT_FORMATTER);
 	}
 
 	/**
@@ -1457,7 +1486,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在年的结束时间字符串
 	 */
 	public static String getYearEndStr(Date date, DateEnum dateFormat) {
-		LocalDateTime yearEndLocal = getYearEndLocal(date2Local(date));
+		LocalDateTime yearEndLocal = getYearEndLocal(toLocal(date));
 		return null == dateFormat
 				? DEFAULT_FORMATTER.format(yearEndLocal)
 				: DateTimeFormatter.ofPattern(dateFormat.getPattern()).format(yearEndLocal);
@@ -1471,7 +1500,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在年的结束时间字符串
 	 */
 	public static String getYearEndStr(Date date, DateTimeFormatter dateTimeFormatter) {
-		LocalDateTime yearEndLocal = getYearEndLocal(date2Local(date));
+		LocalDateTime yearEndLocal = getYearEndLocal(toLocal(date));
 		return null == dateTimeFormatter
 				? DEFAULT_FORMATTER.format(yearEndLocal) : dateTimeFormatter.format(yearEndLocal);
 	}
@@ -1484,7 +1513,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在年的结束时间字符串
 	 */
 	public static String getYearEndStr(Date date, String pattern) {
-		LocalDateTime yearEndLocal = getYearEndLocal(date2Local(date));
+		LocalDateTime yearEndLocal = getYearEndLocal(toLocal(date));
 		return StrHelper.isBlank(pattern)
 				? DEFAULT_FORMATTER.format(yearEndLocal) : DateTimeFormatter.ofPattern(pattern).format(yearEndLocal);
 	}
@@ -1567,7 +1596,7 @@ public interface DateTimeHelper {
 	public static boolean isAfter(Date date1) {
 		AssertHelper.notNull(date1);
 		LocalDateTime now = LocalDateTime.now();
-		return date2Local(date1).isAfter(now) || date2Local(date1).isEqual(now);
+		return toLocal(date1).isAfter(now) || toLocal(date1).isEqual(now);
 	}
 
 	/**
@@ -1580,7 +1609,7 @@ public interface DateTimeHelper {
 	public static boolean isAfter(Date date1, Date date2) {
 		AssertHelper.notNull(date1);
 		AssertHelper.notNull(date2);
-		return date2Local(date1).isAfter(date2Local(date2)) || date2Local(date1).isEqual(date2Local(date2));
+		return toLocal(date1).isAfter(toLocal(date2)) || toLocal(date1).isEqual(toLocal(date2));
 	}
 
 	/**
@@ -1592,7 +1621,7 @@ public interface DateTimeHelper {
 	public static boolean isBefore(Date date1) {
 		AssertHelper.notNull(date1);
 		LocalDateTime now = LocalDateTime.now();
-		return date2Local(date1).isBefore(now) || date2Local(date1).isEqual(now);
+		return toLocal(date1).isBefore(now) || toLocal(date1).isEqual(now);
 	}
 
 	/**
@@ -1605,7 +1634,7 @@ public interface DateTimeHelper {
 	public static boolean isBefore(Date date1, Date date2) {
 		AssertHelper.notNull(date1);
 		AssertHelper.notNull(date2);
-		return date2Local(date1).isBefore(date2Local(date2)) || date2Local(date1).isEqual(date2Local(date2));
+		return toLocal(date1).isBefore(toLocal(date2)) || toLocal(date1).isEqual(toLocal(date2));
 	}
 
 	/**
@@ -1615,7 +1644,7 @@ public interface DateTimeHelper {
 	 * @return true->是;false->否
 	 */
 	public static boolean isBirthday(Date birthday) {
-		return isBirthday(date2Local(birthday).toLocalDate());
+		return isBirthday(toLocal(birthday).toLocalDate());
 	}
 
 	/**
@@ -1629,12 +1658,23 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 将LocalDateTime类型转换为Date类型,此处时区无效
+	 * 将LocalDateTime类型转换为Date
 	 * 
 	 * @param localDateTime 需要进行转换的时间
-	 * @return 转换后的时间
+	 * @return 转换后的时间,和localDateTime时间相同
 	 */
-	public static Date local2Date(LocalDateTime localDateTime) {
+	public static Date toDate(LocalDateTime localDateTime) {
+		AssertHelper.notNull(localDateTime);
+		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+	}
+
+	/**
+	 * 将LocalDateTime类型转换为Date UTC时间
+	 * 
+	 * @param localDateTime 需要进行转换的时间
+	 * @return 转换后的时间,根据时区不同,和localDateTime不同
+	 */
+	public static Date toDateUtc(LocalDateTime localDateTime) {
 		AssertHelper.notNull(localDateTime);
 		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
@@ -1690,7 +1730,7 @@ public interface DateTimeHelper {
 	 * @return date对象
 	 */
 	public static Date parseDate(String date) {
-		return local2Date(parse(date + " 00:00:00"));
+		return toDate(parse(date + " 00:00:00"));
 	}
 
 	/**
@@ -1701,7 +1741,7 @@ public interface DateTimeHelper {
 	 * @return date对象
 	 */
 	public static Date parseDate(String dateTime, DateEnum pattern) {
-		return local2Date(parse(dateTime, pattern.getPattern()));
+		return toDate(parse(dateTime, pattern.getPattern()));
 	}
 
 	/**
@@ -1712,7 +1752,7 @@ public interface DateTimeHelper {
 	 * @return date对象
 	 */
 	public static Date parseDate(String dateTime, String pattern) {
-		return local2Date(parse(dateTime, pattern));
+		return toDate(parse(dateTime, pattern));
 	}
 
 	/**
@@ -1722,7 +1762,7 @@ public interface DateTimeHelper {
 	 * @return date对象
 	 */
 	public static Date parseDateTime(String dateTime) {
-		return local2Date(parse(dateTime));
+		return toDate(parse(dateTime));
 	}
 
 	/**
@@ -1734,7 +1774,7 @@ public interface DateTimeHelper {
 	 * @return 修改后的时间
 	 */
 	public static Date plusDate(Date date, long amount, TemporalUnit temporalUnit) {
-		return plusDate(date2Local(date), amount, temporalUnit);
+		return plusDate(toLocal(date), amount, temporalUnit);
 	}
 
 	/**
@@ -1749,7 +1789,7 @@ public interface DateTimeHelper {
 		AssertHelper.notNull(localDateTime);
 		AssertHelper.notNull(temporalUnit);
 		LocalDateTime newDateTime = localDateTime.plus(amount, temporalUnit);
-		return local2Date(newDateTime);
+		return toDate(newDateTime);
 	}
 
 	/**
@@ -1772,7 +1812,7 @@ public interface DateTimeHelper {
 	 * @return 修改后的时间
 	 */
 	public static LocalDateTime plusDateTime(Date date, long amount, TemporalUnit temporalUnit) {
-		return plusDateTime(date2Local(date), amount, temporalUnit);
+		return plusDateTime(toLocal(date), amount, temporalUnit);
 	}
 
 	/**
@@ -1807,7 +1847,7 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusDay(Date date1, long amount) {
-		return local2Date(date2Local(date1).plusDays(amount));
+		return toDate(toLocal(date1).plusDays(amount));
 	}
 
 	/**
@@ -1817,7 +1857,7 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusDay(long amount) {
-		return local2Date(date2Local(new Date()).plusDays(amount));
+		return toDate(toLocal(new Date()).plusDays(amount));
 	}
 
 	/**
@@ -1827,7 +1867,7 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusHour(Date date1, long amount) {
-		return local2Date(date2Local(date1).plusHours(amount));
+		return toDate(toLocal(date1).plusHours(amount));
 	}
 
 	/**
@@ -1837,7 +1877,7 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusHour(long amount) {
-		return local2Date(date2Local(new Date()).plusHours(amount));
+		return toDate(toLocal(new Date()).plusHours(amount));
 	}
 
 	/**
@@ -1847,7 +1887,7 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusMonth(Date date1, long amount) {
-		return local2Date(date2Local(date1).plusMonths(amount));
+		return toDate(toLocal(date1).plusMonths(amount));
 	}
 
 	/**
@@ -1857,7 +1897,7 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusMonth(long amount) {
-		return local2Date(date2Local(new Date()).plusMonths(amount));
+		return toDate(toLocal(new Date()).plusMonths(amount));
 	}
 
 	/**
@@ -1867,7 +1907,7 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusWeek(Date date1, long amount) {
-		return local2Date(date2Local(date1).plusWeeks(amount));
+		return toDate(toLocal(date1).plusWeeks(amount));
 	}
 
 	/**
@@ -1877,7 +1917,7 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusWeek(long amount) {
-		return local2Date(date2Local(new Date()).plusWeeks(amount));
+		return toDate(toLocal(new Date()).plusWeeks(amount));
 	}
 
 	/**
@@ -1887,7 +1927,7 @@ public interface DateTimeHelper {
 	 * @return true是,false否
 	 */
 	public static boolean sameMonth(Date date) {
-		return date2Local(date).get(ChronoField.MONTH_OF_YEAR) == LocalDate.now().get(ChronoField.MONTH_OF_YEAR);
+		return toLocal(date).get(ChronoField.MONTH_OF_YEAR) == LocalDate.now().get(ChronoField.MONTH_OF_YEAR);
 	}
 
 	/**
@@ -1897,7 +1937,7 @@ public interface DateTimeHelper {
 	 * @return true是,false否
 	 */
 	public static boolean sameMonth(Date date1, Date date2) {
-		return date2Local(date1).get(ChronoField.MONTH_OF_YEAR) == date2Local(date2).get(ChronoField.MONTH_OF_YEAR);
+		return toLocal(date1).get(ChronoField.MONTH_OF_YEAR) == toLocal(date2).get(ChronoField.MONTH_OF_YEAR);
 	}
 
 	/**
@@ -1920,8 +1960,8 @@ public interface DateTimeHelper {
 	 * @return true是,false否
 	 */
 	public static boolean sameMonthDay(Date date) {
-		return date2Local(date).get(ChronoField.MONTH_OF_YEAR) == LocalDate.now().get(ChronoField.MONTH_OF_YEAR)
-				&& date2Local(date).get(ChronoField.DAY_OF_MONTH) == LocalDate.now().get(ChronoField.DAY_OF_MONTH);
+		return toLocal(date).get(ChronoField.MONTH_OF_YEAR) == LocalDate.now().get(ChronoField.MONTH_OF_YEAR)
+				&& toLocal(date).get(ChronoField.DAY_OF_MONTH) == LocalDate.now().get(ChronoField.DAY_OF_MONTH);
 	}
 
 	/**
@@ -1932,8 +1972,8 @@ public interface DateTimeHelper {
 	 * @return true是,false否
 	 */
 	public static boolean sameMonthDay(Date date1, Date date2) {
-		return date2Local(date1).get(ChronoField.MONTH_OF_YEAR) == date2Local(date2).get(ChronoField.MONTH_OF_YEAR)
-				&& date2Local(date1).get(ChronoField.DAY_OF_MONTH) == date2Local(date2).get(ChronoField.DAY_OF_MONTH);
+		return toLocal(date1).get(ChronoField.MONTH_OF_YEAR) == toLocal(date2).get(ChronoField.MONTH_OF_YEAR)
+				&& toLocal(date1).get(ChronoField.DAY_OF_MONTH) == toLocal(date2).get(ChronoField.DAY_OF_MONTH);
 	}
 
 	/**
@@ -1970,7 +2010,7 @@ public interface DateTimeHelper {
 	 * @return true同一年,false不是
 	 */
 	public static boolean sameYear(Date date1, Date date2) {
-		return date2Local(date1).get(ChronoField.YEAR) == date2Local(date2).get(ChronoField.YEAR);
+		return toLocal(date1).get(ChronoField.YEAR) == toLocal(date2).get(ChronoField.YEAR);
 	}
 
 	/**
@@ -1996,7 +2036,7 @@ public interface DateTimeHelper {
 	 */
 	public static boolean sameYearMonth(Date date1, Date date2) {
 		return sameYear(date1, date2)
-				&& date2Local(date1).get(ChronoField.MONTH_OF_YEAR) == date2Local(date2).get(ChronoField.MONTH_OF_YEAR);
+				&& toLocal(date1).get(ChronoField.MONTH_OF_YEAR) == toLocal(date2).get(ChronoField.MONTH_OF_YEAR);
 	}
 
 	/**
@@ -2031,7 +2071,7 @@ public interface DateTimeHelper {
 	 */
 	public static boolean sameYearMonthDay(Date date1, Date date2) {
 		return sameYearMonth(date1, date2)
-				&& date2Local(date1).get(ChronoField.DAY_OF_MONTH) == date2Local(date2).get(ChronoField.DAY_OF_MONTH);
+				&& toLocal(date1).get(ChronoField.DAY_OF_MONTH) == toLocal(date2).get(ChronoField.DAY_OF_MONTH);
 	}
 
 	/**
@@ -2089,7 +2129,7 @@ public interface DateTimeHelper {
 	 * @return 天数相差数
 	 */
 	public static int spanDay(Date date) {
-		return Period.between(LocalDate.now(), date2Local(date).toLocalDate()).getDays();
+		return Period.between(LocalDate.now(), toLocal(date).toLocalDate()).getDays();
 	}
 
 	/**
@@ -2100,7 +2140,7 @@ public interface DateTimeHelper {
 	 * @return 天数相差数
 	 */
 	public static int spanDay(Date date1, Date date2) {
-		return Period.between(date2Local(date1).toLocalDate(), date2Local(date2).toLocalDate()).getDays();
+		return Period.between(toLocal(date1).toLocalDate(), toLocal(date2).toLocalDate()).getDays();
 	}
 
 	/**
@@ -2142,7 +2182,7 @@ public interface DateTimeHelper {
 	 * @return 月份相差数
 	 */
 	public static int spanMonth(Date date) {
-		return Period.between(LocalDate.now(), date2Local(date).toLocalDate()).getMonths();
+		return Period.between(LocalDate.now(), toLocal(date).toLocalDate()).getMonths();
 	}
 
 	/**
@@ -2153,7 +2193,7 @@ public interface DateTimeHelper {
 	 * @return 月份相差数
 	 */
 	public static int spanMonth(Date date1, Date date2) {
-		return Period.between(date2Local(date1).toLocalDate(), date2Local(date2).toLocalDate()).getMonths();
+		return Period.between(toLocal(date1).toLocalDate(), toLocal(date2).toLocalDate()).getMonths();
 	}
 
 	/**
@@ -2212,7 +2252,7 @@ public interface DateTimeHelper {
 	 * @return 年份相差数.大于0表示当前时间大于date1
 	 */
 	public static int spanYear(Date date1) {
-		return LocalDate.now().get(ChronoField.YEAR) - date2Local(date1).get(ChronoField.YEAR);
+		return LocalDate.now().get(ChronoField.YEAR) - toLocal(date1).get(ChronoField.YEAR);
 	}
 
 	/**
@@ -2223,7 +2263,7 @@ public interface DateTimeHelper {
 	 * @return 年份相差数.大于0表示date2大于date1
 	 */
 	public static int spanYear(Date date1, Date date2) {
-		return date2Local(date2).get(ChronoField.YEAR) - date2Local(date1).get(ChronoField.YEAR);
+		return toLocal(date2).get(ChronoField.YEAR) - toLocal(date1).get(ChronoField.YEAR);
 	}
 
 	/**
