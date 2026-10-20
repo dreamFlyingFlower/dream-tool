@@ -41,6 +41,7 @@ import dream.flying.flower.lang.StrHelper;
  * 2.toInstant():类似方法始终都获得的是从1970到现在的时间戳,与时区无关,只有Instant.now()才和时区相关,获得的是UTC时间
  * 3.{@link Date},{@link LocalDateTime}: 无时区时间,即获取到的时间就是本地时间,不会加减时区
  * 4.{@link ZonedDateTime}: 绑定时区的时间,转换时区时间和无时区时间
+ * 5.时区互转的方法,都会先转成Instant,然后再加上时区
  * </pre>
  * 
  * 
@@ -56,6 +57,16 @@ import dream.flying.flower.lang.StrHelper;
  * @git {@link https://github.com/dreamFlyingFlower}
  */
 public interface DateTimeHelper {
+
+	/**
+	 * UTC时区
+	 */
+	ZoneId ZONE_UTC = ZoneOffset.UTC;
+
+	/**
+	 * 默认本地时区
+	 */
+	ZoneId DEFAULT_ZONE = ZoneId.systemDefault();
 
 	/**
 	 * 默认格式化时间字符串HH:mm:ss,系统自带的{@link DateTimeFormatter#ISO_LOCAL_TIME}默认字符串带毫秒
@@ -1663,9 +1674,20 @@ public interface DateTimeHelper {
 	 * @param localDateTime 需要进行转换的时间
 	 * @return 转换后的时间,和localDateTime时间相同
 	 */
-	public static Date toDate(LocalDateTime localDateTime) {
+	static Date toDate(LocalDateTime localDateTime) {
 		AssertHelper.notNull(localDateTime);
-		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+		return toDate(localDateTime.atZone(DEFAULT_ZONE));
+	}
+
+	/**
+	 * ZonedDateTime 转 Date
+	 * 
+	 * @param zonedDateTime 带时区的时间
+	 * @return 转换后时间
+	 */
+	static Date toDate(ZonedDateTime zonedDateTime) {
+		AssertHelper.notNull(zonedDateTime);
+		return Date.from(zonedDateTime.toInstant());
 	}
 
 	/**
@@ -1674,7 +1696,7 @@ public interface DateTimeHelper {
 	 * @param localDateTime 需要进行转换的时间
 	 * @return 转换后的时间,根据时区不同,和localDateTime不同
 	 */
-	public static Date toDateUtc(LocalDateTime localDateTime) {
+	static Date toDateUtc(LocalDateTime localDateTime) {
 		AssertHelper.notNull(localDateTime);
 		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
@@ -2357,8 +2379,18 @@ public interface DateTimeHelper {
 	 * 
 	 * @return Instant UTC时间
 	 */
-	public static Instant toUtc() {
+	public static Instant toInstant() {
 		return Instant.now();
+	}
+
+	/**
+	 * 获取当前UTC时间
+	 * 
+	 * @param date 指定时间
+	 * @return ZonedDateTime 带时区的时间
+	 */
+	static ZonedDateTime toUtc(Date date) {
+		return date.toInstant().atZone(ZONE_UTC);
 	}
 
 	/**
@@ -2407,7 +2439,7 @@ public interface DateTimeHelper {
 	 * @return LocalDateTime UTC时间
 	 */
 	public static LocalDateTime toUtcDateTime() {
-		return LocalDateTime.now(ZoneOffset.UTC);
+		return LocalDateTime.now(ZONE_UTC);
 	}
 
 	/**
@@ -2417,8 +2449,7 @@ public interface DateTimeHelper {
 	 * @return LocalDateTime UTC时间
 	 */
 	public static LocalDateTime toUtcDateTime(LocalDateTime localDateTime) {
-		ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
-		return LocalDateTime.ofInstant(zonedDateTime.toInstant(), ZoneOffset.UTC);
+		return toUtcDateTime(localDateTime, DEFAULT_ZONE);
 	}
 
 	/**
@@ -2428,9 +2459,11 @@ public interface DateTimeHelper {
 	 * @param zoneOffset 时区
 	 * @return LocalDateTime UTC时间
 	 */
-	public static LocalDateTime toUtcDateTime(LocalDateTime localDateTime, ZoneOffset zoneOffset) {
-		ZonedDateTime zonedDateTime = localDateTime.atZone(zoneOffset);
-		return LocalDateTime.ofInstant(zonedDateTime.toInstant(), ZoneOffset.UTC);
+	public static LocalDateTime toUtcDateTime(LocalDateTime localDateTime, ZoneId zoneId) {
+		// ZonedDateTime zdt = ZonedDateTime.of(localDateTime, DEFAULT_ZONE);
+		// return zdt.withZoneSameInstant(ZONE_UTC).toLocalDateTime();
+
+		return toUtcDateTime(localDateTime.atZone(zoneId));
 	}
 
 	/**
@@ -2440,8 +2473,7 @@ public interface DateTimeHelper {
 	 * @return LocalDateTime UTC时间
 	 */
 	public static LocalDateTime toUtcDateTime(String localDateTime) {
-		ZonedDateTime zonedDateTime = parse(localDateTime).atZone(ZoneId.systemDefault());
-		return LocalDateTime.ofInstant(zonedDateTime.toInstant(), ZoneOffset.UTC);
+		return toUtcDateTime(parse(localDateTime));
 	}
 
 	/**
@@ -2451,8 +2483,7 @@ public interface DateTimeHelper {
 	 * @return LocalDateTime UTC时间
 	 */
 	public static LocalDateTime toUtcDateTime(ZonedDateTime zonedDateTime) {
-		Instant instant = zonedDateTime.toInstant();
-		return LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+		return LocalDateTime.ofInstant(zonedDateTime.toInstant(), ZONE_UTC);
 	}
 
 	/**
@@ -2460,7 +2491,7 @@ public interface DateTimeHelper {
 	 * 
 	 * @return LocalTime UTC时间
 	 */
-	public static LocalTime toUtcTime() {
+	static LocalTime toUtcTime() {
 		return LocalDateTime.now(ZoneOffset.UTC).toLocalTime();
 	}
 
@@ -2470,7 +2501,7 @@ public interface DateTimeHelper {
 	 * @param localDateTime 指定时间
 	 * @return LocalTime UTC时间
 	 */
-	public static LocalTime toUtcTime(LocalDateTime localDateTime) {
+	static LocalTime toUtcTime(LocalDateTime localDateTime) {
 		return toUtcDateTime(localDateTime).toLocalTime();
 	}
 
@@ -2481,7 +2512,7 @@ public interface DateTimeHelper {
 	 * @param zoneOffset 时区
 	 * @return LocalTime UTC时间
 	 */
-	public static LocalTime toUtcTime(LocalDateTime localDateTime, ZoneOffset zoneOffset) {
+	static LocalTime toUtcTime(LocalDateTime localDateTime, ZoneOffset zoneOffset) {
 		return toUtcDateTime(localDateTime, zoneOffset).toLocalTime();
 	}
 
@@ -2491,7 +2522,7 @@ public interface DateTimeHelper {
 	 * @param zonedDateTime 时区时间
 	 * @return LocalTime UTC时间
 	 */
-	public static LocalTime toUtcTime(ZonedDateTime zonedDateTime) {
+	static LocalTime toUtcTime(ZonedDateTime zonedDateTime) {
 		return toUtcDateTime(zonedDateTime).toLocalTime();
 	}
 
@@ -2503,7 +2534,7 @@ public interface DateTimeHelper {
 	 * @param endTime 结束时间
 	 * @return true->是;false->否
 	 */
-	public static Boolean betweenDate(Instant nowTime, Instant beginTime, Instant endTime) {
+	static Boolean betweenDate(Instant nowTime, Instant beginTime, Instant endTime) {
 		return nowTime.isAfter(beginTime) && nowTime.isBefore(endTime);
 	}
 
@@ -2513,7 +2544,32 @@ public interface DateTimeHelper {
 	 * @param zoneId 时区
 	 * @return 转换后的时区
 	 */
-	public static ZonedDateTime convertZone(String zoneId) {
-		return ZonedDateTime.now(ZoneId.of(zoneId));
+	static ZonedDateTime toZone(String zoneId) {
+		return toZone(ZoneId.of(zoneId));
+	}
+
+	/**
+	 * 时区转换.支持的时区通过ZoneId.getAvailableZoneIds()查看
+	 * 
+	 * @param zoneId 时区
+	 * @return 转换后的时区
+	 */
+	static ZonedDateTime toZone(ZoneId zoneId) {
+		return ZonedDateTime.now(zoneId);
+	}
+
+	/**
+	 * 将时间在2个时区之间互转
+	 * 
+	 * @param localDateTime 时间,不带时区
+	 * @param sourceZone 来源时区
+	 * @param targetZone 目标时区
+	 * @return 转换后时区
+	 */
+	static LocalDateTime toZone(LocalDateTime localDateTime, ZoneId sourceZone, ZoneId targetZone) {
+		if (localDateTime == null || sourceZone == null || targetZone == null) {
+			return null;
+		}
+		return ZonedDateTime.of(localDateTime, sourceZone).withZoneSameInstant(targetZone).toLocalDateTime();
 	}
 }
