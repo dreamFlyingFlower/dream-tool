@@ -10,7 +10,6 @@ import java.time.Period;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalUnit;
@@ -28,7 +27,7 @@ public class DateTimeHelper2 {
 	/**
 	 * 默认业务时区：东八区
 	 */
-	public static final ZoneId DEFAULT_BUSINESS_ZONE = ZoneId.of("Asia/Shanghai");
+	public static final ZoneId DEFAULT_BUSINESS_ZONE = ZoneId.systemDefault();
 
 	// ===================== 时间格式常量 =====================
 	public static final DateTimeFormatter FORMAT_YYYY_MM_DD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -48,99 +47,6 @@ public class DateTimeHelper2 {
 	// ===================== 转换基础方法 =====================
 
 	/**
-	 * 计算两个时间之间的间隔
-	 *
-	 * @param start 开始时间
-	 * @param end 结束时间
-	 * @param unit 单位 ChronoUnit.DAYS / HOURS / MINUTES / SECONDS
-	 * @return 差值，end - start，负数代表end早于start
-	 */
-	public static long between(Temporal start, Temporal end, ChronoUnit unit) {
-		Objects.requireNonNull(start);
-		Objects.requireNonNull(end);
-		Objects.requireNonNull(unit);
-		return unit.between(start, end);
-	}
-
-	/**
-	 * 计算相差天数
-	 *
-	 * @param start 开始
-	 * @param end 结束
-	 * @return 天数差值
-	 */
-	public static long betweenDays(LocalDateTime start, LocalDateTime end) {
-		return between(start, end, ChronoUnit.DAYS);
-	}
-
-	/**
-	 * 计算相差小时
-	 *
-	 * @param start 开始
-	 * @param end 结束
-	 * @return 小时差值
-	 */
-	public static long betweenHours(LocalDateTime start, LocalDateTime end) {
-		return between(start, end, ChronoUnit.HOURS);
-	}
-
-	/**
-	 * 计算相差毫秒
-	 *
-	 * @param start 开始
-	 * @param end 结束
-	 * @return 毫秒差值
-	 */
-	public static long betweenMilli(LocalDateTime start, LocalDateTime end, ZoneId zoneId) {
-		Objects.requireNonNull(start);
-		Objects.requireNonNull(end);
-		Objects.requireNonNull(zoneId);
-		long sMilli = start.atZone(zoneId).toInstant().toEpochMilli();
-		long eMilli = end.atZone(zoneId).toInstant().toEpochMilli();
-		return eMilli - sMilli;
-	}
-
-	/**
-	 * 计算相差分钟
-	 *
-	 * @param start 开始
-	 * @param end 结束
-	 * @return 分钟差值
-	 */
-	public static long betweenMinutes(LocalDateTime start, LocalDateTime end) {
-		return between(start, end, ChronoUnit.MINUTES);
-	}
-
-	/**
-	 * 计算相差秒
-	 *
-	 * @param start 开始
-	 * @param end 结束
-	 * @return 秒差值
-	 */
-	public static long betweenSeconds(LocalDateTime start, LocalDateTime end) {
-		return between(start, end, ChronoUnit.SECONDS);
-	}
-
-	/**
-	 * 获取当前时间戳（毫秒）
-	 *
-	 * @return 当前毫秒时间戳
-	 */
-	public static long currentMilli() {
-		return System.currentTimeMillis();
-	}
-
-	/**
-	 * 获取当前时间戳（秒）
-	 *
-	 * @return 当前秒级时间戳
-	 */
-	public static long currentSecond() {
-		return System.currentTimeMillis() / 1000;
-	}
-
-	/**
 	 * LocalDate -> LocalDateTime 23:59:59.999999999
 	 */
 	public static LocalDateTime endOfDay(LocalDate localDate) {
@@ -148,33 +54,6 @@ public class DateTimeHelper2 {
 			return null;
 		}
 		return LocalDateTime.of(localDate, LocalTime.MAX);
-	}
-
-	public static String format(Date date, DateTimeFormatter formatter) {
-		if (date == null)
-			return null;
-		return toLocal(date).format(formatter);
-	}
-
-	// ===================== 格式化输出 =====================
-	public static String format(LocalDate localDate, DateTimeFormatter formatter) {
-		if (localDate == null)
-			return null;
-		return localDate.format(formatter);
-	}
-
-	public static String format(LocalDateTime localDateTime, DateTimeFormatter formatter) {
-		if (localDateTime == null)
-			return null;
-		return localDateTime.format(formatter);
-	}
-
-	public static String formatYmd(LocalDate localDate) {
-		return format(localDate, FORMAT_YYYY_MM_DD);
-	}
-
-	public static String formatYmdHms(LocalDateTime localDateTime) {
-		return format(localDateTime, FORMAT_YYYY_MM_DD_HH_MM_SS);
 	}
 
 	/**

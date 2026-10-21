@@ -121,6 +121,18 @@ public interface DateTimeHelper {
 	}
 
 	/**
+	 * 判断指定时间是否在2个时间之间
+	 * 
+	 * @param nowTime 待判断时间
+	 * @param beginTime 开始时间
+	 * @param endTime 结束时间
+	 * @return true->是;false->否
+	 */
+	static Boolean betweenDate(Instant nowTime, Instant beginTime, Instant endTime) {
+		return nowTime.isAfter(beginTime) && nowTime.isBefore(endTime);
+	}
+
+	/**
 	 * 将Date转换成指定格式字符串
 	 * 
 	 * @param date 时间
@@ -2145,12 +2157,84 @@ public interface DateTimeHelper {
 	}
 
 	/**
+	 * 计算两个时间之间的间隔,和Peroid不同,会直接转换为相同单位后计算
+	 *
+	 * @param start 开始时间
+	 * @param end 结束时间
+	 * @param unit 单位
+	 * @return 差值,end - start,负数代表end早于start
+	 */
+	static long between(Temporal start, Temporal end, ChronoUnit unit) {
+		Objects.requireNonNull(start);
+		Objects.requireNonNull(end);
+		Objects.requireNonNull(unit);
+		return unit.between(start, end);
+	}
+
+	/**
+	 * 计算相差天数
+	 *
+	 * @param start 开始
+	 * @param end 结束
+	 * @return 天数差值
+	 */
+	public static long betweenDays(LocalDateTime start, LocalDateTime end) {
+		return between(start, end, ChronoUnit.DAYS);
+	}
+
+	/**
+	 * 计算相差小时
+	 *
+	 * @param start 开始
+	 * @param end 结束
+	 * @return 小时差值
+	 */
+	public static long betweenHours(LocalDateTime start, LocalDateTime end) {
+		return between(start, end, ChronoUnit.HOURS);
+	}
+
+	/**
+	 * 计算相差毫秒
+	 *
+	 * @param start 开始
+	 * @param end 结束
+	 * @return 毫秒差值
+	 */
+	public static long betweenMilli(LocalDateTime start, LocalDateTime end) {
+		Objects.requireNonNull(start);
+		Objects.requireNonNull(end);
+		return between(start, end, ChronoUnit.MILLIS);
+	}
+
+	/**
+	 * 计算相差分钟
+	 *
+	 * @param start 开始
+	 * @param end 结束
+	 * @return 分钟差值
+	 */
+	public static long betweenMinutes(LocalDateTime start, LocalDateTime end) {
+		return between(start, end, ChronoUnit.MINUTES);
+	}
+
+	/**
+	 * 计算相差秒
+	 *
+	 * @param start 开始
+	 * @param end 结束
+	 * @return 秒差值
+	 */
+	public static long betweenSeconds(LocalDateTime start, LocalDateTime end) {
+		return between(start, end, ChronoUnit.SECONDS);
+	}
+
+	/**
 	 * 获得当前时间和指定时间之间相差的天数{@link #spanMonth(LocalDate, LocalDate)}
 	 * 
 	 * @param date 指定时间,可以是未来的,也可以是过去的.
 	 * @return 天数相差数
 	 */
-	public static int spanDay(Date date) {
+	static int spanDay(Date date) {
 		return Period.between(LocalDate.now(), toLocal(date).toLocalDate()).getDays();
 	}
 
@@ -2161,7 +2245,7 @@ public interface DateTimeHelper {
 	 * @param date2 时间2
 	 * @return 天数相差数
 	 */
-	public static int spanDay(Date date1, Date date2) {
+	static int spanDay(Date date1, Date date2) {
 		return Period.between(toLocal(date1).toLocalDate(), toLocal(date2).toLocalDate()).getDays();
 	}
 
@@ -2171,7 +2255,7 @@ public interface DateTimeHelper {
 	 * @param date 指定时间,可以是未来的,也可以是过去的
 	 * @return 天数相差数
 	 */
-	public static int spanDay(LocalDate date) {
+	static int spanDay(LocalDate date) {
 		return Period.between(LocalDate.now(), date).getDays();
 	}
 
@@ -2182,7 +2266,7 @@ public interface DateTimeHelper {
 	 * @param date2 时间2
 	 * @return 天数相差数
 	 */
-	public static int spanDay(LocalDate date1, LocalDate date2) {
+	static int spanDay(LocalDate date1, LocalDate date2) {
 		return Period.between(date1, date2).getDays();
 	}
 
@@ -2229,17 +2313,20 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 获得date1到date2相差的月数,年份,月份,天数都需要根据情况比较,情况复杂,慎用
+	 * 获得date1到date2相差的月数,只有需要完整的年月日才使用,否则容易出现错误
+	 * 
+	 * date2的年月大于date1,得到的是正数,当date2的年月小于date1时,取大于时的负数即可
+	 * 
+	 * 并不会单纯的将时间都换算成年/月/日计算,而是分开计算,如:
 	 * 
 	 * <pre>
-	 * date2的年月大于date1,得到的是正数,当date2的年月小于date1时,取大于时的负数即可
-	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 3, 1))		=0
-	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 3, 5))		=0
-	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 5, 5))		=2
-	 * 	spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 5, 1))		=1
-	 * 	spanMonth(LocalDate.of(2000, 7, 5), LocalDate.of(2021, 5, 8))	=10
+	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 3, 1))		=0;同月
+	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 3, 5))		=0;同月
+	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 5, 5))		=2;日和月都够
+	 * 	spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 5, 1))		=1;月够2,但是日不够1整个月,只能为1
+	 * 	spanMonth(LocalDate.of(2000, 7, 5), LocalDate.of(2021, 5, 8))		=10;如果看年,就不为10,应该是200多
 	 * 	spanMonth(LocalDate.of(2000, 7, 5), LocalDate.of(2021, 5, 1))		=9
-	 * 	spanMonth(LocalDate.of(2000, 3, 5), LocalDate.of(2021, 5, 5))	=2
+	 * 	spanMonth(LocalDate.of(2000, 3, 5), LocalDate.of(2021, 5, 5))		=2
 	 * 	spanMonth(LocalDate.of(2000, 3, 5), LocalDate.of(2021, 5, 1))		=1
 	 * </pre>
 	 * 
@@ -2249,6 +2336,11 @@ public interface DateTimeHelper {
 	 */
 	public static int spanMonth(LocalDate date1, LocalDate date2) {
 		return Period.between(date1, date2).getMonths();
+	}
+
+	public static void main(String[] args) {
+		System.out.println(Period.between(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 1, 5)).getMonths());
+		System.out.println(Period.between(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 5, 1)).getMonths());
 	}
 
 	/**
@@ -2527,18 +2619,6 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 判断指定时间是否在2个时间之间
-	 * 
-	 * @param nowTime 待判断时间
-	 * @param beginTime 开始时间
-	 * @param endTime 结束时间
-	 * @return true->是;false->否
-	 */
-	static Boolean betweenDate(Instant nowTime, Instant beginTime, Instant endTime) {
-		return nowTime.isAfter(beginTime) && nowTime.isBefore(endTime);
-	}
-
-	/**
 	 * 时区转换.支持的时区通过ZoneId.getAvailableZoneIds()查看
 	 * 
 	 * @param zoneId 时区
@@ -2564,12 +2644,23 @@ public interface DateTimeHelper {
 	 * @param localDateTime 时间,不带时区
 	 * @param sourceZone 来源时区
 	 * @param targetZone 目标时区
-	 * @return 转换后时区
+	 * @return 转换后时间
 	 */
 	static LocalDateTime toZone(LocalDateTime localDateTime, ZoneId sourceZone, ZoneId targetZone) {
 		if (localDateTime == null || sourceZone == null || targetZone == null) {
 			return null;
 		}
 		return ZonedDateTime.of(localDateTime, sourceZone).withZoneSameInstant(targetZone).toLocalDateTime();
+	}
+
+	/**
+	 * 将UTC时间转换为本地时间
+	 * 
+	 * @param localDateTime 时间,不带时区
+	 * @return 转换后时间
+	 */
+	static LocalDateTime utc2local(LocalDateTime localDateTime) {
+		AssertHelper.notNull(localDateTime);
+		return toZone(localDateTime, ZONE_UTC, DEFAULT_ZONE);
 	}
 }
