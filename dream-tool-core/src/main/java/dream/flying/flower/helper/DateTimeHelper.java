@@ -25,7 +25,9 @@ import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import dream.flying.flower.annotation.Example;
@@ -37,19 +39,25 @@ import dream.flying.flower.lang.StrHelper;
  * {@link LocalDateTime}等工具类,jdk1.8的时间类工具类,和DateHelper差不多
  * 
  * <pre>
- * 1.当直接输出LocalTime.toString()时,类似XX:00:00将不会输出秒,只会输出XX:00,不要直接输出或使用toString()
- * 2.toInstant():类似方法始终都获得的是从1970到现在的时间戳,与时区无关,只有Instant.now()才和时区相关,获得的是UTC时间
- * 3.{@link Date},{@link LocalDateTime}: 无时区时间,即获取到的时间就是本地时间,不会加减时区
- * 4.{@link ZonedDateTime}: 绑定时区的时间,转换时区时间和无时区时间
- * 5.时区互转的方法,都会先转成Instant,然后再加上时区
+ * {@link Instant}: UTC 时间线,直接记录从 1970-01-01T00:00:00Z(UTC)开始的秒 + 纳秒
+ * {@link Date}: 毫秒精度的 UTC 绝对时间点,不带时区
+ * ->{@link Date#toInstant()}:转成Instant,不带时区
+ * ->{@link Date#toString()}:默认会将UTC转成当前时区之后再输出本地时间,已经处理了时区
+ * {@link LocalDateTime}: 无时区时间,即获取到的时间就是本地时间,不会加减时区
+ * {@link LocalTime#toString() , LocalTime#MIN , LocalTime.of(0, 0, 0), LocalDate#atStartOfDay()}: 
+ * 	输出类似XX:00:00不会输出秒,只会输出XX:00,非0秒的会输出.如果要输出完整的0秒,字符串需要自己格式化
+ * {@link ZonedDateTime}: 绑定时区的时间,转换时区时间和无时区时间
+ * {@link TemporalAdjusters}: 静态时间调整器,配合 with(adjuster) 修正日期,自动处理闰年,大小月,比手写 withMonth/withDayOfMonth 稳妥
+ * ->{@link TemporalAdjusters#next(DayOfWeek)}: 下一个周几
+ * ->{@link TemporalAdjusters#previous(DayOfWeek)}: 上一个周几
  * </pre>
- * 
  * 
  * 时区:
  * 
  * <pre>
  * UTC: 标准时间,所有时区的基准点
  * 时区时间: 以UTC为基准的偏移时间,如Asia/Shanghai时区就是在UTC时间上+8小时,即UTC时间是4点,上海12点
+ * GMT: 本质上可UTC没区别,只是常用来表示天文时间
  * </pre>
  * 
  * @author 飞花梦影
@@ -109,27 +117,75 @@ public interface DateTimeHelper {
 			.toFormatter();
 
 	/**
-	 * 将Date转换为LocalDateTime
-	 * 
-	 * @param date 需要进行转换的时间
-	 * @return 转换后的时间,和date时间相同
+	 * 计算两个时间之间的间隔,和Peroid不同,会直接转换为相同单位后计算
+	 *
+	 * @param start 开始时间
+	 * @param end 结束时间
+	 * @param unit 单位
+	 * @return 差值,end - start,负数代表end早于start
 	 */
-	public static LocalDateTime toLocal(Date date) {
-		AssertHelper.notNull(date);
-		// date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-		return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+	static long between(Temporal start, Temporal end, ChronoUnit unit) {
+		Objects.requireNonNull(start);
+		Objects.requireNonNull(end);
+		Objects.requireNonNull(unit);
+		return unit.between(start, end);
 	}
 
 	/**
-	 * 判断指定时间是否在2个时间之间
-	 * 
-	 * @param nowTime 待判断时间
-	 * @param beginTime 开始时间
-	 * @param endTime 结束时间
-	 * @return true->是;false->否
+	 * 计算相差天数
+	 *
+	 * @param start 开始
+	 * @param end 结束
+	 * @return 天数差值
 	 */
-	static Boolean betweenDate(Instant nowTime, Instant beginTime, Instant endTime) {
-		return nowTime.isAfter(beginTime) && nowTime.isBefore(endTime);
+	public static long betweenDays(LocalDateTime start, LocalDateTime end) {
+		return between(start, end, ChronoUnit.DAYS);
+	}
+
+	/**
+	 * 计算相差小时
+	 *
+	 * @param start 开始
+	 * @param end 结束
+	 * @return 小时差值
+	 */
+	public static long betweenHours(LocalDateTime start, LocalDateTime end) {
+		return between(start, end, ChronoUnit.HOURS);
+	}
+
+	/**
+	 * 计算相差毫秒
+	 *
+	 * @param start 开始
+	 * @param end 结束
+	 * @return 毫秒差值
+	 */
+	public static long betweenMilli(LocalDateTime start, LocalDateTime end) {
+		Objects.requireNonNull(start);
+		Objects.requireNonNull(end);
+		return between(start, end, ChronoUnit.MILLIS);
+	}
+
+	/**
+	 * 计算相差分钟
+	 *
+	 * @param start 开始
+	 * @param end 结束
+	 * @return 分钟差值
+	 */
+	public static long betweenMinutes(LocalDateTime start, LocalDateTime end) {
+		return between(start, end, ChronoUnit.MINUTES);
+	}
+
+	/**
+	 * 计算相差秒
+	 *
+	 * @param start 开始
+	 * @param end 结束
+	 * @return 秒差值
+	 */
+	public static long betweenSeconds(LocalDateTime start, LocalDateTime end) {
+		return between(start, end, ChronoUnit.SECONDS);
 	}
 
 	/**
@@ -389,7 +445,7 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 获得指定时间所在日期的零点时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 获得指定时间所在日期的零点时间,但是toString()不会显示秒和纳秒,需要强制格式化为yyyy-MM-dd HH:mm:ss
 	 * 
 	 * @param date 指定时间
 	 * @return 当前时间所在日期零点时间
@@ -399,7 +455,17 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 获得指定时间所在日期的零点时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-12 00:00:00
+	 * 获得指定时间所在日期的零点时间,但是toString()不会显示秒和纳秒,需要强制格式化为yyyy-MM-dd HH:mm:ss
+	 * 
+	 * @param localDate 指定时间
+	 * @return 当前时间所在日期零点时间
+	 */
+	public static LocalDateTime getDayBegin(LocalDate localDate) {
+		return localDate.atStartOfDay();
+	}
+
+	/**
+	 * 获得指定时间所在日期的零点时间,但是toString()不会显示秒和纳秒,需要强制格式化为yyyy-MM-dd HH:mm:ss
 	 * 
 	 * @param localDateTime 指定时间
 	 * @return 当前时间所在日期零点时间
@@ -745,8 +811,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在月的开始时间
 	 */
 	public static Date getMonthBegin() {
-		return toDate(LocalDateTime.of(LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),
-				LocalTime.MIN));
+		return toDate(LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay());
 	}
 
 	/**
@@ -756,8 +821,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的开始时间
 	 */
 	public static Date getMonthBegin(Date date) {
-		return toDate(
-				LocalDateTime.of(toLocal(date).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(), LocalTime.MIN));
+		return toDate(toLocal(date).toLocalDate().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay());
 	}
 
 	/**
@@ -767,38 +831,85 @@ public interface DateTimeHelper {
 	 * @return 指定时间所在月的开始时间
 	 */
 	public static Date getMonthBegin(LocalDateTime localDateTime) {
-		return toDate(
-				LocalDateTime.of(localDateTime.with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(), LocalTime.MIN));
+		return toDate(localDateTime.with(TemporalAdjusters.firstDayOfMonth()).toLocalDate().atStartOfDay());
 	}
 
 	/**
-	 * 获得当前时间所在月的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-01 00:00:00
+	 * 获得当前时间所在月的开始时间,格式为yyyy-MM-dd HH:mm,如2020-12-01 00:00
 	 * 
 	 * @return 当前时间所在月的开始时间
 	 */
 	public static LocalDateTime getMonthBeginLocal() {
-		return LocalDateTime.of(LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(),
-				LocalTime.MIN);
+		return LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay();
 	}
 
 	/**
-	 * 获得指定时间所在月的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-01 00:00:00
+	 * 获得指定时间所在月的开始时间,格式为yyyy-MM-dd HH:mm,如2020-12-01 00:00
 	 * 
 	 * @param date 指定时间
 	 * @return 指定时间所在月的开始时间
 	 */
-	public static LocalDateTime getMonthBeginLocal(Date date) {
-		return LocalDateTime.of(toLocal(date).with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(), LocalTime.MIN);
+	static LocalDateTime getMonthBeginLocal(Date date) {
+		return getMonthBeginLocal(toLocal(date));
 	}
 
 	/**
-	 * 获得指定时间所在月的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-12-01 00:00:00
+	 * 获得指定时间所在月的开始时间,格式为yyyy-MM-dd HH:mm,如2020-12-01 00:00
 	 * 
 	 * @param localDateTime 指定时间
 	 * @return 指定时间所在月的开始时间
 	 */
-	public static LocalDateTime getMonthBeginLocal(LocalDateTime localDateTime) {
-		return LocalDateTime.of(localDateTime.with(TemporalAdjusters.firstDayOfMonth()).toLocalDate(), LocalTime.MIN);
+	static LocalDateTime getMonthBeginLocal(LocalDateTime localDateTime) {
+		return localDateTime.with(TemporalAdjusters.firstDayOfMonth()).toLocalDate().atStartOfDay();
+	}
+
+	/**
+	 * 获取当前时间的当月总天数
+	 *
+	 * @return 当月天数
+	 */
+	static int getMonthDays() {
+		return LocalDate.now().lengthOfMonth();
+	}
+
+	/**
+	 * 获取当前时间的当月总天数
+	 *
+	 * @return 当月天数
+	 */
+	static int getMonthDays(Date date) {
+		return toLocal(date).toLocalDate().lengthOfMonth();
+	}
+
+	/**
+	 * 获取指定年月的当月总天数
+	 *
+	 * @param year 年
+	 * @param month 月
+	 * @return 当月天数
+	 */
+	static int getMonthDays(int year, int month) {
+		return YearMonth.of(year, month).lengthOfMonth();
+	}
+
+	/**
+	 * 获取指定时间的当月总天数
+	 *
+	 * @param localDate 待判断时间
+	 * @return 当月天数
+	 */
+	static int getMonthDays(LocalDate localDate) {
+		return localDate.lengthOfMonth();
+	}
+
+	/**
+	 * 获取指定时间的当月总天数
+	 *
+	 * @param localDateTime 待判断时间
+	 * @return 当月天数
+	 */
+	static int getMonthDays(LocalDateTime localDateTime) {
+		return localDateTime.toLocalDate().lengthOfMonth();
 	}
 
 	/**
@@ -806,7 +917,7 @@ public interface DateTimeHelper {
 	 * 
 	 * @return 当前时间所在月的结束时间
 	 */
-	public static Date getMonthEnd() {
+	static Date getMonthEnd() {
 		return toDate(getMonthEndLocal());
 	}
 
@@ -816,7 +927,7 @@ public interface DateTimeHelper {
 	 * @param date 指定时间
 	 * @return 指定时间所在月的结束时间
 	 */
-	public static Date getMonthEnd(Date date) {
+	static Date getMonthEnd(Date date) {
 		return toDate(getMonthEndLocal(date));
 	}
 
@@ -836,8 +947,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所在月的结束时间
 	 */
 	public static LocalDateTime getMonthEndLocal() {
-		return LocalDateTime.of(LocalDateTime.now().with(TemporalAdjusters.lastDayOfMonth()).toLocalDate(),
-				LocalTime.MAX);
+		return LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
 	}
 
 	/**
@@ -848,7 +958,7 @@ public interface DateTimeHelper {
 	 */
 	public static LocalDateTime getMonthEndLocal(Date date) {
 		AssertHelper.notNull(date);
-		return LocalDateTime.of(toLocal(date).with(TemporalAdjusters.lastDayOfMonth()).toLocalDate(), LocalTime.MAX);
+		return getMonthEndLocal(toLocal(date));
 	}
 
 	/**
@@ -859,7 +969,7 @@ public interface DateTimeHelper {
 	 */
 	public static LocalDateTime getMonthEndLocal(LocalDateTime localDateTime) {
 		AssertHelper.notNull(localDateTime);
-		return LocalDateTime.of(localDateTime.with(TemporalAdjusters.lastDayOfMonth()).toLocalDate(), LocalTime.MAX);
+		return localDateTime.with(TemporalAdjusters.lastDayOfMonth()).toLocalDate().atTime(LocalTime.MAX);
 	}
 
 	/**
@@ -968,24 +1078,6 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 获取季度第一天
-	 */
-	public static LocalDate getQuarterStart(LocalDate date) {
-		int q = getQuarter(date);
-		int startMonth = (q - 1) * 3 + 1;
-		return LocalDate.of(date.getYear(), startMonth, 1);
-	}
-
-	/**
-	 * 获取季度最后一天
-	 */
-	public static LocalDate getQuarterEnd(LocalDate date) {
-		int q = getQuarter(date);
-		int endMonth = q * 3;
-		return LocalDate.of(date.getYear(), endMonth, 1).plusMonths(1).minusDays(1);
-	}
-
-	/**
 	 * 判断指定时间所属季度
 	 * 
 	 * @param date 指定时间
@@ -1027,6 +1119,24 @@ public interface DateTimeHelper {
 	public static int getQuarter(LocalDateTime localDateTime) {
 		int m = localDateTime.getMonthValue();
 		return (m - 1) / 3 + 1;
+	}
+
+	/**
+	 * 获取季度最后一天
+	 */
+	public static LocalDate getQuarterEnd(LocalDate date) {
+		int q = getQuarter(date);
+		int endMonth = q * 3;
+		return LocalDate.of(date.getYear(), endMonth, 1).plusMonths(1).minusDays(1);
+	}
+
+	/**
+	 * 获取季度第一天
+	 */
+	public static LocalDate getQuarterStart(LocalDate date) {
+		int q = getQuarter(date);
+		int startMonth = (q - 1) * 3 + 1;
+		return LocalDate.of(date.getYear(), startMonth, 1);
 	}
 
 	/**
@@ -1167,7 +1277,7 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 获得指定时间所属周的周一开始时间
+	 * 获得指定时间所属周的周一开始的零点时间,toString()不带秒
 	 * 
 	 * @param date 指定时间
 	 * @return 指定时间所属周的周一的开始时间
@@ -1177,14 +1287,22 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 获得指定时间所属周的周一开始时间
+	 * 获得指定时间所属周的周一开始的零点时间,toString()不带秒
 	 * 
 	 * @param localDateTime 指定时间
 	 * @return 指定时间所属周的周一的开始时间
 	 */
 	public static LocalDateTime getWeekBeginLocal(LocalDateTime localDateTime) {
-		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, DayOfWeek.MONDAY.getValue());
-		return getDayBegin(with);
+		return localDateTime.toLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).atStartOfDay();
+	}
+
+	/**
+	 * 获得当前时间所属周的周天结束时间
+	 * 
+	 * @return 当前时间所属周的周天结束时间
+	 */
+	public static Date getWeekEnd() {
+		return toDate(getWeekEndLocal(LocalDate.now()));
 	}
 
 	/**
@@ -1204,17 +1322,7 @@ public interface DateTimeHelper {
 	 * @return 指定时间所属周的周天结束时间
 	 */
 	public static Date getWeekEnd(LocalDateTime localDateTime) {
-		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, 7);
-		return toDate(getDayEnd(with));
-	}
-
-	/**
-	 * 获得当前时间所属周的周天结束时间
-	 * 
-	 * @return 当前时间所属周的周天结束时间
-	 */
-	public static Date getWeekEndl() {
-		return toDate(getWeekEndLocal(LocalDateTime.now()));
+		return toDate(getWeekEndLocal(localDateTime.toLocalDate()));
 	}
 
 	/**
@@ -1223,7 +1331,7 @@ public interface DateTimeHelper {
 	 * @return 当前时间所属周的周天结束时间
 	 */
 	public static LocalDateTime getWeekEndLocal() {
-		return getWeekEndLocal(LocalDateTime.now());
+		return getWeekEndLocal(LocalDate.now());
 	}
 
 	/**
@@ -1239,12 +1347,21 @@ public interface DateTimeHelper {
 	/**
 	 * 获得指定时间所属周的周天结束时间
 	 * 
+	 * @param localDate 指定时间
+	 * @return 指定时间所属周的周天结束时间
+	 */
+	public static LocalDateTime getWeekEndLocal(LocalDate localDate) {
+		return localDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).atTime(LocalTime.MAX);
+	}
+
+	/**
+	 * 获得指定时间所属周的周天结束时间
+	 * 
 	 * @param localDateTime 指定时间
 	 * @return 指定时间所属周的周天结束时间
 	 */
 	public static LocalDateTime getWeekEndLocal(LocalDateTime localDateTime) {
-		LocalDateTime with = localDateTime.with(ChronoField.DAY_OF_WEEK, DayOfWeek.SUNDAY.getValue());
-		return getDayEnd(with);
+		return getWeekEndLocal(localDateTime.toLocalDate());
 	}
 
 	/**
@@ -1278,17 +1395,16 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 获得当前时间所在年的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 获得当前时间所在年的开始时间,但是toString()不会显示秒和纳秒,需要强制格式化为yyyy-MM-dd HH:mm:ss
 	 * 
 	 * @return 当前时间所在年的开始时间
 	 */
 	public static LocalDateTime getYearBeginLocal() {
-		return LocalDateTime.of(LocalDateTime.now().with(TemporalAdjusters.firstDayOfYear()).toLocalDate(),
-				LocalTime.MIN);
+		return LocalDateTime.of(LocalDate.now().with(TemporalAdjusters.firstDayOfYear()), LocalTime.MIN);
 	}
 
 	/**
-	 * 获得指定时间所在年的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 获得指定时间所在年的开始时间,但是toString()不会显示秒和纳秒,需要强制格式化为yyyy-MM-dd HH:mm:ss
 	 * 
 	 * @param date 指定时间
 	 * @return 指定时间所在年的开始时间
@@ -1299,7 +1415,7 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 获得指定时间所在年的开始时间,格式为yyyy-MM-dd HH:mm:ss,如2020-01-01 00:00:00
+	 * 获得指定时间所在年的开始时间,但是toString()不会显示秒和纳秒,需要强制格式化为yyyy-MM-dd HH:mm:ss
 	 * 
 	 * @param localDateTime 指定时间
 	 * @return 指定时间所在年的开始时间
@@ -1629,7 +1745,7 @@ public interface DateTimeHelper {
 	 * @param date2 时间2
 	 * @return true->date1在date2之后或date1等于date2,false->date1在date2之前
 	 */
-	public static boolean isAfter(Date date1, Date date2) {
+	static boolean isAfter(Date date1, Date date2) {
 		AssertHelper.notNull(date1);
 		AssertHelper.notNull(date2);
 		return toLocal(date1).isAfter(toLocal(date2)) || toLocal(date1).isEqual(toLocal(date2));
@@ -1641,7 +1757,7 @@ public interface DateTimeHelper {
 	 * @param date1 时间1
 	 * @return true->date1在当前时间之前或date1等于当前时间,false->date1在当前时间之后
 	 */
-	public static boolean isBefore(Date date1) {
+	static boolean isBefore(Date date1) {
 		AssertHelper.notNull(date1);
 		LocalDateTime now = LocalDateTime.now();
 		return toLocal(date1).isBefore(now) || toLocal(date1).isEqual(now);
@@ -1654,63 +1770,129 @@ public interface DateTimeHelper {
 	 * @param date2 时间2
 	 * @return true->date1在date2之前或date1等于date2,false->date1在date2之后
 	 */
-	public static boolean isBefore(Date date1, Date date2) {
+	static boolean isBefore(Date date1, Date date2) {
 		AssertHelper.notNull(date1);
 		AssertHelper.notNull(date2);
 		return toLocal(date1).isBefore(toLocal(date2)) || toLocal(date1).isEqual(toLocal(date2));
 	}
 
 	/**
-	 * 根据出生日期判断今天是否为生日
+	 * 判断当前时间是否在2个时间之间
+	 * 
+	 * @param beginTime 开始时间
+	 * @param endTime 结束时间
+	 * @return true->是;false->否
+	 */
+	static Boolean isBetween(Instant beginTime, Instant endTime) {
+		return Instant.now().isAfter(beginTime) && Instant.now().isBefore(endTime);
+	}
+
+	/**
+	 * 判断指定时间是否在2个时间之间
+	 * 
+	 * @param target 待判断时间
+	 * @param start 开始时间
+	 * @param end 结束时间
+	 * @return true->是;false->否
+	 */
+	static Boolean isBetween(Instant target, Instant start, Instant end) {
+		return target.isAfter(start) && target.isBefore(end);
+	}
+
+	/**
+	 * 判断指定时间是否在2个时间之间
+	 *
+	 * @param target 待判断时间
+	 * @param start 起始时间
+	 * @param end 结束时间
+	 * @return true->是;false->否
+	 */
+	public static boolean isBetween(LocalDate target, LocalDate start, LocalDate end) {
+		return target.isAfter(start) && target.isBefore(end);
+	}
+
+	/**
+	 * 判断指定时间是否在2个时间之间
+	 *
+	 * @param target 待判断时间
+	 * @param start 起始时间
+	 * @param end 结束时间
+	 * @return true->是;false->否
+	 */
+	public static boolean isBetween(LocalDateTime target, LocalDateTime start, LocalDateTime end) {
+		return target.isAfter(start) && target.isBefore(end);
+	}
+
+	/**
+	 * 判断月日是否相同,主要判断生日,纪念日等
 	 * 
 	 * @param birthday 出生日期
 	 * @return true->是;false->否
 	 */
-	public static boolean isBirthday(Date birthday) {
-		return isBirthday(toLocal(birthday).toLocalDate());
+	static boolean isToday(Date birthday) {
+		return isToday(toLocal(birthday).toLocalDate());
 	}
 
 	/**
-	 * 根据出生日期判断今天是否为生日
+	 * 判断月日是否相同,主要判断生日,纪念日等
 	 * 
 	 * @param birthday 出生日期
 	 * @return true->是;false->否
 	 */
-	public static boolean isBirthday(LocalDate birthday) {
-		return MonthDay.from(LocalDate.now()).equals(MonthDay.of(birthday.getMonth(), birthday.getDayOfMonth()));
+	static boolean isToday(LocalDate birthday) {
+		return MonthDay.now().equals(MonthDay.of(birthday.getMonth(), birthday.getDayOfMonth()));
 	}
 
 	/**
-	 * 将LocalDateTime类型转换为Date
+	 * 判断月日是否相同,主要判断生日,纪念日等
 	 * 
-	 * @param localDateTime 需要进行转换的时间
-	 * @return 转换后的时间,和localDateTime时间相同
+	 * @param birthday 出生日期
+	 * @return true->是;false->否
 	 */
-	static Date toDate(LocalDateTime localDateTime) {
-		AssertHelper.notNull(localDateTime);
-		return toDate(localDateTime.atZone(DEFAULT_ZONE));
+	static boolean isToday(MonthDay monthDay) {
+		return MonthDay.now().equals(monthDay);
 	}
 
 	/**
-	 * ZonedDateTime 转 Date
+	 * 判断当前时间是否周末,不能判断法定休息日
 	 * 
-	 * @param zonedDateTime 带时区的时间
-	 * @return 转换后时间
+	 * @return true->是;false->不是
 	 */
-	static Date toDate(ZonedDateTime zonedDateTime) {
-		AssertHelper.notNull(zonedDateTime);
-		return Date.from(zonedDateTime.toInstant());
+	static boolean isWeekend() {
+		int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
+		return dayOfWeek == 6 || dayOfWeek == 7;
 	}
 
 	/**
-	 * 将LocalDateTime类型转换为Date UTC时间
+	 * 判断指定时间是否周末,不能判断法定休息日
 	 * 
-	 * @param localDateTime 需要进行转换的时间
-	 * @return 转换后的时间,根据时区不同,和localDateTime不同
+	 * @param localDate 待判断时间
+	 * @return true->是;false->不是
 	 */
-	static Date toDateUtc(LocalDateTime localDateTime) {
-		AssertHelper.notNull(localDateTime);
-		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
+	static boolean isWeekend(LocalDate localDate) {
+		int dayOfWeek = localDate.getDayOfWeek().getValue();
+		return dayOfWeek == 6 || dayOfWeek == 7;
+	}
+
+	/**
+	 * 判断是否工作日
+	 * 
+	 * @param localDate 待判断日期
+	 * @param holidays 自定义节假日（周末之外额外放假的日期）
+	 * @param workDaySet 调休补班日（原本周末，但是要上班）
+	 * @return true=工作日
+	 */
+	static boolean isWorkDay(LocalDate localDate, Set<LocalDate> holidays, Set<LocalDate> workDays) {
+		holidays = holidays == null ? new HashSet<>() : holidays;
+		workDays = workDays == null ? new HashSet<>() : workDays;
+
+		if (workDays.contains(localDate)) {
+			return true;
+		}
+		if (holidays.contains(localDate)) {
+			return false;
+		}
+		return !isWeekend(localDate);
 	}
 
 	/**
@@ -1795,8 +1977,200 @@ public interface DateTimeHelper {
 	 * @param dateTime 时间字符串,若不符合指定格式将报错
 	 * @return date对象
 	 */
-	public static Date parseDateTime(String dateTime) {
+	static Date parseDateTime(String dateTime) {
 		return toDate(parse(dateTime));
+	}
+
+	/**
+	 * 获取两个日期之间的Period(年、月、日),日历差值,不是物理时长
+	 *
+	 * @param start 起始日期
+	 * @param end 结束日期
+	 * @return Period:包含相差的年月日
+	 */
+	static Period period(LocalDate start, LocalDate end) {
+		Objects.requireNonNull(start);
+		Objects.requireNonNull(end);
+		return Period.between(start, end);
+	}
+
+	/**
+	 * 获得当前时间和指定时间之间相差的天数{@link #spanMonth(LocalDate, LocalDate)}
+	 * 
+	 * @param date 指定时间,可以是未来的,也可以是过去的.
+	 * @return 天数相差数
+	 */
+	static int periodDay(Date date) {
+		return Period.between(LocalDate.now(), toLocal(date).toLocalDate()).getDays();
+	}
+
+	/**
+	 * 获得date1和date2相差的天数{@link #spanMonth(LocalDate, LocalDate)}
+	 * 
+	 * @param date1 时间1
+	 * @param date2 时间2
+	 * @return 天数相差数
+	 */
+	static int periodDay(Date date1, Date date2) {
+		return Period.between(toLocal(date1).toLocalDate(), toLocal(date2).toLocalDate()).getDays();
+	}
+
+	/**
+	 * 获得当前时间和指定时间之间相差的天数{@link #spanMonth(LocalDate, LocalDate)}
+	 * 
+	 * @param date 指定时间,可以是未来的,也可以是过去的
+	 * @return 天数相差数
+	 */
+	static int periodDay(LocalDate date) {
+		return Period.between(LocalDate.now(), date).getDays();
+	}
+
+	/**
+	 * 获得date1和date2相差的天数{@link #spanMonth(LocalDate, LocalDate)}
+	 * 
+	 * @param date1 时间1
+	 * @param date2 时间2
+	 * @return 天数相差数
+	 */
+	static int periodDay(LocalDate date1, LocalDate date2) {
+		return Period.between(date1, date2).getDays();
+	}
+
+	/**
+	 * 获得date1和date2相差的天数
+	 * 
+	 * @param date1 时间1
+	 * @param date2 时间2
+	 * @return 天数相差数
+	 */
+	static long periodDays(Temporal date1, Temporal date2) {
+		return ChronoUnit.DAYS.between(date1, date2);
+	}
+
+	/**
+	 * 获得当前时间和指定时间之间相差的月数 {@link #spanMonth(LocalDate, LocalDate)}
+	 * 
+	 * @param date 指定时间,可以是未来的,也可以是过去的.
+	 * @return 月份相差数
+	 */
+	static int periodMonth(Date date) {
+		return Period.between(LocalDate.now(), toLocal(date).toLocalDate()).getMonths();
+	}
+
+	/**
+	 * 获得时间1和时间2之间相差的月数 {@link #spanMonth(LocalDate, LocalDate)}
+	 * 
+	 * @param date1 时间1
+	 * @param date2 时间2
+	 * @return 月份相差数
+	 */
+	static int periodMonth(Date date1, Date date2) {
+		return Period.between(toLocal(date1).toLocalDate(), toLocal(date2).toLocalDate()).getMonths();
+	}
+
+	/**
+	 * 获得当前时间和指定时间之间相差的月数 {@link #spanMonth(LocalDate, LocalDate)}
+	 * 
+	 * @param date 指定时间,可以是未来的,也可以是过去的
+	 * @return 月份相差数
+	 */
+	public static int periodMonth(LocalDate date) {
+		return Period.between(LocalDate.now(), date).getMonths();
+	}
+
+	/**
+	 * 获得date1到date2相差的月数,只有需要完整的年月日才使用,否则容易出现错误
+	 * 
+	 * date2的年月大于date1,得到的是正数,当date2的年月小于date1时,取大于时的负数即可
+	 * 
+	 * 并不会单纯的将时间都换算成年/月/日计算,而是分开计算,如:
+	 * 
+	 * <pre>
+	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 3, 1))		=0;同月
+	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 3, 5))		=0;同月
+	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 5, 5))		=2;日和月都够
+	 * 	spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 5, 1))		=1;月够2,但是日不够1整个月,只能为1
+	 * 	spanMonth(LocalDate.of(2000, 7, 5), LocalDate.of(2021, 5, 8))		=10;如果看年,就不为10,应该是200多
+	 * 	spanMonth(LocalDate.of(2000, 7, 5), LocalDate.of(2021, 5, 1))		=9
+	 * 	spanMonth(LocalDate.of(2000, 3, 5), LocalDate.of(2021, 5, 5))		=2
+	 * 	spanMonth(LocalDate.of(2000, 3, 5), LocalDate.of(2021, 5, 1))		=1
+	 * </pre>
+	 * 
+	 * @param date1 时间1,可以是未来的,也可以是过去的
+	 * @param date2 时间2,可以是未来的,也可以是过去的
+	 * @return 月份相差数
+	 */
+	public static int periodMonth(LocalDate date1, LocalDate date2) {
+		return Period.between(date1, date2).getMonths();
+	}
+
+	/**
+	 * 获得date1到date2相差的月数,年份,月份,天数都需要根据情况比较,情况复杂
+	 * 
+	 * <pre>
+	 * LocalDate.of(2021, 11, 11), LocalDate.of(2001, 11, 11) = -240
+	 * LocalDate.of(2021, 11, 10), LocalDate.of(2001, 11, 11) = -239
+	 * </pre>
+	 * 
+	 * @param date1 时间1,可以是未来的,也可以是过去的
+	 * @param date2 时间2,可以是未来的,也可以是过去的
+	 * @return 月份相差数
+	 */
+	public static long periodMonths(LocalDate date1, LocalDate date2) {
+		return ChronoUnit.MONTHS.between(date1, date2);
+	}
+
+	/**
+	 * 获得指定时间到当前时间相差的年份
+	 * 
+	 * @param date1 指定时间
+	 * @return 年份相差数.大于0表示当前时间大于date1
+	 */
+	public static int periodYear(Date date1) {
+		return LocalDate.now().get(ChronoField.YEAR) - toLocal(date1).get(ChronoField.YEAR);
+	}
+
+	/**
+	 * 获得指定时间到当前时间相差的年份
+	 * 
+	 * @param date1 指定时间
+	 * @param date2 时间2
+	 * @return 年份相差数.大于0表示date2大于date1
+	 */
+	public static int periodYear(Date date1, Date date2) {
+		return toLocal(date2).get(ChronoField.YEAR) - toLocal(date1).get(ChronoField.YEAR);
+	}
+
+	/**
+	 * 获得指定时间到当前时间相差的年份
+	 * 
+	 * @param date1 指定时间
+	 * @return 年份相差数.大于0表示当前时间大于date1
+	 */
+	public static int periodYear(TemporalAccessor date1) {
+		return LocalDate.now().get(ChronoField.YEAR) - date1.get(ChronoField.YEAR);
+	}
+
+	/**
+	 * 获得date1到date2相差的年份
+	 * 
+	 * @param date1 时间1
+	 * @param date2 时间2
+	 * @return 年份相差数.大于0表示date2大于date1
+	 */
+	public static int periodYear(TemporalAccessor date1, TemporalAccessor date2) {
+		return date2.get(ChronoField.YEAR) - date1.get(ChronoField.YEAR);
+	}
+
+	/**
+	 * 获得date1到date2相差的年份
+	 * 
+	 * @param date1 时间1
+	 * @param date2 时间2
+	 * @return 年份相差数.大于0表示date2大于date1
+	 */
+	public static long periodYears(Temporal date1, Temporal date2) {
+		return ChronoUnit.YEARS.between(date1, date2);
 	}
 
 	/**
@@ -1875,13 +2249,25 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 在当前时间基础上增加或减少amount天,若超过当前最大天数,会自动转到相应月数
+	 * 在指定时间基础上增加或减少amount天,若超过当前最大天数,会自动转到相应月数
 	 * 
+	 * @param date 待操作时间
 	 * @param amount 增加或较少的天数
 	 * @return 新的时间
 	 */
-	public static Date plusDay(Date date1, long amount) {
-		return toDate(toLocal(date1).plusDays(amount));
+	public static Date plusDay(Date date, long amount) {
+		return toDate(toLocal(date).plusDays(amount));
+	}
+
+	/**
+	 * 在指定时间基础上增加或减少amount天,若超过当前最大天数,会自动转到相应月数
+	 * 
+	 * @param localDateTime 待操作时间
+	 * @param amount 增加或较少的天数
+	 * @return 新的时间
+	 */
+	public static Date plusDay(LocalDateTime localDateTime, long amount) {
+		return toDate(localDateTime.plusDays(amount));
 	}
 
 	/**
@@ -1891,17 +2277,29 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusDay(long amount) {
-		return toDate(toLocal(new Date()).plusDays(amount));
+		return toDate(LocalDateTime.now().plusDays(amount));
 	}
 
 	/**
-	 * 在当前时间基础上增加或减少amount小时,若超过24小时,会自动转到相应天数
+	 * 在指定时间基础上增加或减少amount小时,若超过24小时,会自动转到相应天数
 	 * 
+	 * @param date 待操作时间
 	 * @param amount 增加或较少的小时
 	 * @return 新的时间
 	 */
-	public static Date plusHour(Date date1, long amount) {
-		return toDate(toLocal(date1).plusHours(amount));
+	public static Date plusHour(Date date, long amount) {
+		return toDate(toLocal(date).plusHours(amount));
+	}
+
+	/**
+	 * 在指定时间基础上增加或减少amount小时,若超过24小时,会自动转到相应天数
+	 * 
+	 * @param localDateTime 待操作时间
+	 * @param amount 增加或较少的小时
+	 * @return 新的时间
+	 */
+	public static Date plusHour(LocalDateTime localDateTime, long amount) {
+		return toDate(localDateTime.plusHours(amount));
 	}
 
 	/**
@@ -1911,17 +2309,29 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusHour(long amount) {
-		return toDate(toLocal(new Date()).plusHours(amount));
+		return toDate(LocalDateTime.now().plusHours(amount));
 	}
 
 	/**
-	 * 在当前时间基础上增加或减少amount个月,若超过12个月,会自动转到相应年
+	 * 在指定时间基础上增加或减少amount个月,若超过12个月,会自动转到相应年
 	 * 
+	 * @param date 待操作时间
 	 * @param amount 增加或较少的月数
 	 * @return 新的时间
 	 */
-	public static Date plusMonth(Date date1, long amount) {
-		return toDate(toLocal(date1).plusMonths(amount));
+	public static Date plusMonth(Date date, long amount) {
+		return toDate(toLocal(date).plusMonths(amount));
+	}
+
+	/**
+	 * 在指定时间基础上增加或减少amount个月,若超过12个月,会自动转到相应年
+	 * 
+	 * @param localDateTime 待操作时间
+	 * @param amount 增加或较少的月数
+	 * @return 新的时间
+	 */
+	public static Date plusMonth(LocalDateTime localDateTime, long amount) {
+		return toDate(localDateTime.plusMonths(amount));
 	}
 
 	/**
@@ -1931,17 +2341,29 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusMonth(long amount) {
-		return toDate(toLocal(new Date()).plusMonths(amount));
+		return toDate(LocalDateTime.now().plusMonths(amount));
 	}
 
 	/**
 	 * 在指定时间基础上增加或减少amount个周
 	 * 
+	 * @param date 待操作时间
 	 * @param amount 增加或较少的周数
 	 * @return 新的时间
 	 */
-	public static Date plusWeek(Date date1, long amount) {
-		return toDate(toLocal(date1).plusWeeks(amount));
+	public static Date plusWeek(Date date, long amount) {
+		return toDate(toLocal(date).plusWeeks(amount));
+	}
+
+	/**
+	 * 在指定时间基础上增加或减少amount个周
+	 * 
+	 * @param localDateTime 待操作时间
+	 * @param amount 增加或较少的周数
+	 * @return 新的时间
+	 */
+	public static Date plusWeek(LocalDateTime localDateTime, long amount) {
+		return toDate(localDateTime.plusWeeks(amount));
 	}
 
 	/**
@@ -1951,7 +2373,7 @@ public interface DateTimeHelper {
 	 * @return 新的时间
 	 */
 	public static Date plusWeek(long amount) {
-		return toDate(toLocal(new Date()).plusWeeks(amount));
+		return toDate(LocalDateTime.now().plusWeeks(amount));
 	}
 
 	/**
@@ -2157,262 +2579,6 @@ public interface DateTimeHelper {
 	}
 
 	/**
-	 * 计算两个时间之间的间隔,和Peroid不同,会直接转换为相同单位后计算
-	 *
-	 * @param start 开始时间
-	 * @param end 结束时间
-	 * @param unit 单位
-	 * @return 差值,end - start,负数代表end早于start
-	 */
-	static long between(Temporal start, Temporal end, ChronoUnit unit) {
-		Objects.requireNonNull(start);
-		Objects.requireNonNull(end);
-		Objects.requireNonNull(unit);
-		return unit.between(start, end);
-	}
-
-	/**
-	 * 计算相差天数
-	 *
-	 * @param start 开始
-	 * @param end 结束
-	 * @return 天数差值
-	 */
-	public static long betweenDays(LocalDateTime start, LocalDateTime end) {
-		return between(start, end, ChronoUnit.DAYS);
-	}
-
-	/**
-	 * 计算相差小时
-	 *
-	 * @param start 开始
-	 * @param end 结束
-	 * @return 小时差值
-	 */
-	public static long betweenHours(LocalDateTime start, LocalDateTime end) {
-		return between(start, end, ChronoUnit.HOURS);
-	}
-
-	/**
-	 * 计算相差毫秒
-	 *
-	 * @param start 开始
-	 * @param end 结束
-	 * @return 毫秒差值
-	 */
-	public static long betweenMilli(LocalDateTime start, LocalDateTime end) {
-		Objects.requireNonNull(start);
-		Objects.requireNonNull(end);
-		return between(start, end, ChronoUnit.MILLIS);
-	}
-
-	/**
-	 * 计算相差分钟
-	 *
-	 * @param start 开始
-	 * @param end 结束
-	 * @return 分钟差值
-	 */
-	public static long betweenMinutes(LocalDateTime start, LocalDateTime end) {
-		return between(start, end, ChronoUnit.MINUTES);
-	}
-
-	/**
-	 * 计算相差秒
-	 *
-	 * @param start 开始
-	 * @param end 结束
-	 * @return 秒差值
-	 */
-	public static long betweenSeconds(LocalDateTime start, LocalDateTime end) {
-		return between(start, end, ChronoUnit.SECONDS);
-	}
-
-	/**
-	 * 获得当前时间和指定时间之间相差的天数{@link #spanMonth(LocalDate, LocalDate)}
-	 * 
-	 * @param date 指定时间,可以是未来的,也可以是过去的.
-	 * @return 天数相差数
-	 */
-	static int spanDay(Date date) {
-		return Period.between(LocalDate.now(), toLocal(date).toLocalDate()).getDays();
-	}
-
-	/**
-	 * 获得date1和date2相差的天数{@link #spanMonth(LocalDate, LocalDate)}
-	 * 
-	 * @param date1 时间1
-	 * @param date2 时间2
-	 * @return 天数相差数
-	 */
-	static int spanDay(Date date1, Date date2) {
-		return Period.between(toLocal(date1).toLocalDate(), toLocal(date2).toLocalDate()).getDays();
-	}
-
-	/**
-	 * 获得当前时间和指定时间之间相差的天数{@link #spanMonth(LocalDate, LocalDate)}
-	 * 
-	 * @param date 指定时间,可以是未来的,也可以是过去的
-	 * @return 天数相差数
-	 */
-	static int spanDay(LocalDate date) {
-		return Period.between(LocalDate.now(), date).getDays();
-	}
-
-	/**
-	 * 获得date1和date2相差的天数{@link #spanMonth(LocalDate, LocalDate)}
-	 * 
-	 * @param date1 时间1
-	 * @param date2 时间2
-	 * @return 天数相差数
-	 */
-	static int spanDay(LocalDate date1, LocalDate date2) {
-		return Period.between(date1, date2).getDays();
-	}
-
-	/**
-	 * 获得date1和date2相差的天数
-	 * 
-	 * @param date1 时间1
-	 * @param date2 时间2
-	 * @return 天数相差数
-	 */
-	public static long spanDays(Temporal date1, Temporal date2) {
-		return ChronoUnit.DAYS.between(date1, date2);
-	}
-
-	/**
-	 * 获得当前时间和指定时间之间相差的月数 {@link #spanMonth(LocalDate, LocalDate)}
-	 * 
-	 * @param date 指定时间,可以是未来的,也可以是过去的.
-	 * @return 月份相差数
-	 */
-	public static int spanMonth(Date date) {
-		return Period.between(LocalDate.now(), toLocal(date).toLocalDate()).getMonths();
-	}
-
-	/**
-	 * 获得时间1和时间2之间相差的月数 {@link #spanMonth(LocalDate, LocalDate)}
-	 * 
-	 * @param date1 时间1
-	 * @param date2 时间2
-	 * @return 月份相差数
-	 */
-	public static int spanMonth(Date date1, Date date2) {
-		return Period.between(toLocal(date1).toLocalDate(), toLocal(date2).toLocalDate()).getMonths();
-	}
-
-	/**
-	 * 获得当前时间和指定时间之间相差的月数 {@link #spanMonth(LocalDate, LocalDate)}
-	 * 
-	 * @param date 指定时间,可以是未来的,也可以是过去的
-	 * @return 月份相差数
-	 */
-	public static int spanMonth(LocalDate date) {
-		return Period.between(LocalDate.now(), date).getMonths();
-	}
-
-	/**
-	 * 获得date1到date2相差的月数,只有需要完整的年月日才使用,否则容易出现错误
-	 * 
-	 * date2的年月大于date1,得到的是正数,当date2的年月小于date1时,取大于时的负数即可
-	 * 
-	 * 并不会单纯的将时间都换算成年/月/日计算,而是分开计算,如:
-	 * 
-	 * <pre>
-	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 3, 1))		=0;同月
-	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 3, 5))		=0;同月
-	 * spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 5, 5))		=2;日和月都够
-	 * 	spanMonth(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 5, 1))		=1;月够2,但是日不够1整个月,只能为1
-	 * 	spanMonth(LocalDate.of(2000, 7, 5), LocalDate.of(2021, 5, 8))		=10;如果看年,就不为10,应该是200多
-	 * 	spanMonth(LocalDate.of(2000, 7, 5), LocalDate.of(2021, 5, 1))		=9
-	 * 	spanMonth(LocalDate.of(2000, 3, 5), LocalDate.of(2021, 5, 5))		=2
-	 * 	spanMonth(LocalDate.of(2000, 3, 5), LocalDate.of(2021, 5, 1))		=1
-	 * </pre>
-	 * 
-	 * @param date1 时间1,可以是未来的,也可以是过去的
-	 * @param date2 时间2,可以是未来的,也可以是过去的
-	 * @return 月份相差数
-	 */
-	public static int spanMonth(LocalDate date1, LocalDate date2) {
-		return Period.between(date1, date2).getMonths();
-	}
-
-	public static void main(String[] args) {
-		System.out.println(Period.between(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 1, 5)).getMonths());
-		System.out.println(Period.between(LocalDate.of(2021, 3, 3), LocalDate.of(2021, 5, 1)).getMonths());
-	}
-
-	/**
-	 * 获得date1到date2相差的月数,年份,月份,天数都需要根据情况比较,情况复杂
-	 * 
-	 * <pre>
-	 * LocalDate.of(2021, 11, 11), LocalDate.of(2001, 11, 11) = -240
-	 * LocalDate.of(2021, 11, 10), LocalDate.of(2001, 11, 11) = -239
-	 * </pre>
-	 * 
-	 * @param date1 时间1,可以是未来的,也可以是过去的
-	 * @param date2 时间2,可以是未来的,也可以是过去的
-	 * @return 月份相差数
-	 */
-	public static long spanMonths(LocalDate date1, LocalDate date2) {
-		return ChronoUnit.MONTHS.between(date1, date2);
-	}
-
-	/**
-	 * 获得指定时间到当前时间相差的年份
-	 * 
-	 * @param date1 指定时间
-	 * @return 年份相差数.大于0表示当前时间大于date1
-	 */
-	public static int spanYear(Date date1) {
-		return LocalDate.now().get(ChronoField.YEAR) - toLocal(date1).get(ChronoField.YEAR);
-	}
-
-	/**
-	 * 获得指定时间到当前时间相差的年份
-	 * 
-	 * @param date1 指定时间
-	 * @param date2 时间2
-	 * @return 年份相差数.大于0表示date2大于date1
-	 */
-	public static int spanYear(Date date1, Date date2) {
-		return toLocal(date2).get(ChronoField.YEAR) - toLocal(date1).get(ChronoField.YEAR);
-	}
-
-	/**
-	 * 获得指定时间到当前时间相差的年份
-	 * 
-	 * @param date1 指定时间
-	 * @return 年份相差数.大于0表示当前时间大于date1
-	 */
-	public static int spanYear(TemporalAccessor date1) {
-		return LocalDate.now().get(ChronoField.YEAR) - date1.get(ChronoField.YEAR);
-	}
-
-	/**
-	 * 获得date1到date2相差的年份
-	 * 
-	 * @param date1 时间1
-	 * @param date2 时间2
-	 * @return 年份相差数.大于0表示date2大于date1
-	 */
-	public static int spanYear(TemporalAccessor date1, TemporalAccessor date2) {
-		return date2.get(ChronoField.YEAR) - date1.get(ChronoField.YEAR);
-	}
-
-	/**
-	 * 获得date1到date2相差的年份
-	 * 
-	 * @param date1 时间1
-	 * @param date2 时间2
-	 * @return 年份相差数.大于0表示date2大于date1
-	 */
-	public static long spanYears(Temporal date1, Temporal date2) {
-		return ChronoUnit.YEARS.between(date1, date2);
-	}
-
-	/**
 	 * 将TimeUnit单位转换为ChronoUnit单位,JDK9自带该方法
 	 * 
 	 * @param timeUnit TimeUnit
@@ -2440,6 +2606,116 @@ public interface DateTimeHelper {
 	}
 
 	/**
+	 * 将LocalDateTime类型转换为Date
+	 * 
+	 * @param localDateTime 需要进行转换的时间
+	 * @return 转换后的时间,和localDateTime时间相同
+	 */
+	static Date toDate(LocalDateTime localDateTime) {
+		AssertHelper.notNull(localDateTime);
+		return toDate(localDateTime.atZone(DEFAULT_ZONE));
+	}
+
+	/**
+	 * 将LocalDateTime类型转换为Date
+	 * 
+	 * @param localDateTime 需要进行转换的时间
+	 * @param zoneId 时区编号
+	 * @return 转换后的时间,和localDateTime时间相同
+	 */
+	static Date toDate(LocalDateTime localDateTime, ZoneId zoneId) {
+		AssertHelper.notNull(localDateTime);
+		return Date.from(localDateTime.atZone(zoneId).toInstant());
+	}
+
+	/**
+	 * ZonedDateTime 转 Date
+	 * 
+	 * @param zonedDateTime 带时区的时间
+	 * @return 转换后时间
+	 */
+	static Date toDate(ZonedDateTime zonedDateTime) {
+		AssertHelper.notNull(zonedDateTime);
+		return Date.from(zonedDateTime.toInstant());
+	}
+
+	/**
+	 * 将LocalDateTime类型转换为Date UTC时间
+	 * 
+	 * @param localDateTime 需要进行转换的时间
+	 * @return 转换后的时间,根据时区不同,和localDateTime不同
+	 */
+	static Date toDateUtc(LocalDateTime localDateTime) {
+		AssertHelper.notNull(localDateTime);
+		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
+	}
+
+	/**
+	 * 获取当前UTC时间
+	 * 
+	 * @return Instant UTC时间
+	 */
+	static Instant toInstant() {
+		return Instant.now();
+	}
+
+	/**
+	 * 将Date转换为LocalDateTime
+	 * 
+	 * @param date 需要进行转换的时间
+	 * @return 转换后的时间,和date时间相同
+	 */
+	static LocalDateTime toLocal(Date date) {
+		AssertHelper.notNull(date);
+		return toLocal(date, ZoneId.systemDefault());
+	}
+
+	/**
+	 * 将Date转换为LocalDateTime
+	 * 
+	 * @param date 需要进行转换的时间
+	 * @param zoneId 时区编号
+	 * @return 转换后的时间,和date时间相同
+	 */
+	static LocalDateTime toLocal(Date date, ZoneId zoneId) {
+		AssertHelper.notNull(date);
+		// date.toInstant().atZone(zoneId).toLocalDateTime();
+		return LocalDateTime.ofInstant(date.toInstant(), zoneId);
+	}
+
+	/**
+	 * 毫秒时间戳转换为LocalDateTime
+	 * 
+	 * @param milli 毫秒时间
+	 * @return 转换后的时间
+	 */
+	static LocalDateTime toLocal(long milli) {
+		return Instant.ofEpochMilli(milli).atZone(DEFAULT_ZONE).toLocalDateTime();
+	}
+
+	/**
+	 * 将LocalDateTime转换成毫秒时间戳
+	 * 
+	 * @param localDateTime 待判断时间
+	 * @return 从1970到localDateTime的毫秒数
+	 */
+	static long toMilli(LocalDateTime localDateTime) {
+		AssertHelper.notNull(localDateTime);
+		return localDateTime.atZone(DEFAULT_ZONE).toInstant().toEpochMilli();
+	}
+
+	/**
+	 * 将LocalDateTime转换成秒时间戳
+	 * 
+	 * @param localDateTime 待判断时间
+	 * @return 从1970到localDateTime的秒数
+	 */
+	static long toSecond(LocalDateTime localDateTime) {
+		AssertHelper.notNull(localDateTime);
+		return localDateTime.atZone(DEFAULT_ZONE).toInstant().getEpochSecond();
+	}
+
+	/**
 	 * 将ChronoUnit单位转换为TimeUnit单位,JDK9自带该方法
 	 * 
 	 * @param chronoUnit ChronoUnit
@@ -2464,15 +2740,6 @@ public interface DateTimeHelper {
 		default:
 			throw new IllegalArgumentException("No TimeUnit equivalent for " + chronoUnit);
 		}
-	}
-
-	/**
-	 * 获取当前UTC时间
-	 * 
-	 * @return Instant UTC时间
-	 */
-	public static Instant toInstant() {
-		return Instant.now();
 	}
 
 	/**
@@ -2619,6 +2886,21 @@ public interface DateTimeHelper {
 	}
 
 	/**
+	 * 将时间在2个时区之间互转
+	 * 
+	 * @param localDateTime 时间,不带时区
+	 * @param sourceZone 来源时区
+	 * @param targetZone 目标时区
+	 * @return 转换后时间
+	 */
+	static LocalDateTime toZone(LocalDateTime localDateTime, ZoneId sourceZone, ZoneId targetZone) {
+		if (localDateTime == null || sourceZone == null || targetZone == null) {
+			return null;
+		}
+		return ZonedDateTime.of(localDateTime, sourceZone).withZoneSameInstant(targetZone).toLocalDateTime();
+	}
+
+	/**
 	 * 时区转换.支持的时区通过ZoneId.getAvailableZoneIds()查看
 	 * 
 	 * @param zoneId 时区
@@ -2636,21 +2918,6 @@ public interface DateTimeHelper {
 	 */
 	static ZonedDateTime toZone(ZoneId zoneId) {
 		return ZonedDateTime.now(zoneId);
-	}
-
-	/**
-	 * 将时间在2个时区之间互转
-	 * 
-	 * @param localDateTime 时间,不带时区
-	 * @param sourceZone 来源时区
-	 * @param targetZone 目标时区
-	 * @return 转换后时间
-	 */
-	static LocalDateTime toZone(LocalDateTime localDateTime, ZoneId sourceZone, ZoneId targetZone) {
-		if (localDateTime == null || sourceZone == null || targetZone == null) {
-			return null;
-		}
-		return ZonedDateTime.of(localDateTime, sourceZone).withZoneSameInstant(targetZone).toLocalDateTime();
 	}
 
 	/**
